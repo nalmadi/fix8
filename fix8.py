@@ -19,9 +19,19 @@ class Fix8(QMainWindow):
         # --- wrapper layout ---
         self.wrapperLayout = QHBoxLayout()
 
-        # button layout - the side bar of buttons
+        # --- left side bar of tools and buttons ---
+        leftBar = QVBoxLayout()
+
+        # --- button layout ---
         buttonLayout = QVBoxLayout()
-        self.wrapperLayout.addLayout(buttonLayout)
+        leftBar.addLayout(buttonLayout)
+
+        # --- bottom right tools ---
+        bottomRight = QVBoxLayout()
+        leftBar.addLayout(bottomRight)
+
+        # --- add left bar to layout ---
+        self.wrapperLayout.addLayout(leftBar)
 
         # --- button to open a file ---
         openFileButton = QPushButton('Open File', self)
@@ -50,6 +60,39 @@ class Fix8(QMainWindow):
 
         buttonLayout.insertStretch(-1,0)
         buttonLayout.setSpacing(10)
+
+        # --- add rows of buttons to bottom right: row 1 ---
+        row1 = QHBoxLayout()
+        bottomRight.addLayout(row1)
+
+        homeButton = QPushButton("Home Button", self)
+        homeButton.setFixedSize(100,50)
+        leftArrow = QPushButton("Left Arrow", self)
+        leftArrow.setFixedSize(100,50)
+        rightArrow = QPushButton("Right Arrow", self)
+        rightArrow.setFixedSize(100,50)
+
+        row1.addWidget(homeButton)
+        row1.addWidget(leftArrow)
+        row1.addWidget(rightArrow)
+
+        # --- row 2 ---
+        row2 = QHBoxLayout()
+        bottomRight.addLayout(row2)
+
+        move = QPushButton("Move", self)
+        move.setFixedSize(100,50)
+        find = QPushButton("Find", self)
+        find.setFixedSize(100,50)
+        adjust = QPushButton("Adjust", self)
+        adjust.setFixedSize(100,50)
+        stats = QPushButton("Stats", self)
+        stats.setFixedSize(100,50)
+
+        row2.addWidget(move)
+        row2.addWidget(find)
+        row2.addWidget(adjust)
+        row2.addWidget(stats)
 
         widget = QWidget()
         widget.setLayout(self.wrapperLayout)
