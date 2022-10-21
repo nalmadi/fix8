@@ -2,6 +2,42 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
                              QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup)
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt5agg import \
+    NavigationToolbar2QT as NavigationToolBar
+
+
+
+class QtCanvas(FigureCanvasQTAgg):
+
+    def __init__(self, parent=None, width=6, height=4, dpi=100):
+        self.figure, self.ax = plt.subplots(
+            ncols=1, nrows=1, figsize=(width, height))
+        self.figure.tight_layout()
+
+        FigureCanvasQTAgg.__init__(self, self.figure)
+        self.setParent(parent)
+
+        FigureCanvasQTAgg.setSizePolicy(
+            self, QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvasQTAgg.updateGeometry(self)
+
+        self.initialize()
+        self.history = []
+        self.future = []
+        self.suggestion = None
+        self.trial = None
+        self.current_fixation_number = None
+
+    def initialize(self):
+        """Initialize the Canvas object, display the welcome image
+        """
+        img = mpimg.imread("hello.jpg")
+        self.ax.imshow(img)
+        self.draw()
 
 
 class Fix8(QMainWindow):
@@ -35,27 +71,27 @@ class Fix8(QMainWindow):
 
         # --- button to open a file ---
         openFileButton = QPushButton('Open File', self)
-        openFileButton.setFixedSize(200,50)
+        openFileButton.setFixedSize(350,75)
         buttonLayout.addWidget(openFileButton)
 
         # --- next ---
         nextButton = QPushButton("Next Trial", self)
-        nextButton.setFixedSize(200,50)
+        nextButton.setFixedSize(350,75)
         buttonLayout.addWidget(nextButton)
 
         # --- back ---
         backButton = QPushButton("Previous Trial", self)
-        backButton.setFixedSize(200,50)
+        backButton.setFixedSize(350,75)
         buttonLayout.addWidget(backButton)
 
         #  --- save ---
         saveButton = QPushButton("Save", self)
-        saveButton.setFixedSize(200,50)
+        saveButton.setFixedSize(350,75)
         buttonLayout.addWidget(saveButton)
 
         #  --- cancel ---
         cancelButton = QPushButton("Cancel", self)
-        cancelButton.setFixedSize(200,50)
+        cancelButton.setFixedSize(350,75)
         buttonLayout.addWidget(cancelButton)
 
         buttonLayout.insertStretch(-1,0)
@@ -93,6 +129,10 @@ class Fix8(QMainWindow):
         row2.addWidget(find)
         row2.addWidget(adjust)
         row2.addWidget(stats)
+
+        canvas = QtCanvas(self, width=8, height=6, dpi=100)
+        canvas.setFixedSize(1000,700)
+        self.wrapperLayout.addWidget(canvas)
 
         widget = QWidget()
         widget.setLayout(self.wrapperLayout)
