@@ -13,7 +13,7 @@ from matplotlib.backends.backend_qt5agg import \
 
 class QtCanvas(FigureCanvasQTAgg):
 
-    def __init__(self, parent=None, width=12, height=8, dpi=100):
+    def __init__(self, parent=None, width=6, height=4, dpi=100):
         self.figure, self.ax = plt.subplots(
             ncols=1, nrows=1, figsize=(width, height))
         self.figure.tight_layout()
@@ -71,27 +71,27 @@ class Fix8(QMainWindow):
 
         # --- button to open a file ---
         openFileButton = QPushButton('Open File', self)
-        openFileButton.setFixedSize(200,50)
+        openFileButton.setFixedSize(350,75)
         buttonLayout.addWidget(openFileButton)
 
         # --- next ---
         nextButton = QPushButton("Next Trial", self)
-        nextButton.setFixedSize(200,50)
+        nextButton.setFixedSize(350,75)
         buttonLayout.addWidget(nextButton)
 
         # --- back ---
         backButton = QPushButton("Previous Trial", self)
-        backButton.setFixedSize(200,50)
+        backButton.setFixedSize(350,75)
         buttonLayout.addWidget(backButton)
 
         #  --- save ---
         saveButton = QPushButton("Save", self)
-        saveButton.setFixedSize(200,50)
+        saveButton.setFixedSize(350,75)
         buttonLayout.addWidget(saveButton)
 
         #  --- cancel ---
         cancelButton = QPushButton("Cancel", self)
-        cancelButton.setFixedSize(200,50)
+        cancelButton.setFixedSize(350,75)
         buttonLayout.addWidget(cancelButton)
 
         buttonLayout.insertStretch(-1,0)
@@ -129,6 +129,10 @@ class Fix8(QMainWindow):
         row2.addWidget(find)
         row2.addWidget(adjust)
         row2.addWidget(stats)
+
+        canvas = QtCanvas(self, width=8, height=6, dpi=100)
+        canvas.setFixedSize(1000,700)
+        self.wrapperLayout.addWidget(canvas)
 
         widget = QWidget()
         widget.setLayout(self.wrapperLayout)
