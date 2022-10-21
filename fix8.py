@@ -2,6 +2,42 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
                              QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup)
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt5agg import \
+    NavigationToolbar2QT as NavigationToolBar
+
+
+
+class QtCanvas(FigureCanvasQTAgg):
+
+    def __init__(self, parent=None, width=12, height=8, dpi=100):
+        self.figure, self.ax = plt.subplots(
+            ncols=1, nrows=1, figsize=(width, height))
+        self.figure.tight_layout()
+
+        FigureCanvasQTAgg.__init__(self, self.figure)
+        self.setParent(parent)
+
+        FigureCanvasQTAgg.setSizePolicy(
+            self, QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvasQTAgg.updateGeometry(self)
+
+        self.initialize()
+        self.history = []
+        self.future = []
+        self.suggestion = None
+        self.trial = None
+        self.current_fixation_number = None
+
+    def initialize(self):
+        """Initialize the Canvas object, display the welcome image
+        """
+        img = mpimg.imread("hello.jpg")
+        self.ax.imshow(img)
+        self.draw()
 
 
 class Fix8(QMainWindow):
