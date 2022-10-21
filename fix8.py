@@ -159,6 +159,26 @@ class Fix8(QMainWindow):
         selectAlgoButton.addItem('Select Correction Algorithm')
         bottomButtons.addWidget(selectAlgoButton)
 
+        # --- second row ---
+
+        bottomButtons2 = QHBoxLayout()
+        rightBar.addLayout(bottomButtons2)
+
+        showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
+        showAOI.setChecked(False)
+        bottomButtons2.addWidget(showAOI)
+
+        showFixation = QCheckBox("Show Fixation", self)
+        showFixation.setChecked(False)
+        bottomButtons2.addWidget(showFixation)
+
+        showSaccade = QCheckBox("Show Saccade", self)
+        showSaccade.setChecked(False)
+        bottomButtons2.addWidget(showSaccade)
+
+        correctAllButton = QPushButton("Correct All", self)
+        bottomButtons2.addWidget(correctAllButton)
+
         widget = QWidget()
         widget.setLayout(self.wrapperLayout)
         self.setCentralWidget(widget)
