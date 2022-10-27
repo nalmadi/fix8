@@ -6,7 +6,7 @@ import time
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
-                             QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup)
+                             QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, QLineEdit)
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,7 +53,6 @@ class Fix8(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        # --- size of UI ---
 
         # --- wrapper layout ---
         self.wrapperLayout = QHBoxLayout()
@@ -61,9 +60,19 @@ class Fix8(QMainWindow):
         # --- left side bar of tools and buttons ---
         leftBar = QVBoxLayout()
 
-        # --- button layout ---
-        buttonLayout = QVBoxLayout()
-        leftBar.addLayout(buttonLayout)
+        # --- drop down bar to open and manage files ---
+        manageFiles = QComboBox()
+        manageFiles.setEditable(True)
+
+        manageFiles.addItem('Manage Files')
+        manageFiles.addItem('Save')
+        manageFiles.setCurrentText('Select')
+        manageFiles.setFixedSize(300,30)
+
+
+        manageFiles.lineEdit().setAlignment(Qt.AlignCenter)
+        manageFiles.lineEdit().setReadOnly(True)
+        leftBar.addWidget(manageFiles)
 
         # --- bottom right tools ---
         bottomRight = QVBoxLayout()
@@ -72,33 +81,6 @@ class Fix8(QMainWindow):
         # --- add left bar to layout ---
         self.wrapperLayout.addLayout(leftBar)
 
-        # --- button to open a file ---
-        openFileButton = QPushButton('Open File', self)
-        openFileButton.setFixedSize(350,75)
-        buttonLayout.addWidget(openFileButton)
-
-        # --- next ---
-        nextButton = QPushButton("Next Trial", self)
-        nextButton.setFixedSize(350,75)
-        buttonLayout.addWidget(nextButton)
-
-        # --- back ---
-        backButton = QPushButton("Previous Trial", self)
-        backButton.setFixedSize(350,75)
-        buttonLayout.addWidget(backButton)
-
-        #  --- save ---
-        saveButton = QPushButton("Save", self)
-        saveButton.setFixedSize(350,75)
-        buttonLayout.addWidget(saveButton)
-
-        #  --- cancel ---
-        cancelButton = QPushButton("Cancel", self)
-        cancelButton.setFixedSize(350,75)
-        buttonLayout.addWidget(cancelButton)
-
-        buttonLayout.insertStretch(-1,0)
-        buttonLayout.setSpacing(10)
 
         # --- add rows of buttons to bottom right: row 1 ---
         row1 = QHBoxLayout()
