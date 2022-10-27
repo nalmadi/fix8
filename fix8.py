@@ -1,3 +1,8 @@
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+import sys
+import time
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
@@ -134,6 +139,16 @@ class Fix8(QMainWindow):
 
         canvas = QtCanvas(self, width=8, height=6, dpi=100)
         rightBar.addWidget(canvas)
+
+        #########################################
+        # testing progress bar
+        abovebottomButtons = QHBoxLayout()
+        rightBar.addLayout(abovebottomButtons)
+
+        progressBar = QProgressBar(self)
+        progressBar.setGeometry(250, 80, 250, 20)
+        abovebottomButtons.addWidget(progressBar)
+        ##########################################
 
         bottomButtons = QHBoxLayout()
         rightBar.addLayout(bottomButtons)
