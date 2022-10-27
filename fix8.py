@@ -49,8 +49,6 @@ class Fix8(QMainWindow):
 
     def initUI(self):
         # --- size of UI ---
-        self.setFixedWidth(1500)
-        self.setFixedHeight(900)
 
         # --- wrapper layout ---
         self.wrapperLayout = QHBoxLayout()
@@ -102,11 +100,11 @@ class Fix8(QMainWindow):
         bottomRight.addLayout(row1)
 
         homeButton = QPushButton("Home Button", self)
-        homeButton.setFixedSize(100,50)
+        # homeButton.setFixedSize(100,50)
         leftArrow = QPushButton("Left Arrow", self)
-        leftArrow.setFixedSize(100,50)
+        # leftArrow.setFixedSize(100,50)
         rightArrow = QPushButton("Right Arrow", self)
-        rightArrow.setFixedSize(100,50)
+        # rightArrow.setFixedSize(100,50)
 
         row1.addWidget(homeButton)
         row1.addWidget(leftArrow)
@@ -135,7 +133,6 @@ class Fix8(QMainWindow):
         self.wrapperLayout.addLayout(rightBar)
 
         canvas = QtCanvas(self, width=8, height=6, dpi=100)
-        canvas.setFixedSize(1000,700)
         rightBar.addWidget(canvas)
 
         bottomButtons = QHBoxLayout()
