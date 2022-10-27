@@ -1,3 +1,8 @@
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+import sys
+import time
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
@@ -130,9 +135,64 @@ class Fix8(QMainWindow):
         row2.addWidget(adjust)
         row2.addWidget(stats)
 
+        # --- right side of tool ---
+        rightBar = QVBoxLayout()
+        self.wrapperLayout.addLayout(rightBar)
+
         canvas = QtCanvas(self, width=8, height=6, dpi=100)
         canvas.setFixedSize(1000,700)
-        self.wrapperLayout.addWidget(canvas)
+        rightBar.addWidget(canvas)
+
+        #########################################
+        # testing progress bar
+        abovebottomButtons = QHBoxLayout()
+        rightBar.addLayout(abovebottomButtons)
+
+        progressBar = QProgressBar(self)
+        progressBar.setGeometry(250, 80, 250, 20)
+        abovebottomButtons.addWidget(progressBar)
+        ##########################################
+
+        bottomButtons = QHBoxLayout()
+        rightBar.addLayout(bottomButtons)
+
+        previousButton = QPushButton('Previous', self)
+        bottomButtons.addWidget(previousButton)
+
+        slider = QSlider(Qt.Horizontal)
+        slider.setMinimum(0)
+        slider.setMaximum(100)
+        bottomButtons.addWidget(slider)
+
+        skipButton = QPushButton('Skip', self)
+        bottomButtons.addWidget(skipButton)
+
+        nextButtonBottom = QPushButton('Next', self)
+        bottomButtons.addWidget(nextButtonBottom)
+
+        selectAlgoButton = QComboBox(self)
+        selectAlgoButton.addItem('Select Correction Algorithm')
+        bottomButtons.addWidget(selectAlgoButton)
+
+        # --- second row ---
+
+        bottomButtons2 = QHBoxLayout()
+        rightBar.addLayout(bottomButtons2)
+
+        showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
+        showAOI.setChecked(False)
+        bottomButtons2.addWidget(showAOI)
+
+        showFixation = QCheckBox("Show Fixation", self)
+        showFixation.setChecked(False)
+        bottomButtons2.addWidget(showFixation)
+
+        showSaccade = QCheckBox("Show Saccade", self)
+        showSaccade.setChecked(False)
+        bottomButtons2.addWidget(showSaccade)
+
+        correctAllButton = QPushButton("Correct All", self)
+        bottomButtons2.addWidget(correctAllButton)
 
         widget = QWidget()
         widget.setLayout(self.wrapperLayout)
