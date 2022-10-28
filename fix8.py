@@ -86,6 +86,7 @@ class Fix8(QMainWindow):
     # --- run the trial on the data given ---
     def runTrial(self):
         self.findAOI()
+        self.findFixations()
 
     # --- draw the AOI to screen ---
     def drawAOI(self):
@@ -98,6 +99,7 @@ class Fix8(QMainWindow):
             height = row[1]['height']
             width = row[1]['width']
             self.patches.append(self.canvas.ax.add_patch(Rectangle((x_cord, y_cord), width-1, height-1,linewidth=0.8,edgecolor=color,facecolor="none",alpha=0.65)))
+
         self.canvas.draw()
 
     def clearAOI(self):
@@ -147,120 +149,122 @@ class Fix8(QMainWindow):
         self.wrapperLayout.addLayout(self.leftBar)
         self.wrapperLayout.addLayout(self.rightBar)
 
-        --- drop down bar to open and manage files ---
-        manageFiles = QComboBox()
-        manageFiles.setEditable(True)
-
-        manageFiles.addItem('Open')
-        manageFiles.addItem('Save')
-        manageFiles.setCurrentText('Select')
-
-        manageFiles.setFixedSize(300,30)
-        manageFiles.lineEdit().setAlignment(Qt.AlignCenter)
-        manageFiles.lineEdit().setReadOnly(True)
-        leftBar.addWidget(manageFiles)
-
-
-
-        # --- bottom right tools ---
-        bottomRight = QVBoxLayout()
-        self.leftBar.addLayout(bottomRight)
-
-
-
-
-        # --- add rows of buttons to bottom right: row 1 ---
-        row1 = QHBoxLayout()
-        bottomRight.addLayout(row1)
-
-        homeButton = QPushButton("Home Button", self)
-        # homeButton.setFixedSize(100,50)
-        leftArrow = QPushButton("Left Arrow", self)
-        # leftArrow.setFixedSize(100,50)
-        rightArrow = QPushButton("Right Arrow", self)
-        # rightArrow.setFixedSize(100,50)
-
-        row1.addWidget(homeButton)
-        row1.addWidget(leftArrow)
-        row1.addWidget(rightArrow)
-
-        # --- row 2 ---
-        row2 = QHBoxLayout()
-        bottomRight.addLayout(row2)
-
-        move = QPushButton("Move", self)
-        move.setFixedSize(100,50)
-        find = QPushButton("Find", self)
-        find.setFixedSize(100,50)
-        adjust = QPushButton("Adjust", self)
-        adjust.setFixedSize(100,50)
-        stats = QPushButton("Stats", self)
-        stats.setFixedSize(100,50)
-
-        row2.addWidget(move)
-        row2.addWidget(find)
-        row2.addWidget(adjust)
-        row2.addWidget(stats)
-
-        # --- right side of tool ---
-        rightBar = QVBoxLayout()
-        self.wrapperLayout.addLayout(rightBar)
-
-        #########################################
-        # testing progress bar
-        abovebottomButtons = QHBoxLayout()
-        rightBar.addLayout(abovebottomButtons)
-
-        progressBar = QProgressBar(self)
-        progressBar.setGeometry(250, 80, 250, 20)
-        abovebottomButtons.addWidget(progressBar)
-        ##########################################
-
-        bottomButtons = QHBoxLayout()
-        rightBar.addLayout(bottomButtons)
-
-        previousButton = QPushButton('Previous', self)
-        bottomButtons.addWidget(previousButton)
-
-        slider = QSlider(Qt.Horizontal)
-        slider.setMinimum(0)
-        slider.setMaximum(100)
-        bottomButtons.addWidget(slider)
-
-        skipButton = QPushButton('Skip', self)
-        bottomButtons.addWidget(skipButton)
-
-        nextButtonBottom = QPushButton('Next', self)
-        bottomButtons.addWidget(nextButtonBottom)
-
-        selectAlgoButton = QComboBox(self)
-        selectAlgoButton.addItem('Select Correction Algorithm')
-        bottomButtons.addWidget(selectAlgoButton)
-
-        # --- second row ---
-
-        bottomButtons2 = QHBoxLayout()
-        rightBar.addLayout(bottomButtons2)
-
-        showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
-        showAOI.setChecked(False)
-        bottomButtons2.addWidget(showAOI)
-
-        showFixation = QCheckBox("Show Fixation", self)
-        showFixation.setChecked(False)
-        bottomButtons2.addWidget(showFixation)
-
-        showSaccade = QCheckBox("Show Saccade", self)
-        showSaccade.setChecked(False)
-        bottomButtons2.addWidget(showSaccade)
-
-        correctAllButton = QPushButton("Correct All", self)
-        bottomButtons2.addWidget(correctAllButton)
-
         widget = QWidget()
         widget.setLayout(self.wrapperLayout)
         self.setCentralWidget(widget)
         self.show()
+
+        # --- drop down bar to open and manage files ---
+        # manageFiles = QComboBox()
+        # manageFiles.setEditable(True)
+        #
+        # manageFiles.addItem('Open')
+        # manageFiles.addItem('Save')
+        # manageFiles.setCurrentText('Select')
+        #
+        # manageFiles.setFixedSize(300,30)
+        # manageFiles.lineEdit().setAlignment(Qt.AlignCenter)
+        # manageFiles.lineEdit().setReadOnly(True)
+        # leftBar.addWidget(manageFiles)
+        #
+        #
+        #
+        # # --- bottom right tools ---
+        # bottomRight = QVBoxLayout()
+        # self.leftBar.addLayout(bottomRight)
+        #
+        #
+        #
+        #
+        # # --- add rows of buttons to bottom right: row 1 ---
+        # row1 = QHBoxLayout()
+        # bottomRight.addLayout(row1)
+        #
+        # homeButton = QPushButton("Home Button", self)
+        # # homeButton.setFixedSize(100,50)
+        # leftArrow = QPushButton("Left Arrow", self)
+        # # leftArrow.setFixedSize(100,50)
+        # rightArrow = QPushButton("Right Arrow", self)
+        # # rightArrow.setFixedSize(100,50)
+        #
+        # row1.addWidget(homeButton)
+        # row1.addWidget(leftArrow)
+        # row1.addWidget(rightArrow)
+        #
+        # # --- row 2 ---
+        # row2 = QHBoxLayout()
+        # bottomRight.addLayout(row2)
+        #
+        # move = QPushButton("Move", self)
+        # move.setFixedSize(100,50)
+        # find = QPushButton("Find", self)
+        # find.setFixedSize(100,50)
+        # adjust = QPushButton("Adjust", self)
+        # adjust.setFixedSize(100,50)
+        # stats = QPushButton("Stats", self)
+        # stats.setFixedSize(100,50)
+        #
+        # row2.addWidget(move)
+        # row2.addWidget(find)
+        # row2.addWidget(adjust)
+        # row2.addWidget(stats)
+        #
+        # # --- right side of tool ---
+        # rightBar = QVBoxLayout()
+        # self.wrapperLayout.addLayout(rightBar)
+        #
+        # #########################################
+        # # testing progress bar
+        # abovebottomButtons = QHBoxLayout()
+        # rightBar.addLayout(abovebottomButtons)
+        #
+        # progressBar = QProgressBar(self)
+        # progressBar.setGeometry(250, 80, 250, 20)
+        # abovebottomButtons.addWidget(progressBar)
+        # ##########################################
+        #
+        # bottomButtons = QHBoxLayout()
+        # rightBar.addLayout(bottomButtons)
+        #
+        # previousButton = QPushButton('Previous', self)
+        # bottomButtons.addWidget(previousButton)
+        #
+        # slider = QSlider(Qt.Horizontal)
+        # slider.setMinimum(0)
+        # slider.setMaximum(100)
+        # bottomButtons.addWidget(slider)
+        #
+        # skipButton = QPushButton('Skip', self)
+        # bottomButtons.addWidget(skipButton)
+        #
+        # nextButtonBottom = QPushButton('Next', self)
+        # bottomButtons.addWidget(nextButtonBottom)
+        #
+        # selectAlgoButton = QComboBox(self)
+        # selectAlgoButton.addItem('Select Correction Algorithm')
+        # bottomButtons.addWidget(selectAlgoButton)
+        #
+        # # --- second row ---
+        #
+        # bottomButtons2 = QHBoxLayout()
+        # rightBar.addLayout(bottomButtons2)
+        #
+        # showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
+        # showAOI.setChecked(False)
+        # bottomButtons2.addWidget(showAOI)
+        #
+        # showFixation = QCheckBox("Show Fixation", self)
+        # showFixation.setChecked(False)
+        # bottomButtons2.addWidget(showFixation)
+        #
+        # showSaccade = QCheckBox("Show Saccade", self)
+        # showSaccade.setChecked(False)
+        # bottomButtons2.addWidget(showSaccade)
+        #
+        # correctAllButton = QPushButton("Correct All", self)
+        # bottomButtons2.addWidget(correctAllButton)
+        #
+
 
     # --- allows or blocks buttons from being interacted with depending on if a correct file was chosen
     def initButtons(self):
