@@ -13,7 +13,8 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import \
     NavigationToolbar2QT as NavigationToolBar
-import findAOI
+import emip_toolkit as emtk
+from matplotlib.patches import Rectangle
 
 
 
@@ -39,9 +40,7 @@ class QtCanvas(FigureCanvasQTAgg):
         self.current_fixation_number = None
 
     def initialize(self):
-        """Initialize the Canvas object, display the welcome image
-        """
-        img = mpimg.imread("hello.jpg")
+        img = mpimg.imread("welcome.png")
         self.ax.imshow(img)
         self.draw()
 
@@ -57,23 +56,65 @@ class Fix8(QMainWindow):
     def openFile(self):
         # # --- open the file, grab the file name and file type ---
         qfd = QFileDialog()
-        file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
+        self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
         #
         # --- make sure a png file is chosen, if cancelled don't do anything ---
-        if file:
-            fileName = file[0]
-            fileName = fileName.split('/')[-1]
-            fileType = fileName.split('.')[-1]
+        if self.file:
+            self.filePath = self.file[0]
+            self.fileName = self.filePath.split('/')[-1]
+            self.fileType = self.fileName.split('.')[-1]
 
-            if fileType.lower() != 'png':
+            if self.fileType.lower() != 'png':
                 image = mpimg.imread('wrongFileType.png')
                 self.canvas.ax.imshow(image)
                 self.canvas.draw()
+                self.blockButtons()
             else:
-                image = mpimg.imread(str(fileName))
+                image = mpimg.imread(self.file[0])
                 self.canvas.ax.imshow(image)
-                self.canvas.ax.set_title(str(fileName))
+                self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
                 self.canvas.draw()
+                self.runTrial()
+                self.initButtons()
+
+
+    # --- find the AOIs for current image ---
+    def findAOI(self):
+        if self.file:
+            self.aoi, self.backgroundColor = emtk.find_aoi(image=self.fileName, image_path=self.filePath.replace(self.fileName, ''))
+
+    # --- run the trial on the data given ---
+    def runTrial(self):
+        self.findAOI()
+        self.findFixations()
+
+    # --- draw the AOI to screen ---
+    def drawAOI(self):
+        color = "yellow" if self.backgroundColor == "black" else "black"
+        self.patches = []
+
+        for row in self.aoi.iterrows():
+            x_cord = row[1]['x']
+            y_cord = row[1]['y']
+            height = row[1]['height']
+            width = row[1]['width']
+            self.patches.append(self.canvas.ax.add_patch(Rectangle((x_cord, y_cord), width-1, height-1,linewidth=0.8,edgecolor=color,facecolor="none",alpha=0.65)))
+
+        self.canvas.draw()
+
+    def clearAOI(self):
+        for patch in self.patches:
+            patch.remove()
+        self.canvas.draw()
+
+    # --- triggered by the show AOI checkbox, show or hide AOIs ---
+    def showAOI(self, state):
+        if self.file:
+            if self.checkbox_showAOI.isCheckable():
+                if state == Qt.Checked:
+                    self.drawAOI()
+                elif state == Qt.Unchecked:
+                    self.clearAOI()
 
     # --- UI structure ---
     def initUI(self):
@@ -93,11 +134,27 @@ class Fix8(QMainWindow):
         self.leftBar.addWidget(self.button_openFile)
         self.button_openFile.clicked.connect(self.openFile)
 
+        # --- right buttons below the canvas ---
+        self.belowCanvas = QHBoxLayout()
+        self.rightBar.addLayout(self.belowCanvas)
+
+        # --- show AOI checkbox ---
+        self.checkbox_showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
+        self.checkbox_showAOI.setChecked(False)
+        self.checkbox_showAOI.setCheckable(False)
+        self.checkbox_showAOI.stateChanged.connect(self.showAOI)
+        self.belowCanvas.addWidget(self.checkbox_showAOI)
+
         # --- add bars to layout ---
         self.wrapperLayout.addLayout(self.leftBar)
         self.wrapperLayout.addLayout(self.rightBar)
 
-        # # --- drop down bar to open and manage files ---
+        widget = QWidget()
+        widget.setLayout(self.wrapperLayout)
+        self.setCentralWidget(widget)
+        self.show()
+
+        # --- drop down bar to open and manage files ---
         # manageFiles = QComboBox()
         # manageFiles.setEditable(True)
         #
@@ -109,16 +166,16 @@ class Fix8(QMainWindow):
         # manageFiles.lineEdit().setAlignment(Qt.AlignCenter)
         # manageFiles.lineEdit().setReadOnly(True)
         # leftBar.addWidget(manageFiles)
-
-
-
+        #
+        #
+        #
         # # --- bottom right tools ---
         # bottomRight = QVBoxLayout()
         # self.leftBar.addLayout(bottomRight)
-
-
-
-
+        #
+        #
+        #
+        #
         # # --- add rows of buttons to bottom right: row 1 ---
         # row1 = QHBoxLayout()
         # bottomRight.addLayout(row1)
@@ -206,11 +263,16 @@ class Fix8(QMainWindow):
         #
         # correctAllButton = QPushButton("Correct All", self)
         # bottomButtons2.addWidget(correctAllButton)
+        #
 
-        widget = QWidget()
-        widget.setLayout(self.wrapperLayout)
-        self.setCentralWidget(widget)
-        self.show()
+
+    # --- allows or blocks buttons from being interacted with depending on if a correct file was chosen
+    def initButtons(self):
+        self.checkbox_showAOI.setCheckable(True)
+
+    def blockButtons(self):
+        self.checkbox_showAOI.setCheckable(False)
+
 
 
 if __name__ == '__main__':
