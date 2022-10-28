@@ -70,9 +70,9 @@ class Fix8(QMainWindow):
                 self.canvas.ax.imshow(image)
                 self.canvas.draw()
             else:
-                image = mpimg.imread(str(fileName))
+                image = mpimg.imread(file[0])
                 self.canvas.ax.imshow(image)
-                self.canvas.ax.set_title(str(fileName))
+                self.canvas.ax.set_title(str(fileName.split('.')[0]))
                 self.canvas.draw()
 
     # --- UI structure ---
