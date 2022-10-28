@@ -122,7 +122,7 @@ class Fix8(QMainWindow):
             self.trialData = json.load(trial)
 
         for x in self.trialData:
-            self.fixations.append([self.trialData[x][0], self.trialData[x][1]])
+            self.fixations.append([self.trialData[x][0], self.trialData[x][1], self.trialData[x][2]])
 
         self.fixations = np.array(self.fixations)
 
@@ -130,8 +130,9 @@ class Fix8(QMainWindow):
     def drawFixations(self):
         x = self.fixations[:, 0]
         y = self.fixations[:, 1]
+        duration = self.fixations[:, 2]
 
-        self.scatter = self.canvas.ax.scatter(x,y,s=300, alpha = 0.5, c = 'red')
+        self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
         self.canvas.draw()
 
     # -- clear the fixations on the canvas ---
@@ -259,12 +260,12 @@ class Fix8(QMainWindow):
         #
         # #########################################
         # testing progress bar
-        abovebottomButtons = QHBoxLayout()
-        self.rightBar.addLayout(abovebottomButtons)
-
-        progressBar = QProgressBar(self)
-        progressBar.setGeometry(250, 80, 250, 20)
-        abovebottomButtons.addWidget(progressBar)
+        # abovebottomButtons = QHBoxLayout()
+        # self.rightBar.addLayout(abovebottomButtons)
+        #
+        # progressBar = QProgressBar(self)
+        # progressBar.setGeometry(250, 80, 250, 20)
+        # abovebottomButtons.addWidget(progressBar)
         # ##########################################
         #
         # bottomButtons = QHBoxLayout()
