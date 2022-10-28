@@ -21,7 +21,7 @@ import json
 
 class QtCanvas(FigureCanvasQTAgg):
 
-    def __init__(self, parent=None, width=6, height=4, dpi=100):
+    def __init__(self, parent=None, width=12, height=8, dpi=100):
         self.figure, self.ax = plt.subplots(
             ncols=1, nrows=1, figsize=(width, height))
         self.figure.tight_layout()
@@ -87,8 +87,6 @@ class Fix8(QMainWindow):
         if self.file:
             self.aoi, self.backgroundColor = emtk.find_aoi(image=self.fileName, image_path=self.filePath.replace(self.fileName, ''))
 
-
-
     # --- draw the AOI to screen ---
     def drawAOI(self):
         color = "yellow" if self.backgroundColor == "black" else "black"
@@ -124,7 +122,7 @@ class Fix8(QMainWindow):
             self.trialData = json.load(trial)
 
         for x in self.trialData:
-            self.fixations.append([self.trialData[x][0], self.trialData[x][1]])
+            self.fixations.append([self.trialData[x][0], self.trialData[x][1], self.trialData[x][2]])
 
         self.fixations = np.array(self.fixations)
 
@@ -132,8 +130,9 @@ class Fix8(QMainWindow):
     def drawFixations(self):
         x = self.fixations[:, 0]
         y = self.fixations[:, 1]
+        duration = self.fixations[:, 2]
 
-        self.scatter = self.canvas.ax.scatter(x,y,s=100, c = 'red')
+        self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
         self.canvas.draw()
 
     # -- clear the fixations on the canvas ---
@@ -154,12 +153,6 @@ class Fix8(QMainWindow):
     def runTrial(self):
         self.findAOI()
         self.findFixations('trial.json')
-
-
-
-
-
-
 
     # --- UI structure ---
     def initUI(self):
@@ -266,9 +259,9 @@ class Fix8(QMainWindow):
         # self.wrapperLayout.addLayout(rightBar)
         #
         # #########################################
-        # # testing progress bar
+        # testing progress bar
         # abovebottomButtons = QHBoxLayout()
-        # rightBar.addLayout(abovebottomButtons)
+        # self.rightBar.addLayout(abovebottomButtons)
         #
         # progressBar = QProgressBar(self)
         # progressBar.setGeometry(250, 80, 250, 20)
