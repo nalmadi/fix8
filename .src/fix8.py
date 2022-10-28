@@ -40,7 +40,7 @@ class QtCanvas(FigureCanvasQTAgg):
         self.current_fixation_number = None
 
     def initialize(self):
-        img = mpimg.imread("welcome.png")
+        img = mpimg.imread("./.images/welcome.png")
         self.ax.imshow(img)
         self.draw()
 
@@ -65,7 +65,7 @@ class Fix8(QMainWindow):
             self.fileType = self.fileName.split('.')[-1]
 
             if self.fileType.lower() != 'png':
-                image = mpimg.imread('wrongFileType.png')
+                image = mpimg.imread('./.images/wrongFile.png')
                 self.canvas.ax.imshow(image)
                 self.canvas.draw()
                 self.blockButtons()
@@ -86,7 +86,7 @@ class Fix8(QMainWindow):
     # --- run the trial on the data given ---
     def runTrial(self):
         self.findAOI()
-        self.findFixations()
+        # self.findFixations()
 
     # --- draw the AOI to screen ---
     def drawAOI(self):
@@ -153,7 +153,6 @@ class Fix8(QMainWindow):
         widget.setLayout(self.wrapperLayout)
         self.setCentralWidget(widget)
         self.show()
-        
 
         # --- drop down bar to open and manage files ---
         # manageFiles = QComboBox()
