@@ -153,6 +153,7 @@ class Fix8(QMainWindow):
         widget.setLayout(self.wrapperLayout)
         self.setCentralWidget(widget)
         self.show()
+        
 
         # --- drop down bar to open and manage files ---
         # manageFiles = QComboBox()
