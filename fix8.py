@@ -13,7 +13,8 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import \
     NavigationToolbar2QT as NavigationToolBar
-import findAOI
+import emip_toolkit as emtk
+from matplotlib.patches import Rectangle
 
 
 
@@ -39,9 +40,7 @@ class QtCanvas(FigureCanvasQTAgg):
         self.current_fixation_number = None
 
     def initialize(self):
-        """Initialize the Canvas object, display the welcome image
-        """
-        img = mpimg.imread("hello.jpg")
+        img = mpimg.imread("welcome.png")
         self.ax.imshow(img)
         self.draw()
 
@@ -57,23 +56,63 @@ class Fix8(QMainWindow):
     def openFile(self):
         # # --- open the file, grab the file name and file type ---
         qfd = QFileDialog()
-        file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
+        self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
         #
         # --- make sure a png file is chosen, if cancelled don't do anything ---
-        if file:
-            fileName = file[0]
-            fileName = fileName.split('/')[-1]
-            fileType = fileName.split('.')[-1]
+        if self.file:
+            self.filePath = self.file[0]
+            self.fileName = self.filePath.split('/')[-1]
+            self.fileType = self.fileName.split('.')[-1]
 
-            if fileType.lower() != 'png':
+            if self.fileType.lower() != 'png':
                 image = mpimg.imread('wrongFileType.png')
                 self.canvas.ax.imshow(image)
                 self.canvas.draw()
+                self.blockButtons()
             else:
-                image = mpimg.imread(file[0])
+                image = mpimg.imread(self.file[0])
                 self.canvas.ax.imshow(image)
-                self.canvas.ax.set_title(str(fileName.split('.')[0]))
+                self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
                 self.canvas.draw()
+                self.runTrial()
+                self.initButtons()
+
+
+    # --- find the AOIs for current image ---
+    def findAOI(self):
+        if self.file:
+            self.aoi, self.backgroundColor = emtk.find_aoi(image=self.fileName, image_path=self.filePath.replace(self.fileName, ''))
+
+    # --- run the trial on the data given ---
+    def runTrial(self):
+        self.findAOI()
+
+    # --- draw the AOI to screen ---
+    def drawAOI(self):
+        color = "yellow" if self.backgroundColor == "black" else "black"
+        self.patches = []
+
+        for row in self.aoi.iterrows():
+            x_cord = row[1]['x']
+            y_cord = row[1]['y']
+            height = row[1]['height']
+            width = row[1]['width']
+            self.patches.append(self.canvas.ax.add_patch(Rectangle((x_cord, y_cord), width-1, height-1,linewidth=0.8,edgecolor=color,facecolor="none",alpha=0.65)))
+        self.canvas.draw()
+
+    def clearAOI(self):
+        for patch in self.patches:
+            patch.remove()
+        self.canvas.draw()
+
+    # --- triggered by the show AOI checkbox, show or hide AOIs ---
+    def showAOI(self, state):
+        if self.file:
+            if self.checkbox_showAOI.isCheckable():
+                if state == Qt.Checked:
+                    self.drawAOI()
+                elif state == Qt.Unchecked:
+                    self.clearAOI()
 
     # --- UI structure ---
     def initUI(self):
@@ -93,124 +132,143 @@ class Fix8(QMainWindow):
         self.leftBar.addWidget(self.button_openFile)
         self.button_openFile.clicked.connect(self.openFile)
 
+        # --- right buttons below the canvas ---
+        self.belowCanvas = QHBoxLayout()
+        self.rightBar.addLayout(self.belowCanvas)
+
+        # --- show AOI checkbox ---
+        self.checkbox_showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
+        self.checkbox_showAOI.setChecked(False)
+        self.checkbox_showAOI.setCheckable(False)
+        self.checkbox_showAOI.stateChanged.connect(self.showAOI)
+        self.belowCanvas.addWidget(self.checkbox_showAOI)
+
         # --- add bars to layout ---
         self.wrapperLayout.addLayout(self.leftBar)
         self.wrapperLayout.addLayout(self.rightBar)
 
-        # # --- drop down bar to open and manage files ---
-        # manageFiles = QComboBox()
-        # manageFiles.setEditable(True)
-        #
-        # manageFiles.addItem('Open')
-        # manageFiles.addItem('Save')
-        # manageFiles.setCurrentText('Select')
-        #
-        # manageFiles.setFixedSize(300,30)
-        # manageFiles.lineEdit().setAlignment(Qt.AlignCenter)
-        # manageFiles.lineEdit().setReadOnly(True)
-        # leftBar.addWidget(manageFiles)
+        --- drop down bar to open and manage files ---
+        manageFiles = QComboBox()
+        manageFiles.setEditable(True)
+
+        manageFiles.addItem('Open')
+        manageFiles.addItem('Save')
+        manageFiles.setCurrentText('Select')
+
+        manageFiles.setFixedSize(300,30)
+        manageFiles.lineEdit().setAlignment(Qt.AlignCenter)
+        manageFiles.lineEdit().setReadOnly(True)
+        leftBar.addWidget(manageFiles)
 
 
 
-        # # --- bottom right tools ---
-        # bottomRight = QVBoxLayout()
-        # self.leftBar.addLayout(bottomRight)
+        # --- bottom right tools ---
+        bottomRight = QVBoxLayout()
+        self.leftBar.addLayout(bottomRight)
 
 
 
 
-        # # --- add rows of buttons to bottom right: row 1 ---
-        # row1 = QHBoxLayout()
-        # bottomRight.addLayout(row1)
-        #
-        # homeButton = QPushButton("Home Button", self)
-        # # homeButton.setFixedSize(100,50)
-        # leftArrow = QPushButton("Left Arrow", self)
-        # # leftArrow.setFixedSize(100,50)
-        # rightArrow = QPushButton("Right Arrow", self)
-        # # rightArrow.setFixedSize(100,50)
-        #
-        # row1.addWidget(homeButton)
-        # row1.addWidget(leftArrow)
-        # row1.addWidget(rightArrow)
-        #
-        # # --- row 2 ---
-        # row2 = QHBoxLayout()
-        # bottomRight.addLayout(row2)
-        #
-        # move = QPushButton("Move", self)
-        # move.setFixedSize(100,50)
-        # find = QPushButton("Find", self)
-        # find.setFixedSize(100,50)
-        # adjust = QPushButton("Adjust", self)
-        # adjust.setFixedSize(100,50)
-        # stats = QPushButton("Stats", self)
-        # stats.setFixedSize(100,50)
-        #
-        # row2.addWidget(move)
-        # row2.addWidget(find)
-        # row2.addWidget(adjust)
-        # row2.addWidget(stats)
-        #
-        # # --- right side of tool ---
-        # rightBar = QVBoxLayout()
-        # self.wrapperLayout.addLayout(rightBar)
-        #
-        # #########################################
-        # # testing progress bar
-        # abovebottomButtons = QHBoxLayout()
-        # rightBar.addLayout(abovebottomButtons)
-        #
-        # progressBar = QProgressBar(self)
-        # progressBar.setGeometry(250, 80, 250, 20)
-        # abovebottomButtons.addWidget(progressBar)
-        # ##########################################
-        #
-        # bottomButtons = QHBoxLayout()
-        # rightBar.addLayout(bottomButtons)
-        #
-        # previousButton = QPushButton('Previous', self)
-        # bottomButtons.addWidget(previousButton)
-        #
-        # slider = QSlider(Qt.Horizontal)
-        # slider.setMinimum(0)
-        # slider.setMaximum(100)
-        # bottomButtons.addWidget(slider)
-        #
-        # skipButton = QPushButton('Skip', self)
-        # bottomButtons.addWidget(skipButton)
-        #
-        # nextButtonBottom = QPushButton('Next', self)
-        # bottomButtons.addWidget(nextButtonBottom)
-        #
-        # selectAlgoButton = QComboBox(self)
-        # selectAlgoButton.addItem('Select Correction Algorithm')
-        # bottomButtons.addWidget(selectAlgoButton)
-        #
-        # # --- second row ---
-        #
-        # bottomButtons2 = QHBoxLayout()
-        # rightBar.addLayout(bottomButtons2)
-        #
-        # showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
-        # showAOI.setChecked(False)
-        # bottomButtons2.addWidget(showAOI)
-        #
-        # showFixation = QCheckBox("Show Fixation", self)
-        # showFixation.setChecked(False)
-        # bottomButtons2.addWidget(showFixation)
-        #
-        # showSaccade = QCheckBox("Show Saccade", self)
-        # showSaccade.setChecked(False)
-        # bottomButtons2.addWidget(showSaccade)
-        #
-        # correctAllButton = QPushButton("Correct All", self)
-        # bottomButtons2.addWidget(correctAllButton)
+        # --- add rows of buttons to bottom right: row 1 ---
+        row1 = QHBoxLayout()
+        bottomRight.addLayout(row1)
+
+        homeButton = QPushButton("Home Button", self)
+        # homeButton.setFixedSize(100,50)
+        leftArrow = QPushButton("Left Arrow", self)
+        # leftArrow.setFixedSize(100,50)
+        rightArrow = QPushButton("Right Arrow", self)
+        # rightArrow.setFixedSize(100,50)
+
+        row1.addWidget(homeButton)
+        row1.addWidget(leftArrow)
+        row1.addWidget(rightArrow)
+
+        # --- row 2 ---
+        row2 = QHBoxLayout()
+        bottomRight.addLayout(row2)
+
+        move = QPushButton("Move", self)
+        move.setFixedSize(100,50)
+        find = QPushButton("Find", self)
+        find.setFixedSize(100,50)
+        adjust = QPushButton("Adjust", self)
+        adjust.setFixedSize(100,50)
+        stats = QPushButton("Stats", self)
+        stats.setFixedSize(100,50)
+
+        row2.addWidget(move)
+        row2.addWidget(find)
+        row2.addWidget(adjust)
+        row2.addWidget(stats)
+
+        # --- right side of tool ---
+        rightBar = QVBoxLayout()
+        self.wrapperLayout.addLayout(rightBar)
+
+        #########################################
+        # testing progress bar
+        abovebottomButtons = QHBoxLayout()
+        rightBar.addLayout(abovebottomButtons)
+
+        progressBar = QProgressBar(self)
+        progressBar.setGeometry(250, 80, 250, 20)
+        abovebottomButtons.addWidget(progressBar)
+        ##########################################
+
+        bottomButtons = QHBoxLayout()
+        rightBar.addLayout(bottomButtons)
+
+        previousButton = QPushButton('Previous', self)
+        bottomButtons.addWidget(previousButton)
+
+        slider = QSlider(Qt.Horizontal)
+        slider.setMinimum(0)
+        slider.setMaximum(100)
+        bottomButtons.addWidget(slider)
+
+        skipButton = QPushButton('Skip', self)
+        bottomButtons.addWidget(skipButton)
+
+        nextButtonBottom = QPushButton('Next', self)
+        bottomButtons.addWidget(nextButtonBottom)
+
+        selectAlgoButton = QComboBox(self)
+        selectAlgoButton.addItem('Select Correction Algorithm')
+        bottomButtons.addWidget(selectAlgoButton)
+
+        # --- second row ---
+
+        bottomButtons2 = QHBoxLayout()
+        rightBar.addLayout(bottomButtons2)
+
+        showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
+        showAOI.setChecked(False)
+        bottomButtons2.addWidget(showAOI)
+
+        showFixation = QCheckBox("Show Fixation", self)
+        showFixation.setChecked(False)
+        bottomButtons2.addWidget(showFixation)
+
+        showSaccade = QCheckBox("Show Saccade", self)
+        showSaccade.setChecked(False)
+        bottomButtons2.addWidget(showSaccade)
+
+        correctAllButton = QPushButton("Correct All", self)
+        bottomButtons2.addWidget(correctAllButton)
 
         widget = QWidget()
         widget.setLayout(self.wrapperLayout)
         self.setCentralWidget(widget)
         self.show()
+
+    # --- allows or blocks buttons from being interacted with depending on if a correct file was chosen
+    def initButtons(self):
+        self.checkbox_showAOI.setCheckable(True)
+
+    def blockButtons(self):
+        self.checkbox_showAOI.setCheckable(False)
+
 
 
 if __name__ == '__main__':
