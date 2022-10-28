@@ -15,7 +15,8 @@ from matplotlib.backends.backend_qt5agg import \
     NavigationToolbar2QT as NavigationToolBar
 import emip_toolkit as emtk
 from matplotlib.patches import Rectangle
-
+from matplotlib.patches import Circle
+import json
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -57,7 +58,7 @@ class Fix8(QMainWindow):
         # # --- open the file, grab the file name and file type ---
         qfd = QFileDialog()
         self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
-        #
+
         # --- make sure a png file is chosen, if cancelled don't do anything ---
         if self.file:
             self.filePath = self.file[0]
@@ -86,7 +87,7 @@ class Fix8(QMainWindow):
     # --- run the trial on the data given ---
     def runTrial(self):
         self.findAOI()
-        # self.findFixations()
+        self.findFixations('trial.json')
 
     # --- draw the AOI to screen ---
     def drawAOI(self):
@@ -94,11 +95,11 @@ class Fix8(QMainWindow):
         self.patches = []
 
         for row in self.aoi.iterrows():
-            x_cord = row[1]['x']
-            y_cord = row[1]['y']
+            xcord = row[1]['x']
+            ycord = row[1]['y']
             height = row[1]['height']
             width = row[1]['width']
-            self.patches.append(self.canvas.ax.add_patch(Rectangle((x_cord, y_cord), width-1, height-1,linewidth=0.8,edgecolor=color,facecolor="none",alpha=0.65)))
+            self.patches.append(self.canvas.ax.add_patch(Rectangle((xcord, ycord), width-1, height-1,linewidth=0.8,edgecolor=color,facecolor="none",alpha=0.65)))
 
         self.canvas.draw()
 
@@ -115,6 +116,19 @@ class Fix8(QMainWindow):
                     self.drawAOI()
                 elif state == Qt.Unchecked:
                     self.clearAOI()
+
+    # --- find all fixations of the given trial ---
+    def findFixations(self, trialPath):
+        self.fixations = []
+        with open(trialPath, 'r') as trial:
+            self.trialData = json.load(trial)
+
+        for x in self.trialData:
+            self.fixations.append([self.trialData[x][0], self.trialData[x][1]])
+
+        self.fixations = np.array(self.fixations)
+
+
 
     # --- UI structure ---
     def initUI(self):
@@ -144,6 +158,12 @@ class Fix8(QMainWindow):
         self.checkbox_showAOI.setCheckable(False)
         self.checkbox_showAOI.stateChanged.connect(self.showAOI)
         self.belowCanvas.addWidget(self.checkbox_showAOI)
+
+        # --- show Fixations checkbox ---
+        self.checkbox_showFixations = QCheckBox("Show Fixations", self)
+        self.checkbox_showFixations.setChecked(False)
+        self.checkbox_showFixations.setCheckable(False)
+        self.belowCanvas.addWidget(self.checkbox_showFixations)
 
         # --- add bars to layout ---
         self.wrapperLayout.addLayout(self.leftBar)
