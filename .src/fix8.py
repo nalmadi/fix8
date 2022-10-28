@@ -43,7 +43,10 @@ class QtCanvas(FigureCanvasQTAgg):
     def initialize(self):
         img = mpimg.imread("./.images/welcome.png")
         self.ax.imshow(img)
-        self.draw()
+        self.draw
+
+    def clear(self):
+        self.ax.clear()
 
 
 class Fix8(QMainWindow):
@@ -71,6 +74,7 @@ class Fix8(QMainWindow):
                 self.canvas.draw()
                 self.blockButtons()
             else:
+                self.canvas.clear()
                 image = mpimg.imread(self.file[0])
                 self.canvas.ax.imshow(image)
                 self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
@@ -78,16 +82,12 @@ class Fix8(QMainWindow):
                 self.runTrial()
                 self.initButtons()
 
-
     # --- find the AOIs for current image ---
     def findAOI(self):
         if self.file:
             self.aoi, self.backgroundColor = emtk.find_aoi(image=self.fileName, image_path=self.filePath.replace(self.fileName, ''))
 
-    # --- run the trial on the data given ---
-    def runTrial(self):
-        self.findAOI()
-        self.findFixations('trial.json')
+
 
     # --- draw the AOI to screen ---
     def drawAOI(self):
@@ -128,6 +128,37 @@ class Fix8(QMainWindow):
 
         self.fixations = np.array(self.fixations)
 
+    # --- draw fixations to canvas ---
+    def drawFixations(self):
+        x = self.fixations[:, 0]
+        y = self.fixations[:, 1]
+
+        self.scatter = self.canvas.ax.scatter(x,y,s=100, c = 'red')
+        self.canvas.draw()
+
+    # -- clear the fixations on the canvas ---
+    def clearFixations(self):
+        self.scatter.remove()
+        self.scatter = None
+        self.canvas.draw()
+
+    def showFixations(self, state):
+        if self.file:
+            if self.checkbox_showFixations.isCheckable():
+                if state == Qt.Checked:
+                    self.drawFixations()
+                elif state == Qt.Unchecked:
+                    self.clearFixations()
+
+    # --- run the trial on the data given ---
+    def runTrial(self):
+        self.findAOI()
+        self.findFixations('trial.json')
+
+
+
+
+
 
 
     # --- UI structure ---
@@ -163,6 +194,7 @@ class Fix8(QMainWindow):
         self.checkbox_showFixations = QCheckBox("Show Fixations", self)
         self.checkbox_showFixations.setChecked(False)
         self.checkbox_showFixations.setCheckable(False)
+        self.checkbox_showFixations.stateChanged.connect(self.showFixations)
         self.belowCanvas.addWidget(self.checkbox_showFixations)
 
         # --- add bars to layout ---
@@ -289,10 +321,11 @@ class Fix8(QMainWindow):
     # --- allows or blocks buttons from being interacted with depending on if a correct file was chosen
     def initButtons(self):
         self.checkbox_showAOI.setCheckable(True)
+        self.checkbox_showFixations.setCheckable(True)
 
     def blockButtons(self):
         self.checkbox_showAOI.setCheckable(False)
-
+        self.checkbox_showFixations.setCheckable(False)
 
 
 if __name__ == '__main__':
