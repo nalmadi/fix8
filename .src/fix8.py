@@ -58,6 +58,7 @@ class Fix8(QMainWindow):
         self.setWindowTitle("Fix8")
         self.initUI()
         self.file, self.filePath, self.fileName, self.fileType, self.folderPath, self.fileList = None, None, None, None, None, None
+        self.trials = None
         self.patches, self.aoi, self.backgroundColor = None, None, None
         self.fixations, self.trialData, self.scatter = None, None, None
 
@@ -65,11 +66,36 @@ class Fix8(QMainWindow):
     def openFile(self):
         # --- open the file, grab the file name and file type ---
         qfd = QFileDialog()
+        self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
+
+        # --- make sure a png file is chosen, if cancelled don't do anything ---
+        if self.file[0] != '':
+            self.filePath = self.file[0]
+            self.fileName = self.filePath.split('/')[-1]
+            self.fileType = self.fileName.split('.')[-1]
+
+            if self.fileType.lower() != 'png':
+                image = mpimg.imread('./.images/wrongFile.png')
+                self.canvas.ax.imshow(image)
+                self.canvas.draw()
+                self.blockButtons()
+            else:
+                self.canvas.clear()
+                image = mpimg.imread(self.file[0])
+                self.canvas.ax.imshow(image)
+                self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
+                self.canvas.draw()
+                self.findAOI()
+                self.checkbox_showAOI.setCheckable(True)
+
+    # --- display trials on window and create a dictionary with each trial number and file number
+    def test(self):
+
+        qfd = QFileDialog()
         self.folderPath = qfd.getExistingDirectory(self, 'Select Folder')
-        # self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
 
         # --- make sure a folder was actually chosen, otherwise just cancel ---
-        if self.folderPath:
+        if self.folderPath != '':
             files = listdir(self.folderPath)
             if len(files) == 0:
                 img = mpimg.imread("./.images/novalidfiles.png")
@@ -88,15 +114,13 @@ class Fix8(QMainWindow):
                     self.canvas.draw()
                     self.blockButtons()
                 else:
-                    img = mpimg.imread("./.images/selecttrial.png")
-                    self.canvas.ax.imshow(img)
-                    self.canvas.draw()
-
                     # add the files to the file list window
                     listIndex = 0
+                    self.trials = {}
                     for file in self.fileList:
                         fileToAdd = QListWidgetItem(file)
                         fileToAddName = str("Trial " + str(listIndex))
+                        self.trials[fileToAddName] = file
                         fileToAdd.setText(fileToAddName)
                         self.list_viewFiles.addItem(fileToAdd)
                         listIndex = listIndex + 1
@@ -104,29 +128,9 @@ class Fix8(QMainWindow):
                     # once trial is selected then initialize everything
                     self.initButtons()
 
-        # --- make sure a png file is chosen, if cancelled don't do anything ---
-        # if self.file:
-        #     self.filePath = self.file[0]
-        #     self.fileName = self.filePath.split('/')[-1]
-        #     self.fileType = self.fileName.split('.')[-1]
-        #
-        #     if self.fileType.lower() != 'png':
-        #         image = mpimg.imread('./.images/wrongFile.png')
-        #         self.canvas.ax.imshow(image)
-        #         self.canvas.draw()
-        #         self.blockButtons()
-        #     else:
-        #         self.canvas.clear()
-        #         image = mpimg.imread(self.file[0])
-        #         self.canvas.ax.imshow(image)
-        #         self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
-        #         self.canvas.draw()
-        #         self.runTrial()
-        #         self.initButtons()
-
     # --- find the AOIs for current image ---
     def findAOI(self):
-        if self.file:
+        if self.file[0] != '':
             self.aoi, self.backgroundColor = emtk.find_aoi(image=self.fileName, image_path=self.filePath.replace(self.fileName, ''))
 
     # --- draw the AOI to screen ---
@@ -151,12 +155,11 @@ class Fix8(QMainWindow):
 
     # --- triggered by the show AOI checkbox, show or hide AOIs ---
     def showAOI(self, state):
-        if self.file:
-            if self.checkbox_showAOI.isCheckable():
-                if state == Qt.Checked:
-                    self.drawAOI()
-                elif state == Qt.Unchecked:
-                    self.clearAOI()
+        if self.checkbox_showAOI.isCheckable():
+            if state == Qt.Checked:
+                self.drawAOI()
+            elif state == Qt.Unchecked:
+                self.clearAOI()
 
     # --- find all fixations of the given trial ---
     def findFixations(self, trialPath):
@@ -200,7 +203,11 @@ class Fix8(QMainWindow):
     def runTrial(self):
         self.findAOI()
         self.findFixations('trial.json')
-        self.drawSaccades()
+        # self.drawSaccades()
+
+    def trialClicked(self,item):
+        trialPath = self.trials[item.text()]
+        self.findFixations(trialPath)
 
     # --- UI structure ---
     def initUI(self):
@@ -220,9 +227,15 @@ class Fix8(QMainWindow):
         self.leftBar.addWidget(self.button_openFile)
         self.button_openFile.clicked.connect(self.openFile)
 
+        # --- open folder button ---
+        self.button_openFolder = QPushButton("Open Folder", self)
+        self.leftBar.addWidget(self.button_openFolder)
+        self.button_openFolder.clicked.connect(self.test)
+
         # --- file viewer window ---
         self.list_viewFiles = QListWidget()
         self.leftBar.addWidget(self.list_viewFiles)
+        self.list_viewFiles.itemDoubleClicked.connect(self.trialClicked)
 
         # --- right buttons below the canvas ---
         self.belowCanvas = QHBoxLayout()
@@ -290,7 +303,7 @@ class Fix8(QMainWindow):
         # # leftArrow.setFixedSize(100,50)
         # rightArrow = QPushButton("Right Arrow", self)
         # # rightArrow.setFixedSize(100,50)
-        #
+
         # row1.addWidget(homeButton)
         # row1.addWidget(leftArrow)
         # row1.addWidget(rightArrow)
