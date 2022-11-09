@@ -107,6 +107,7 @@ class Fix8(QMainWindow):
                 # allow user to click relevant buttons
                 self.checkbox_showAOI.setCheckable(True)
                 self.button_openFolder.setEnabled(True)
+                self.toolbar.setEnabled(True)
 
     '''Display trials on file list window and create a dictionary with each trial number and file path'''
     def displayTrialList(self):
@@ -261,6 +262,11 @@ class Fix8(QMainWindow):
         self.leftBar.addWidget(self.list_viewTrials)
         self.list_viewTrials.itemDoubleClicked.connect(self.trialClicked)
 
+        self.toolbar = NavigationToolBar(self.canvas, self)
+        self.toolbar.setStyleSheet("QToolBar { border: 0px }")
+        self.toolbar.setEnabled(False)
+        self.leftBar.addWidget(self.toolbar)
+
         # --- right buttons below the canvas ---
         self.belowCanvas = QHBoxLayout()
         self.rightBar.addLayout(self.belowCanvas)
@@ -409,6 +415,8 @@ class Fix8(QMainWindow):
         self.checkbox_showAOI.setCheckable(False)
         self.checkbox_showFixations.setCheckable(False)
         self.button_openFolder.setEnabled(False)
+        self.toolbar.setEnabled(False)
+
 
 
 if __name__ == '__main__':
