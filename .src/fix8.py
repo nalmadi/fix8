@@ -19,11 +19,9 @@ from matplotlib.patches import Circle
 import json
 from os import listdir
 from os.path import isfile, join
+# import driftAlgorithms as da
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-
-
-from datetime import datetime
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -106,6 +104,7 @@ class Fix8(QMainWindow):
 
                 # allow user to click relevant buttons
                 self.checkbox_showAOI.setCheckable(True)
+                self.checkbox_showAOI.setChecked(False)
                 self.button_openFolder.setEnabled(True)
                 self.toolbar.setEnabled(True)
 
@@ -119,8 +118,9 @@ class Fix8(QMainWindow):
         if self.folderPath != '':
 
             self.list_viewTrials.clear()
-            if self.scatter != None:
-                self.clearFixations()
+            self.clearFixations()
+
+            self.checkbox_showFixations.setChecked(False)
             self.checkbox_showFixations.setCheckable(False)
 
 
@@ -215,7 +215,7 @@ class Fix8(QMainWindow):
 
     '''If show fixations is checked, show them, else erase them from canvas'''
     def showFixations(self, state):
-        if self.file:
+        if self.folderPath != '':
             if self.checkbox_showFixations.isCheckable():
                 if state == Qt.Checked:
                     self.drawFixations()
@@ -224,9 +224,10 @@ class Fix8(QMainWindow):
 
     '''Clear the fixations from the canvas'''
     def clearFixations(self):
-        self.scatter.remove()
-        self.scatter = None
-        self.canvas.draw()
+        if self.scatter != None:
+            self.scatter.remove()
+            self.scatter = None
+            self.canvas.draw()
 
     def drawSaccades(self):
         line = self.canvas.ax.plot(self.fixations[:, 0], self.fixations[:, 1], alpha=0.4, c='blue', linewidth=2)
@@ -412,11 +413,12 @@ class Fix8(QMainWindow):
         # bottomButtons2.addWidget(correctAllButton)
 
     def blockButtons(self):
+        self.checkbox_showAOI.setChecked(False)
         self.checkbox_showAOI.setCheckable(False)
+        self.checkbox_showFixations.setChecked(False)
         self.checkbox_showFixations.setCheckable(False)
         self.button_openFolder.setEnabled(False)
         self.toolbar.setEnabled(False)
-
 
 
 if __name__ == '__main__':
