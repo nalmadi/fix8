@@ -6,7 +6,7 @@ import time
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
-                             QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, QLineEdit)
+                             QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, QLineEdit, QListWidget, QListWidgetItem)
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -81,7 +81,7 @@ class Fix8(QMainWindow):
                 for file in files:
                     if file.endswith(".json"):
                         self.fileList.append(self.folderPath + "/" + file)
-                        
+
                 if len(self.fileList) == 0:
                     img = mpimg.imread("./.images/novalidfiles.png")
                     self.canvas.ax.imshow(img)
@@ -91,6 +91,17 @@ class Fix8(QMainWindow):
                     img = mpimg.imread("./.images/selecttrial.png")
                     self.canvas.ax.imshow(img)
                     self.canvas.draw()
+
+                    # add the files to the file list window
+                    listIndex = 0
+                    for file in self.fileList:
+                        fileToAdd = QListWidgetItem(file)
+                        fileToAddName = str("Trial " + str(listIndex))
+                        fileToAdd.setText(fileToAddName)
+                        self.list_viewFiles.addItem(fileToAdd)
+                        listIndex = listIndex + 1
+
+                    # once trial is selected then initialize everything
                     self.initButtons()
 
         # --- make sure a png file is chosen, if cancelled don't do anything ---
@@ -208,6 +219,10 @@ class Fix8(QMainWindow):
         self.button_openFile = QPushButton("Open File", self)
         self.leftBar.addWidget(self.button_openFile)
         self.button_openFile.clicked.connect(self.openFile)
+
+        # --- file viewer window ---
+        self.list_viewFiles = QListWidget()
+        self.leftBar.addWidget(self.list_viewFiles)
 
         # --- right buttons below the canvas ---
         self.belowCanvas = QHBoxLayout()
