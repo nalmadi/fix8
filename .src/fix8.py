@@ -23,6 +23,9 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
+from datetime import datetime
+
+
 class QtCanvas(FigureCanvasQTAgg):
 
     def __init__(self, parent=None, width=12, height=8, dpi=100):
@@ -138,9 +141,6 @@ class Fix8(QMainWindow):
                         self.list_viewTrials.addItem(fileToAdd)
                         listIndex = listIndex + 1
 
-                    # once trial is selected then initialize relevant buttons
-                    self.checkbox_showFixations.setCheckable(True)
-
     '''Find the AOIs for current image'''
     def findAOI(self):
         if self.file[0] != '':
@@ -177,7 +177,10 @@ class Fix8(QMainWindow):
     '''When a trial in the trial list is double clicked, find the fixations and saccades of the trial'''
     def trialClicked(self,item):
         trialPath = self.trials[item.text()]
+
         self.findFixations(trialPath)
+        # once trial is selected then initialize relevant buttons
+        self.checkbox_showFixations.setCheckable(True)
 
         if self.checkbox_showFixations.isChecked() == True:
             self.clearFixations()
@@ -188,12 +191,17 @@ class Fix8(QMainWindow):
     def findFixations(self, trialPath):
         self.fixations = []
         with open(trialPath, 'r') as trial:
-            self.trialData = json.load(trial)
+            try:
+                self.trialData = json.load(trial)
+                for x in self.trialData:
+                    self.fixations.append([self.trialData[x][0], self.trialData[x][1], self.trialData[x][2]])
 
-        for x in self.trialData:
-            self.fixations.append([self.trialData[x][0], self.trialData[x][1], self.trialData[x][2]])
-
-        self.fixations = np.array(self.fixations)
+                self.fixations = np.array(self.fixations)
+            except json.decoder.JSONDecodeError:
+                qmb = QMessageBox()
+                qmb.setWindowTitle("Trial File Error")
+                qmb.setText("Trial Error: JSON File Empty")
+                qmb.exec_()
 
     '''Draw fixations to canvas'''
     def drawFixations(self):
