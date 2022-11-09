@@ -17,6 +17,8 @@ import emip_toolkit as emtk
 from matplotlib.patches import Rectangle
 from matplotlib.patches import Circle
 import json
+from os import listdir
+from os.path import isfile, join
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -55,32 +57,61 @@ class Fix8(QMainWindow):
         super().__init__()
         self.setWindowTitle("Fix8")
         self.initUI()
+        self.file, self.filePath, self.fileName, self.fileType, self.folderPath, self.fileList = None, None, None, None, None, None
+        self.patches, self.aoi, self.backgroundColor = None, None, None
+        self.fixations, self.trialData, self.scatter = None, None, None
 
     # --- open an image file, display to canvas ---
     def openFile(self):
-        # # --- open the file, grab the file name and file type ---
+        # --- open the file, grab the file name and file type ---
         qfd = QFileDialog()
-        self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
+        self.folderPath = qfd.getExistingDirectory(self, 'Select Folder')
+        # self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
 
-        # --- make sure a png file is chosen, if cancelled don't do anything ---
-        if self.file:
-            self.filePath = self.file[0]
-            self.fileName = self.filePath.split('/')[-1]
-            self.fileType = self.fileName.split('.')[-1]
-
-            if self.fileType.lower() != 'png':
-                image = mpimg.imread('./.images/wrongFile.png')
-                self.canvas.ax.imshow(image)
+        # --- make sure a folder was actually chosen, otherwise just cancel ---
+        if self.folderPath:
+            files = listdir(self.folderPath)
+            if len(files) == 0:
+                img = mpimg.imread("./.images/novalidfiles.png")
+                self.canvas.ax.imshow(img)
                 self.canvas.draw()
                 self.blockButtons()
             else:
-                self.canvas.clear()
-                image = mpimg.imread(self.file[0])
-                self.canvas.ax.imshow(image)
-                self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
-                self.canvas.draw()
-                self.runTrial()
-                self.initButtons()
+                self.fileList = []
+                for file in files:
+                    if file.endswith(".json"):
+                        self.fileList.append(self.folderPath + "/" + file)
+                        
+                if len(self.fileList) == 0:
+                    img = mpimg.imread("./.images/novalidfiles.png")
+                    self.canvas.ax.imshow(img)
+                    self.canvas.draw()
+                    self.blockButtons()
+                else:
+                    img = mpimg.imread("./.images/selecttrial.png")
+                    self.canvas.ax.imshow(img)
+                    self.canvas.draw()
+                    self.initButtons()
+
+        # --- make sure a png file is chosen, if cancelled don't do anything ---
+        # if self.file:
+        #     self.filePath = self.file[0]
+        #     self.fileName = self.filePath.split('/')[-1]
+        #     self.fileType = self.fileName.split('.')[-1]
+        #
+        #     if self.fileType.lower() != 'png':
+        #         image = mpimg.imread('./.images/wrongFile.png')
+        #         self.canvas.ax.imshow(image)
+        #         self.canvas.draw()
+        #         self.blockButtons()
+        #     else:
+        #         self.canvas.clear()
+        #         image = mpimg.imread(self.file[0])
+        #         self.canvas.ax.imshow(image)
+        #         self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
+        #         self.canvas.draw()
+        #         self.runTrial()
+        #         self.initButtons()
 
     # --- find the AOIs for current image ---
     def findAOI(self):
@@ -101,6 +132,7 @@ class Fix8(QMainWindow):
 
         self.canvas.draw()
 
+    # --- clear AOIs from canvas
     def clearAOI(self):
         for patch in self.patches:
             patch.remove()
@@ -141,6 +173,7 @@ class Fix8(QMainWindow):
         self.scatter = None
         self.canvas.draw()
 
+    # --- triggered by show fixations check box ---
     def showFixations(self, state):
         if self.file:
             if self.checkbox_showFixations.isCheckable():
@@ -149,10 +182,14 @@ class Fix8(QMainWindow):
                 elif state == Qt.Unchecked:
                     self.clearFixations()
 
+    def drawSaccades(self):
+        line = self.canvas.ax.plot(self.fixations[:, 0], self.fixations[:, 1], alpha=0.4, c='blue', linewidth=2)
+
     # --- run the trial on the data given ---
     def runTrial(self):
         self.findAOI()
         self.findFixations('trial.json')
+        self.drawSaccades()
 
     # --- UI structure ---
     def initUI(self):
@@ -189,6 +226,13 @@ class Fix8(QMainWindow):
         self.checkbox_showFixations.setCheckable(False)
         self.checkbox_showFixations.stateChanged.connect(self.showFixations)
         self.belowCanvas.addWidget(self.checkbox_showFixations)
+
+        # # --- show Saccades checkbox ---
+        # self.checkbox_showSaccades = QCheckBox("Show Saccades", self)
+        # self.checkbox_showSaccades.setChecked(False)
+        # self.checkbox_showSaccades.setCheckable(False)
+        # self.checkbox_showSaccades.stateChanged.connect(self.showSaccades)
+        # self.belowCanvas.addWidget(self.checkbox_showSaccades)
 
         # --- add bars to layout ---
         self.wrapperLayout.addLayout(self.leftBar)
