@@ -19,6 +19,8 @@ from matplotlib.patches import Circle
 import json
 from os import listdir
 from os.path import isfile, join
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -57,64 +59,75 @@ class Fix8(QMainWindow):
         super().__init__()
         self.setWindowTitle("Fix8")
         self.initUI()
-        self.file, self.filePath, self.fileName, self.fileType, self.folderPath, self.fileList = None, None, None, None, None, None
-        self.trials = None
+
+        # these are the fields for the image file of the trial
+        self.file, self.fileName, self.filePath = None, None, None
+
+        # these are the fields for the trial files that are stored in a folder
+        self.folderPath, self.fileList, self.trials = None, None, None
+
+        # these are the fields for the AOIs and image in relation to AOIs
         self.patches, self.aoi, self.backgroundColor = None, None, None
+
+        # these are the fields for fixations
         self.fixations, self.trialData, self.scatter = None, None, None
 
-    # --- open an image file, display to canvas ---
+    '''Open an image file, display to canvas, and grab the AOIs of the image'''
     def openFile(self):
-        # --- open the file, grab the file name and file type ---
+        # open the file, grab the file name and file type
         qfd = QFileDialog()
         self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
 
-        # --- make sure a png file is chosen, if cancelled don't do anything ---
+        # make sure a file is chosen, if cancelled don't do anything
         if self.file[0] != '':
             self.filePath = self.file[0]
             self.fileName = self.filePath.split('/')[-1]
-            self.fileType = self.fileName.split('.')[-1]
+            fileType = self.fileName.split('.')[-1]
 
-            if self.fileType.lower() != 'png':
+            # make sure the file is a png type
+            if fileType.lower() != 'png':
                 image = mpimg.imread('./.images/wrongFile.png')
                 self.canvas.ax.imshow(image)
                 self.canvas.draw()
                 self.blockButtons()
             else:
+                # draw the image to the canvas
                 self.canvas.clear()
                 image = mpimg.imread(self.file[0])
                 self.canvas.ax.imshow(image)
                 self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
                 self.canvas.draw()
-                self.findAOI()
-                self.checkbox_showAOI.setCheckable(True)
 
-    # --- display trials on window and create a dictionary with each trial number and file number
-    def test(self):
+                # find the AOIs of the image
+                self.findAOI()
+
+                # allow user to click relevant buttons
+                self.checkbox_showAOI.setCheckable(True)
+                self.button_openFolder.setEnabled(True)
+
+    '''Display trials on file list window and create a dictionary with each trial number and file path'''
+    def displayTrialList(self):
 
         qfd = QFileDialog()
         self.folderPath = qfd.getExistingDirectory(self, 'Select Folder')
 
         # --- make sure a folder was actually chosen, otherwise just cancel ---
         if self.folderPath != '':
+
+            self.list_viewTrials.clear()
+            if self.scatter != None:
+                self.clearFixations()
+            self.checkbox_showFixations.setCheckable(False)
+
+
             files = listdir(self.folderPath)
-            if len(files) == 0:
-                img = mpimg.imread("./.images/novalidfiles.png")
-                self.canvas.ax.imshow(img)
-                self.canvas.draw()
-                self.blockButtons()
-            else:
+            if len(files) > 0:
                 self.fileList = []
                 for file in files:
                     if file.endswith(".json"):
                         self.fileList.append(self.folderPath + "/" + file)
-
-                if len(self.fileList) == 0:
-                    img = mpimg.imread("./.images/novalidfiles.png")
-                    self.canvas.ax.imshow(img)
-                    self.canvas.draw()
-                    self.blockButtons()
-                else:
-                    # add the files to the file list window
+                if len(self.fileList) > 0:
+                    # add the files to the trial list window
                     listIndex = 0
                     self.trials = {}
                     for file in self.fileList:
@@ -122,18 +135,18 @@ class Fix8(QMainWindow):
                         fileToAddName = str("Trial " + str(listIndex))
                         self.trials[fileToAddName] = file
                         fileToAdd.setText(fileToAddName)
-                        self.list_viewFiles.addItem(fileToAdd)
+                        self.list_viewTrials.addItem(fileToAdd)
                         listIndex = listIndex + 1
 
-                    # once trial is selected then initialize everything
-                    self.initButtons()
+                    # once trial is selected then initialize relevant buttons
+                    self.checkbox_showFixations.setCheckable(True)
 
-    # --- find the AOIs for current image ---
+    '''Find the AOIs for current image'''
     def findAOI(self):
         if self.file[0] != '':
             self.aoi, self.backgroundColor = emtk.find_aoi(image=self.fileName, image_path=self.filePath.replace(self.fileName, ''))
 
-    # --- draw the AOI to screen ---
+    '''Draw the AOIs to screen'''
     def drawAOI(self):
         color = "yellow" if self.backgroundColor == "black" else "black"
         self.patches = []
@@ -147,13 +160,13 @@ class Fix8(QMainWindow):
 
         self.canvas.draw()
 
-    # --- clear AOIs from canvas
+    '''Clear AOIs from canvas'''
     def clearAOI(self):
         for patch in self.patches:
             patch.remove()
         self.canvas.draw()
 
-    # --- triggered by the show AOI checkbox, show or hide AOIs ---
+    '''Triggered by the show AOI checkbox, show or hide AOIs'''
     def showAOI(self, state):
         if self.checkbox_showAOI.isCheckable():
             if state == Qt.Checked:
@@ -161,7 +174,17 @@ class Fix8(QMainWindow):
             elif state == Qt.Unchecked:
                 self.clearAOI()
 
-    # --- find all fixations of the given trial ---
+    '''When a trial in the trial list is double clicked, find the fixations and saccades of the trial'''
+    def trialClicked(self,item):
+        trialPath = self.trials[item.text()]
+        self.findFixations(trialPath)
+
+        if self.checkbox_showFixations.isChecked() == True:
+            self.clearFixations()
+            self.drawFixations()
+        # self.findSaccades()
+
+    '''Find all fixations of the given trial'''
     def findFixations(self, trialPath):
         self.fixations = []
         with open(trialPath, 'r') as trial:
@@ -172,7 +195,7 @@ class Fix8(QMainWindow):
 
         self.fixations = np.array(self.fixations)
 
-    # --- draw fixations to canvas ---
+    '''Draw fixations to canvas'''
     def drawFixations(self):
         x = self.fixations[:, 0]
         y = self.fixations[:, 1]
@@ -181,13 +204,7 @@ class Fix8(QMainWindow):
         self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
         self.canvas.draw()
 
-    # -- clear the fixations on the canvas ---
-    def clearFixations(self):
-        self.scatter.remove()
-        self.scatter = None
-        self.canvas.draw()
-
-    # --- triggered by show fixations check box ---
+    '''If show fixations is checked, show them, else erase them from canvas'''
     def showFixations(self, state):
         if self.file:
             if self.checkbox_showFixations.isCheckable():
@@ -196,18 +213,16 @@ class Fix8(QMainWindow):
                 elif state == Qt.Unchecked:
                     self.clearFixations()
 
+    '''Clear the fixations from the canvas'''
+    def clearFixations(self):
+        self.scatter.remove()
+        self.scatter = None
+        self.canvas.draw()
+
     def drawSaccades(self):
         line = self.canvas.ax.plot(self.fixations[:, 0], self.fixations[:, 1], alpha=0.4, c='blue', linewidth=2)
 
-    # --- run the trial on the data given ---
-    def runTrial(self):
-        self.findAOI()
-        self.findFixations('trial.json')
-        # self.drawSaccades()
 
-    def trialClicked(self,item):
-        trialPath = self.trials[item.text()]
-        self.findFixations(trialPath)
 
     # --- UI structure ---
     def initUI(self):
@@ -230,12 +245,13 @@ class Fix8(QMainWindow):
         # --- open folder button ---
         self.button_openFolder = QPushButton("Open Folder", self)
         self.leftBar.addWidget(self.button_openFolder)
-        self.button_openFolder.clicked.connect(self.test)
+        self.button_openFolder.setEnabled(False)
+        self.button_openFolder.clicked.connect(self.displayTrialList)
 
-        # --- file viewer window ---
-        self.list_viewFiles = QListWidget()
-        self.leftBar.addWidget(self.list_viewFiles)
-        self.list_viewFiles.itemDoubleClicked.connect(self.trialClicked)
+        # --- trial viewer window ---
+        self.list_viewTrials = QListWidget()
+        self.leftBar.addWidget(self.list_viewTrials)
+        self.list_viewTrials.itemDoubleClicked.connect(self.trialClicked)
 
         # --- right buttons below the canvas ---
         self.belowCanvas = QHBoxLayout()
@@ -380,17 +396,11 @@ class Fix8(QMainWindow):
         #
         # correctAllButton = QPushButton("Correct All", self)
         # bottomButtons2.addWidget(correctAllButton)
-        #
-
-
-    # --- allows or blocks buttons from being interacted with depending on if a correct file was chosen
-    def initButtons(self):
-        self.checkbox_showAOI.setCheckable(True)
-        self.checkbox_showFixations.setCheckable(True)
 
     def blockButtons(self):
         self.checkbox_showAOI.setCheckable(False)
         self.checkbox_showFixations.setCheckable(False)
+        self.button_openFolder.setEnabled(False)
 
 
 if __name__ == '__main__':
