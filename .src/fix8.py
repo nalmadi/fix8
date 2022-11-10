@@ -19,7 +19,7 @@ from matplotlib.patches import Circle
 import json
 from os import listdir
 from os.path import isfile, join
-# import driftAlgorithms as da
+import driftAlgorithms as da
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -122,6 +122,7 @@ class Fix8(QMainWindow):
 
             self.checkbox_showFixations.setChecked(False)
             self.checkbox_showFixations.setCheckable(False)
+            self.dropdown_selectAlgorithm.setEnabled(False)
 
 
             files = listdir(self.folderPath)
@@ -177,9 +178,9 @@ class Fix8(QMainWindow):
 
     '''When a trial in the trial list is double clicked, find the fixations and saccades of the trial'''
     def trialClicked(self,item):
-        trialPath = self.trials[item.text()]
+        self.trialPath = self.trials[item.text()]
 
-        self.findFixations(trialPath)
+        self.findFixations(self.trialPath)
         # once trial is selected then initialize relevant buttons
         self.checkbox_showFixations.setCheckable(True)
 
@@ -198,6 +199,7 @@ class Fix8(QMainWindow):
                     self.fixations.append([self.trialData[x][0], self.trialData[x][1], self.trialData[x][2]])
 
                 self.fixations = np.array(self.fixations)
+                self.dropdown_selectAlgorithm.setEnabled(True)
             except json.decoder.JSONDecodeError:
                 qmb = QMessageBox()
                 qmb.setWindowTitle("Trial File Error")
@@ -233,6 +235,29 @@ class Fix8(QMainWindow):
         line = self.canvas.ax.plot(self.fixations[:, 0], self.fixations[:, 1], alpha=0.4, c='blue', linewidth=2)
 
 
+    '''Correct the fixations, making them the new fixations, and replacing them on the canvas'''
+    def correctFixations(self, algorithm):
+        algorithm = algorithm.lower()
+        if algorithm == 'original':
+            self.findFixations(self.trialPath)
+            self.clearFixations()
+            self.drawFixations()
+        elif algorithm == 'attach':
+            fixation_XY = np.array(list(self.trialData.values()))[:,:] # drift algos use an np array
+            line_Y = self.findLinesY(self.aoi)
+            self.fixations = da.attach(fixation_XY, line_Y)
+            self.clearFixations()
+            self.drawFixations()
+
+    def findLinesY(self, aoi):
+        results = []
+        for index, row in aoi.iterrows():
+            y, height = row['y'], row['height']
+
+            if y + height / 2 not in results:
+                results.append(y + height / 2)
+
+        return results
 
     # --- UI structure ---
     def initUI(self):
@@ -285,6 +310,17 @@ class Fix8(QMainWindow):
         self.checkbox_showFixations.setCheckable(False)
         self.checkbox_showFixations.stateChanged.connect(self.showFixations)
         self.belowCanvas.addWidget(self.checkbox_showFixations)
+
+        self.dropdown_selectAlgorithm = QComboBox()
+        self.dropdown_selectAlgorithm.setEditable(True)
+        self.dropdown_selectAlgorithm.addItem('Original')
+        self.dropdown_selectAlgorithm.addItem('Attach')
+        self.dropdown_selectAlgorithm.lineEdit().setAlignment(Qt.AlignCenter)
+        self.dropdown_selectAlgorithm.lineEdit().setReadOnly(True)
+        self.dropdown_selectAlgorithm.setEditable(False)
+        self.dropdown_selectAlgorithm.setEnabled(False)
+        self.belowCanvas.addWidget(self.dropdown_selectAlgorithm)
+        self.dropdown_selectAlgorithm.currentTextChanged.connect(self.correctFixations)
 
         # # --- show Saccades checkbox ---
         # self.checkbox_showSaccades = QCheckBox("Show Saccades", self)
@@ -419,6 +455,7 @@ class Fix8(QMainWindow):
         self.checkbox_showFixations.setCheckable(False)
         self.button_openFolder.setEnabled(False)
         self.toolbar.setEnabled(False)
+        self.dropdown_selectAlgorithm.setEnabled(False)
 
 
 if __name__ == '__main__':
