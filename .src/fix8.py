@@ -187,6 +187,7 @@ class Fix8(QMainWindow):
         if self.checkbox_showFixations.isChecked() == True:
             self.clearFixations()
             self.drawFixations()
+        self.dropdown_selectAlgorithm.setCurrentIndex(0)
         # self.findSaccades()
 
     '''Find all fixations of the given trial'''
