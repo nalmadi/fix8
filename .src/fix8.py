@@ -26,6 +26,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class QtCanvas(FigureCanvasQTAgg):
 
+    '''Credit: Dr. Naser Al Madi and Ricky Peng'''
     def __init__(self, parent=None, width=12, height=8, dpi=100):
         self.figure, self.ax = plt.subplots(
             ncols=1, nrows=1, figsize=(width, height))
@@ -120,6 +121,7 @@ class Fix8(QMainWindow):
             self.list_viewTrials.clear()
             self.clearFixations()
 
+            # when open a new folder, block off all the buttons that shouldn't be accesible until a trial is clicked
             self.checkbox_showFixations.setChecked(False)
             self.checkbox_showFixations.setCheckable(False)
             self.dropdown_selectAlgorithm.setEnabled(False)
@@ -142,6 +144,17 @@ class Fix8(QMainWindow):
                         fileToAdd.setText(fileToAddName)
                         self.list_viewTrials.addItem(fileToAdd)
                         listIndex = listIndex + 1
+                else:
+                    qmb = QMessageBox()
+                    qmb.setWindowTitle("Trial Folder Error")
+                    qmb.setText("No JSONS")
+                    qmb.exec_()
+
+            else:
+                qmb = QMessageBox()
+                qmb.setWindowTitle("Trial Folder Error")
+                qmb.setText("Empty Folder")
+                qmb.exec_()
 
     '''Find the AOIs for current image'''
     def findAOI(self):
@@ -154,10 +167,14 @@ class Fix8(QMainWindow):
         self.patches = []
 
         for row in self.aoi.iterrows():
+
+            # ---
+            '''Credit: Dr. Naser Al Madi and Ricky Peng'''
             xcord = row[1]['x']
             ycord = row[1]['y']
             height = row[1]['height']
             width = row[1]['width']
+            # ---
             self.patches.append(self.canvas.ax.add_patch(Rectangle((xcord, ycord), width-1, height-1,linewidth=0.8,edgecolor=color,facecolor="none",alpha=0.65)))
 
         self.canvas.draw()
@@ -250,6 +267,8 @@ class Fix8(QMainWindow):
             self.clearFixations()
             self.drawFixations()
 
+
+    '''Credit: Dr. Naser Al Madi and Ricky Peng'''
     def findLinesY(self, aoi):
         results = []
         for index, row in aoi.iterrows():
