@@ -201,6 +201,7 @@ class Fix8(QMainWindow):
         self.findFixations(self.trialPath)
         # once trial is selected then initialize relevant buttons
         self.checkbox_showFixations.setCheckable(True)
+        self.button_saveFile.setEnabled(True)
 
         if self.checkbox_showFixations.isChecked() == True:
             self.clearFixations()
@@ -260,13 +261,15 @@ class Fix8(QMainWindow):
         if algorithm == 'original':
             self.findFixations(self.trialPath)
             self.clearFixations()
-            self.drawFixations()
+            if self.checkbox_showFixations.isChecked():
+                self.drawFixations()
         elif algorithm == 'attach':
             fixation_XY = np.array(list(self.trialData.values()))[:,:] # drift algos use an np array
             line_Y = self.findLinesY(self.aoi)
             self.fixations = da.attach(fixation_XY, line_Y)
             self.clearFixations()
-            self.drawFixations()
+            if self.checkbox_showFixations.isChecked():
+                self.drawFixations()
 
 
     '''Credit: Dr. Naser Al Madi and Ricky Peng'''
@@ -279,6 +282,14 @@ class Fix8(QMainWindow):
                 results.append(y + height / 2)
 
         return results
+
+    def saveCorrections(self):
+        list = self.fixations.tolist()
+        correctedFixations = {}
+        for i in range(len(self.fixations)):
+            correctedFixations[i + 1] = list[i]
+        with open(f"{self.trialPath.replace('.json', '_CORRECTED.json')}", 'w') as f:
+            json.dump(correctedFixations, f)
 
 
     def doAction(self):
@@ -311,6 +322,11 @@ class Fix8(QMainWindow):
         self.leftBar.addWidget(self.button_openFolder)
         self.button_openFolder.setEnabled(False)
         self.button_openFolder.clicked.connect(self.displayTrialList)
+
+        self.button_saveFile = QPushButton("Save Corrections", self)
+        self.leftBar.addWidget(self.button_saveFile)
+        self.button_saveFile.setEnabled(False)
+        self.button_saveFile.clicked.connect(self.saveCorrections)
 
         # --- trial viewer window ---
         self.list_viewTrials = QListWidget()
@@ -351,14 +367,13 @@ class Fix8(QMainWindow):
         self.belowCanvas.addWidget(self.dropdown_selectAlgorithm)
         self.dropdown_selectAlgorithm.currentTextChanged.connect(self.correctFixations)
 
-        self.progressBar = QProgressBar(self)
-        self.progressBar.setGeometry(250, 80, 250, 20)
-        #self.btn = QPushButton('Start Progress Bar', self)
-        self.button_nextFixation = QPushButton('Next', self)
-        self.belowCanvas.addWidget(self.button_nextFixation)
-        # abovebottomButtons.addWidget(self.btn)
-        self.belowCanvas.addWidget(self.progressBar)
-        self.button_nextFixation.clicked.connect(self.doAction)
+        # self.progressBar = QProgressBar(self)
+        # self.progressBar.setGeometry(250, 80, 250, 20)
+        # self.button_nextFixation = QPushButton('Next', self)
+        # self.belowCanvas.addWidget(self.button_nextFixation)
+        #
+        # self.belowCanvas.addWidget(self.progressBar)
+        # self.button_nextFixation.clicked.connect(self.doAction)
 
         # --- add bars to layout ---
         self.wrapperLayout.addLayout(self.leftBar)
@@ -377,6 +392,7 @@ class Fix8(QMainWindow):
         self.button_openFolder.setEnabled(False)
         self.toolbar.setEnabled(False)
         self.dropdown_selectAlgorithm.setEnabled(False)
+        self.button_saveFile.setEnabled(False)
 
 
 if __name__ == '__main__':
