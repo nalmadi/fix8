@@ -261,13 +261,15 @@ class Fix8(QMainWindow):
         if algorithm == 'original':
             self.findFixations(self.trialPath)
             self.clearFixations()
-            self.drawFixations()
+            if self.checkbox_showFixations.isChecked():
+                self.drawFixations()
         elif algorithm == 'attach':
             fixation_XY = np.array(list(self.trialData.values()))[:,:] # drift algos use an np array
             line_Y = self.findLinesY(self.aoi)
             self.fixations = da.attach(fixation_XY, line_Y)
             self.clearFixations()
-            self.drawFixations()
+            if self.checkbox_showFixations.isChecked():
+                self.drawFixations()
 
 
     '''Credit: Dr. Naser Al Madi and Ricky Peng'''
@@ -280,6 +282,14 @@ class Fix8(QMainWindow):
                 results.append(y + height / 2)
 
         return results
+
+    def saveCorrections(self):
+        list = self.fixations.tolist()
+        correctedFixations = {}
+        for i in range(len(self.fixations)):
+            correctedFixations[i + 1] = list[i]
+        with open(f"{self.trialPath.replace('.json', '_CORRECTED.json')}", 'w') as f:
+            json.dump(correctedFixations, f)
 
 
     def doAction(self):
@@ -316,6 +326,7 @@ class Fix8(QMainWindow):
         self.button_saveFile = QPushButton("Save Corrections", self)
         self.leftBar.addWidget(self.button_saveFile)
         self.button_saveFile.setEnabled(False)
+        self.button_saveFile.clicked.connect(self.saveCorrections)
 
         # --- trial viewer window ---
         self.list_viewTrials = QListWidget()
