@@ -201,6 +201,7 @@ class Fix8(QMainWindow):
         self.findFixations(self.trialPath)
         # once trial is selected then initialize relevant buttons
         self.checkbox_showFixations.setCheckable(True)
+        self.button_saveFile.setEnabled(True)
 
         if self.checkbox_showFixations.isChecked() == True:
             self.clearFixations()
@@ -312,6 +313,10 @@ class Fix8(QMainWindow):
         self.button_openFolder.setEnabled(False)
         self.button_openFolder.clicked.connect(self.displayTrialList)
 
+        self.button_saveFile = QPushButton("Save Corrections", self)
+        self.leftBar.addWidget(self.button_saveFile)
+        self.button_saveFile.setEnabled(False)
+
         # --- trial viewer window ---
         self.list_viewTrials = QListWidget()
         self.leftBar.addWidget(self.list_viewTrials)
@@ -351,14 +356,13 @@ class Fix8(QMainWindow):
         self.belowCanvas.addWidget(self.dropdown_selectAlgorithm)
         self.dropdown_selectAlgorithm.currentTextChanged.connect(self.correctFixations)
 
-        self.progressBar = QProgressBar(self)
-        self.progressBar.setGeometry(250, 80, 250, 20)
-        #self.btn = QPushButton('Start Progress Bar', self)
-        self.button_nextFixation = QPushButton('Next', self)
-        self.belowCanvas.addWidget(self.button_nextFixation)
-        # abovebottomButtons.addWidget(self.btn)
-        self.belowCanvas.addWidget(self.progressBar)
-        self.button_nextFixation.clicked.connect(self.doAction)
+        # self.progressBar = QProgressBar(self)
+        # self.progressBar.setGeometry(250, 80, 250, 20)
+        # self.button_nextFixation = QPushButton('Next', self)
+        # self.belowCanvas.addWidget(self.button_nextFixation)
+        #
+        # self.belowCanvas.addWidget(self.progressBar)
+        # self.button_nextFixation.clicked.connect(self.doAction)
 
         # --- add bars to layout ---
         self.wrapperLayout.addLayout(self.leftBar)
@@ -377,6 +381,7 @@ class Fix8(QMainWindow):
         self.button_openFolder.setEnabled(False)
         self.toolbar.setEnabled(False)
         self.dropdown_selectAlgorithm.setEnabled(False)
+        self.button_saveFile.setEnabled(False)
 
 
 if __name__ == '__main__':
