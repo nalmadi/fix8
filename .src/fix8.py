@@ -71,9 +71,13 @@ class Fix8(QMainWindow):
 
         # fields relating to fixations
         self.original_fixations, self.corrected_fixations, self.scatter = None, None, None
+        self.current_fixation = 0
 
         # fields relating to AOIs
         self.patches, self.aoi, self.background_color = None, None, None
+
+        # the algorithm the user selects, intially just the original
+        self.algorithm = 'original'
 
         # fields relating to the drag and drop system
         self.selected_fixation = None
@@ -83,7 +87,8 @@ class Fix8(QMainWindow):
         self.canvas.mpl_connect('button_release_event', self.button_release_callback)
         self.canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
 
-    '''get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon)'''
+    '''get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon),
+    selected_fixation is an index, not the actual scatter point'''
     def get_selected_fixation(self, event):
         if self.scatter is not None:
             self.xy = np.asarray(self.scatter.get_offsets())
@@ -307,8 +312,10 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isCheckable():
                 if state == Qt.Checked:
                     self.draw_fixations()
+                    self.enable_relevant_buttons("show_fixations_checked")
                 elif state == Qt.Unchecked:
                     self.clear_fixations()
+                    self.disable_relevant_buttons("show_fixations_unchecked")
 
     '''clear the fixations from the canvas'''
     def clear_fixations(self):
@@ -317,21 +324,28 @@ class Fix8(QMainWindow):
             self.scatter = None
             self.canvas.draw()
 
+    '''when the user selects an algorithm from the drop down menu, make it the current algorithm to use
+        parameters:
+        algorithm - the selected correction algorithm'''
+    def get_algorithm_picked(self,algorithm):
+        self.algorithm = algorithm
+        print(self.algorithm)
+
     '''if the user selects a correction algorithm, correct the current position of the fixations
         parameters:
         algorithm - the selected correction algorithm'''
-    def correct_fixations(self, algorithm):
-        algorithm = algorithm.lower()
-        # self.corrected_fixations = copy.deepcopy(self.original_fixations)
-        if algorithm == 'original':
+    def correct_all_fixations(self):
+        print("corecting all..")
+        self.algorithm = self.algorithm.lower()
+        if self.algorithm == 'original':
             self.find_fixations(self.trial_path)
             self.clear_fixations()
             if self.checkbox_show_fixations.isChecked():
-                self.draw_fixations(1)
+                self.draw_fixations(1) # 1 = draw originals
 
             # reset fixations
             self.corrected_fixations = copy.deepcopy(self.original_fixations)
-        elif algorithm == 'attach':
+        elif self.algorithm == 'attach':
             fixation_XY = self.corrected_fixations
             line_Y = self.find_lines_y(self.aoi)
             self.corrected_fixations = da.attach(fixation_XY, line_Y)
@@ -353,6 +367,11 @@ class Fix8(QMainWindow):
             qmb.setWindowTitle("Save Error")
             qmb.setText("No Corrections Made")
             qmb.exec_()
+
+    def next_fixation(self):
+        self.current_fixation += 1
+        fixations = np.asarray(self.scatter.get_offsets())
+
 
     '''initalize the tool window'''
     def init_UI(self):
@@ -377,6 +396,7 @@ class Fix8(QMainWindow):
         self.left_side.addWidget(self.button_open_folder)
         self.button_open_folder.clicked.connect(self.open_trial_folder)
 
+        # button to save corrected fixations to a file
         self.button_save_corrections = QPushButton("Save Corrections", self)
         self.left_side.addWidget(self.button_save_corrections)
         self.button_save_corrections.clicked.connect(self.save_corrections)
@@ -385,6 +405,16 @@ class Fix8(QMainWindow):
         self.trial_list = QListWidget()
         self.left_side.addWidget(self.trial_list)
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
+
+        # layout below the trial list window
+        self.below_trial_list = QHBoxLayout()
+
+        # button to move to the next fixation
+        self.button_next_fixation = QPushButton("Next Fixation")
+        self.button_next_fixation.clicked.connect(self.next_fixation)
+        self.below_trial_list.addWidget(self.button_next_fixation)
+
+        self.left_side.addLayout(self.below_trial_list)
 
         # toolbar to interact with canvas
         self.toolbar = NavigationToolBar(self.canvas, self)
@@ -413,12 +443,18 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
         self.below_canvas.addWidget(self.dropdown_select_algorithm)
-        self.dropdown_select_algorithm.currentTextChanged.connect(self.correct_fixations)
+        self.dropdown_select_algorithm.currentTextChanged.connect(self.get_algorithm_picked)
+
+        # correct all fixations button
+        self.button_correct_all_fixations = QPushButton("Correct All Fixations")
+        self.below_canvas.addWidget(self.button_correct_all_fixations)
+        self.button_correct_all_fixations.clicked.connect(self.correct_all_fixations)
 
         # add both sides to overall wrapper layout
         self.wrapper_layout.addLayout(self.left_side)
         self.wrapper_layout.addLayout(self.right_side)
 
+        # initial button states
         self.button_open_folder.setEnabled(False)
         self.button_save_corrections.setEnabled(False)
         self.toolbar.setEnabled(False)
@@ -428,6 +464,8 @@ class Fix8(QMainWindow):
         self.checkbox_show_fixations.setCheckable(False)
         self.dropdown_select_algorithm.setEditable(False)
         self.dropdown_select_algorithm.setEnabled(False)
+        self.button_next_fixation.setEnabled(False)
+        self.button_correct_all_fixations.setEnabled(False)
 
         widget = QWidget()
         widget.setLayout(self.wrapper_layout)
@@ -449,11 +487,26 @@ class Fix8(QMainWindow):
             self.checkbox_show_fixations.setCheckable(False)
             self.dropdown_select_algorithm.setEditable(False)
             self.dropdown_select_algorithm.setEnabled(False)
+            self.button_next_fixation.setEnabled(False)
+            self.button_correct_all_fixations.setEnabled(False)
         elif feature == "folder_opened":
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setCheckable(False)
             self.dropdown_select_algorithm.setEnabled(False)
             self.button_save_corrections.setEnabled(False)
+            self.button_next_fixation.setEnabled(False)
+            self.button_correct_all_fixations.setEnabled(False)
+        elif feature == "show_fixations_unchecked":
+            self.button_next_fixation.setEnabled(False)
+            self.button_correct_all_fixations.setEnabled(False)
+        elif feature == "stimulus_chosen":
+            self.button_save_corrections.setEnabled(False)
+            self.checkbox_show_fixations.setChecked(False)
+            self.checkbox_show_fixations.setCheckable(False)
+            self.dropdown_select_algorithm.setEditable(False)
+            self.dropdown_select_algorithm.setEnabled(False)
+            self.button_next_fixation.setEnabled(False)
+            self.button_correct_all_fixations.setEnabled(False)
 
     '''Enables any buttons that can be used with whatever element of the tool the user interacted with
         parameters:
@@ -465,10 +518,14 @@ class Fix8(QMainWindow):
             self.checkbox_show_aoi.setChecked(False)
             self.toolbar.setEnabled(True)
             self.button_open_folder.setEnabled(True)
+            self.disable_relevant_buttons(feature)
         elif feature == "trial_clicked":
             self.checkbox_show_fixations.setCheckable(True)
             self.dropdown_select_algorithm.setEnabled(True)
             self.button_save_corrections.setEnabled(True)
+        elif feature == "show_fixations_checked":
+            self.button_next_fixation.setEnabled(True)
+            self.button_correct_all_fixations.setEnabled(True)
 
 if __name__ == '__main__':
     fix8 = QApplication([])
