@@ -71,7 +71,7 @@ class Fix8(QMainWindow):
 
         # fields relating to fixations
         self.original_fixations, self.corrected_fixations, self.scatter = None, None, None
-        self.current_fixation = 0
+        self.current_fixation = -1
 
         # fields relating to AOIs
         self.patches, self.aoi, self.background_color = None, None, None
@@ -324,16 +324,14 @@ class Fix8(QMainWindow):
             self.scatter = None
             self.canvas.draw()
 
-    '''when the user selects an algorithm from the drop down menu, make it the current algorithm to use
+    '''when the user selects an algorithm from the drop down menu, make it the current algorithm to use for automated and semi automated use
         parameters:
         algorithm - the selected correction algorithm'''
     def get_algorithm_picked(self,algorithm):
         self.algorithm = algorithm
         print(self.algorithm)
 
-    '''if the user selects a correction algorithm, correct the current position of the fixations
-        parameters:
-        algorithm - the selected correction algorithm'''
+    '''if the user presses the correct all fixations button, correct the current position of all fixations'''
     def correct_all_fixations(self):
         print("corecting all..")
         self.algorithm = self.algorithm.lower()
@@ -369,8 +367,11 @@ class Fix8(QMainWindow):
             qmb.exec_()
 
     def next_fixation(self):
+        if self.current_fixation == len(self.scatter.get_offsets()) - 1:
+            self.current_fixation = -1
         self.current_fixation += 1
         fixations = np.asarray(self.scatter.get_offsets())
+        print(fixations[self.current_fixation])
 
 
     '''initalize the tool window'''
