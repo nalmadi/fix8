@@ -105,6 +105,7 @@ class Fix8(QMainWindow):
             return
         self.selected_fixation = self.get_selected_fixation(event)
 
+    '''when released the fixation, update the corrected fixations'''
     def button_release_callback(self, event):
         if self.selected_fixation is not None:
             self.corrected_fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
