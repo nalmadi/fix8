@@ -56,66 +56,65 @@ class QtCanvas(FigureCanvasQTAgg):
     def clear(self):
         self.ax.clear()
 
-
 class Fix8(QMainWindow):
 
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Fix8")
-        self.initUI()
+        self.init_UI()
 
-        # these are the fields for the image file of the trial
-        self.file, self.fileName, self.filePath = None, None, None
+        # fields relating to the stimulus
+        self.file, self.file_path, self.file_name = None, None, None
 
-        # these are the fields for the trial files that are stored in a folder
-        self.folderPath, self.fileList, self.trials = None, None, None
+        # fields relating to the trial folder
+        self.folder_path, self.trial_path, self.trial_data = None, None, None
 
-        # these are the fields for the AOIs and image in relation to AOIs
-        self.patches, self.aoi, self.backgroundColor = None, None, None
+        # fields relating to fixations
+        self.original_fixations, self.corrected_fixations, self.scatter = None, None, None
 
-        # these are the fields for fixations
-        self.fixations, self.correctedFixations, self.trialData, self.scatter = None, None, None, None
+        # fields relating to AOIs
+        self.patches, self.aoi, self.background_color = None, None, None
 
-        self._ind = None
-        self.epsilon = 8
+        # fields relating to the drag and drop system
+        self.selected_fixation = None
+        self.epsilon = 11
         self.xy = None
-
         self.canvas.mpl_connect('button_press_event', self.button_press_callback)
         self.canvas.mpl_connect('button_release_event', self.button_release_callback)
         self.canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
 
-    def get_ind_under_point(self, event):
+    '''get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon)'''
+    def get_selected_fixation(self, event):
         if self.scatter is not None:
             self.xy = np.asarray(self.scatter.get_offsets())
             xyt = self.canvas.ax.transData.transform(self.xy)
             xt, yt = xyt[:, 0], xyt[:, 1]
 
             d = np.sqrt((xt - event.x)**2 + (yt - event.y)**2)
-            self._ind = d.argmin()
+            self.selected_fixation = d.argmin()
 
-            if d[self._ind] >= self.epsilon:
-                self._ind = None
+            if d[self.selected_fixation] >= self.epsilon:
+                self.selected_fixation = None
 
-            return self._ind
+            return self.selected_fixation
 
     def button_press_callback(self, event):
         if event.inaxes is None:
             return
         if event.button != 1:
             return
-        self._ind = self.get_ind_under_point(event)
+        self.selected_fixation = self.get_selected_fixation(event)
 
     def button_release_callback(self, event):
-        if self._ind is not None:
-            self.correctedFixations[self._ind][0] = self.xy[self._ind][0]
-            self.correctedFixations[self._ind][1] = self.xy[self._ind][1]
-            print(self.correctedFixations[0])
+        if self.selected_fixation is not None:
+            self.corrected_fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
+            self.corrected_fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][1]
         if event.button != 1:
             return
-        self._ind = None
+        self.selected_fixation = None
 
     def motion_notify_callback(self, event):
-        if self._ind is None:
+        if self.selected_fixation is None:
             return
         if event.inaxes is None:
             return
@@ -123,107 +122,112 @@ class Fix8(QMainWindow):
             return
         x, y = event.xdata, event.ydata
         self.xy = np.asarray(self.scatter.get_offsets())
-        self.xy[self._ind] = np.array([x, y])
+        self.xy[self.selected_fixation] = np.array([x, y])
         self.scatter.set_offsets(self.xy)
         self.canvas.draw_idle()
 
-
-
-    '''Open an image file, display to canvas, and grab the AOIs of the image'''
-    def openFile(self):
+    '''opens the stimulus, displays it to the canvas, and grabs the aois of the image'''
+    def open_stimulus(self):
         # open the file, grab the file name and file type
         qfd = QFileDialog()
         self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
 
         # make sure a file is chosen, if cancelled don't do anything
         if self.file[0] != '':
-            self.filePath = self.file[0]
-            self.fileName = self.filePath.split('/')[-1]
-            fileType = self.fileName.split('.')[-1]
+            self.file_path = self.file[0]
+            self.file_name = self.file_path.split('/')[-1]
+            fileType = self.file_name.split('.')[-1]
 
             # make sure the file is a png type
             if fileType.lower() != 'png':
                 image = mpimg.imread('./.images/wrongFile.png')
                 self.canvas.ax.imshow(image)
                 self.canvas.draw()
-                self.blockButtons()
+                self.disable_relevant_buttons("not_a_PNG")
             else:
                 # draw the image to the canvas
                 self.canvas.clear()
                 image = mpimg.imread(self.file[0])
                 self.canvas.ax.imshow(image)
-                self.canvas.ax.set_title(str(self.fileName.split('.')[0]))
+                self.canvas.ax.set_title(str(self.file_name.split('.')[0]))
                 self.canvas.draw()
 
-                # find the AOIs of the image
-                self.findAOI()
+                self.find_aoi()
 
-                # allow user to click relevant buttons
-                self.checkbox_showAOI.setCheckable(True)
-                self.checkbox_showAOI.setChecked(False)
-                self.button_openFolder.setEnabled(True)
-                self.toolbar.setEnabled(True)
+                self.enable_relevant_buttons("stimulus_chosen")
 
-    '''Display trials on file list window and create a dictionary with each trial number and file path'''
-    def displayTrialList(self):
+
+    '''open trial folder, display it to trial list window with list of JSON trials'''
+    def open_trial_folder(self):
 
         qfd = QFileDialog()
-        self.folderPath = qfd.getExistingDirectory(self, 'Select Folder')
+        self.folder_path = qfd.getExistingDirectory(self, 'Select Folder')
 
         # --- make sure a folder was actually chosen, otherwise just cancel ---
-        if self.folderPath != '':
+        if self.folder_path != '':
 
-            self.list_viewTrials.clear()
-            self.clearFixations()
+            self.trial_list.clear()
+            self.clear_fixations()
 
             # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
-            self.checkbox_showFixations.setChecked(False)
-            self.checkbox_showFixations.setCheckable(False)
-            self.dropdown_selectAlgorithm.setEnabled(False)
+            self.disable_relevant_buttons("folder_opened")
 
+            files = listdir(self.folder_path)
 
-            files = listdir(self.folderPath)
             if len(files) > 0:
-                self.fileList = []
+                self.file_list = []
                 for file in files:
                     if file.endswith(".json"):
-                        self.fileList.append(self.folderPath + "/" + file)
-                if len(self.fileList) > 0:
+                        self.file_list.append(self.folder_path + "/" + file)
+                if len(self.file_list) > 0:
                     # add the files to the trial list window
-                    listIndex = 0
+                    list_index = 0
                     self.trials = {}
-                    for file in self.fileList:
-                        fileToAdd = QListWidgetItem(file)
-                        fileText = str(self.fileList[listIndex])
-                        fileToAddName = fileText.split('/')[-1] # last part of file text
-                        self.trials[fileToAddName] = file
-                        fileToAdd.setText(fileToAddName)
-                        self.list_viewTrials.addItem(fileToAdd)
-                        listIndex = listIndex + 1
+                    for file in self.file_list:
+                        file_to_add = QListWidgetItem(file)
+                        file_text = str(self.file_list[list_index])
+                        file_to_add_name = file_text.split('/')[-1] # last part of file text
+                        self.trials[file_to_add_name] = file
+                        file_to_add.setText(file_to_add_name)
+                        self.trial_list.addItem(file_to_add)
+                        list_index = list_index + 1
                 else:
                     qmb = QMessageBox()
                     qmb.setWindowTitle("Trial Folder Error")
                     qmb.setText("No JSONS")
                     qmb.exec_()
-
             else:
                 qmb = QMessageBox()
                 qmb.setWindowTitle("Trial Folder Error")
                 qmb.setText("Empty Folder")
                 qmb.exec_()
 
-    '''Find the AOIs for current image'''
-    def findAOI(self):
-        if self.file[0] != '':
-            self.aoi, self.backgroundColor = emtk.find_aoi(image=self.fileName, image_path=self.filePath.replace(self.fileName, ''))
+    '''when a trial from the trial list is double clicked, find the fixations of the trial
+        parameters:
+        item - the value passed through when clicking a trial object in the list'''
+    def trial_double_clicked(self,item):
+        self.trial_path = self.trials[item.text()]
 
-    '''Draw the AOIs to screen'''
-    def drawAOI(self):
-        color = "yellow" if self.backgroundColor == "black" else "black"
+        self.find_fixations(self.trial_path)
+        self.corrected_fixations = copy.deepcopy(self.original_fixations)
+
+        if self.checkbox_show_fixations.isChecked() == True:
+            self.clear_fixations()
+            self.draw_fixations()
+        self.dropdown_select_algorithm.setCurrentIndex(0)
+        # self.findSaccades()
+
+    '''find the areas of interest (aoi) for the selected stimulus'''
+    def find_aoi(self):
+        if self.file[0] != '':
+            self.aoi, self.background_color = emtk.find_aoi(image=self.file_name, image_path=self.file_path.replace(self.file_name, ''))
+
+    '''draw the found aois to the canvas'''
+    def draw_aoi(self):
+        color = "yellow" if self.background_color == "black" else "black"
         self.patches = []
 
         for row in self.aoi.iterrows():
-
             # ---
             '''Credit: Dr. Naser Al Madi and Ricky Peng'''
             xcord = row[1]['x']
@@ -231,114 +235,45 @@ class Fix8(QMainWindow):
             height = row[1]['height']
             width = row[1]['width']
             # ---
+
             self.patches.append(self.canvas.ax.add_patch(Rectangle((xcord, ycord), width-1, height-1,linewidth=0.8,edgecolor=color,facecolor="none",alpha=0.65)))
 
         self.canvas.draw()
 
-    '''Clear AOIs from canvas'''
-    def clearAOI(self):
+    '''clear the aois from the canvas'''
+    def clear_aoi(self):
         for patch in self.patches:
             patch.remove()
         self.canvas.draw()
 
-    '''Triggered by the show AOI checkbox, show or hide AOIs'''
-    def showAOI(self, state):
-        if self.checkbox_showAOI.isCheckable():
+    '''when the show aoi button is pressed, show or hide aois based on checkbox'''
+    def show_aoi(self, state):
+        if self.checkbox_show_aoi.isCheckable():
             if state == Qt.Checked:
-                self.drawAOI()
+                self.draw_aoi()
             elif state == Qt.Unchecked:
-                self.clearAOI()
+                self.clear_aoi()
 
-    '''When a trial in the trial list is double clicked, find the fixations and saccades of the trial'''
-    def trialClicked(self,item):
-        self.trialPath = self.trials[item.text()]
-
-        self.findFixations(self.trialPath)
-        self.correctedFixations = copy.deepcopy(self.fixations)
-        # once trial is selected then initialize relevant buttons
-        self.checkbox_showFixations.setCheckable(True)
-        self.button_saveFile.setEnabled(True)
-
-        if self.checkbox_showFixations.isChecked() == True:
-            self.clearFixations()
-            self.drawFixations()
-        self.dropdown_selectAlgorithm.setCurrentIndex(0)
-        # self.findSaccades()
-
-    '''Find all fixations of the given trial'''
-    def findFixations(self, trialPath):
-        self.fixations = []
-        with open(trialPath, 'r') as trial:
+    '''find all the fixations of the trial that was double clicked
+        parameters:
+        trial_path - the trial file path of the trial clicked on'''
+    def find_fixations(self, trial_path):
+        self.original_fixations = []
+        with open(trial_path, 'r') as trial:
             try:
-                self.trialData = json.load(trial)
-                for x in self.trialData:
-                    self.fixations.append([self.trialData[x][0], self.trialData[x][1], self.trialData[x][2]])
-
-                self.fixations = np.array(self.fixations)
-                self.dropdown_selectAlgorithm.setEnabled(True)
+                self.trial_data = json.load(trial)
+                for x in self.trial_data:
+                    self.original_fixations.append([self.trial_data[x][0], self.trial_data[x][1], self.trial_data[x][2]])
+                self.original_fixations = np.array(self.original_fixations)
+                self.enable_relevant_buttons("trial_clicked")
             except json.decoder.JSONDecodeError:
                 qmb = QMessageBox()
                 qmb.setWindowTitle("Trial File Error")
                 qmb.setText("Trial Error: JSON File Empty")
                 qmb.exec_()
 
-    '''Draw fixations to canvas'''
-    def drawFixations(self, corrected = 0):
-        if corrected != 0:
-            x = self.correctedFixations[:, 0]
-            y = self.correctedFixations[:, 1]
-            duration = self.correctedFixations[:, 2]
-
-            self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
-            self.canvas.draw()
-        else:
-            x = self.fixations[:, 0]
-            y = self.fixations[:, 1]
-            duration = self.fixations[:, 2]
-
-            self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
-            self.canvas.draw()
-
-    '''If show fixations is checked, show them, else erase them from canvas'''
-    def showFixations(self, state):
-        if self.folderPath != '':
-            if self.checkbox_showFixations.isCheckable():
-                if state == Qt.Checked:
-                    self.drawFixations()
-                elif state == Qt.Unchecked:
-                    self.clearFixations()
-
-    '''Clear the fixations from the canvas'''
-    def clearFixations(self):
-        if self.scatter != None:
-            self.scatter.remove()
-            self.scatter = None
-            self.canvas.draw()
-
-    def drawSaccades(self):
-        line = self.canvas.ax.plot(self.fixations[:, 0], self.fixations[:, 1], alpha=0.4, c='blue', linewidth=2)
-
-
-    '''Correct the fixations, making them the new fixations, and replacing them on the canvas'''
-    def correctFixations(self, algorithm):
-        algorithm = algorithm.lower()
-        self.correctedFixations = copy.deepcopy(self.fixations)
-        if algorithm == 'original':
-            self.findFixations(self.trialPath)
-            self.clearFixations()
-            if self.checkbox_showFixations.isChecked():
-                self.drawFixations(0)
-        elif algorithm == 'attach':
-            fixation_XY = np.array(list(self.trialData.values()))[:,:] # drift algos use an np array
-            line_Y = self.findLinesY(self.aoi)
-            self.correctedFixations = da.attach(fixation_XY, line_Y)
-            self.clearFixations()
-            if self.checkbox_showFixations.isChecked():
-                self.drawFixations(1)
-
-
     '''Credit: Dr. Naser Al Madi and Ricky Peng'''
-    def findLinesY(self, aoi):
+    def find_lines_y(self, aoi):
         results = []
         for index, row in aoi.iterrows():
             y, height = row['y'], row['height']
@@ -348,125 +283,191 @@ class Fix8(QMainWindow):
 
         return results
 
-    def saveCorrections(self):
-        if self.correctedFixations is not None:
-            list = self.correctedFixations.tolist()
-            correctedFixations = {}
-            for i in range(len(self.correctedFixations)):
-                correctedFixations[i + 1] = list[i]
-            with open(f"{self.trialPath.replace('.json', '_CORRECTED.json')}", 'w') as f:
-                json.dump(correctedFixations, f)
+    '''draw the fixations to the canvas
+        parameters:
+        fixations - 0 is default since the corrected fixations are the main thing to be shown,
+        1 the original fixations is manually chosen'''
+    def draw_fixations(self, fixations = 0):
+        if fixations == 0: # default fixations to use
+            fixations = self.corrected_fixations
+        elif fixations == 1:
+            fixations = self.original_fixations
+        x = fixations[:, 0]
+        y = fixations[:, 1]
+        duration = fixations[:, 2]
+        self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+        self.canvas.draw()
+
+    '''if the user clicks the show fixations checkbox, show or hide the fixations
+        parameters:
+        state - the checkbox being checked or unchecked'''
+    def show_fixations(self, state):
+        if self.folder_path != '':
+            if self.checkbox_show_fixations.isCheckable():
+                if state == Qt.Checked:
+                    self.draw_fixations()
+                elif state == Qt.Unchecked:
+                    self.clear_fixations()
+
+    '''clear the fixations from the canvas'''
+    def clear_fixations(self):
+        if self.scatter != None:
+            self.scatter.remove()
+            self.scatter = None
+            self.canvas.draw()
+
+    '''if the user selects a correction algorithm, correct the current position of the fixations
+        parameters:
+        algorithm - the selected correction algorithm'''
+    def correct_fixations(self, algorithm):
+        algorithm = algorithm.lower()
+        # self.corrected_fixations = copy.deepcopy(self.original_fixations)
+        if algorithm == 'original':
+            self.find_fixations(self.trial_path)
+            self.clear_fixations()
+            if self.checkbox_show_fixations.isChecked():
+                self.draw_fixations(1)
+
+            # reset fixations
+            self.corrected_fixations = copy.deepcopy(self.original_fixations)
+        elif algorithm == 'attach':
+            fixation_XY = self.corrected_fixations
+            line_Y = self.find_lines_y(self.aoi)
+            self.corrected_fixations = da.attach(fixation_XY, line_Y)
+            self.clear_fixations()
+            if self.checkbox_show_fixations.isChecked():
+                self.draw_fixations()
+
+    '''save a JSON object of the corrections to a file'''
+    def save_corrections(self):
+        if self.corrected_fixations is not None:
+            list = self.corrected_fixations.tolist()
+            corrected_fixations = {}
+            for i in range(len(self.corrected_fixations)):
+                corrected_fixations[i + 1] = list[i]
+            with open(f"{self.trial_path.replace('.json', '_CORRECTED.json')}", 'w') as f:
+                json.dump(corrected_fixations, f)
         else:
             qmb = QMessageBox()
             qmb.setWindowTitle("Save Error")
             qmb.setText("No Corrections Made")
             qmb.exec_()
 
+    '''initalize the tool window'''
+    def init_UI(self):
 
+        # wrapper layout
+        self.wrapper_layout = QHBoxLayout()
 
-    def doAction(self):
-        # making the progress bar move
-        self.completed = 0
-        while self.completed < 100:
-            self.completed += 0.0001
-            self.progressBar.setValue(int(self.completed))
-
-    # --- UI structure ---
-    def initUI(self):
-
-        # --- wrapper layout ---
-        self.wrapperLayout = QHBoxLayout()
-
-        # --- two bar framework ---
-        self.leftBar = QVBoxLayout()
-        self.rightBar = QVBoxLayout()
+        # left side is one half, right side is the other half of the tool
+        self.left_side = QVBoxLayout()
+        self.right_side = QVBoxLayout()
 
         self.canvas = QtCanvas(self, width=12, height=8, dpi=200)
-        self.rightBar.addWidget(self.canvas)
+        self.right_side.addWidget(self.canvas)
 
-        # --- open file button ---
-        self.button_openFile = QPushButton("Open Stimulus", self)
-        self.leftBar.addWidget(self.button_openFile)
-        self.button_openFile.clicked.connect(self.openFile)
+        # button to open stimulus (image)
+        self.button_open_stimulus = QPushButton("Open Stimulus", self)
+        self.left_side.addWidget(self.button_open_stimulus)
+        self.button_open_stimulus.clicked.connect(self.open_stimulus)
 
-        # --- open folder button ---
-        self.button_openFolder = QPushButton("Open Trial Folder", self)
-        self.leftBar.addWidget(self.button_openFolder)
-        self.button_openFolder.setEnabled(False)
-        self.button_openFolder.clicked.connect(self.displayTrialList)
+        # button to open folder which contains trial data JSON files
+        self.button_open_folder = QPushButton("Open Trial Folder", self)
+        self.left_side.addWidget(self.button_open_folder)
+        self.button_open_folder.clicked.connect(self.open_trial_folder)
 
-        self.button_saveFile = QPushButton("Save Corrections", self)
-        self.leftBar.addWidget(self.button_saveFile)
-        self.button_saveFile.setEnabled(False)
-        self.button_saveFile.clicked.connect(self.saveCorrections)
+        self.button_save_corrections = QPushButton("Save Corrections", self)
+        self.left_side.addWidget(self.button_save_corrections)
+        self.button_save_corrections.clicked.connect(self.save_corrections)
 
-        # --- trial viewer window ---
-        self.list_viewTrials = QListWidget()
-        self.leftBar.addWidget(self.list_viewTrials)
-        self.list_viewTrials.itemDoubleClicked.connect(self.trialClicked)
+        # window list to access trial data
+        self.trial_list = QListWidget()
+        self.left_side.addWidget(self.trial_list)
+        self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
 
+        # toolbar to interact with canvas
         self.toolbar = NavigationToolBar(self.canvas, self)
         self.toolbar.setStyleSheet("QToolBar { border: 0px }")
+        self.left_side.addWidget(self.toolbar)
+
+        # section on right side, below canvas
+        self.below_canvas = QHBoxLayout()
+        self.right_side.addLayout(self.below_canvas)
+
+        # checkbox to show and hide AOIs
+        self.checkbox_show_aoi = QCheckBox("Show Areas of Interest (AOIs)", self)
+        self.checkbox_show_aoi.stateChanged.connect(self.show_aoi)
+        self.below_canvas.addWidget(self.checkbox_show_aoi)
+
+        # checkbox to show and hide fixations
+        self.checkbox_show_fixations = QCheckBox("Show Fixations", self)
+        self.checkbox_show_fixations.stateChanged.connect(self.show_fixations)
+        self.below_canvas.addWidget(self.checkbox_show_fixations)
+
+        # drop down menu to select correction algorithm
+        self.dropdown_select_algorithm = QComboBox()
+        self.dropdown_select_algorithm.setEditable(True)
+        self.dropdown_select_algorithm.addItem('Original')
+        self.dropdown_select_algorithm.addItem('Attach')
+        self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
+        self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
+        self.below_canvas.addWidget(self.dropdown_select_algorithm)
+        self.dropdown_select_algorithm.currentTextChanged.connect(self.correct_fixations)
+
+        # add both sides to overall wrapper layout
+        self.wrapper_layout.addLayout(self.left_side)
+        self.wrapper_layout.addLayout(self.right_side)
+
+        self.button_open_folder.setEnabled(False)
+        self.button_save_corrections.setEnabled(False)
         self.toolbar.setEnabled(False)
-        self.leftBar.addWidget(self.toolbar)
-
-        # --- right buttons below the canvas ---
-        self.belowCanvas = QHBoxLayout()
-        self.rightBar.addLayout(self.belowCanvas)
-
-        # --- show AOI checkbox ---
-        self.checkbox_showAOI = QCheckBox("Show Areas of Interest (AOIs)", self)
-        self.checkbox_showAOI.setChecked(False)
-        self.checkbox_showAOI.setCheckable(False)
-        self.checkbox_showAOI.stateChanged.connect(self.showAOI)
-        self.belowCanvas.addWidget(self.checkbox_showAOI)
-
-        # --- show Fixations checkbox ---
-        self.checkbox_showFixations = QCheckBox("Show Fixations", self)
-        self.checkbox_showFixations.setChecked(False)
-        self.checkbox_showFixations.setCheckable(False)
-        self.checkbox_showFixations.stateChanged.connect(self.showFixations)
-        self.belowCanvas.addWidget(self.checkbox_showFixations)
-
-        self.dropdown_selectAlgorithm = QComboBox()
-        self.dropdown_selectAlgorithm.setEditable(True)
-        self.dropdown_selectAlgorithm.addItem('Original')
-        self.dropdown_selectAlgorithm.addItem('Attach')
-        self.dropdown_selectAlgorithm.lineEdit().setAlignment(Qt.AlignCenter)
-        self.dropdown_selectAlgorithm.lineEdit().setReadOnly(True)
-        self.dropdown_selectAlgorithm.setEditable(False)
-        self.dropdown_selectAlgorithm.setEnabled(False)
-        self.belowCanvas.addWidget(self.dropdown_selectAlgorithm)
-        self.dropdown_selectAlgorithm.currentTextChanged.connect(self.correctFixations)
-
-        # self.progressBar = QProgressBar(self)
-        # self.progressBar.setGeometry(250, 80, 250, 20)
-        # self.button_nextFixation = QPushButton('Next', self)
-        # self.belowCanvas.addWidget(self.button_nextFixation)
-        #
-        # self.belowCanvas.addWidget(self.progressBar)
-        # self.button_nextFixation.clicked.connect(self.doAction)
-
-        # --- add bars to layout ---
-        self.wrapperLayout.addLayout(self.leftBar)
-        self.wrapperLayout.addLayout(self.rightBar)
+        self.checkbox_show_aoi.setChecked(False)
+        self.checkbox_show_aoi.setCheckable(False)
+        self.checkbox_show_fixations.setChecked(False)
+        self.checkbox_show_fixations.setCheckable(False)
+        self.dropdown_select_algorithm.setEditable(False)
+        self.dropdown_select_algorithm.setEnabled(False)
 
         widget = QWidget()
-        widget.setLayout(self.wrapperLayout)
+        widget.setLayout(self.wrapper_layout)
         self.setCentralWidget(widget)
         self.show()
 
+    '''Disables any buttons that shouldn't be used with whatever element of the tool the user interacted with
+        parameters:
+        feature - the element the user interacted with
+    '''
+    def disable_relevant_buttons(self, feature):
+        if feature == "not_a_PNG":
+            self.button_open_folder.setEnabled(False)
+            self.button_save_corrections.setEnabled(False)
+            self.toolbar.setEnabled(False)
+            self.checkbox_show_aoi.setChecked(False)
+            self.checkbox_show_aoi.setCheckable(False)
+            self.checkbox_show_fixations.setChecked(False)
+            self.checkbox_show_fixations.setCheckable(False)
+            self.dropdown_select_algorithm.setEditable(False)
+            self.dropdown_select_algorithm.setEnabled(False)
+        elif feature == "folder_opened":
+            self.checkbox_show_fixations.setChecked(False)
+            self.checkbox_show_fixations.setCheckable(False)
+            self.dropdown_select_algorithm.setEnabled(False)
+            self.button_save_corrections.setEnabled(False)
 
-    def blockButtons(self):
-        self.checkbox_showAOI.setChecked(False)
-        self.checkbox_showAOI.setCheckable(False)
-        self.checkbox_showFixations.setChecked(False)
-        self.checkbox_showFixations.setCheckable(False)
-        self.button_openFolder.setEnabled(False)
-        self.toolbar.setEnabled(False)
-        self.dropdown_selectAlgorithm.setEnabled(False)
-        self.button_saveFile.setEnabled(False)
-
+    '''Enables any buttons that can be used with whatever element of the tool the user interacted with
+        parameters:
+        feature - the element the user interacted with
+    '''
+    def enable_relevant_buttons(self, feature):
+        if feature == "stimulus_chosen":
+            self.checkbox_show_aoi.setCheckable(True)
+            self.checkbox_show_aoi.setChecked(False)
+            self.toolbar.setEnabled(True)
+            self.button_open_folder.setEnabled(True)
+        elif feature == "trial_clicked":
+            self.checkbox_show_fixations.setCheckable(True)
+            self.dropdown_select_algorithm.setEnabled(True)
+            self.button_save_corrections.setEnabled(True)
 
 if __name__ == '__main__':
     fix8 = QApplication([])
