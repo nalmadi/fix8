@@ -23,6 +23,7 @@ import driftAlgorithms as da
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import threading
+import copy
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -73,7 +74,60 @@ class Fix8(QMainWindow):
         self.patches, self.aoi, self.backgroundColor = None, None, None
 
         # these are the fields for fixations
-        self.fixations, self.trialData, self.scatter = None, None, None
+        self.fixations, self.correctedFixations, self.trialData, self.scatter = None, None, None, None
+
+        self._ind = None
+        self.epsilon = 8
+        self.xy = None
+
+        self.canvas.mpl_connect('button_press_event', self.button_press_callback)
+        self.canvas.mpl_connect('button_release_event', self.button_release_callback)
+        self.canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
+
+    def get_ind_under_point(self, event):
+        if self.scatter is not None:
+            self.xy = np.asarray(self.scatter.get_offsets())
+            xyt = self.canvas.ax.transData.transform(self.xy)
+            xt, yt = xyt[:, 0], xyt[:, 1]
+
+            d = np.sqrt((xt - event.x)**2 + (yt - event.y)**2)
+            self._ind = d.argmin()
+
+            if d[self._ind] >= self.epsilon:
+                self._ind = None
+
+            return self._ind
+
+    def button_press_callback(self, event):
+        if event.inaxes is None:
+            return
+        if event.button != 1:
+            return
+        self._ind = self.get_ind_under_point(event)
+
+    def button_release_callback(self, event):
+        if self._ind is not None:
+            self.correctedFixations[self._ind][0] = self.xy[self._ind][0]
+            self.correctedFixations[self._ind][1] = self.xy[self._ind][1]
+            print(self.correctedFixations[0])
+        if event.button != 1:
+            return
+        self._ind = None
+
+    def motion_notify_callback(self, event):
+        if self._ind is None:
+            return
+        if event.inaxes is None:
+            return
+        if event.button != 1:
+            return
+        x, y = event.xdata, event.ydata
+        self.xy = np.asarray(self.scatter.get_offsets())
+        self.xy[self._ind] = np.array([x, y])
+        self.scatter.set_offsets(self.xy)
+        self.canvas.draw_idle()
+
+
 
     '''Open an image file, display to canvas, and grab the AOIs of the image'''
     def openFile(self):
@@ -122,7 +176,7 @@ class Fix8(QMainWindow):
             self.list_viewTrials.clear()
             self.clearFixations()
 
-            # when open a new folder, block off all the buttons that shouldn't be accesible until a trial is clicked
+            # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
             self.checkbox_showFixations.setChecked(False)
             self.checkbox_showFixations.setCheckable(False)
             self.dropdown_selectAlgorithm.setEnabled(False)
@@ -140,7 +194,8 @@ class Fix8(QMainWindow):
                     self.trials = {}
                     for file in self.fileList:
                         fileToAdd = QListWidgetItem(file)
-                        fileToAddName = str("Trial " + str(listIndex))
+                        fileText = str(self.fileList[listIndex])
+                        fileToAddName = fileText.split('/')[-1] # last part of file text
                         self.trials[fileToAddName] = file
                         fileToAdd.setText(fileToAddName)
                         self.list_viewTrials.addItem(fileToAdd)
@@ -199,6 +254,7 @@ class Fix8(QMainWindow):
         self.trialPath = self.trials[item.text()]
 
         self.findFixations(self.trialPath)
+        self.correctedFixations = copy.deepcopy(self.fixations)
         # once trial is selected then initialize relevant buttons
         self.checkbox_showFixations.setCheckable(True)
         self.button_saveFile.setEnabled(True)
@@ -227,13 +283,21 @@ class Fix8(QMainWindow):
                 qmb.exec_()
 
     '''Draw fixations to canvas'''
-    def drawFixations(self):
-        x = self.fixations[:, 0]
-        y = self.fixations[:, 1]
-        duration = self.fixations[:, 2]
+    def drawFixations(self, corrected = 0):
+        if corrected != 0:
+            x = self.correctedFixations[:, 0]
+            y = self.correctedFixations[:, 1]
+            duration = self.correctedFixations[:, 2]
 
-        self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
-        self.canvas.draw()
+            self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+            self.canvas.draw()
+        else:
+            x = self.fixations[:, 0]
+            y = self.fixations[:, 1]
+            duration = self.fixations[:, 2]
+
+            self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+            self.canvas.draw()
 
     '''If show fixations is checked, show them, else erase them from canvas'''
     def showFixations(self, state):
@@ -258,18 +322,19 @@ class Fix8(QMainWindow):
     '''Correct the fixations, making them the new fixations, and replacing them on the canvas'''
     def correctFixations(self, algorithm):
         algorithm = algorithm.lower()
+        self.correctedFixations = copy.deepcopy(self.fixations)
         if algorithm == 'original':
             self.findFixations(self.trialPath)
             self.clearFixations()
             if self.checkbox_showFixations.isChecked():
-                self.drawFixations()
+                self.drawFixations(0)
         elif algorithm == 'attach':
             fixation_XY = np.array(list(self.trialData.values()))[:,:] # drift algos use an np array
             line_Y = self.findLinesY(self.aoi)
-            self.fixations = da.attach(fixation_XY, line_Y)
+            self.correctedFixations = da.attach(fixation_XY, line_Y)
             self.clearFixations()
             if self.checkbox_showFixations.isChecked():
-                self.drawFixations()
+                self.drawFixations(1)
 
 
     '''Credit: Dr. Naser Al Madi and Ricky Peng'''
@@ -284,12 +349,19 @@ class Fix8(QMainWindow):
         return results
 
     def saveCorrections(self):
-        list = self.fixations.tolist()
-        correctedFixations = {}
-        for i in range(len(self.fixations)):
-            correctedFixations[i + 1] = list[i]
-        with open(f"{self.trialPath.replace('.json', '_CORRECTED.json')}", 'w') as f:
-            json.dump(correctedFixations, f)
+        if self.correctedFixations is not None:
+            list = self.correctedFixations.tolist()
+            correctedFixations = {}
+            for i in range(len(self.correctedFixations)):
+                correctedFixations[i + 1] = list[i]
+            with open(f"{self.trialPath.replace('.json', '_CORRECTED.json')}", 'w') as f:
+                json.dump(correctedFixations, f)
+        else:
+            qmb = QMessageBox()
+            qmb.setWindowTitle("Save Error")
+            qmb.setText("No Corrections Made")
+            qmb.exec_()
+
 
 
     def doAction(self):
@@ -383,6 +455,7 @@ class Fix8(QMainWindow):
         widget.setLayout(self.wrapperLayout)
         self.setCentralWidget(widget)
         self.show()
+
 
     def blockButtons(self):
         self.checkbox_showAOI.setChecked(False)
