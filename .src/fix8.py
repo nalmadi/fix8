@@ -46,7 +46,6 @@ class QtCanvas(FigureCanvasQTAgg):
         self.future = []
         self.suggestion = None
         self.trial = None
-        self.current_fixation_number = None
 
     def initialize(self):
         img = mpimg.imread("./.images/welcome.png")
@@ -76,8 +75,9 @@ class Fix8(QMainWindow):
         # fields relating to AOIs
         self.patches, self.aoi, self.background_color = None, None, None
 
-        # the algorithm the user selects, intially just the original
+        # fields relating to the correction algorithm
         self.algorithm = 'original'
+        self.suggested_corrections, self.single_suggestion = None, None
 
         # fields relating to the drag and drop system
         self.selected_fixation = None
@@ -118,7 +118,7 @@ class Fix8(QMainWindow):
         if event.button != 1:
             return
         self.selected_fixation = None
-
+        
     def motion_notify_callback(self, event):
         if self.selected_fixation is None:
             return
@@ -324,32 +324,51 @@ class Fix8(QMainWindow):
             self.scatter = None
             self.canvas.draw()
 
-    '''when the user selects an algorithm from the drop down menu, make it the current algorithm to use for automated and semi automated use
+    '''when the user selects an algorithm from the drop down menu,
+        make it the current algorithm to use for automated and semi automated use
         parameters:
         algorithm - the selected correction algorithm'''
     def get_algorithm_picked(self,algorithm):
         self.algorithm = algorithm
-        print(self.algorithm)
-
-    '''if the user presses the correct all fixations button, correct the current position of all fixations'''
-    def correct_all_fixations(self):
-        print("corecting all..")
         self.algorithm = self.algorithm.lower()
-        if self.algorithm == 'original':
-            self.find_fixations(self.trial_path)
-            self.clear_fixations()
-            if self.checkbox_show_fixations.isChecked():
-                self.draw_fixations(1) # 1 = draw originals
 
-            # reset fixations
-            self.corrected_fixations = copy.deepcopy(self.original_fixations)
-        elif self.algorithm == 'attach':
-            fixation_XY = self.corrected_fixations
-            line_Y = self.find_lines_y(self.aoi)
-            self.corrected_fixations = da.attach(fixation_XY, line_Y)
+        # run correction
+        fixation_XY = self.corrected_fixations
+        line_Y = self.find_lines_y(self.aoi)
+
+        if self.algorithm == 'attach':
+            self.suggested_corrections = da.attach(fixation_XY, line_Y)
+        else:
+            self.suggested_corrections = None
+
+    '''if the user presses the correct all fixations button,
+    make the corrected fixations the suggested ones from the correction algorithm'''
+    def correct_all_fixations(self):
+        if self.suggested_corrections is not None:
+            self.corrected_fixations = copy.deepcopy(self.suggested_corrections)
             self.clear_fixations()
             if self.checkbox_show_fixations.isChecked():
                 self.draw_fixations()
+
+    '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
+    def next_fixation(self):
+        if self.suggested_corrections is not None:
+            if self.current_fixation == len(self.scatter.get_offsets()) - 1:
+                self.current_fixation = -1
+            self.current_fixation += 1
+
+            x = self.suggested_corrections[self.current_fixation][0]
+            y = self.suggested_corrections[self.current_fixation][1]
+            duration = self.suggested_corrections[self.current_fixation][2]
+
+            # remove and replace the last suggestion for the current suggestion
+            if self.single_suggestion != None:
+                self.single_suggestion.remove()
+                self.single_suggestion = None
+                self.canvas.draw()
+            self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
+            self.canvas.draw()
+
 
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
@@ -365,14 +384,6 @@ class Fix8(QMainWindow):
             qmb.setWindowTitle("Save Error")
             qmb.setText("No Corrections Made")
             qmb.exec_()
-
-    def next_fixation(self):
-        if self.current_fixation == len(self.scatter.get_offsets()) - 1:
-            self.current_fixation = -1
-        self.current_fixation += 1
-        fixations = np.asarray(self.scatter.get_offsets())
-        print(fixations[self.current_fixation])
-
 
     '''initalize the tool window'''
     def init_UI(self):
@@ -439,7 +450,7 @@ class Fix8(QMainWindow):
         # drop down menu to select correction algorithm
         self.dropdown_select_algorithm = QComboBox()
         self.dropdown_select_algorithm.setEditable(True)
-        self.dropdown_select_algorithm.addItem('Original')
+        self.dropdown_select_algorithm.addItem('Select Correction Algorithm')
         self.dropdown_select_algorithm.addItem('Attach')
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
