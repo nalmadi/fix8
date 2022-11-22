@@ -118,7 +118,7 @@ class Fix8(QMainWindow):
         if event.button != 1:
             return
         self.selected_fixation = None
-        
+
     def motion_notify_callback(self, event):
         if self.selected_fixation is None:
             return
@@ -338,6 +338,7 @@ class Fix8(QMainWindow):
 
         if self.algorithm == 'attach':
             self.suggested_corrections = da.attach(fixation_XY, line_Y)
+            self.update_single_suggestion()
         else:
             self.suggested_corrections = None
 
@@ -350,13 +351,8 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isChecked():
                 self.draw_fixations()
 
-    '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
-    def next_fixation(self):
-        if self.suggested_corrections is not None:
-            if self.current_fixation == len(self.scatter.get_offsets()) - 1:
-                self.current_fixation = -1
-            self.current_fixation += 1
-
+    def update_single_suggestion(self):
+        if self.current_fixation != -1:
             x = self.suggested_corrections[self.current_fixation][0]
             y = self.suggested_corrections[self.current_fixation][1]
             duration = self.suggested_corrections[self.current_fixation][2]
@@ -369,6 +365,14 @@ class Fix8(QMainWindow):
             self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
             self.canvas.draw()
 
+    '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
+    def next_fixation(self):
+        if self.suggested_corrections is not None:
+            if self.current_fixation == len(self.scatter.get_offsets()) - 1:
+                self.current_fixation = -1
+            self.current_fixation += 1
+
+            self.update_single_suggestion()
 
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
