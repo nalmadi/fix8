@@ -335,12 +335,18 @@ class Fix8(QMainWindow):
         line_Y = self.find_lines_y(self.aoi)
 
         if self.algorithm == 'attach':
-            self.suggested_corrections = da.attach(fixation_XY, line_Y)
-            # enable suggestion buttons
+            self.suggested_corrections = da.attach(copy.deepcopy(fixation_XY), line_Y)
             self.enable_relevant_buttons("suggestion")
+            self.update_suggestion()
+        elif self.algorithm == 'chain':
+            self.suggested_corrections = da.chain(copy.deepcopy(fixation_XY), line_Y)
+            self.enable_relevant_buttons("suggestion")
+            self.update_suggestion()
+        elif self.algorithm == 'cluster':
+            self.suggested_corrections = da.cluster(copy.deepcopy(fixation_XY), line_Y)
+            self.enable_relevant_buttons("suggestion")
+            self.update_suggestion()
         else:
-            # self.suggested_corrections = None
-            # disable suggestion buttons
             self.disable_relevant_buttons("suggestion")
             self.update_suggestion()
 
@@ -379,7 +385,7 @@ class Fix8(QMainWindow):
                 self.canvas.draw()
             self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
 
-            # if checkbox is checked draw them
+            # if checkbox is checked draw the suggestion
             if self.checkbox_show_suggestion.isChecked():
                 self.canvas.draw()
             else:
@@ -470,6 +476,8 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.setEditable(True)
         self.dropdown_select_algorithm.addItem('Select Correction Algorithm')
         self.dropdown_select_algorithm.addItem('Attach')
+        self.dropdown_select_algorithm.addItem('Chain')
+        self.dropdown_select_algorithm.addItem('Cluster')
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
         self.below_canvas.addWidget(self.dropdown_select_algorithm)
@@ -520,14 +528,14 @@ class Fix8(QMainWindow):
             self.toolbar.setEnabled(False)
             self.checkbox_show_aoi.setChecked(False)
             self.checkbox_show_aoi.setCheckable(False)
-            self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setCheckable(False)
+            self.checkbox_show_fixations.setChecked(False)
             self.dropdown_select_algorithm.setEditable(False)
             self.dropdown_select_algorithm.setEnabled(False)
             self.button_next_fixation.setEnabled(False)
             self.button_correct_all_fixations.setEnabled(False)
-            self.checkbox_show_suggestion.setChecked(False)
             self.checkbox_show_suggestion.setCheckable(False)
+            self.checkbox_show_suggestion.setChecked(False)
         elif feature == "folder_opened" or feature == "stimulus_chosen":
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setCheckable(False)
