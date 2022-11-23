@@ -359,6 +359,14 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isChecked():
                 self.draw_fixations()
 
+    def previous_fixation(self):
+        if self.suggested_corrections is not None:
+            if self.current_fixation == 0:
+                self.current_fixation = len(self.suggested_corrections)
+            self.current_fixation -= 1
+
+            self.update_suggestion()
+
     '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
     def next_fixation(self):
         if self.suggested_corrections is not None:
@@ -460,6 +468,10 @@ class Fix8(QMainWindow):
         self.button_next_fixation = QPushButton("Next Fixation")
         self.button_next_fixation.clicked.connect(self.next_fixation)
         self.below_trial_list.addWidget(self.button_next_fixation)
+
+        self.button_previous_fixation = QPushButton("Previous Fixation")
+        self.button_previous_fixation.clicked.connect(self.previous_fixation)
+        self.below_trial_list.addWidget(self.button_previous_fixation)
 
         self.left_side.addLayout(self.below_trial_list)
 
