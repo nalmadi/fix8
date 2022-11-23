@@ -359,6 +359,14 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isChecked():
                 self.draw_fixations()
 
+    def previous_fixation(self):
+        if self.suggested_corrections is not None:
+            if self.current_fixation == 0:
+                self.current_fixation = len(self.suggested_corrections)
+            self.current_fixation -= 1
+
+            self.update_suggestion()
+
     '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
     def next_fixation(self):
         if self.suggested_corrections is not None:
@@ -393,6 +401,17 @@ class Fix8(QMainWindow):
                     self.single_suggestion.remove()
                     self.single_suggestion = None
                     self.canvas.draw()
+
+    ''' when the confirm button is clicked, the suggested correction replaces the current fixation'''
+    def confirm_suggestion(self):
+        x = self.suggested_corrections[self.current_fixation][0]
+        y = self.suggested_corrections[self.current_fixation][1]
+        self.corrected_fixations[self.current_fixation][0] = x
+        self.corrected_fixations[self.current_fixation][1] = y
+        if self.checkbox_show_fixations.isCheckable():
+            if self.checkbox_show_fixations.isChecked():
+                self.clear_fixations()
+                self.draw_fixations()
 
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
@@ -450,6 +469,10 @@ class Fix8(QMainWindow):
         self.button_next_fixation.clicked.connect(self.next_fixation)
         self.below_trial_list.addWidget(self.button_next_fixation)
 
+        self.button_previous_fixation = QPushButton("Previous Fixation")
+        self.button_previous_fixation.clicked.connect(self.previous_fixation)
+        self.below_trial_list.addWidget(self.button_previous_fixation)
+
         self.left_side.addLayout(self.below_trial_list)
 
         # toolbar to interact with canvas
@@ -487,6 +510,11 @@ class Fix8(QMainWindow):
         self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction", self)
         self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
         self.below_canvas.addWidget(self.checkbox_show_suggestion)
+
+        # button to confirm suggestion
+        self.button_confirm_suggestion = QPushButton("Confirm Suggestion")
+        self.button_confirm_suggestion.clicked.connect(self.confirm_suggestion)
+        self.below_canvas.addWidget(self.button_confirm_suggestion)
 
         # correct all fixations button
         self.button_correct_all_fixations = QPushButton("Correct All Fixations")
