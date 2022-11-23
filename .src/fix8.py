@@ -312,10 +312,8 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isCheckable():
                 if state == Qt.Checked:
                     self.draw_fixations()
-                    self.enable_relevant_buttons("show_fixations_checked")
                 elif state == Qt.Unchecked:
                     self.clear_fixations()
-                    self.disable_relevant_buttons("show_fixations_unchecked")
 
     '''clear the fixations from the canvas'''
     def clear_fixations(self):
@@ -338,9 +336,13 @@ class Fix8(QMainWindow):
 
         if self.algorithm == 'attach':
             self.suggested_corrections = da.attach(fixation_XY, line_Y)
-            self.update_single_suggestion()
+            # enable suggestion buttons
+            self.enable_relevant_buttons("suggestion")
         else:
-            self.suggested_corrections = None
+            # self.suggested_corrections = None
+            # disable suggestion buttons
+            self.disable_relevant_buttons("suggestion")
+            self.update_suggestion()
 
     '''if the user presses the correct all fixations button,
     make the corrected fixations the suggested ones from the correction algorithm'''
@@ -351,7 +353,20 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isChecked():
                 self.draw_fixations()
 
-    def update_single_suggestion(self):
+    '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
+    def next_fixation(self):
+        if self.suggested_corrections is not None:
+            if self.current_fixation == len(self.suggested_corrections) - 1:
+                self.current_fixation = -1
+            self.current_fixation += 1
+
+            self.update_suggestion()
+
+    def show_suggestion(self,state):
+        if self.checkbox_show_suggestion.isCheckable():
+            self.update_suggestion()
+
+    def update_suggestion(self):
         if self.current_fixation != -1:
             x = self.suggested_corrections[self.current_fixation][0]
             y = self.suggested_corrections[self.current_fixation][1]
@@ -363,16 +378,15 @@ class Fix8(QMainWindow):
                 self.single_suggestion = None
                 self.canvas.draw()
             self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
-            self.canvas.draw()
 
-    '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
-    def next_fixation(self):
-        if self.suggested_corrections is not None:
-            if self.current_fixation == len(self.scatter.get_offsets()) - 1:
-                self.current_fixation = -1
-            self.current_fixation += 1
-
-            self.update_single_suggestion()
+            # if checkbox is checked draw them
+            if self.checkbox_show_suggestion.isChecked():
+                self.canvas.draw()
+            else:
+                if self.single_suggestion != None:
+                    self.single_suggestion.remove()
+                    self.single_suggestion = None
+                    self.canvas.draw()
 
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
@@ -461,6 +475,11 @@ class Fix8(QMainWindow):
         self.below_canvas.addWidget(self.dropdown_select_algorithm)
         self.dropdown_select_algorithm.currentTextChanged.connect(self.get_algorithm_picked)
 
+        # checkbox to show or hide suggested correction
+        self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction", self)
+        self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
+        self.below_canvas.addWidget(self.checkbox_show_suggestion)
+
         # correct all fixations button
         self.button_correct_all_fixations = QPushButton("Correct All Fixations")
         self.below_canvas.addWidget(self.button_correct_all_fixations)
@@ -482,6 +501,8 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.setEnabled(False)
         self.button_next_fixation.setEnabled(False)
         self.button_correct_all_fixations.setEnabled(False)
+        self.checkbox_show_suggestion.setChecked(False)
+        self.checkbox_show_suggestion.setCheckable(False)
 
         widget = QWidget()
         widget.setLayout(self.wrapper_layout)
@@ -505,24 +526,22 @@ class Fix8(QMainWindow):
             self.dropdown_select_algorithm.setEnabled(False)
             self.button_next_fixation.setEnabled(False)
             self.button_correct_all_fixations.setEnabled(False)
-        elif feature == "folder_opened":
+            self.checkbox_show_suggestion.setChecked(False)
+            self.checkbox_show_suggestion.setCheckable(False)
+        elif feature == "folder_opened" or feature == "stimulus_chosen":
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setCheckable(False)
             self.dropdown_select_algorithm.setEnabled(False)
             self.button_save_corrections.setEnabled(False)
             self.button_next_fixation.setEnabled(False)
             self.button_correct_all_fixations.setEnabled(False)
-        elif feature == "show_fixations_unchecked":
+            self.checkbox_show_suggestion.setChecked(False)
+            self.checkbox_show_suggestion.setCheckable(False)
+        elif feature == "suggestion":
             self.button_next_fixation.setEnabled(False)
-            self.button_correct_all_fixations.setEnabled(False)
-        elif feature == "stimulus_chosen":
-            self.button_save_corrections.setEnabled(False)
-            self.checkbox_show_fixations.setChecked(False)
-            self.checkbox_show_fixations.setCheckable(False)
-            self.dropdown_select_algorithm.setEditable(False)
-            self.dropdown_select_algorithm.setEnabled(False)
-            self.button_next_fixation.setEnabled(False)
-            self.button_correct_all_fixations.setEnabled(False)
+            self.checkbox_show_suggestion.setCheckable(False)
+            self.checkbox_show_suggestion.setChecked(False)
+            self.checkbox_show_suggestion.setEnabled(False)
 
     '''Enables any buttons that can be used with whatever element of the tool the user interacted with
         parameters:
@@ -539,9 +558,12 @@ class Fix8(QMainWindow):
             self.checkbox_show_fixations.setCheckable(True)
             self.dropdown_select_algorithm.setEnabled(True)
             self.button_save_corrections.setEnabled(True)
-        elif feature == "show_fixations_checked":
+        elif feature == "suggestion":
             self.button_next_fixation.setEnabled(True)
-            self.button_correct_all_fixations.setEnabled(True)
+            self.checkbox_show_suggestion.setEnabled(True)
+            self.checkbox_show_suggestion.setCheckable(True)
+
+
 
 if __name__ == '__main__':
     fix8 = QApplication([])
