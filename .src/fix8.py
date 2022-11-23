@@ -394,6 +394,17 @@ class Fix8(QMainWindow):
                     self.single_suggestion = None
                     self.canvas.draw()
 
+    ''' when the confirm button is clicked, the suggested correction replaces the current fixation'''
+    def confirm_suggestion(self):
+        x = self.suggested_corrections[self.current_fixation][0]
+        y = self.suggested_corrections[self.current_fixation][1]
+        self.corrected_fixations[self.current_fixation][0] = x
+        self.corrected_fixations[self.current_fixation][1] = y
+        if self.checkbox_show_fixations.isCheckable():
+            if self.checkbox_show_fixations.isChecked():
+                self.clear_fixations()
+                self.draw_fixations()
+
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
         if self.corrected_fixations is not None:
@@ -487,6 +498,11 @@ class Fix8(QMainWindow):
         self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction", self)
         self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
         self.below_canvas.addWidget(self.checkbox_show_suggestion)
+
+        # button to confirm suggestion
+        self.button_confirm_suggestion = QPushButton("Confirm Suggestion")
+        self.button_confirm_suggestion.clicked.connect(self.confirm_suggestion)
+        self.below_canvas.addWidget(self.button_confirm_suggestion)
 
         # correct all fixations button
         self.button_correct_all_fixations = QPushButton("Correct All Fixations")
