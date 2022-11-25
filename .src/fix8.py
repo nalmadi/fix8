@@ -25,7 +25,6 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import threading
 import copy
 
-
 class QtCanvas(FigureCanvasQTAgg):
 
     '''Credit: Dr. Naser Al Madi and Ricky Peng'''
@@ -146,10 +145,10 @@ class Fix8(QMainWindow):
 
             # make sure the file is a png type
             if fileType.lower() != 'png':
-                image = mpimg.imread('./.images/wrongFile.png')
-                self.canvas.ax.imshow(image)
-                self.canvas.draw()
-                self.disable_relevant_buttons("not_a_PNG")
+                qmb = QMessageBox()
+                qmb.setWindowTitle("Stimulus File Error")
+                qmb.setText("Not a PNG; please choose a PNG file")
+                qmb.exec_()
             else:
                 # draw the image to the canvas
                 self.canvas.clear()
@@ -160,7 +159,7 @@ class Fix8(QMainWindow):
 
                 self.find_aoi()
 
-                self.enable_relevant_buttons("stimulus_chosen")
+                self.relevant_buttons("opened_stimulus")
 
 
     '''open trial folder, display it to trial list window with list of JSON trials'''
@@ -176,7 +175,7 @@ class Fix8(QMainWindow):
             self.clear_fixations()
 
             # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
-            self.disable_relevant_buttons("folder_opened")
+            self.relevant_buttons("opened_folder")
 
             files = listdir(self.folder_path)
 
@@ -220,7 +219,6 @@ class Fix8(QMainWindow):
         if self.checkbox_show_fixations.isChecked() == True:
             self.clear_fixations()
             self.draw_fixations()
-        self.dropdown_select_algorithm.setCurrentIndex(0)
         # self.findSaccades()
 
     '''find the areas of interest (aoi) for the selected stimulus'''
@@ -248,9 +246,10 @@ class Fix8(QMainWindow):
 
     '''clear the aois from the canvas'''
     def clear_aoi(self):
-        for patch in self.patches:
-            patch.remove()
-        self.canvas.draw()
+        if self.patches is not None:
+            for patch in self.patches:
+                patch.remove()
+            self.canvas.draw()
 
     '''when the show aoi button is pressed, show or hide aois based on checkbox'''
     def show_aoi(self, state):
@@ -271,7 +270,7 @@ class Fix8(QMainWindow):
                 for x in self.trial_data:
                     self.original_fixations.append([self.trial_data[x][0], self.trial_data[x][1], self.trial_data[x][2]])
                 self.original_fixations = np.array(self.original_fixations)
-                self.enable_relevant_buttons("trial_clicked")
+                self.relevant_buttons("trial_clicked")
             except json.decoder.JSONDecodeError:
                 qmb = QMessageBox()
                 qmb.setWindowTitle("Trial File Error")
@@ -336,18 +335,18 @@ class Fix8(QMainWindow):
 
         if self.algorithm == 'attach':
             self.suggested_corrections = da.attach(copy.deepcopy(fixation_XY), line_Y)
-            self.enable_relevant_buttons("suggestion")
+            self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'chain':
             self.suggested_corrections = da.chain(copy.deepcopy(fixation_XY), line_Y)
-            self.enable_relevant_buttons("suggestion")
+            self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'cluster':
             self.suggested_corrections = da.cluster(copy.deepcopy(fixation_XY), line_Y)
-            self.enable_relevant_buttons("suggestion")
+            self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         else:
-            self.disable_relevant_buttons("suggestion")
+            self.relevant_buttons("no_selected_algorithm")
             self.update_suggestion()
 
     '''if the user presses the correct all fixations button,
@@ -393,7 +392,7 @@ class Fix8(QMainWindow):
                 self.canvas.draw()
             self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
 
-            # if checkbox is checked draw the suggestion
+            # if checkbox is checked draw the suggestion, else remove it
             if self.checkbox_show_suggestion.isChecked():
                 self.canvas.draw()
             else:
@@ -434,67 +433,112 @@ class Fix8(QMainWindow):
         # wrapper layout
         self.wrapper_layout = QHBoxLayout()
 
-        # left side is one half, right side is the other half of the tool
+        # --- left side
         self.left_side = QVBoxLayout()
+
+        self.button_open_stimulus = QPushButton("Open Stimulus", self)
+        self.button_open_stimulus.clicked.connect(self.open_stimulus)
+
+        self.button_open_folder = QPushButton("Open Folder", self)
+        self.button_open_folder.setEnabled(False)
+        self.button_open_folder.clicked.connect(self.open_trial_folder)
+
+        self.button_save_corrections = QPushButton("Save Corrrections", self)
+        self.button_save_corrections.setEnabled(False)
+        self.button_save_corrections.clicked.connect(self.save_corrections)
+
+        self.trial_list = QListWidget()
+        self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
+
+        widget_list = [self.button_open_stimulus, self.button_open_folder, self.button_save_corrections,
+                        self.trial_list]
+        for w in widget_list:
+            self.left_side.addWidget(w)
+        # ---
+
+        # --- canvas
         self.right_side = QVBoxLayout()
 
         self.canvas = QtCanvas(self, width=12, height=8, dpi=200)
         self.right_side.addWidget(self.canvas)
 
-        # button to open stimulus (image)
-        self.button_open_stimulus = QPushButton("Open Stimulus", self)
-        self.left_side.addWidget(self.button_open_stimulus)
-        self.button_open_stimulus.clicked.connect(self.open_stimulus)
-
-        # button to open folder which contains trial data JSON files
-        self.button_open_folder = QPushButton("Open Trial Folder", self)
-        self.left_side.addWidget(self.button_open_folder)
-        self.button_open_folder.clicked.connect(self.open_trial_folder)
-
-        # button to save corrected fixations to a file
-        self.button_save_corrections = QPushButton("Save Corrections", self)
-        self.left_side.addWidget(self.button_save_corrections)
-        self.button_save_corrections.clicked.connect(self.save_corrections)
-
-        # window list to access trial data
-        self.trial_list = QListWidget()
-        self.left_side.addWidget(self.trial_list)
-        self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
-
-        # layout below the trial list window
-        self.below_trial_list = QHBoxLayout()
-
-        # button to move to the next fixation
-        self.button_next_fixation = QPushButton("Next Fixation")
-        self.button_next_fixation.clicked.connect(self.next_fixation)
-        self.below_trial_list.addWidget(self.button_next_fixation)
-
-        self.button_previous_fixation = QPushButton("Previous Fixation")
-        self.button_previous_fixation.clicked.connect(self.previous_fixation)
-        self.below_trial_list.addWidget(self.button_previous_fixation)
-
-        self.left_side.addLayout(self.below_trial_list)
-
-        # toolbar to interact with canvas
         self.toolbar = NavigationToolBar(self.canvas, self)
         self.toolbar.setStyleSheet("QToolBar { border: 0px }")
+        self.toolbar.setEnabled(False)
         self.left_side.addWidget(self.toolbar)
 
-        # section on right side, below canvas
         self.below_canvas = QHBoxLayout()
-        self.right_side.addLayout(self.below_canvas)
 
-        # checkbox to show and hide AOIs
-        self.checkbox_show_aoi = QCheckBox("Show Areas of Interest (AOIs)", self)
-        self.checkbox_show_aoi.stateChanged.connect(self.show_aoi)
-        self.below_canvas.addWidget(self.checkbox_show_aoi)
+        # --- section for semi automated tools
+        self.semi_automation = QVBoxLayout()
 
-        # checkbox to show and hide fixations
-        self.checkbox_show_fixations = QCheckBox("Show Fixations", self)
-        self.checkbox_show_fixations.stateChanged.connect(self.show_fixations)
-        self.below_canvas.addWidget(self.checkbox_show_fixations)
+        self.label_semi_automation = QLabel("Semi-Automation")
+        self.label_semi_automation.setAlignment(Qt.AlignCenter)
+        self.semi_automation.addWidget(self.label_semi_automation)
 
-        # drop down menu to select correction algorithm
+        self.semi_automation_second_row = QHBoxLayout()
+
+        self.button_next_fixation = QPushButton("Next Fixation", self)
+        self.button_next_fixation.setEnabled(False)
+        self.button_next_fixation.clicked.connect(self.next_fixation)
+
+        self.button_previous_fixation = QPushButton("Previous Fixation", self)
+        self.button_previous_fixation.setEnabled(False)
+        self.button_previous_fixation.clicked.connect(self.previous_fixation)
+
+        self.semi_automation_second_row.addWidget(self.button_previous_fixation)
+        self.semi_automation_second_row.addWidget(self.button_next_fixation)
+
+        self.semi_automation.addLayout(self.semi_automation_second_row)
+
+        self.button_confirm_suggestion = QPushButton("Confirm Suggested Correction", self)
+        self.button_confirm_suggestion.setEnabled(False)
+        self.button_confirm_suggestion.clicked.connect(self.confirm_suggestion)
+        self.semi_automation.addWidget(self.button_confirm_suggestion)
+
+        self.frame = QFrame()
+        self.frame.setStyleSheet(" QFrame {border: 2px solid black; margin: 0px; padding: 0px;}")
+        self.label_semi_automation.setStyleSheet("QLabel { border: 0px }")
+        self.frame.setLayout(self.semi_automation)
+        self.below_canvas.addWidget(self.frame)
+        # ---
+
+        # --- section for automated tools
+        self.automation = QVBoxLayout()
+
+        self.label_automation = QLabel("Automation")
+        self.label_automation.setAlignment(Qt.AlignCenter)
+        self.automation.addWidget(self.label_automation)
+
+        self.button_correct_all_fixations = QPushButton("Correct All Fixations", self)
+        self.button_correct_all_fixations.setEnabled(False)
+        self.button_correct_all_fixations.clicked.connect(self.correct_all_fixations)
+        self.automation.addWidget(self.button_correct_all_fixations)
+
+        # buttons to fill in space
+        self.button2 = QPushButton()
+        self.automation.addWidget(self.button2)
+        retain = self.button2.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.button2.setSizePolicy(retain)
+        self.button2.hide()
+
+
+        self.frame2 = QFrame()
+        self.frame2.setStyleSheet(" QFrame {border: 2px solid black; margin: 0px; padding: 0px;}")
+        self.label_automation.setStyleSheet("QLabel { border: 0px }")
+        self.frame2.setLayout(self.automation)
+        self.below_canvas.addWidget(self.frame2)
+        # ---
+
+
+        # --- section for filters
+        self.filters = QVBoxLayout()
+
+        self.label_filters = QLabel("Filters")
+        self.label_filters.setAlignment(Qt.AlignCenter)
+        self.filters.addWidget(self.label_filters)
+
         self.dropdown_select_algorithm = QComboBox()
         self.dropdown_select_algorithm.setEditable(True)
         self.dropdown_select_algorithm.addItem('Select Correction Algorithm')
@@ -503,27 +547,37 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.addItem('Cluster')
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
-        self.below_canvas.addWidget(self.dropdown_select_algorithm)
+        self.dropdown_select_algorithm.setEnabled(False)
         self.dropdown_select_algorithm.currentTextChanged.connect(self.get_algorithm_picked)
+        self.filters.addWidget(self.dropdown_select_algorithm)
 
-        # checkbox to show or hide suggested correction
-        self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction", self)
+        self.checkbox_show_aoi = QCheckBox("Show AOIs")
+        self.checkbox_show_aoi.setEnabled(False)
+        self.checkbox_show_aoi.stateChanged.connect(self.show_aoi)
+        self.filters.addWidget(self.checkbox_show_aoi)
+
+        self.checkbox_show_fixations = QCheckBox("Show Fixations")
+        self.checkbox_show_fixations.setEnabled(False)
+        self.checkbox_show_fixations.stateChanged.connect(self.show_fixations)
+        self.filters.addWidget(self.checkbox_show_fixations)
+
+        self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction")
+        self.checkbox_show_suggestion.setEnabled(False)
         self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
-        self.below_canvas.addWidget(self.checkbox_show_suggestion)
+        self.filters.addWidget(self.checkbox_show_suggestion)
+        self.frame3 = QFrame()
+        self.frame3.setStyleSheet(" QFrame {border: 2px solid black; margin: 0px; padding: 0px;}")
+        self.label_filters.setStyleSheet("QLabel { border: 0px }")
+        self.frame3.setLayout(self.filters)
+        self.below_canvas.addWidget(self.frame3)
 
-        # button to confirm suggestion
-        self.button_confirm_suggestion = QPushButton("Confirm Suggestion")
-        self.button_confirm_suggestion.clicked.connect(self.confirm_suggestion)
-        self.below_canvas.addWidget(self.button_confirm_suggestion)
-
-        # correct all fixations button
-        self.button_correct_all_fixations = QPushButton("Correct All Fixations")
-        self.below_canvas.addWidget(self.button_correct_all_fixations)
-        self.button_correct_all_fixations.clicked.connect(self.correct_all_fixations)
+        self.right_side.addLayout(self.below_canvas)
 
         # add both sides to overall wrapper layout
         self.wrapper_layout.addLayout(self.left_side)
         self.wrapper_layout.addLayout(self.right_side)
+        self.wrapper_layout.setStretch(0,1)
+        self.wrapper_layout.setStretch(1,3)
 
         # initial button states
         self.button_open_folder.setEnabled(False)
@@ -545,61 +599,68 @@ class Fix8(QMainWindow):
         self.setCentralWidget(widget)
         self.show()
 
-    '''Disables any buttons that shouldn't be used with whatever element of the tool the user interacted with
-        parameters:
-        feature - the element the user interacted with
-    '''
-    def disable_relevant_buttons(self, feature):
-        if feature == "not_a_PNG":
-            self.button_open_folder.setEnabled(False)
-            self.button_save_corrections.setEnabled(False)
-            self.toolbar.setEnabled(False)
-            self.checkbox_show_aoi.setChecked(False)
-            self.checkbox_show_aoi.setCheckable(False)
-            self.checkbox_show_fixations.setCheckable(False)
-            self.checkbox_show_fixations.setChecked(False)
-            self.dropdown_select_algorithm.setEditable(False)
-            self.dropdown_select_algorithm.setEnabled(False)
-            self.button_next_fixation.setEnabled(False)
-            self.button_correct_all_fixations.setEnabled(False)
-            self.checkbox_show_suggestion.setCheckable(False)
-            self.checkbox_show_suggestion.setChecked(False)
-        elif feature == "folder_opened" or feature == "stimulus_chosen":
-            self.checkbox_show_fixations.setChecked(False)
-            self.checkbox_show_fixations.setCheckable(False)
-            self.dropdown_select_algorithm.setEnabled(False)
-            self.button_save_corrections.setEnabled(False)
-            self.button_next_fixation.setEnabled(False)
-            self.button_correct_all_fixations.setEnabled(False)
-            self.checkbox_show_suggestion.setChecked(False)
-            self.checkbox_show_suggestion.setCheckable(False)
-        elif feature == "suggestion":
-            self.button_next_fixation.setEnabled(False)
-            self.checkbox_show_suggestion.setCheckable(False)
-            self.checkbox_show_suggestion.setChecked(False)
-            self.checkbox_show_suggestion.setEnabled(False)
-
-    '''Enables any buttons that can be used with whatever element of the tool the user interacted with
-        parameters:
-        feature - the element the user interacted with
-    '''
-    def enable_relevant_buttons(self, feature):
-        if feature == "stimulus_chosen":
+    def relevant_buttons(self, feature):
+        if feature == "opened_stimulus":
+            self.button_open_folder.setEnabled(True)
             self.checkbox_show_aoi.setCheckable(True)
             self.checkbox_show_aoi.setChecked(False)
+            self.checkbox_show_aoi.setEnabled(True)
             self.toolbar.setEnabled(True)
-            self.button_open_folder.setEnabled(True)
-            self.disable_relevant_buttons(feature)
+        elif feature == "opened_folder":
+            self.button_save_corrections.setEnabled(False)
+            self.button_previous_fixation.setEnabled(False)
+            self.button_next_fixation.setEnabled(False)
+            self.button_correct_all_fixations.setEnabled(False)
+            self.button_confirm_suggestion.setEnabled(False)
+
+            self.checkbox_show_fixations.setCheckable(False)
+            self.checkbox_show_fixations.setChecked(False)
+            self.checkbox_show_fixations.setEnabled(False)
+
+            # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
+            # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions
+            self.checkbox_show_suggestion.setChecked(False)
+            self.checkbox_show_suggestion.setCheckable(False)
+            self.checkbox_show_suggestion.setEnabled(False)
+
+            self.dropdown_select_algorithm.setEnabled(False)
         elif feature == "trial_clicked":
-            self.checkbox_show_fixations.setCheckable(True)
-            self.dropdown_select_algorithm.setEnabled(True)
             self.button_save_corrections.setEnabled(True)
-        elif feature == "suggestion":
+
+            self.button_previous_fixation.setEnabled(False)
+            self.button_next_fixation.setEnabled(False)
+            self.button_correct_all_fixations.setEnabled(False)
+            self.button_confirm_suggestion.setEnabled(False)
+
+            self.dropdown_select_algorithm.setEnabled(True)
+            self.dropdown_select_algorithm.setCurrentIndex(0)
+
+            self.checkbox_show_aoi.setCheckable(True)
+            self.checkbox_show_aoi.setEnabled(True)
+
+            self.checkbox_show_fixations.setCheckable(True)
+            self.checkbox_show_fixations.setEnabled(True)
+
+            # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
+            # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions
+            self.checkbox_show_suggestion.setChecked(False)
+            self.checkbox_show_suggestion.setCheckable(False)
+            self.checkbox_show_suggestion.setEnabled(False)
+        elif feature == "no_selected_algorithm":
+            self.button_previous_fixation.setEnabled(False)
+            self.button_next_fixation.setEnabled(False)
+            self.button_correct_all_fixations.setEnabled(False)
+            self.button_confirm_suggestion.setEnabled(False)
+            self.checkbox_show_suggestion.setCheckable(False)
+            self.checkbox_show_suggestion.setChecked(False) # the no algorithm selection updates the suggestions which clears them in the function itself
+            self.checkbox_show_suggestion.setEnabled(False)
+        elif feature == "algorithm_selected":
+            self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
-            self.checkbox_show_suggestion.setEnabled(True)
+            self.button_correct_all_fixations.setEnabled(True)
+            self.button_confirm_suggestion.setEnabled(True)
             self.checkbox_show_suggestion.setCheckable(True)
-
-
+            self.checkbox_show_suggestion.setEnabled(True)
 
 if __name__ == '__main__':
     fix8 = QApplication([])
