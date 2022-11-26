@@ -114,6 +114,12 @@ class Fix8(QMainWindow):
         if self.selected_fixation is not None:
             self.corrected_fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
             self.corrected_fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][1]
+            if self.algorithm != 'original':
+                fixation_XY = np.array([self.corrected_fixations[self.selected_fixation]])
+                line_Y = self.find_lines_y(self.aoi)
+                updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[0]
+                self.suggested_corrections[self.selected_fixation] = updated_correction
+                self.update_suggestion()
         if event.button != 1:
             return
         self.selected_fixation = None
@@ -347,6 +353,7 @@ class Fix8(QMainWindow):
             self.update_suggestion()
         else:
             self.relevant_buttons("no_selected_algorithm")
+            self.algorithm = None
             self.update_suggestion()
 
     '''if the user presses the correct all fixations button,
@@ -496,6 +503,13 @@ class Fix8(QMainWindow):
         self.button_confirm_suggestion.clicked.connect(self.confirm_suggestion)
         self.semi_automation.addWidget(self.button_confirm_suggestion)
 
+        self.button1 = QPushButton()
+        self.semi_automation.addWidget(self.button1)
+        retain = self.button1.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.button1.setSizePolicy(retain)
+        self.button1.hide()
+
         self.frame = QFrame()
         self.frame.setStyleSheet(" QFrame {border: 2px solid black; margin: 0px; padding: 0px;}")
         self.label_semi_automation.setStyleSheet("QLabel { border: 0px }")
@@ -522,6 +536,14 @@ class Fix8(QMainWindow):
         retain.setRetainSizeWhenHidden(True)
         self.button2.setSizePolicy(retain)
         self.button2.hide()
+
+        self.button3 = QPushButton()
+        self.automation.addWidget(self.button3)
+        retain = self.button3.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.button3.setSizePolicy(retain)
+        self.button3.hide()
+
 
 
         self.frame2 = QFrame()
@@ -597,7 +619,7 @@ class Fix8(QMainWindow):
         widget = QWidget()
         widget.setLayout(self.wrapper_layout)
         self.setCentralWidget(widget)
-        self.show()
+        self.showMaximized()
 
     def relevant_buttons(self, feature):
         if feature == "opened_stimulus":
@@ -606,6 +628,9 @@ class Fix8(QMainWindow):
             self.checkbox_show_aoi.setChecked(False)
             self.checkbox_show_aoi.setEnabled(True)
             self.toolbar.setEnabled(True)
+            self.checkbox_show_fixations.setCheckable(False)
+            self.checkbox_show_fixations.setChecked(False)
+            self.checkbox_show_fixations.setCheckable(True)
         elif feature == "opened_folder":
             self.button_save_corrections.setEnabled(False)
             self.button_previous_fixation.setEnabled(False)
