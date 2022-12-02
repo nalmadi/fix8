@@ -31,6 +31,8 @@ class QtCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=12, height=8, dpi=100):
         self.figure, self.ax = plt.subplots(
             ncols=1, nrows=1, figsize=(width, height))
+        self.sax = plt.subplot(
+            1,1,1)
         self.figure.tight_layout()
 
         FigureCanvasQTAgg.__init__(self, self.figure)
@@ -68,7 +70,7 @@ class Fix8(QMainWindow):
         self.folder_path, self.trial_path, self.trial_data = None, None, None
 
         # fields relating to fixations
-        self.original_fixations, self.corrected_fixations, self.scatter = None, None, None
+        self.original_fixations, self.corrected_fixations, self.scatter, self.saccades = None, None, None, None
         self.current_fixation = -1
 
         # fields relating to AOIs
@@ -120,6 +122,10 @@ class Fix8(QMainWindow):
                 updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[0]
                 self.suggested_corrections[self.selected_fixation] = updated_correction
                 self.update_suggestion()
+                if self.checkbox_show_saccades.isChecked():
+                    self.show_saccades(Qt.Checked)
+                else:
+                    self.show_saccades(Qt.Unchecked)
         if event.button != 1:
             return
         self.selected_fixation = None
@@ -179,6 +185,7 @@ class Fix8(QMainWindow):
 
             self.trial_list.clear()
             self.clear_fixations()
+            self.clear_saccades()
 
             # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
             self.relevant_buttons("opened_folder")
@@ -225,7 +232,10 @@ class Fix8(QMainWindow):
         if self.checkbox_show_fixations.isChecked() == True:
             self.clear_fixations()
             self.draw_fixations()
-        # self.findSaccades()
+
+        if self.checkbox_show_saccades.isChecked() == True:
+            self.clear_saccades()
+            self.draw_saccades()
 
     '''find the areas of interest (aoi) for the selected stimulus'''
     def find_aoi(self):
@@ -320,6 +330,26 @@ class Fix8(QMainWindow):
                 elif state == Qt.Unchecked:
                     self.clear_fixations()
 
+    def show_saccades(self, state):
+        if self.folder_path != '':
+            if self.checkbox_show_saccades.isCheckable():
+                if state == Qt.Checked:
+                    self.draw_saccades()
+                elif state == Qt.Unchecked:
+                    self.clear_saccades()
+
+    def draw_saccades(self):
+        x = self.corrected_fixations[:, 0]
+        y = self.corrected_fixations[:, 1]
+        self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='green', linewidth=2)
+        self.canvas.draw()
+
+    def clear_saccades(self):
+        if self.saccades != None:
+            self.canvas.ax.lines.clear()
+            self.saccades = None
+            self.canvas.draw()
+
     '''clear the fixations from the canvas'''
     def clear_fixations(self):
         if self.scatter != None:
@@ -362,8 +392,11 @@ class Fix8(QMainWindow):
         if self.suggested_corrections is not None:
             self.corrected_fixations = copy.deepcopy(self.suggested_corrections)
             self.clear_fixations()
+            self.clear_saccades()
             if self.checkbox_show_fixations.isChecked():
                 self.draw_fixations()
+            if self.checkbox_show_saccades.isChecked():
+                self.draw_saccades()
 
     def previous_fixation(self):
         if self.suggested_corrections is not None:
@@ -418,6 +451,10 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isChecked():
                 self.clear_fixations()
                 self.draw_fixations()
+        if self.checkbox_show_saccades.isCheckable():
+            if self.checkbox_show_saccades.isChecked():
+                self.clear_saccades()
+                self.draw_saccades()
 
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
@@ -583,6 +620,11 @@ class Fix8(QMainWindow):
         self.checkbox_show_fixations.stateChanged.connect(self.show_fixations)
         self.filters.addWidget(self.checkbox_show_fixations)
 
+        self.checkbox_show_saccades = QCheckBox("Show Saccades")
+        self.checkbox_show_saccades.setEnabled(False)
+        self.checkbox_show_saccades.stateChanged.connect(self.show_saccades)
+        self.filters.addWidget(self.checkbox_show_saccades)
+
         self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction")
         self.checkbox_show_suggestion.setEnabled(False)
         self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
@@ -631,6 +673,9 @@ class Fix8(QMainWindow):
             self.checkbox_show_fixations.setCheckable(False)
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setCheckable(True)
+            self.checkbox_show_saccades.setCheckable(False)
+            self.checkbox_show_saccades.setChecked(False)
+            self.checkbox_show_saccades.setCheckable(True)
         elif feature == "opened_folder":
             self.button_save_corrections.setEnabled(False)
             self.button_previous_fixation.setEnabled(False)
@@ -643,10 +688,14 @@ class Fix8(QMainWindow):
             self.checkbox_show_fixations.setEnabled(False)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
-            # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions
+            # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions, so clearing suggestions isn't called anywhere in the code
             self.checkbox_show_suggestion.setChecked(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setEnabled(False)
+
+            self.checkbox_show_saccades.setCheckable(False)
+            self.checkbox_show_saccades.setChecked(False)
+            self.checkbox_show_saccades.setEnabled(False)
 
             self.dropdown_select_algorithm.setEnabled(False)
         elif feature == "trial_clicked":
@@ -665,6 +714,9 @@ class Fix8(QMainWindow):
 
             self.checkbox_show_fixations.setCheckable(True)
             self.checkbox_show_fixations.setEnabled(True)
+
+            self.checkbox_show_saccades.setCheckable(True)
+            self.checkbox_show_saccades.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
             # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions
