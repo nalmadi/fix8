@@ -122,10 +122,11 @@ class Fix8(QMainWindow):
                 updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[0]
                 self.suggested_corrections[self.selected_fixation] = updated_correction
                 self.update_suggestion()
-                if self.checkbox_show_saccades.isChecked():
-                    self.show_saccades(Qt.Checked)
-                else:
-                    self.show_saccades(Qt.Unchecked)
+            if self.checkbox_show_saccades.isChecked():
+                self.clear_saccades()
+                self.show_saccades(Qt.Checked)
+            else:
+                self.show_saccades(Qt.Unchecked)
         if event.button != 1:
             return
         self.selected_fixation = None
