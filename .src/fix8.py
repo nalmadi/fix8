@@ -24,6 +24,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import threading
 import copy
+from matplotlib.animation import FuncAnimation
 
 class QtCanvas(FigureCanvasQTAgg):
 
@@ -31,8 +32,6 @@ class QtCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=12, height=8, dpi=100):
         self.figure, self.ax = plt.subplots(
             ncols=1, nrows=1, figsize=(width, height))
-        self.sax = plt.subplot(
-            1,1,1)
         self.figure.tight_layout()
 
         FigureCanvasQTAgg.__init__(self, self.figure)
@@ -110,6 +109,8 @@ class Fix8(QMainWindow):
         if event.button != 1:
             return
         self.selected_fixation = self.get_selected_fixation(event)
+        self.background = self.canvas.copy_from_bbox(self.canvas.ax.bbox)
+        self.canvas.ax.draw_artist(self.scatter)
 
     '''when released the fixation, update the corrected fixations'''
     def button_release_callback(self, event):
@@ -130,6 +131,8 @@ class Fix8(QMainWindow):
         if event.button != 1:
             return
         self.selected_fixation = None
+        self.canvas.draw_idle()
+
 
     def motion_notify_callback(self, event):
         if self.selected_fixation is None:
@@ -138,14 +141,27 @@ class Fix8(QMainWindow):
             return
         if event.button != 1:
             return
+
         x, y = event.xdata, event.ydata
         self.xy = np.asarray(self.scatter.get_offsets())
         self.xy[self.selected_fixation] = np.array([x, y])
         self.scatter.set_offsets(self.xy)
-        self.canvas.draw_idle()
+
+
+        #
+        self.canvas.restore_region(self.background)
+        # self.canvas.draw()
+        self.canvas.ax.draw_artist(self.scatter)
+        self.canvas.blit(self.canvas.bbox)
+        self.canvas.flush_events()
+
+        ani = FuncAnimation(fig=self.canvas, func=motion_notify_event, blit=True)
+
 
     '''opens the stimulus, displays it to the canvas, and grabs the aois of the image'''
     def open_stimulus(self):
+        # if self.scatter is None:
+            # self.checkbox_show_fixations.setEnabled(False)
         # open the file, grab the file name and file type
         qfd = QFileDialog()
         self.file = qfd.getOpenFileName(self, 'Open File', 'c:\\')
@@ -173,6 +189,7 @@ class Fix8(QMainWindow):
                 self.find_aoi()
 
                 self.relevant_buttons("opened_stimulus")
+
 
 
     '''open trial folder, display it to trial list window with list of JSON trials'''
@@ -342,7 +359,7 @@ class Fix8(QMainWindow):
     def draw_saccades(self):
         x = self.corrected_fixations[:, 0]
         y = self.corrected_fixations[:, 1]
-        self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='green', linewidth=2)
+        self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
         self.canvas.draw()
 
     def clear_saccades(self):
@@ -442,12 +459,17 @@ class Fix8(QMainWindow):
                     self.single_suggestion = None
                     self.canvas.draw()
 
+    def back_to_beginning(self):
+        self.current_fixation = 1
+        self.update_suggestion()
+
     ''' when the confirm button is clicked, the suggested correction replaces the current fixation'''
     def confirm_suggestion(self):
         x = self.suggested_corrections[self.current_fixation][0]
         y = self.suggested_corrections[self.current_fixation][1]
         self.corrected_fixations[self.current_fixation][0] = x
         self.corrected_fixations[self.current_fixation][1] = y
+        self.next_fixation()
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
                 self.clear_fixations()
@@ -510,7 +532,7 @@ class Fix8(QMainWindow):
         self.toolbar = NavigationToolBar(self.canvas, self)
         self.toolbar.setStyleSheet("QToolBar { border: 0px }")
         self.toolbar.setEnabled(False)
-        self.left_side.addWidget(self.toolbar)
+        self.right_side.addWidget(self.toolbar)
 
         self.below_canvas = QHBoxLayout()
 
@@ -565,6 +587,19 @@ class Fix8(QMainWindow):
         self.button_correct_all_fixations = QPushButton("Correct All Fixations", self)
         self.button_correct_all_fixations.setEnabled(False)
         self.button_correct_all_fixations.clicked.connect(self.correct_all_fixations)
+
+        self.dropdown_select_algorithm = QComboBox()
+        self.dropdown_select_algorithm.setEditable(True)
+        self.dropdown_select_algorithm.addItem('Select Correction Algorithm')
+        self.dropdown_select_algorithm.addItem('Attach')
+        self.dropdown_select_algorithm.addItem('Chain')
+        self.dropdown_select_algorithm.addItem('Cluster')
+        self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
+        self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
+        self.dropdown_select_algorithm.setEnabled(False)
+        self.dropdown_select_algorithm.currentTextChanged.connect(self.get_algorithm_picked)
+
+        self.automation.addWidget(self.dropdown_select_algorithm)
         self.automation.addWidget(self.button_correct_all_fixations)
 
         # buttons to fill in space
@@ -598,18 +633,6 @@ class Fix8(QMainWindow):
         self.label_filters = QLabel("Filters")
         self.label_filters.setAlignment(Qt.AlignCenter)
         self.filters.addWidget(self.label_filters)
-
-        self.dropdown_select_algorithm = QComboBox()
-        self.dropdown_select_algorithm.setEditable(True)
-        self.dropdown_select_algorithm.addItem('Select Correction Algorithm')
-        self.dropdown_select_algorithm.addItem('Attach')
-        self.dropdown_select_algorithm.addItem('Chain')
-        self.dropdown_select_algorithm.addItem('Cluster')
-        self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
-        self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
-        self.dropdown_select_algorithm.setEnabled(False)
-        self.dropdown_select_algorithm.currentTextChanged.connect(self.get_algorithm_picked)
-        self.filters.addWidget(self.dropdown_select_algorithm)
 
         self.checkbox_show_aoi = QCheckBox("Show AOIs")
         self.checkbox_show_aoi.setEnabled(False)
