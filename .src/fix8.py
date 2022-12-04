@@ -79,6 +79,9 @@ class Fix8(QMainWindow):
         self.algorithm = 'original'
         self.suggested_corrections, self.single_suggestion = None, None
 
+        # corrections to show based on where the progress bar is
+        self.correction_to_show = None
+
         # fields relating to the drag and drop system
         self.selected_fixation = None
         self.epsilon = 11
@@ -246,6 +249,14 @@ class Fix8(QMainWindow):
 
         self.find_fixations(self.trial_path)
         self.corrected_fixations = copy.deepcopy(self.original_fixations)
+
+        # set the progress bar to the amount of fixations found
+        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        if self.current_fixation is not None:
+            if self.current_fixation == -1:
+                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+            else:
+                self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
 
         if self.checkbox_show_fixations.isChecked() == True:
             self.clear_fixations()
@@ -437,7 +448,13 @@ class Fix8(QMainWindow):
         if self.checkbox_show_suggestion.isCheckable():
             self.update_suggestion()
 
-    def update_suggestion(self):
+    # call update suggestion with the progress bar value
+    def progress_bar_changed(self):
+        self.current_fixation = self.progress_bar.value()
+        if self.current_fixation is not None:
+            self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
+
+    def update_suggestion(self, progress_bar_value = -1):
         if self.current_fixation != -1:
             x = self.suggested_corrections[self.current_fixation][0]
             y = self.suggested_corrections[self.current_fixation][1]
@@ -529,10 +546,24 @@ class Fix8(QMainWindow):
         self.canvas = QtCanvas(self, width=12, height=8, dpi=200)
         self.right_side.addWidget(self.canvas)
 
+        self.progress_tools = QHBoxLayout()
+
         self.toolbar = NavigationToolBar(self.canvas, self)
         self.toolbar.setStyleSheet("QToolBar { border: 0px }")
         self.toolbar.setEnabled(False)
-        self.right_side.addWidget(self.toolbar)
+        self.progress_tools.addWidget(self.toolbar)
+
+        self.progress_bar = QSlider(Qt.Horizontal)
+        self.progress_bar.setMinimum(0)
+        self.progress_bar.setMaximum(100)
+        self.progress_bar.setEnabled(False)
+        self.progress_bar.valueChanged.connect(self.progress_bar_changed)
+        self.progress_tools.addWidget(self.progress_bar)
+
+        self.label_progress = QLabel("0/0")
+        self.progress_tools.addWidget(self.label_progress)
+
+        self.right_side.addLayout(self.progress_tools)
 
         self.below_canvas = QHBoxLayout()
 
@@ -710,6 +741,7 @@ class Fix8(QMainWindow):
             self.checkbox_show_fixations.setCheckable(False)
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setEnabled(False)
+            self.progress_bar.setEnabled(False)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
             # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions, so clearing suggestions isn't called anywhere in the code
@@ -747,6 +779,8 @@ class Fix8(QMainWindow):
             self.checkbox_show_suggestion.setChecked(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setEnabled(False)
+
+            self.progress_bar.setEnabled(True)
         elif feature == "no_selected_algorithm":
             self.button_previous_fixation.setEnabled(False)
             self.button_next_fixation.setEnabled(False)
