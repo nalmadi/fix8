@@ -12,7 +12,7 @@ Fix8 is a tool that provides manual, automated, and semi-automated correction me
 
 Currently, Fix8 is in Pre-Alpha testing, so please give it try and give us feedback!
 
-# **Requirements \*\***⚙️\*\*
+# Requirements ⚙️
 
 -   PyQT5
 -   Matplotlib
@@ -64,8 +64,6 @@ In order to do manual correction, all you need to do is select a fixation with y
 -   There is a very rare bug which occurs when switching stimuli, and the fixation filters do not work/do not show fixations. It is indentified where the bug occurs, so there is a fix, but not a necessary one. Currently working on a good approach to resolve this minor issue.
 -   Progress bar under development.
 -   Undo and redo buttons under development.
-
-* * *
 
 # Give us Feedback ✍️
 
