@@ -112,8 +112,6 @@ class Fix8(QMainWindow):
         if event.button != 1:
             return
         self.selected_fixation = self.get_selected_fixation(event)
-        self.background = self.canvas.copy_from_bbox(self.canvas.ax.bbox)
-        self.canvas.ax.draw_artist(self.scatter)
 
     '''when released the fixation, update the corrected fixations'''
     def button_release_callback(self, event):
@@ -149,16 +147,6 @@ class Fix8(QMainWindow):
         self.xy = np.asarray(self.scatter.get_offsets())
         self.xy[self.selected_fixation] = np.array([x, y])
         self.scatter.set_offsets(self.xy)
-
-
-        #
-        self.canvas.restore_region(self.background)
-        # self.canvas.draw()
-        self.canvas.ax.draw_artist(self.scatter)
-        self.canvas.blit(self.canvas.bbox)
-        self.canvas.flush_events()
-
-        ani = FuncAnimation(fig=self.canvas, func=motion_notify_event, blit=True)
 
 
     '''opens the stimulus, displays it to the canvas, and grabs the aois of the image'''
@@ -246,8 +234,12 @@ class Fix8(QMainWindow):
         parameters:
         item - the value passed through when clicking a trial object in the list'''
     def trial_double_clicked(self,item):
+        # reset times saved if a DIFFERENT trial was selected
+        if self.trials[item.text()] != self.trial_path:
+            self.file_saved = 0
         self.trial_path = self.trials[item.text()]
         self.current_fixation = 0 # resets the current suggestion since the user is restarting the trial
+
 
         self.find_fixations(self.trial_path)
         self.corrected_fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
@@ -518,6 +510,7 @@ class Fix8(QMainWindow):
                 json.dump(corrected_fixations, f)
             self.file_saved += 1
         else:
+
             qmb = QMessageBox()
             qmb.setWindowTitle("Save Error")
             qmb.setText("No Corrections Made")
