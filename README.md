@@ -1,6 +1,6 @@
 # Fix8
 
-![My project-2 (11).png](media_Fix8/my%20project-2%20(11).png)
+![Welcome](./welcome_docs.png)
 
 > **Software Name**: Fix8  
 > **Version**: 0.01
