@@ -79,8 +79,8 @@ class Fix8(QMainWindow):
         self.algorithm = 'original'
         self.suggested_corrections, self.single_suggestion = None, None
 
-        # corrections to show based on where the progress bar is
-        self.correction_to_show = None
+        # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
+        self.file_saved = 0
 
         # fields relating to the drag and drop system
         self.selected_fixation = None
@@ -204,6 +204,7 @@ class Fix8(QMainWindow):
         # --- make sure a folder was actually chosen, otherwise just cancel ---
         if self.folder_path != '':
 
+            # clear the data since a new folder was open, no trial is chosen at this point
             self.trial_list.clear()
             self.clear_fixations()
             self.clear_saccades()
@@ -246,17 +247,10 @@ class Fix8(QMainWindow):
         item - the value passed through when clicking a trial object in the list'''
     def trial_double_clicked(self,item):
         self.trial_path = self.trials[item.text()]
+        self.current_fixation = 0 # resets the current suggestion since the user is restarting the trial
 
         self.find_fixations(self.trial_path)
-        self.corrected_fixations = copy.deepcopy(self.original_fixations)
-
-        # set the progress bar to the amount of fixations found
-        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
-        if self.current_fixation is not None:
-            if self.current_fixation == -1:
-                self.label_progress.setText(f"0/{len(self.original_fixations)}")
-            else:
-                self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
+        self.corrected_fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
 
         if self.checkbox_show_fixations.isChecked() == True:
             self.clear_fixations()
@@ -336,7 +330,7 @@ class Fix8(QMainWindow):
     '''draw the fixations to the canvas
         parameters:
         fixations - 0 is default since the corrected fixations are the main thing to be shown,
-        1 the original fixations is manually chosen'''
+        1 the original fixations is manually chosen (not currently needed as this isn't in option in algorithms)'''
     def draw_fixations(self, fixations = 0):
         if fixations == 0: # default fixations to use
             fixations = self.corrected_fixations
@@ -359,6 +353,7 @@ class Fix8(QMainWindow):
                 elif state == Qt.Unchecked:
                     self.clear_fixations()
 
+    '''if the user clicks saccades, show or hide them'''
     def show_saccades(self, state):
         if self.folder_path != '':
             if self.checkbox_show_saccades.isCheckable():
@@ -367,12 +362,14 @@ class Fix8(QMainWindow):
                 elif state == Qt.Unchecked:
                     self.clear_saccades()
 
+    '''draw the scatter plot to the canvas'''
     def draw_saccades(self):
         x = self.corrected_fixations[:, 0]
         y = self.corrected_fixations[:, 1]
         self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
         self.canvas.draw()
 
+    '''remove the saccades from the canvas (this does not erase the data, just visuals)'''
     def clear_saccades(self):
         if self.saccades != None:
             self.canvas.ax.lines.clear()
@@ -401,13 +398,33 @@ class Fix8(QMainWindow):
         if self.algorithm == 'attach':
             self.suggested_corrections = da.attach(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
+            self.update_suggestion()  # update the suggested corrections to the new algorithm, and the current suggestion aswell
         elif self.algorithm == 'chain':
             self.suggested_corrections = da.chain(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'cluster':
             self.suggested_corrections = da.cluster(copy.deepcopy(fixation_XY), line_Y)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
+        elif self.algorithm == 'merge':
+            self.suggested_corrections = da.merge(copy.deepcopy(fixation_XY), line_Y)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
+        elif self.algorithm == 'regress':
+            self.suggested_corrections = da.regress(copy.deepcopy(fixation_XY), line_Y)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
+        elif self.algorithm == 'segment':
+            self.suggested_corrections = da.segment(copy.deepcopy(fixation_XY), line_Y)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
+        elif self.algorithm == 'split':
+            self.suggested_corrections = da.split(copy.deepcopy(fixation_XY), line_Y)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
+        elif self.algorithm == 'stretch':
+            self.suggested_corrections = da.stretch(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         else:
@@ -448,13 +465,7 @@ class Fix8(QMainWindow):
         if self.checkbox_show_suggestion.isCheckable():
             self.update_suggestion()
 
-    # call update suggestion with the progress bar value
-    def progress_bar_changed(self):
-        self.current_fixation = self.progress_bar.value()
-        if self.current_fixation is not None:
-            self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
-
-    def update_suggestion(self, progress_bar_value = -1):
+    def update_suggestion(self):
         if self.current_fixation != -1:
             x = self.suggested_corrections[self.current_fixation][0]
             y = self.suggested_corrections[self.current_fixation][1]
@@ -503,8 +514,9 @@ class Fix8(QMainWindow):
             corrected_fixations = {}
             for i in range(len(self.corrected_fixations)):
                 corrected_fixations[i + 1] = list[i]
-            with open(f"{self.trial_path.replace('.json', '_CORRECTED.json')}", 'w') as f:
+            with open(f"{self.trial_path.replace('.json', '_CORRECTED_' + str(self.file_saved) + '.json')}", 'w') as f:
                 json.dump(corrected_fixations, f)
+            self.file_saved += 1
         else:
             qmb = QMessageBox()
             qmb.setWindowTitle("Save Error")
@@ -557,7 +569,6 @@ class Fix8(QMainWindow):
         self.progress_bar.setMinimum(0)
         self.progress_bar.setMaximum(100)
         self.progress_bar.setEnabled(False)
-        self.progress_bar.valueChanged.connect(self.progress_bar_changed)
         self.progress_tools.addWidget(self.progress_bar)
 
         self.label_progress = QLabel("0/0")
@@ -625,6 +636,11 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.addItem('Attach')
         self.dropdown_select_algorithm.addItem('Chain')
         self.dropdown_select_algorithm.addItem('Cluster')
+        self.dropdown_select_algorithm.addItem('Merge')
+        self.dropdown_select_algorithm.addItem('Regress')
+        self.dropdown_select_algorithm.addItem('Segment')
+        self.dropdown_select_algorithm.addItem('Split')
+        self.dropdown_select_algorithm.addItem('Stretch')
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
         self.dropdown_select_algorithm.setEnabled(False)
@@ -741,7 +757,6 @@ class Fix8(QMainWindow):
             self.checkbox_show_fixations.setCheckable(False)
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setEnabled(False)
-            self.progress_bar.setEnabled(False)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
             # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions, so clearing suggestions isn't called anywhere in the code
@@ -780,7 +795,6 @@ class Fix8(QMainWindow):
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setEnabled(False)
 
-            self.progress_bar.setEnabled(True)
         elif feature == "no_selected_algorithm":
             self.button_previous_fixation.setEnabled(False)
             self.button_next_fixation.setEnabled(False)
