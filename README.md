@@ -20,8 +20,6 @@ Currently, Fix8 is in Pre-Alpha testing, so please give it try and give us feedb
 
 # How to Use 👇
 
-### 📽️ See How To Video on Github
-
 ### 1. Open Stimulus
 
 The first thing you are going to want to do is open your image which contains the text that was read. This is the 'stimulus.' The stimulus file is independent of any data, so you can open a different stimulus at any time and all fixation data will be retained.** Make sure that your stimulus is a PNG file in order for it to be displayed.**
