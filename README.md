@@ -1,16 +1,10 @@
-
-title: Fix8
-created at: Tue Dec 06 2022 20:12:08 GMT+0000 (Coordinated Universal Time)
-updated at: Tue Dec 06 2022 20:57:18 GMT+0000 (Coordinated Universal Time)
----
-
 # Fix8
 
 ![My project-2 (11).png](media_Fix8/my%20project-2%20(11).png)
 
-> **Software Name: **Fix8  
-> **Version:** 0.01
-> **Date: **2022-12-06
+> **Software Name**: Fix8  
+> **Version**: 0.01
+> **Date**: 2022-12-06
 
 # Software Summary 💻
 
