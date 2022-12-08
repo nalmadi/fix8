@@ -18,7 +18,7 @@ Currently, Fix8 is in Pre-Alpha testing, so please give it try and give us feedb
 -   Matplotlib
 -   Numpy
 
-Also see requirments.txt in .src folder
+Also see requirments.txt
 
 # How to Use 👇
 
