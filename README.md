@@ -17,6 +17,7 @@ Currently, Fix8 is in Pre-Alpha testing, so please give it try and give us feedb
 -   PyQT5
 -   Matplotlib
 -   Numpy
+
 Also see requirments.txt in .src folder
 
 # How to Use 👇
