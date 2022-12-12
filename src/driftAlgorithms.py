@@ -1,3 +1,10 @@
+'''
+This file is adopted directly and as is from:
+Carr, Jon W., et al. "Algorithms for the automated correction of vertical drift
+in eye-tracking data." Behavior Research Methods 54.1 (2022): 287-310.
+'''
+
+
 import numpy as np
 from scipy.optimize import minimize
 from scipy.stats import norm
