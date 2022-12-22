@@ -242,6 +242,14 @@ class Fix8(QMainWindow):
 
 
         self.find_fixations(self.trial_path)
+        
+        # set the progress bar to the amount of fixations found
+        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        if self.current_fixation is not None:
+            if self.current_fixation == -1:
+                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+            else:
+                self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
         self.corrected_fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
 
         if self.checkbox_show_fixations.isChecked() == True:
@@ -516,6 +524,41 @@ class Fix8(QMainWindow):
             qmb.setText("No Corrections Made")
             qmb.exec_()
 
+    def progress_bar_updated(self, value):
+        # update the current suggested correction to the last fixation of the list
+        self.current_fixation = value
+        
+        # update current suggestion to the progress bar
+        if self.current_fixation is not None:
+            self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
+        
+        fixations = self.corrected_fixations
+        saccades = self.saccades
+        x = fixations[0:value + 1, 0]
+        y = fixations[0:value + 1, 1]
+        duration = fixations[0:value + 1, 2]
+        print(fixations[1, 0])
+
+        # get rid of the data before updating it
+        self.clear_fixations()
+        self.clear_saccades()
+
+        
+        # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+        # do the same for saccades
+        if self.checkbox_show_fixations.isCheckable():
+            if self.checkbox_show_fixations.isChecked():
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+        if self.checkbox_show_saccades.isCheckable():
+            if self.checkbox_show_saccades.isChecked():
+                self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+
+        # draw whatever was updated
+        self.canvas.draw()
+
+        if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+            self.update_suggestion()
+        
     '''initalize the tool window'''
     def init_UI(self):
 
@@ -562,6 +605,7 @@ class Fix8(QMainWindow):
         self.progress_bar.setMinimum(0)
         self.progress_bar.setMaximum(100)
         self.progress_bar.setEnabled(False)
+        self.progress_bar.valueChanged.connect(self.progress_bar_updated)
         self.progress_tools.addWidget(self.progress_bar)
 
         self.label_progress = QLabel("0/0")
@@ -760,6 +804,8 @@ class Fix8(QMainWindow):
             self.checkbox_show_saccades.setCheckable(False)
             self.checkbox_show_saccades.setChecked(False)
             self.checkbox_show_saccades.setEnabled(False)
+            self.progress_bar.setEnabled(False)
+            self.progress_bar.setValue(self.progress_bar.minimum())
 
             self.dropdown_select_algorithm.setEnabled(False)
         elif feature == "trial_clicked":
@@ -787,6 +833,9 @@ class Fix8(QMainWindow):
             self.checkbox_show_suggestion.setChecked(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setEnabled(False)
+            
+            self.progress_bar.setValue(self.progress_bar.minimum())
+            self.progress_bar.setEnabled(True)
 
         elif feature == "no_selected_algorithm":
             self.button_previous_fixation.setEnabled(False)
