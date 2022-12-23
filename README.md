@@ -6,6 +6,10 @@
 > **Version**: 0.01
 > **Date**: 2022-12-06
 
+# Latest Additions ⭐
+
+- 12/22/22: Progress Bar - Slide the progress bar under the canvas to show how many fixations you wish. Use this to track your progress in the trial.
+
 # Software Summary 💻
 
 Fix8 is a tool that provides manual, automated, and semi-automated correction methods for eye tracking data in reading tasks with a graphical user interface.
