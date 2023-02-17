@@ -9,7 +9,7 @@
 # Latest Additions ⭐
 
 - 02/16/23 - Added metadata for each trial ran
-           - Added extra algorithms including Slice
+- Added extra algorithms including Slice
 
 # Bug Fixes
 - 02/16/23 - Next, Previous, and Confirm Suggestion buttons update fixations as intended
