@@ -3,12 +3,16 @@
 ![Welcome](./welcome_docs.png)
 
 > **Software Name**: Fix8  
-> **Version**: 0.02
-> **Date**: 2022-12-22
+> **Version**: 0.03
+> **Date**: 2023-02-16
 
 # Latest Additions ⭐
 
-- 12/22/22: Progress Bar - Slide the progress bar under the canvas to show how many fixations you wish. Use this to track your progress in the trial.
+- 02/16/23 - Added metadata for each trial ran
+           - Added extra algorithms including Slice
+
+# Bug Fixes
+- 02/16/23 - Next, Previous, and Confirm Suggestion buttons update fixations as intended
 
 # Software Summary 💻
 
@@ -66,8 +70,6 @@ In order to do manual correction, all you need to do is select a fixation with y
 
 -   Improve performance of drag and drop; it is quite laggy at the moment, needs to be smooth.
 -   There is a very rare bug which occurs when switching stimuli, and the fixation filters do not work/do not show fixations. It is indentified where the bug occurs, so there is a fix, but not a necessary one. Currently working on a good approach to resolve this minor issue.
--   Progress bar under development.
--   Undo and redo buttons under development.
 
 # Give us Feedback ✍️
 
