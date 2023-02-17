@@ -25,6 +25,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import threading
 import copy
 from matplotlib.animation import FuncAnimation
+from datetime import date
 
 class QtCanvas(FigureCanvasQTAgg):
 
@@ -66,7 +67,7 @@ class Fix8(QMainWindow):
         self.file, self.file_path, self.file_name = None, None, None
 
         # fields relating to the trial folder
-        self.folder_path, self.trial_path, self.trial_data = None, None, None
+        self.folder_path, self.trial_path, self.trial_data, self.trial_name = None, None, None, None
 
         # fields relating to fixations
         self.original_fixations, self.corrected_fixations, self.scatter, self.saccades = None, None, None, None
@@ -81,6 +82,9 @@ class Fix8(QMainWindow):
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
         self.file_saved = 0
+        self.b = 0 # beginning time of trial
+        self.duration = 0
+        self.user = ''
 
         # fields relating to the drag and drop system
         self.selected_fixation = None
@@ -235,6 +239,7 @@ class Fix8(QMainWindow):
         item - the value passed through when clicking a trial object in the list'''
     def trial_double_clicked(self,item):
         # reset times saved if a DIFFERENT trial was selected
+        self.trial_name = item.text()
         if self.trials[item.text()] != self.trial_path:
             self.file_saved = 0
         self.trial_path = self.trials[item.text()]
@@ -245,6 +250,7 @@ class Fix8(QMainWindow):
         
         # set the progress bar to the amount of fixations found
         self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.b = time.time()
         if self.current_fixation is not None:
             if self.current_fixation == -1:
                 self.label_progress.setText(f"0/{len(self.original_fixations)}")
@@ -327,6 +333,20 @@ class Fix8(QMainWindow):
 
         return results
 
+    def find_word_centers(self, aois):
+        ''' returns a list of word centers '''
+        results = []
+        
+        for index, row in aois.iterrows():
+            x, y, height, width = row['x'], row['y'], row['height'], row['width']
+            
+            center = [int(x + width // 2), int(y + height // 2)]
+            
+            if center not in results:
+                results.append(center)
+                
+        return results
+
     '''draw the fixations to the canvas
         parameters:
         fixations - 0 is default since the corrected fixations are the main thing to be shown,
@@ -394,6 +414,7 @@ class Fix8(QMainWindow):
         # run correction
         fixation_XY = self.corrected_fixations
         line_Y = self.find_lines_y(self.aoi)
+        word_XY = self.find_word_centers(self.aoi)
 
         if self.algorithm == 'attach':
             self.suggested_corrections = da.attach(copy.deepcopy(fixation_XY), line_Y)
@@ -427,6 +448,22 @@ class Fix8(QMainWindow):
             self.suggested_corrections = da.stretch(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
+        elif self.algorithm == 'compare':
+            self.suggested_corrections = da.compare(copy.deepcopy(fixation_XY), word_XY)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
+        elif self.algorithm == 'warp':
+            self.suggested_corrections = da.warp(copy.deepcopy(fixation_XY), word_XY)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
+        elif self.algorithm == 'time warp':
+            self.suggested_corrections = da.time_warp(copy.deepcopy(fixation_XY), word_XY)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
+        elif self.algorithm == 'slice':
+            self.suggested_corrections = da.slice(copy.deepcopy(fixation_XY), line_Y)
+            self.relevant_buttons("algorithm_selected")
+            self.update_suggestion()
         else:
             self.relevant_buttons("no_selected_algorithm")
             self.algorithm = None
@@ -450,7 +487,33 @@ class Fix8(QMainWindow):
                 self.current_fixation = len(self.suggested_corrections)
             self.current_fixation -= 1
 
-            self.update_suggestion()
+            fixations = self.corrected_fixations
+            saccades = self.saccades
+            x = fixations[0:self.current_fixation + 1, 0]
+            y = fixations[0:self.current_fixation + 1, 1]
+            duration = fixations[0:self.current_fixation + 1, 2]
+            print(fixations[1, 0])
+
+            # get rid of the data before updating it
+            self.clear_fixations()
+            self.clear_saccades()
+
+            
+            # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+            # do the same for saccades
+            if self.checkbox_show_fixations.isCheckable():
+                if self.checkbox_show_fixations.isChecked():
+                    self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+            if self.checkbox_show_saccades.isCheckable():
+                if self.checkbox_show_saccades.isChecked():
+                    self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+
+            # draw whatever was updated
+            self.canvas.draw()
+
+            if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+                self.update_suggestion()
+                self.update_suggestion()
 
     '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
     def next_fixation(self):
@@ -459,7 +522,34 @@ class Fix8(QMainWindow):
                 self.current_fixation = -1
             self.current_fixation += 1
 
-            self.update_suggestion()
+            fixations = self.corrected_fixations
+            saccades = self.saccades
+            x = fixations[0:self.current_fixation + 1, 0]
+            y = fixations[0:self.current_fixation + 1, 1]
+            duration = fixations[0:self.current_fixation + 1, 2]
+            print(fixations[1, 0])
+
+            # get rid of the data before updating it
+            self.clear_fixations()
+            self.clear_saccades()
+
+            
+            # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+            # do the same for saccades
+            if self.checkbox_show_fixations.isCheckable():
+                if self.checkbox_show_fixations.isChecked():
+                    self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+            if self.checkbox_show_saccades.isCheckable():
+                if self.checkbox_show_saccades.isChecked():
+                    self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+
+            # draw whatever was updated
+            self.canvas.draw()
+
+            if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+                self.update_suggestion()
+                self.update_suggestion()
+            
 
     def show_suggestion(self,state):
         if self.checkbox_show_suggestion.isCheckable():
@@ -498,14 +588,42 @@ class Fix8(QMainWindow):
         self.corrected_fixations[self.current_fixation][0] = x
         self.corrected_fixations[self.current_fixation][1] = y
         self.next_fixation()
+        
+        fixations = self.corrected_fixations
+        saccades = self.saccades
+        x = fixations[0:self.current_fixation + 1, 0]
+        y = fixations[0:self.current_fixation + 1, 1]
+        duration = fixations[0:self.current_fixation + 1, 2]
+        print(fixations[1, 0])
+
+        # get rid of the data before updating it
+        self.clear_fixations()
+        self.clear_saccades()
+
+        
+        # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+        # do the same for saccades
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
-                self.clear_fixations()
-                self.draw_fixations()
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.clear_saccades()
-                self.draw_saccades()
+                self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+
+        # draw whatever was updated
+        self.canvas.draw()
+
+        if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+            self.update_suggestion()
+            self.update_suggestion()
+        # if self.checkbox_show_fixations.isCheckable():
+        #     if self.checkbox_show_fixations.isChecked():
+        #         self.clear_fixations()
+        #         self.draw_fixations()
+        # if self.checkbox_show_saccades.isCheckable():
+        #     if self.checkbox_show_saccades.isChecked():
+        #         self.clear_saccades()
+        #         self.draw_saccades()
 
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
@@ -517,6 +635,26 @@ class Fix8(QMainWindow):
             with open(f"{self.trial_path.replace('.json', '_CORRECTED_' + str(self.file_saved) + '.json')}", 'w') as f:
                 json.dump(corrected_fixations, f)
             self.file_saved += 1
+            self.duration = time.time() - self.b  # store in a file called metadata which includes the file name they were correcting, the image, and the duration
+            today = date.today()
+            print("Today's date:", today)
+            current_session_metadata = {"Date": None,
+                                        "Trial Name": None,
+                                        "Image": None,
+                                        "Duration": None
+                                        }
+            current_session_metadata["Date"] = str(today)
+            current_session_metadata["Trial Name"] = str(self.trial_name)
+            current_session_metadata["Image"] = str(self.file_path)
+            current_session_metadata["Duration"] = str(self.duration)
+            l_metadata = []
+            with open('./metadata.json') as fp:
+                l_metadata = json.load(fp)
+                
+            print(l_metadata)
+            l_metadata.append(current_session_metadata)
+            with open('./metadata.json', 'w') as wr:
+                json.dump(l_metadata, wr)
         else:
 
             qmb = QMessageBox()
@@ -527,7 +665,6 @@ class Fix8(QMainWindow):
     def progress_bar_updated(self, value):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
-        
         # update current suggestion to the progress bar
         if self.current_fixation is not None:
             self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
@@ -560,7 +697,7 @@ class Fix8(QMainWindow):
             self.update_suggestion()
         
     '''initalize the tool window'''
-    def init_UI(self):
+    def init_UI(self): 
 
         # wrapper layout
         self.wrapper_layout = QHBoxLayout()
@@ -678,6 +815,10 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.addItem('Segment')
         self.dropdown_select_algorithm.addItem('Split')
         self.dropdown_select_algorithm.addItem('Stretch')
+        self.dropdown_select_algorithm.addItem('Compare')
+        self.dropdown_select_algorithm.addItem('Warp')
+        self.dropdown_select_algorithm.addItem('Time Warp')
+        self.dropdown_select_algorithm.addItem('Slice')
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
         self.dropdown_select_algorithm.setEnabled(False)
@@ -836,7 +977,6 @@ class Fix8(QMainWindow):
             
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.progress_bar.setEnabled(True)
-
         elif feature == "no_selected_algorithm":
             self.button_previous_fixation.setEnabled(False)
             self.button_next_fixation.setEnabled(False)
