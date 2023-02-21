@@ -492,7 +492,7 @@ class Fix8(QMainWindow):
             x = fixations[0:self.current_fixation + 1, 0]
             y = fixations[0:self.current_fixation + 1, 1]
             duration = fixations[0:self.current_fixation + 1, 2]
-            print(fixations[1, 0])
+            # print(fixations[1, 0])
 
             # get rid of the data before updating it
             self.clear_fixations()
@@ -527,7 +527,7 @@ class Fix8(QMainWindow):
             x = fixations[0:self.current_fixation + 1, 0]
             y = fixations[0:self.current_fixation + 1, 1]
             duration = fixations[0:self.current_fixation + 1, 2]
-            print(fixations[1, 0])
+            # print(fixations[1, 0])
 
             # get rid of the data before updating it
             self.clear_fixations()
@@ -594,7 +594,7 @@ class Fix8(QMainWindow):
         x = fixations[0:self.current_fixation + 1, 0]
         y = fixations[0:self.current_fixation + 1, 1]
         duration = fixations[0:self.current_fixation + 1, 2]
-        print(fixations[1, 0])
+        # print(fixations[1, 0])
 
         # get rid of the data before updating it
         self.clear_fixations()
@@ -637,7 +637,7 @@ class Fix8(QMainWindow):
             self.file_saved += 1
             self.duration = time.time() - self.b  # store in a file called metadata which includes the file name they were correcting, the image, and the duration
             today = date.today()
-            print("Today's date:", today)
+            # print("Today's date:", today)
             current_session_metadata = {"Date": None,
                                         "Trial Name": None,
                                         "Image": None,
@@ -651,7 +651,7 @@ class Fix8(QMainWindow):
             with open('./metadata.json') as fp:
                 l_metadata = json.load(fp)
                 
-            print(l_metadata)
+            # print(l_metadata)
             l_metadata.append(current_session_metadata)
             with open('./metadata.json', 'w') as wr:
                 json.dump(l_metadata, wr)
@@ -674,7 +674,7 @@ class Fix8(QMainWindow):
         x = fixations[0:value + 1, 0]
         y = fixations[0:value + 1, 1]
         duration = fixations[0:value + 1, 2]
-        print(fixations[1, 0])
+        # print(fixations[1, 0])
 
         # get rid of the data before updating it
         self.clear_fixations()
