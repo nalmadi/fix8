@@ -11,6 +11,8 @@ from scipy.stats import norm
 from sklearn.cluster import KMeans
 import math
 
+############ R to Python Conversions https://github.com/jwcarr/drift
+
 ######################################################################
 # ATTACH
 ######################################################################
@@ -371,7 +373,6 @@ def slice(fixation_XY, line_Y, x_thresh=192, y_thresh=32, w_thresh=32, n_thresh=
 			# Compute differences between current proto line and all runs
 			run_differences = np.zeros(len(runs))
 			for run_i, run in enumerate(runs):
-				print(fixation_XY[run])
 				y_diffs = [y - proto_line_XY[np.argmin(abs(proto_line_XY[:, 0] - x)), 1] for x, y, z in fixation_XY[run]]
 				run_differences[run_i] = np.mean(y_diffs)
 			# Find runs that can be merged into this proto line
