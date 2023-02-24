@@ -259,7 +259,6 @@ class Fix8(QMainWindow):
             else:
                 self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
         self.corrected_fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
-        print(self.corrected_fixations)
         self.checkbox_show_fixations.setChecked(True)
         if self.checkbox_show_fixations.isChecked() == True:
             self.clear_fixations()
@@ -389,7 +388,7 @@ class Fix8(QMainWindow):
     def draw_saccades(self):
         x = self.corrected_fixations[:, 0]
         y = self.corrected_fixations[:, 1]
-        self.saccades = self.canvas.ax.plot(x, y, alpha=0.15, c='gold', linewidth=1)
+        self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=1)
         self.canvas.draw()
 
     '''remove the saccades from the canvas (this does not erase the data, just visuals)'''
@@ -509,7 +508,7 @@ class Fix8(QMainWindow):
                     self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
             if self.checkbox_show_saccades.isCheckable():
                 if self.checkbox_show_saccades.isChecked():
-                    self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+                    self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=2)
 
             # draw whatever was updated
             self.canvas.draw()
@@ -544,7 +543,7 @@ class Fix8(QMainWindow):
                     self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
             if self.checkbox_show_saccades.isCheckable():
                 if self.checkbox_show_saccades.isChecked():
-                    self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+                    self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=2)
 
             # draw whatever was updated
             self.canvas.draw()
@@ -611,7 +610,7 @@ class Fix8(QMainWindow):
                 self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+                self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=2)
 
         # draw whatever was updated
         self.canvas.draw()
@@ -669,6 +668,8 @@ class Fix8(QMainWindow):
             qmb.setText("No Corrections Made")
             qmb.exec_()
 
+
+    # create a function with similar properties: self.corrected_fixations[self.corrected_fixations[:, 2] > 300]
     def progress_bar_updated(self, value):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
@@ -686,7 +687,6 @@ class Fix8(QMainWindow):
         # get rid of the data before updating it
         self.clear_fixations()
         self.clear_saccades()
-
         
         # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
         # do the same for saccades
@@ -695,13 +695,18 @@ class Fix8(QMainWindow):
                 self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+                self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=2)
 
         # draw whatever was updated
         self.canvas.draw()
 
         if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
             self.update_suggestion()
+            
+    
+    def size_input_changed(self,value):
+        print(value)
+        
         
     '''initalize the tool window'''
     def init_UI(self): 
@@ -725,9 +730,13 @@ class Fix8(QMainWindow):
 
         self.trial_list = QListWidget()
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
+        
+        self.size_input = QLineEdit()
+        self.size_input.textChanged.connect(self.size_input_changed)
+        
 
         widget_list = [self.button_open_stimulus, self.button_open_folder, self.button_save_corrections,
-                        self.trial_list]
+                        self.trial_list,self.size_input]
         for w in widget_list:
             self.left_side.addWidget(w)
         # ---
