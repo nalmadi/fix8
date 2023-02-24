@@ -170,10 +170,10 @@ class Fix8(QMainWindow):
             fileType = self.file_name.split('.')[-1]
 
             # make sure the file is a png type
-            if fileType.lower() != 'png':
+            if fileType.lower() != 'png' or fileType.lower() != 'jpg' or fileType.lower() != 'jpeg':
                 qmb = QMessageBox()
                 qmb.setWindowTitle("Stimulus File Error")
-                qmb.setText("Not a PNG; please choose a PNG file")
+                qmb.setText("Not a PNG; please choose a PNG, JPG or JPEG file")
                 qmb.exec_()
             else:
                 # draw the image to the canvas
@@ -664,7 +664,6 @@ class Fix8(QMainWindow):
                     writer = csv.writer(wr)
                     writer.writerow(l_metadata)               
         else:
-
             qmb = QMessageBox()
             qmb.setWindowTitle("Save Error")
             qmb.setText("No Corrections Made")
