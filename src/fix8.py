@@ -632,7 +632,7 @@ class Fix8(QMainWindow):
             corrected_fixations = {}
             for i in range(len(self.corrected_fixations)):
                 corrected_fixations[i + 1] = list[i]
-            with open(f"{self.trial_path.replace('.json', '_CORRECTED_' + str(self.file_saved) + '.json')}", 'w') as f:
+            with open(f"{self.trial_path.replace('.json', '_CORRECTED' + '.json')}", 'w') as f:
                 json.dump(corrected_fixations, f)
             self.file_saved += 1
             self.duration = time.time() - self.b  # store in a file called metadata which includes the file name they were correcting, the image, and the duration
