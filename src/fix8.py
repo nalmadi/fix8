@@ -26,6 +26,8 @@ import threading
 import copy
 from matplotlib.animation import FuncAnimation
 from datetime import date
+import csv
+from pathlib import Path
 
 class QtCanvas(FigureCanvasQTAgg):
 
@@ -649,13 +651,18 @@ class Fix8(QMainWindow):
             current_session_metadata["Image"] = str(self.file_path)
             current_session_metadata["Duration"] = str(self.duration)
             l_metadata = []
-            with open('./metadata.json') as fp:
-                l_metadata = json.load(fp)
-                
-            # print(l_metadata)
+
             l_metadata.append(current_session_metadata)
-            with open('./metadata.json', 'w') as wr:
-                json.dump(l_metadata, wr)
+            path = Path(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}").is_file()
+            
+            if(path == False):       
+                with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'w') as wr:
+                    writer = csv.writer(wr)
+                    writer.writerow(l_metadata)
+            else:
+                with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'a') as wr:
+                    writer = csv.writer(wr)
+                    writer.writerow(l_metadata)               
         else:
 
             qmb = QMessageBox()
