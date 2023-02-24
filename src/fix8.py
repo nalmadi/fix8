@@ -389,7 +389,7 @@ class Fix8(QMainWindow):
     def draw_saccades(self):
         x = self.corrected_fixations[:, 0]
         y = self.corrected_fixations[:, 1]
-        self.saccades = self.canvas.ax.plot(x, y, alpha=0.9, c='yellow', linewidth=2)
+        self.saccades = self.canvas.ax.plot(x, y, alpha=0.15, c='gold', linewidth=1)
         self.canvas.draw()
 
     '''remove the saccades from the canvas (this does not erase the data, just visuals)'''
