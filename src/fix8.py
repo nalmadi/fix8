@@ -170,7 +170,7 @@ class Fix8(QMainWindow):
             fileType = self.file_name.split('.')[-1]
 
             # make sure the file is a png type
-            if fileType.lower() != 'png' or fileType.lower() != 'jpg' or fileType.lower() != 'jpeg':
+            if fileType.lower() != 'png' and fileType.lower() != 'jpg' and fileType.lower() != 'jpeg':
                 qmb = QMessageBox()
                 qmb.setWindowTitle("Stimulus File Error")
                 qmb.setText("Not a PNG; please choose a PNG, JPG or JPEG file")
@@ -259,7 +259,7 @@ class Fix8(QMainWindow):
             else:
                 self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
         self.corrected_fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
-
+        print(self.corrected_fixations)
         self.checkbox_show_fixations.setChecked(True)
         if self.checkbox_show_fixations.isChecked() == True:
             self.clear_fixations()
