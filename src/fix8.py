@@ -640,23 +640,26 @@ class Fix8(QMainWindow):
             self.duration = time.time() - self.b  # store in a file called metadata which includes the file name they were correcting, the image, and the duration
             today = date.today()
             # print("Today's date:", today)
-            current_session_metadata = {"Date": None,
-                                        "Trial Name": None,
-                                        "Image": None,
-                                        "Duration": None
-                                        }
-            current_session_metadata["Date"] = str(today)
-            current_session_metadata["Trial Name"] = str(self.trial_name)
-            current_session_metadata["Image"] = str(self.file_path)
-            current_session_metadata["Duration"] = str(self.duration)
-            l_metadata = []
+            # current_session_metadata = {"Date": None,
+            #                             "Trial Name": None,
+            #                             "Image": None,
+            #                             "Duration": None
+            #                             }
+            # current_session_metadata["Date"] = str(today)
+            # current_session_metadata["Trial Name"] = str(self.trial_name)
+            # current_session_metadata["Image"] = str(self.file_path)
+            # current_session_metadata["Duration"] = str(self.duration)
+            # l_metadata = []
+            # l_metadata.append(current_session_metadata)
 
-            l_metadata.append(current_session_metadata)
+            headers = ["Date", "Trial Name", "File Path", "Duration"]
+            l_metadata = [str(today), str(self.trial_name), str(self.file_path), str(self.duration)]
             path = Path(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}").is_file()
             
             if(path == False):       
                 with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'w') as wr:
                     writer = csv.writer(wr)
+                    writer.writerow(headers)
                     writer.writerow(l_metadata)
             else:
                 with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'a') as wr:
@@ -871,7 +874,7 @@ class Fix8(QMainWindow):
         # --- section for filters
         self.filters = QVBoxLayout()
 
-        self.label_filters = QLabel("Filters")
+        self.label_filters = QLabel("Visualization")
         self.label_filters.setAlignment(Qt.AlignCenter)
         self.filters.addWidget(self.label_filters)
 
