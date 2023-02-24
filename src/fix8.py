@@ -258,6 +258,7 @@ class Fix8(QMainWindow):
                 self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
         self.corrected_fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
 
+        self.checkbox_show_fixations.setChecked(True)
         if self.checkbox_show_fixations.isChecked() == True:
             self.clear_fixations()
             self.draw_fixations()
