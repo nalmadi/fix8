@@ -87,6 +87,8 @@ class Fix8(QMainWindow):
         self.b = 0 # beginning time of trial
         self.duration = 0
         self.user = ''
+        
+        self.saccade_opacity = 0.2
 
         # fields relating to the drag and drop system
         self.selected_fixation = None
@@ -95,6 +97,10 @@ class Fix8(QMainWindow):
         self.canvas.mpl_connect('button_press_event', self.button_press_callback)
         self.canvas.mpl_connect('button_release_event', self.button_release_callback)
         self.canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
+        
+        # fields related to filters
+        self.lesser_value = 0
+        self.greater_value = 0
 
     '''get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon),
     selected_fixation is an index, not the actual scatter point'''
@@ -388,7 +394,7 @@ class Fix8(QMainWindow):
     def draw_saccades(self):
         x = self.corrected_fixations[:, 0]
         y = self.corrected_fixations[:, 1]
-        self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=1)
+        self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=1)
         self.canvas.draw()
 
     '''remove the saccades from the canvas (this does not erase the data, just visuals)'''
@@ -508,7 +514,7 @@ class Fix8(QMainWindow):
                     self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
             if self.checkbox_show_saccades.isCheckable():
                 if self.checkbox_show_saccades.isChecked():
-                    self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=2)
+                    self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
 
             # draw whatever was updated
             self.canvas.draw()
@@ -543,7 +549,7 @@ class Fix8(QMainWindow):
                     self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
             if self.checkbox_show_saccades.isCheckable():
                 if self.checkbox_show_saccades.isChecked():
-                    self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=2)
+                    self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
 
             # draw whatever was updated
             self.canvas.draw()
@@ -610,7 +616,7 @@ class Fix8(QMainWindow):
                 self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=2)
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
 
         # draw whatever was updated
         self.canvas.draw()
@@ -657,12 +663,12 @@ class Fix8(QMainWindow):
             path = Path(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}").is_file()
             
             if(path == False):       
-                with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'w') as wr:
+                with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'w', newline='') as wr:
                     writer = csv.writer(wr)
                     writer.writerow(headers)
                     writer.writerow(l_metadata)
             else:
-                with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'a') as wr:
+                with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'a',newline='') as wr:
                     writer = csv.writer(wr)
                     writer.writerow(l_metadata)               
         else:
@@ -672,7 +678,7 @@ class Fix8(QMainWindow):
             qmb.exec_()
 
 
-    # create a function with similar properties: self.corrected_fixations[self.corrected_fixations[:, 2] > 300]
+    # create a function with similar properties: self.corrected_fixations[self.corrected_fixations[:, 2] > input]
     def progress_bar_updated(self, value):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
@@ -698,7 +704,7 @@ class Fix8(QMainWindow):
                 self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(x, y, alpha=0.4, c='blue', linewidth=2)
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
 
         # draw whatever was updated
         self.canvas.draw()
@@ -707,8 +713,68 @@ class Fix8(QMainWindow):
             self.update_suggestion()
             
     
-    def size_input_changed(self,value):
-        print(value)
+    '''Activates when the lesser value filter changes'''
+    def lesser_value_changed(self,value):
+        self.lesser_value = value
+            
+
+    def lesser_value_confirmed(self):
+        
+        print("getting rid of all fixations less than", self.lesser_value)
+        
+        self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] > int(self.lesser_value)]
+        fixations = self.corrected_fixations
+        saccades = self.saccades
+        x = fixations[:,0]
+        y = fixations[:,1]
+        duration = fixations[:,2]
+        
+        # get rid of the data before updating it
+        self.clear_fixations()
+        self.clear_saccades()
+        
+        # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+        # do the same for saccades
+        if self.checkbox_show_fixations.isCheckable():
+            if self.checkbox_show_fixations.isChecked():
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+        if self.checkbox_show_saccades.isCheckable():
+            if self.checkbox_show_saccades.isChecked():
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
+
+        # draw whatever was updated
+        self.canvas.draw()       
+
+    '''Activates when the greater value filter changes'''
+    def greater_value_changed(self,value):
+        self.greater_value = value
+        
+    def greater_value_confirmed(self):
+        
+        print("getting rid of all fixations greater than", self.greater_value)
+        
+        self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] < int(self.greater_value)]
+        fixations = self.corrected_fixations
+        saccades = self.saccades
+        x = fixations[:,0]
+        y = fixations[:,1]
+        duration = fixations[:,2]
+        
+        # get rid of the data before updating it
+        self.clear_fixations()
+        self.clear_saccades()
+        
+        # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+        # do the same for saccades
+        if self.checkbox_show_fixations.isCheckable():
+            if self.checkbox_show_fixations.isChecked():
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+        if self.checkbox_show_saccades.isCheckable():
+            if self.checkbox_show_saccades.isChecked():
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
+
+        # draw whatever was updated
+        self.canvas.draw()       
         
         
     '''initalize the tool window'''
@@ -734,14 +800,35 @@ class Fix8(QMainWindow):
         self.trial_list = QListWidget()
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
         
-        self.size_input = QLineEdit()
-        self.size_input.textChanged.connect(self.size_input_changed)
+        # section for fixation size filters
+        self.greater_inputs = QHBoxLayout()
+        self.input_greater = QLineEdit()
+        self.input_greater.textChanged.connect(self.greater_value_changed)
+        self.input_greater.setEnabled(False)
+        self.button_greater = QPushButton("Remove Fixations >")
+        self.button_greater.setEnabled(False)
+        self.button_greater.clicked.connect(self.greater_value_confirmed)
+        self.greater_inputs.addWidget(self.input_greater)
+        self.greater_inputs.addWidget(self.button_greater)
+        
+        self.lesser_inputs = QHBoxLayout()
+        self.input_lesser = QLineEdit()
+        self.input_lesser.textChanged.connect(self.lesser_value_changed)
+        self.input_lesser.setEnabled(False)
+        self.button_lesser = QPushButton("Remove Fixations <")
+        self.button_lesser.setEnabled(False)
+        self.button_lesser.clicked.connect(self.lesser_value_confirmed)
+        self.lesser_inputs.addWidget(self.input_lesser)
+        self.lesser_inputs.addWidget(self.button_lesser)
         
 
         widget_list = [self.button_open_stimulus, self.button_open_folder, self.button_save_corrections,
-                        self.trial_list,self.size_input]
+                        self.trial_list]
         for w in widget_list:
             self.left_side.addWidget(w)
+            
+        self.left_side.addLayout(self.greater_inputs)
+        self.left_side.addLayout(self.lesser_inputs)
         # ---
 
         # --- canvas
@@ -834,9 +921,9 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.addItem('Segment')
         self.dropdown_select_algorithm.addItem('Split')
         self.dropdown_select_algorithm.addItem('Stretch')
-        self.dropdown_select_algorithm.addItem('Compare')
-        self.dropdown_select_algorithm.addItem('Warp')
-        self.dropdown_select_algorithm.addItem('Time Warp')
+        # self.dropdown_select_algorithm.addItem('Compare')
+        # self.dropdown_select_algorithm.addItem('Warp')
+        # self.dropdown_select_algorithm.addItem('Time Warp')
         self.dropdown_select_algorithm.addItem('Slice')
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
@@ -954,6 +1041,10 @@ class Fix8(QMainWindow):
             self.checkbox_show_fixations.setCheckable(False)
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setEnabled(False)
+            self.input_lesser.setEnabled(False)
+            self.input_greater.setEnabled(False)
+            self.button_lesser.setEnabled(False)
+            self.button_greater.setEnabled(False)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
             # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions, so clearing suggestions isn't called anywhere in the code
@@ -987,6 +1078,11 @@ class Fix8(QMainWindow):
 
             self.checkbox_show_saccades.setCheckable(True)
             self.checkbox_show_saccades.setEnabled(True)
+            
+            self.input_lesser.setEnabled(True)
+            self.input_greater.setEnabled(True)
+            self.button_lesser.setEnabled(True)
+            self.button_greater.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
             # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions
