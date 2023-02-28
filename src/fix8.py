@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 import sys
 import time
 from PyQt5.QtCore import *
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
                              QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, QLineEdit, QListWidget, QListWidgetItem)
@@ -98,6 +99,10 @@ class Fix8(QMainWindow):
         self.canvas.mpl_connect('button_release_event', self.button_release_callback)
         self.canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
         
+        # fields relating to color filters
+        self.fixation_color = 'red'
+        self.saccade_color = 'blue' 
+               
         # fields related to filters
         self.lesser_value = 0
         self.greater_value = 0
@@ -367,7 +372,7 @@ class Fix8(QMainWindow):
         x = fixations[:, 0]
         y = fixations[:, 1]
         duration = fixations[:, 2]
-        self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+        self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
         self.canvas.draw()
 
     '''if the user clicks the show fixations checkbox, show or hide the fixations
@@ -394,7 +399,7 @@ class Fix8(QMainWindow):
     def draw_saccades(self):
         x = self.corrected_fixations[:, 0]
         y = self.corrected_fixations[:, 1]
-        self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=1)
+        self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
         self.canvas.draw()
 
     '''remove the saccades from the canvas (this does not erase the data, just visuals)'''
@@ -511,10 +516,10 @@ class Fix8(QMainWindow):
             # do the same for saccades
             if self.checkbox_show_fixations.isCheckable():
                 if self.checkbox_show_fixations.isChecked():
-                    self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+                    self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
             if self.checkbox_show_saccades.isCheckable():
                 if self.checkbox_show_saccades.isChecked():
-                    self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
+                    self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
 
             # draw whatever was updated
             self.canvas.draw()
@@ -546,10 +551,10 @@ class Fix8(QMainWindow):
             # do the same for saccades
             if self.checkbox_show_fixations.isCheckable():
                 if self.checkbox_show_fixations.isChecked():
-                    self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+                    self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
             if self.checkbox_show_saccades.isCheckable():
                 if self.checkbox_show_saccades.isChecked():
-                    self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
+                    self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
 
             # draw whatever was updated
             self.canvas.draw()
@@ -613,10 +618,10 @@ class Fix8(QMainWindow):
         # do the same for saccades
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
-                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
 
         # draw whatever was updated
         self.canvas.draw()
@@ -678,7 +683,7 @@ class Fix8(QMainWindow):
             qmb.exec_()
 
 
-    # create a function with similar properties: self.corrected_fixations[self.corrected_fixations[:, 2] > input]
+    # progress bar updated in tool
     def progress_bar_updated(self, value):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
@@ -701,10 +706,10 @@ class Fix8(QMainWindow):
         # do the same for saccades
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
-                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
 
         # draw whatever was updated
         self.canvas.draw()
@@ -737,10 +742,10 @@ class Fix8(QMainWindow):
         # do the same for saccades
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
-                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
 
         # draw whatever was updated
         self.canvas.draw()       
@@ -768,14 +773,66 @@ class Fix8(QMainWindow):
         # do the same for saccades
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
-                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'red')
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c='blue', linewidth=2)
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
 
         # draw whatever was updated
         self.canvas.draw()       
         
+    def select_fixation_color(self):
+        
+        color = QColorDialog.getColor()
+        self.fixation_color = str(color.name())
+        
+        fixations = self.corrected_fixations
+        saccades = self.saccades
+        x = fixations[:,0]
+        y = fixations[:,1]
+        duration = fixations[:,2]
+        
+        # get rid of the data before updating it
+        self.clear_fixations()
+        self.clear_saccades()
+        
+        # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+        # do the same for saccades
+        if self.checkbox_show_fixations.isCheckable():
+            if self.checkbox_show_fixations.isChecked():
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
+        if self.checkbox_show_saccades.isCheckable():
+            if self.checkbox_show_saccades.isChecked():
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
+
+        # draw whatever was updated
+        self.canvas.draw()
+        
+    def select_saccade_color(self):
+        color = QColorDialog.getColor()
+        self.saccade_color = str(color.name())  
+        
+        fixations = self.corrected_fixations
+        saccades = self.saccades
+        x = fixations[:,0]
+        y = fixations[:,1]
+        duration = fixations[:,2]
+        
+        # get rid of the data before updating it
+        self.clear_fixations()
+        self.clear_saccades()
+        
+        # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+        # do the same for saccades
+        if self.checkbox_show_fixations.isCheckable():
+            if self.checkbox_show_fixations.isChecked():
+                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
+        if self.checkbox_show_saccades.isCheckable():
+            if self.checkbox_show_saccades.isChecked():
+                self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
+
+        # draw whatever was updated
+        self.canvas.draw()
         
     '''initalize the tool window'''
     def init_UI(self): 
@@ -932,6 +989,7 @@ class Fix8(QMainWindow):
 
         self.automation.addWidget(self.dropdown_select_algorithm)
         self.automation.addWidget(self.button_correct_all_fixations)
+        
 
         # buttons to fill in space
         self.button2 = QPushButton()
@@ -979,6 +1037,23 @@ class Fix8(QMainWindow):
         self.checkbox_show_saccades.setEnabled(False)
         self.checkbox_show_saccades.stateChanged.connect(self.show_saccades)
         self.filters.addWidget(self.checkbox_show_saccades)
+        
+        # --
+        self.button_fixation_color = QPushButton("Select Fixation Color")
+        self.button_fixation_color.clicked.connect(self.select_fixation_color)
+        self.layer_fixation_color = QHBoxLayout()
+        self.button_saccade_color = QPushButton("Select Saccade Color")
+        self.button_saccade_color.clicked.connect(self.select_saccade_color)
+        self.layer_saccade_color = QHBoxLayout()
+        self.button_fixation_color.setEnabled(False)
+        self.button_saccade_color.setEnabled(False)
+        
+        self.layer_fixation_color.addWidget(self.button_fixation_color)
+        self.layer_saccade_color.addWidget(self.button_saccade_color)
+        
+        self.filters.addLayout(self.layer_fixation_color)
+        self.filters.addLayout(self.layer_saccade_color)
+        # --
 
         self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction")
         self.checkbox_show_suggestion.setEnabled(False)
@@ -1057,6 +1132,8 @@ class Fix8(QMainWindow):
             self.checkbox_show_saccades.setEnabled(False)
             self.progress_bar.setEnabled(False)
             self.progress_bar.setValue(self.progress_bar.minimum())
+            self.button_fixation_color.setEnabled(False)
+            self.button_saccade_color.setEnabled(False)
 
             self.dropdown_select_algorithm.setEnabled(False)
         elif feature == "trial_clicked":
@@ -1083,6 +1160,9 @@ class Fix8(QMainWindow):
             self.input_greater.setEnabled(True)
             self.button_lesser.setEnabled(True)
             self.button_greater.setEnabled(True)
+            
+            self.button_fixation_color.setEnabled(True)
+            self.button_saccade_color.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
             # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions
