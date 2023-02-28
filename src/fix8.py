@@ -89,7 +89,7 @@ class Fix8(QMainWindow):
         self.duration = 0
         self.user = ''
         
-        self.saccade_opacity = 0.2
+        self.saccade_opacity = 0.4
 
         # fields relating to the drag and drop system
         self.selected_fixation = None
@@ -168,17 +168,30 @@ class Fix8(QMainWindow):
 
     def keyPressEvent(self, e):
         if e.key() == 16777219:
-            print(self.corrected_fixations[0], "selected fixation\n", self.selected_fixation)    
+            # print(self.corrected_fixations[0], "selected fixation\n", self.selected_fixation)    
             if(self.corrected_fixations is not None and self.selected_fixation is not None):
                 if self.selected_fixation < len(self.corrected_fixations):
-                    print("able to delete")
+                    print("delete:", self.current_fixation)
+                    # print("able to delete")
                     self.corrected_fixations = np.delete(self.corrected_fixations, self.selected_fixation, 0) # delete the row of selected fixation
+                    if self.current_fixation == 0:
+                        self.current_fixation = len(self.corrected_fixations)
+                        self.current_fixation -= 1
+                        temp = self.current_fixation
+                    else:
+                        self.current_fixation-=1
+                        temp = self.current_fixation
+                    self.progress_bar.setMaximum(len(self.corrected_fixations) - 1)
+                    self.progress_bar_updated(temp)
+                    if self.suggested_corrections is not None:
+                        self.suggested_corrections = np.delete(self.suggested_corrections, self.selected_fixation, 0) # delete the row of selected fixation
                     self.selected_fixation = None
                     fixations = self.corrected_fixations
                     saccades = self.saccades
-                    x = fixations[:,0]
-                    y = fixations[:,1]
-                    duration = fixations[:,2]
+                    
+                    x = fixations[0:self.current_fixation+1,0]
+                    y = fixations[0:self.current_fixation+1,1]
+                    duration = fixations[0:self.current_fixation+1,2]
                     
                     # get rid of the data before updating it
                     self.clear_fixations()
@@ -193,6 +206,11 @@ class Fix8(QMainWindow):
                         if self.checkbox_show_saccades.isChecked():
                             self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
 
+                    if self.algorithm != 'original':
+                        if self.current_fixation == len(self.corrected_fixations):
+                            # off by one error
+                            self.current_fixation-=1
+                        self.update_suggestion()
                     # draw whatever was updated
                     self.canvas.draw()
                     
@@ -531,6 +549,7 @@ class Fix8(QMainWindow):
             if self.current_fixation == 0:
                 self.current_fixation = len(self.suggested_corrections)
             self.current_fixation -= 1
+            print("previous:", self.current_fixation)
 
             fixations = self.corrected_fixations
             saccades = self.saccades
@@ -719,9 +738,10 @@ class Fix8(QMainWindow):
     def progress_bar_updated(self, value):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
+        print("progress:", self.current_fixation)
         # update current suggestion to the progress bar
         if self.current_fixation is not None:
-            self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
+            self.label_progress.setText(f"{self.current_fixation}/{len(self.corrected_fixations)}")
         
         fixations = self.corrected_fixations
         saccades = self.saccades
@@ -760,6 +780,16 @@ class Fix8(QMainWindow):
         print("getting rid of all fixations less than", self.lesser_value)
         
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] > int(self.lesser_value)]
+        self.current_fixation = 0
+        if self.algorithm != 'original':
+            if self.current_fixation == len(self.corrected_fixations):
+                # off by one error, since deleting fixation moves current onto the next fixation
+                self.current_fixation-=1
+            self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] > int(self.lesser_value)]
+            
+        temp = self.current_fixation
+        self.progress_bar.setMaximum(len(self.corrected_fixations) - 1)
+        self.progress_bar_updated(temp)
         fixations = self.corrected_fixations
         saccades = self.saccades
         x = fixations[:,0]
@@ -791,6 +821,16 @@ class Fix8(QMainWindow):
         print("getting rid of all fixations greater than", self.greater_value)
         
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] < int(self.greater_value)]
+        self.current_fixation = 0
+        if self.algorithm != 'original':
+            if self.current_fixation == len(self.corrected_fixations):
+                # off by one error, since deleting fixation moves current onto the next fixation
+                self.current_fixation-=1
+            print(self.suggested_corrections[:,2])
+            self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < int(self.greater_value)]
+        temp = self.current_fixation
+        self.progress_bar.setMaximum(len(self.corrected_fixations) - 1)
+        self.progress_bar_updated(temp)
         fixations = self.corrected_fixations
         saccades = self.saccades
         x = fixations[:,0]
@@ -969,7 +1009,7 @@ class Fix8(QMainWindow):
 
         self.semi_automation.addLayout(self.semi_automation_second_row)
 
-        self.button_confirm_suggestion = QPushButton("Confirm Suggested Correction", self)
+        self.button_confirm_suggestion = QPushButton("Accept Suggestion and Next", self)
         self.button_confirm_suggestion.setEnabled(False)
         self.button_confirm_suggestion.clicked.connect(self.confirm_suggestion)
         self.semi_automation.addWidget(self.button_confirm_suggestion)
@@ -1010,9 +1050,9 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.addItem('Segment')
         self.dropdown_select_algorithm.addItem('Split')
         self.dropdown_select_algorithm.addItem('Stretch')
-        # self.dropdown_select_algorithm.addItem('Compare')
-        # self.dropdown_select_algorithm.addItem('Warp')
-        # self.dropdown_select_algorithm.addItem('Time Warp')
+        self.dropdown_select_algorithm.addItem('Compare')
+        self.dropdown_select_algorithm.addItem('Warp')
+        self.dropdown_select_algorithm.addItem('Time Warp')
         self.dropdown_select_algorithm.addItem('Slice')
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
@@ -1070,22 +1110,6 @@ class Fix8(QMainWindow):
         self.checkbox_show_saccades.stateChanged.connect(self.show_saccades)
         self.filters.addWidget(self.checkbox_show_saccades)
         
-        # --
-        self.button_fixation_color = QPushButton("Select Fixation Color")
-        self.button_fixation_color.clicked.connect(self.select_fixation_color)
-        self.layer_fixation_color = QHBoxLayout()
-        self.button_saccade_color = QPushButton("Select Saccade Color")
-        self.button_saccade_color.clicked.connect(self.select_saccade_color)
-        self.layer_saccade_color = QHBoxLayout()
-        self.button_fixation_color.setEnabled(False)
-        self.button_saccade_color.setEnabled(False)
-        
-        self.layer_fixation_color.addWidget(self.button_fixation_color)
-        self.layer_saccade_color.addWidget(self.button_saccade_color)
-        
-        self.filters.addLayout(self.layer_fixation_color)
-        self.filters.addLayout(self.layer_saccade_color)
-        # --
 
         self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction")
         self.checkbox_show_suggestion.setEnabled(False)
@@ -1096,6 +1120,21 @@ class Fix8(QMainWindow):
         self.label_filters.setStyleSheet("QLabel { border: 0px }")
         self.frame3.setLayout(self.filters)
         self.below_canvas.addWidget(self.frame3)
+        
+        # --
+        self.button_fixation_color = QPushButton("Select Fixation Color")
+        self.button_fixation_color.clicked.connect(self.select_fixation_color)
+        self.layer_fixation_color = QHBoxLayout()
+        self.button_saccade_color = QPushButton("Select Saccade Color")
+        self.button_saccade_color.clicked.connect(self.select_saccade_color)
+        self.button_fixation_color.setEnabled(False)
+        self.button_saccade_color.setEnabled(False)
+        
+        self.layer_fixation_color.addWidget(self.button_fixation_color)
+        self.layer_fixation_color.addWidget(self.button_saccade_color)
+        
+        self.filters.addLayout(self.layer_fixation_color)
+        # --
 
         self.right_side.addLayout(self.below_canvas)
 
