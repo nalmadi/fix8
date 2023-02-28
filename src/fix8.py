@@ -117,6 +117,7 @@ class Fix8(QMainWindow):
 
             d = np.sqrt((xt - event.x)**2 + (yt - event.y)**2)
             self.selected_fixation = d.argmin()
+            print(self.selected_fixation)
 
             if d[self.selected_fixation] >= self.epsilon:
                 self.selected_fixation = None
@@ -148,7 +149,7 @@ class Fix8(QMainWindow):
                 self.show_saccades(Qt.Unchecked)
         if event.button != 1:
             return
-        self.selected_fixation = None
+        # self.selected_fixation = None
         self.canvas.draw_idle()
 
 
@@ -165,6 +166,37 @@ class Fix8(QMainWindow):
         self.xy[self.selected_fixation] = np.array([x, y])
         self.scatter.set_offsets(self.xy)
 
+    def keyPressEvent(self, e):
+        if e.key() == 16777219:
+            print(self.corrected_fixations[0], "selected fixation\n", self.selected_fixation)    
+            if(self.corrected_fixations is not None and self.selected_fixation is not None):
+                if self.selected_fixation < len(self.corrected_fixations):
+                    print("able to delete")
+                    self.corrected_fixations = np.delete(self.corrected_fixations, self.selected_fixation, 0) # delete the row of selected fixation
+                    self.selected_fixation = None
+                    fixations = self.corrected_fixations
+                    saccades = self.saccades
+                    x = fixations[:,0]
+                    y = fixations[:,1]
+                    duration = fixations[:,2]
+                    
+                    # get rid of the data before updating it
+                    self.clear_fixations()
+                    self.clear_saccades()
+                    
+                    # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
+                    # do the same for saccades
+                    if self.checkbox_show_fixations.isCheckable():
+                        if self.checkbox_show_fixations.isChecked():
+                            self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = self.fixation_color)
+                    if self.checkbox_show_saccades.isCheckable():
+                        if self.checkbox_show_saccades.isChecked():
+                            self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)
+
+                    # draw whatever was updated
+                    self.canvas.draw()
+                    
+                
 
     '''opens the stimulus, displays it to the canvas, and grabs the aois of the image'''
     def open_stimulus(self):
