@@ -493,47 +493,43 @@ class Fix8(QMainWindow):
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()  # update the suggested corrections to the new algorithm, and the current suggestion aswell
         elif self.algorithm == 'chain':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'cluster':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.cluster(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'merge':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.merge(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'regress':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.regress(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'segment':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.segment(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'split':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.split(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'stretch':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'compare':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.compare(copy.deepcopy(fixation_XY), word_XY)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'warp':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        elif self.algorithm == 'time warp':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         elif self.algorithm == 'slice':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+            self.suggested_corrections[:, 0:2] = da.slice(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
         else:
@@ -1034,7 +1030,7 @@ class Fix8(QMainWindow):
             self.input_lesser.setEnabled(False)
             self.input_greater.setEnabled(False)
             self.button_lesser.setEnabled(False)
-            self.button_greater.setEnabled(False)
+            self.button_greater.setEnabled(False)          
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
             # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions, so clearing suggestions isn't called anywhere in the code
