@@ -290,6 +290,7 @@ class Fix8(QMainWindow):
         self.trial_path = self.trials[item.text()]
 
         self.find_fixations(self.trial_path)
+        self.suggested_corrections = None
         self.current_fixation = len(self.original_fixations) - 1 # double clicking trial should show all and make the current fixation the last one
 
         # set the progress bar to the amount of fixations found
@@ -872,10 +873,10 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.addItem('Segment')
         self.dropdown_select_algorithm.addItem('Split')
         self.dropdown_select_algorithm.addItem('Stretch')
-        self.dropdown_select_algorithm.addItem('Compare')
+        # self.dropdown_select_algorithm.addItem('Compare')
         self.dropdown_select_algorithm.addItem('Warp')
         # self.dropdown_select_algorithm.addItem('Time Warp')
-        self.dropdown_select_algorithm.addItem('Slice')
+        # self.dropdown_select_algorithm.addItem('Slice')
         self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
         self.dropdown_select_algorithm.setEnabled(False)
