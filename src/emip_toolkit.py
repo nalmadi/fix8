@@ -1002,7 +1002,10 @@ def find_background_color(img):
         the color of the background of the image
     """
 
-    img = img.convert('1')
+    img = img.convert('L')  # Convert to grayscale
+    threshold = 80
+    img = img.point(lambda x: 0 if x < threshold else 255, '1')  # Apply threshold and convert to black and white
+
     width, height = img.size
 
     color_result = []
@@ -1049,14 +1052,22 @@ def find_aoi(image=None, image_path=None, img=None, level="sub-line", margin_hei
     if img is None:
         if image is None or image_path is None:
             return
-        img = Image.open(image_path + image).convert('1')
+        # img = Image.open(image_path + image).convert('1')
+        img = Image.open(image_path + image)
+        img = img.convert('L')  # Convert to grayscale
+        threshold = 80
+        img = img.point(lambda x: 0 if x < threshold else 255, '1')  # Apply threshold and convert to black and white
+
     else:
-        img = img.convert('1')
+        img = img.convert('L')  # Convert to grayscale
+        threshold = 80
+        img = img.point(lambda x: 0 if x < threshold else 255, '1')  # Apply threshold and convert to black and white
 
     width, height = img.size
 
     # Detect the background color
     bg_color = find_background_color(img)
+    # print("bg_color: ", bg_color)
 
     left, right = 0, width
 
