@@ -64,7 +64,7 @@ def cluster(fixation_XY, line_Y):
 # https://doi.org/10.1145/2800835.2807936
 ######################################################################
 
-def compare(fixation_XY, word_XY, x_thresh=512, n_nearest_lines=3):
+def compare(fixation_XY, word_XY, x_thresh=75, n_nearest_lines=3):
 	line_Y = np.unique(word_XY[:, 1])
 	n = len(fixation_XY)
 	diff_X = np.diff(fixation_XY[:, 0])
@@ -85,6 +85,7 @@ def compare(fixation_XY, word_XY, x_thresh=512, n_nearest_lines=3):
 		line_i = nearest_line_I[np.argmin(line_costs)]
 		fixation_XY[start_of_line:end_of_line, 1] = line_Y[line_i]
 		start_of_line = end_of_line
+	# print(fixation_XY)
 	return fixation_XY
 
 ######################################################################
@@ -213,7 +214,7 @@ def segment(fixation_XY, line_Y):
 # https://doi.org/10.1016/j.procs.2021.09.069
 ######################################################################
 
-def slice(fixation_XY, line_Y, x_thresh=192, y_thresh=32, w_thresh=32, n_thresh=90):
+def slice(fixation_XY, line_Y, x_thresh=100, y_thresh=32, w_thresh=32, n_thresh=90):
 	n = len(fixation_XY)
 	line_height = np.mean(np.diff(line_Y))
 	proto_lines, phantom_proto_lines = {}, {}

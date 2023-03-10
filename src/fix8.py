@@ -86,7 +86,7 @@ class Fix8(QMainWindow):
 
         # fields relating to the correction algorithm
         self.algorithm = 'original'
-        self.suggested_corrections, self.single_suggestion = None, None
+        self.suggested_corrections, self.single_suggestion = None, None # single suggestion is the current suggestion
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
         self.file_saved = 0
@@ -483,15 +483,20 @@ class Fix8(QMainWindow):
         # run correction
         fixation_XY = copy.deepcopy(self.corrected_fixations)
         fixation_XY = fixation_XY[:, 0:2]
+        fixation_XY = np.array(fixation_XY)
         line_Y = self.find_lines_y(self.aoi)    
+        line_Y = np.array(line_Y)
+        
         word_XY = self.find_word_centers(self.aoi)
         word_XY = np.array(word_XY)
+        
         self.suggested_corrections = copy.deepcopy(self.corrected_fixations)
+        print(self.corrected_fixations)
 
         if self.algorithm == 'attach':
             self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()  # update the suggested corrections to the new algorithm, and the current suggestion aswell
+            self.update_suggestion()  # update the current suggestion aswell
         elif self.algorithm == 'chain':
             self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
@@ -520,18 +525,19 @@ class Fix8(QMainWindow):
             self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
-        elif self.algorithm == 'compare':
-            self.suggested_corrections[:, 0:2] = da.compare(copy.deepcopy(fixation_XY), word_XY)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
+        # elif self.algorithm == 'compare':
+        #     self.suggested_corrections[:, 0:2] = da.compare(copy.deepcopy(fixation_XY), word_XY)
+        #     self.relevant_buttons("algorithm_selected")
+        #     self.update_suggestion()
+        #     print("after", self.suggested_corrections)
         elif self.algorithm == 'warp':
             self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
             self.relevant_buttons("algorithm_selected")
             self.update_suggestion()
-        elif self.algorithm == 'slice':
-            self.suggested_corrections[:, 0:2] = da.slice(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
+        # elif self.algorithm == 'slice':
+        #     self.suggested_corrections[:, 0:2] = da.slice(copy.deepcopy(fixation_XY), line_Y)
+        #     self.relevant_buttons("algorithm_selected")
+        #     self.update_suggestion()
         else:
             self.relevant_buttons("no_selected_algorithm")
             self.algorithm = None
