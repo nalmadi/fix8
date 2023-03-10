@@ -231,7 +231,7 @@ class Fix8(QMainWindow):
                 for file in files:
                     if file.endswith(".json"):
                         self.file_list.append(self.folder_path + "/" + file)
-                    elif file.endswith(".png") or file.endswith(".jpeg"):
+                    elif file.endswith(".png") or file.endswith(".jpeg") or file.endswith(".jpg"):
                         if image_file == '': # only get the first image found
                             image_file = self.folder_path + "/" + file
                             image_name = file
