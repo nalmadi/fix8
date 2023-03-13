@@ -681,7 +681,9 @@ class Fix8(QMainWindow):
             if self.current_fixation == len(self.corrected_fixations):
                 # off by one error, since deleting fixation moves current onto the next fixation
                 self.current_fixation-=1
-            self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] > int(self.lesser_value)]
+                
+            if self.suggested_corrections is not None:   
+                self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] > int(self.lesser_value)]
             
         temp = self.current_fixation
         self.progress_bar.setMaximum(len(self.corrected_fixations) - 1)
@@ -701,8 +703,9 @@ class Fix8(QMainWindow):
             if self.current_fixation == len(self.corrected_fixations):
                 # off by one error, since deleting fixation moves current onto the next fixation
                 self.current_fixation-=1
-
-            self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < int(self.greater_value)]
+                
+            if self.suggested_corrections is not None:   
+                self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < int(self.greater_value)]
             
         temp = self.current_fixation
         self.progress_bar.setMaximum(len(self.corrected_fixations) - 1)
