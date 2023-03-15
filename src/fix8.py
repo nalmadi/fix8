@@ -403,6 +403,7 @@ class Fix8(QMainWindow):
         y = fixations[0:self.current_fixation + 1, 1]
         duration = fixations[0:self.current_fixation + 1, 2]
         self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = self.fixation_opacity, c = self.fixation_color)
+
         self.canvas.draw()
 
     '''if the user clicks the show fixations checkbox, show or hide the fixations
@@ -677,7 +678,7 @@ class Fix8(QMainWindow):
     def lesser_value_confirmed(self):
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] > int(self.lesser_value)]
         self.current_fixation = 0
-        if self.algorithm != 'original':
+        if self.algorithm != 'original' and self.suggested_corrections is not None:
             if self.current_fixation == len(self.corrected_fixations):
                 # off by one error, since deleting fixation moves current onto the next fixation
                 self.current_fixation-=1
@@ -701,7 +702,7 @@ class Fix8(QMainWindow):
             if self.current_fixation == len(self.corrected_fixations):
                 # off by one error, since deleting fixation moves current onto the next fixation
                 self.current_fixation-=1
-
+            
             self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < int(self.greater_value)]
             
         temp = self.current_fixation
@@ -1115,5 +1116,5 @@ class Fix8(QMainWindow):
 if __name__ == '__main__':
     fix8 = QApplication([])
     window = Fix8()
-    apply_stylesheet(fix8, 'my_theme.xml')
+    # apply_stylesheet(fix8, 'my_theme.xml')
     fix8.exec_()
