@@ -304,6 +304,7 @@ class Fix8(QMainWindow):
         
         self.corrected_fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
         self.checkbox_show_fixations.setChecked(True)
+        self.checkbox_show_saccades.setChecked(True)
         
         self.draw_canvas(self.corrected_fixations,draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
@@ -447,6 +448,8 @@ class Fix8(QMainWindow):
         if self.scatter != None:
             self.scatter.remove()
             self.scatter = None
+            # clear scatter data from canvas but not the background image
+            self.canvas.ax.collections.clear()
             self.canvas.draw()
             
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
@@ -469,7 +472,9 @@ class Fix8(QMainWindow):
         # do the same for saccades
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
-                self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = self.fixation_opacity, c = self.fixation_color)
+                self.scatter = self.canvas.ax.scatter(x[:-1], y[:-1], s=30 * (duration[:-1]/50)**1.8, alpha = self.fixation_opacity, c = self.fixation_color)
+                self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
+
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
                 self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)       
@@ -495,57 +500,59 @@ class Fix8(QMainWindow):
         word_XY = np.array(word_XY)
         
         self.suggested_corrections = copy.deepcopy(self.corrected_fixations)
-        print(self.corrected_fixations)
+        #print(self.corrected_fixations)
 
-        if self.algorithm == 'attach':
-            self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()  # update the current suggestion aswell
-        elif self.algorithm == 'chain':
-            self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        elif self.algorithm == 'cluster':
-            self.suggested_corrections[:, 0:2] = da.cluster(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        elif self.algorithm == 'merge':
-            self.suggested_corrections[:, 0:2] = da.merge(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        elif self.algorithm == 'regress':
-            self.suggested_corrections[:, 0:2] = da.regress(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        elif self.algorithm == 'segment':
-            self.suggested_corrections[:, 0:2] = da.segment(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        elif self.algorithm == 'split':
-            self.suggested_corrections[:, 0:2] = da.split(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        elif self.algorithm == 'stretch':
-            self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        # elif self.algorithm == 'compare':
-        #     self.suggested_corrections[:, 0:2] = da.compare(copy.deepcopy(fixation_XY), word_XY)
-        #     self.relevant_buttons("algorithm_selected")
-        #     self.update_suggestion()
-        #     print("after", self.suggested_corrections)
-        elif self.algorithm == 'warp':
-            self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
-            self.relevant_buttons("algorithm_selected")
-            self.update_suggestion()
-        # elif self.algorithm == 'slice':
-        #     self.suggested_corrections[:, 0:2] = da.slice(copy.deepcopy(fixation_XY), line_Y)
-        #     self.relevant_buttons("algorithm_selected")
-        #     self.update_suggestion()
-        else:
-            self.relevant_buttons("no_selected_algorithm")
-            self.algorithm = None
-            self.update_suggestion()
+        if len(self.corrected_fixations) > 0:
+            if self.algorithm == 'attach':
+                self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()  # update the current suggestion aswell
+            elif self.algorithm == 'chain':
+                self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()
+            elif self.algorithm == 'cluster':
+                self.suggested_corrections[:, 0:2] = da.cluster(copy.deepcopy(fixation_XY), line_Y)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()
+            elif self.algorithm == 'merge':
+                self.suggested_corrections[:, 0:2] = da.merge(copy.deepcopy(fixation_XY), line_Y)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()
+            elif self.algorithm == 'regress':
+                self.suggested_corrections[:, 0:2] = da.regress(copy.deepcopy(fixation_XY), line_Y)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()
+            elif self.algorithm == 'segment':
+                self.suggested_corrections[:, 0:2] = da.segment(copy.deepcopy(fixation_XY), line_Y)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()
+            elif self.algorithm == 'split':
+                self.suggested_corrections[:, 0:2] = da.split(copy.deepcopy(fixation_XY), line_Y)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()
+            elif self.algorithm == 'stretch':
+                self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()
+            # elif self.algorithm == 'compare':
+            #     self.suggested_corrections[:, 0:2] = da.compare(copy.deepcopy(fixation_XY), word_XY)
+            #     self.relevant_buttons("algorithm_selected")
+            #     self.update_suggestion()
+            #     print("after", self.suggested_corrections)
+            elif self.algorithm == 'warp':
+                self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
+                self.relevant_buttons("algorithm_selected")
+                self.update_suggestion()
+            # elif self.algorithm == 'slice':
+            #     self.suggested_corrections[:, 0:2] = da.slice(copy.deepcopy(fixation_XY), line_Y)
+            #     self.relevant_buttons("algorithm_selected")
+            #     self.update_suggestion()
+            else:
+                self.relevant_buttons("no_selected_algorithm")
+                self.algorithm = None
+                self.update_suggestion()
+            self.checkbox_show_suggestion.setChecked(True)
 
     '''if the user presses the correct all fixations button,
     make the corrected fixations the suggested ones from the correction algorithm'''
@@ -592,7 +599,7 @@ class Fix8(QMainWindow):
 
             # remove and replace the last suggestion for the current suggestion
             if self.single_suggestion != None:
-                self.single_suggestion.remove()
+                #self.single_suggestion.remove()
                 self.single_suggestion = None
                 self.canvas.draw()
             self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
@@ -602,7 +609,7 @@ class Fix8(QMainWindow):
                 self.canvas.draw()
             else:
                 if self.single_suggestion != None:
-                    self.single_suggestion.remove()
+                    #self.single_suggestion.remove()
                     self.single_suggestion = None
                     self.canvas.draw()
 
@@ -619,6 +626,15 @@ class Fix8(QMainWindow):
         self.corrected_fixations[self.current_fixation][1] = y
         
         self.next_fixation()
+
+    def undo_suggestion(self):
+        
+        x = self.original_fixations[self.current_fixation - 1][0]
+        y = self.original_fixations[self.current_fixation - 1][1]
+        self.corrected_fixations[self.current_fixation - 1][0] = x
+        self.corrected_fixations[self.current_fixation - 1][1] = y
+        
+        self.previous_fixation()
 
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
@@ -676,6 +692,9 @@ class Fix8(QMainWindow):
             
 
     def lesser_value_confirmed(self):
+        # set lesser_value to value of the greater value filter
+        self.lesser_value = self.input_lesser.text()
+
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] > int(self.lesser_value)]
         self.current_fixation = 0
         if self.algorithm != 'original':
@@ -696,6 +715,9 @@ class Fix8(QMainWindow):
         self.greater_value = value
         
     def greater_value_confirmed(self):
+        # set greater_value to value of the greater value filter
+        self.greater_value = self.input_greater.text()
+
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] < int(self.greater_value)]
         self.current_fixation = 0
         if self.algorithm != 'original':
@@ -758,6 +780,7 @@ class Fix8(QMainWindow):
         self.input_greater = QLineEdit()
         self.input_greater.textChanged.connect(self.greater_value_changed)
         self.input_greater.setEnabled(False)
+        self.input_greater.setText("1000")
         self.button_greater = QPushButton("Remove Fixations >")
         self.button_greater.setEnabled(False)
         self.button_greater.clicked.connect(self.greater_value_confirmed)
@@ -768,6 +791,7 @@ class Fix8(QMainWindow):
         self.input_lesser = QLineEdit()
         self.input_lesser.textChanged.connect(self.lesser_value_changed)
         self.input_lesser.setEnabled(False)
+        self.input_lesser.setText("100")
         self.button_lesser = QPushButton("Remove Fixations <")
         self.button_lesser.setEnabled(False)
         self.button_lesser.clicked.connect(self.lesser_value_confirmed)
@@ -838,6 +862,11 @@ class Fix8(QMainWindow):
         self.button_confirm_suggestion.setEnabled(False)
         self.button_confirm_suggestion.clicked.connect(self.confirm_suggestion)
         self.semi_automation.addWidget(self.button_confirm_suggestion)
+
+        self.button_undo_suggestion = QPushButton("Undo Correction", self)
+        self.button_undo_suggestion.setEnabled(False)
+        self.button_undo_suggestion.clicked.connect(self.undo_suggestion)
+        self.semi_automation.addWidget(self.button_undo_suggestion)
 
         self.button1 = QPushButton()
         self.semi_automation.addWidget(self.button1)
@@ -1110,6 +1139,7 @@ class Fix8(QMainWindow):
             self.button_next_fixation.setEnabled(True)
             self.button_correct_all_fixations.setEnabled(True)
             self.button_confirm_suggestion.setEnabled(True)
+            self.button_undo_suggestion.setEnabled(True)
             self.checkbox_show_suggestion.setCheckable(True)
             self.checkbox_show_suggestion.setEnabled(True)
 
