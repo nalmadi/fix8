@@ -613,6 +613,7 @@ class Fix8(QMainWindow):
                     self.single_suggestion = None
                     self.canvas.draw()
 
+
     def back_to_beginning(self):
         self.current_fixation = 1
         self.update_suggestion()
