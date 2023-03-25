@@ -118,6 +118,7 @@ class Fix8(QMainWindow):
     def get_selected_fixation(self, event):
         if self.scatter is not None:
             self.xy = np.asarray(self.scatter.get_offsets())
+
             xyt = self.canvas.ax.transData.transform(self.xy)
             xt, yt = xyt[:, 0], xyt[:, 1]
 
@@ -135,6 +136,7 @@ class Fix8(QMainWindow):
         if event.button != 1:
             return
         self.selected_fixation = self.get_selected_fixation(event)
+        #print(self.selected_fixation)
 
     '''when released the fixation, update the corrected fixations'''
     def button_release_callback(self, event):
@@ -472,8 +474,11 @@ class Fix8(QMainWindow):
         # do the same for saccades
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
-                self.scatter = self.canvas.ax.scatter(x[:-1], y[:-1], s=30 * (duration[:-1]/50)**1.8, alpha = self.fixation_opacity, c = self.fixation_color)
-                self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
+
+                list_colors = [self.fixation_color] * (len(x)-1)
+                colors = np.array(list_colors + ['yellow'])
+                self.scatter = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha = self.fixation_opacity, c = colors)
+                #self.scatter = self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
 
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
