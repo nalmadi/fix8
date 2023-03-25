@@ -142,14 +142,27 @@ class Fix8(QMainWindow):
     '''when released the fixation, update the corrected fixations'''
     def button_release_callback(self, event):
         if self.selected_fixation is not None:
+
+            self.metadata += "manual_moving, fixation " + str(self.selected_fixation) \
+                             + " moved from x:" + str(self.corrected_fixations[self.selected_fixation][0]) \
+                             + " y:" + str(self.corrected_fixations[self.selected_fixation][1]) \
+                             + ' to x:' + str(self.xy[self.selected_fixation][0]) \
+                             + ' y:' + str(self.xy[self.selected_fixation][1]) \
+                             + ',' + str(time.time()) + '\n'
+
             self.corrected_fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
             self.corrected_fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][1]
+
             if self.algorithm != 'original':
                 fixation_XY = np.array([self.corrected_fixations[self.selected_fixation]])
                 line_Y = self.find_lines_y(self.aoi)
+
+                # todo: problem here I think, it shouldn't pick attach everytime, right?
                 updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[0]
+                
                 self.suggested_corrections[self.selected_fixation] = updated_correction
                 self.update_suggestion()
+            
             if self.checkbox_show_saccades.isChecked():
                 self.clear_saccades()
                 self.show_saccades(Qt.Checked)
@@ -628,6 +641,13 @@ class Fix8(QMainWindow):
     ''' when the confirm button is clicked, the suggested correction replaces the current fixation'''
     def confirm_suggestion(self):
         
+        self.metadata += "auto_moving, fixation " + str(self.current_fixation) \
+         + " moved from x:" + str(self.corrected_fixations[self.current_fixation][0]) \
+         + " y:" + str(self.corrected_fixations[self.current_fixation][1]) \
+         + ' to x:' + str(self.suggested_corrections[self.current_fixation][0]) \
+         + ' y:' + str(self.suggested_corrections[self.current_fixation][1]) \
+         + ',' + str(time.time()) + '\n'
+
         x = self.suggested_corrections[self.current_fixation][0]
         y = self.suggested_corrections[self.current_fixation][1]
         self.corrected_fixations[self.current_fixation][0] = x
@@ -636,6 +656,13 @@ class Fix8(QMainWindow):
         self.next_fixation()
 
     def undo_suggestion(self):
+
+        self.metadata += "auto_undo, fixation " + str(self.current_fixation - 1) \
+         + " moved from x:" + str(self.corrected_fixations[self.current_fixation - 1][0]) \
+         + " y:" + str(self.corrected_fixations[self.current_fixation - 1][1]) \
+         + ' to x:' + str(self.original_fixations[self.current_fixation - 1][0]) \
+         + ' y:' + str(self.original_fixations[self.current_fixation - 1][1]) \
+         + ',' + str(time.time()) + '\n'
         
         x = self.original_fixations[self.current_fixation - 1][0]
         y = self.original_fixations[self.current_fixation - 1][1]
@@ -663,7 +690,7 @@ class Fix8(QMainWindow):
                            + " Trial Name" + str(self.trial_name)\
                            + " File Path " + str(self.file_path)\
                            + " Duration " + str(self.duration) \
-                           + "," + str(time.time())
+                           + "," + str(time.time()) + '\n'
 
             metadata_file_path = Path(f"{self.trial_path.replace(self.trial_path.split('/')[-1], str(self.trial_name) + 'metadata.csv')}")
 
