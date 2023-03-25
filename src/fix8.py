@@ -507,6 +507,10 @@ class Fix8(QMainWindow):
         self.algorithm = algorithm
         self.algorithm = self.algorithm.lower()
 
+        # write metadata
+        self.metadata += "selected,algorithm " + str(algorithm) \
+                         + "," + str(time.time()) + '\n'
+
         # run correction
         fixation_XY = copy.deepcopy(self.corrected_fixations)
         fixation_XY = fixation_XY[:, 0:2]
