@@ -93,6 +93,7 @@ class Fix8(QMainWindow):
         self.b = 0 # beginning time of trial
         self.duration = 0
         self.user = ''
+        self.metadata = ""
         
         self.saccade_opacity = 0.4
         self.fixation_opacity = 0.4
@@ -655,19 +656,26 @@ class Fix8(QMainWindow):
             self.duration = time.time() - self.b  # store in a file called metadata which includes the file name they were correcting, the image, and the duration
             today = date.today()
 
-            headers = ["Date", "Trial Name", "File Path", "Duration"]
-            l_metadata = [str(today), str(self.trial_name), str(self.file_path), str(self.duration)]
-            path = Path(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}").is_file()
+            headers = "event,event details,timestamp"
+
+            self.metadata += "Date " + str(today) \
+                           + ",Trial Name \n" + str(self.trial_name)\
+                           + ",File Path " + str(self.file_path)\
+                           + ",Duration " + str(self.duration)
+
+            metadata_file_path = Path(f"{self.trial_path.replace(self.trial_path.split('/')[-1], str(self.trial_name) + 'metadata.csv')}")
+
+            metadata_file_exists = metadata_file_path.is_file()
             
-            if(path == False):       
-                with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'w', newline='') as wr:
-                    writer = csv.writer(wr)
-                    writer.writerow(headers)
-                    writer.writerow(l_metadata)
+            if(metadata_file_exists == False):       
+                with open(metadata_file_path, 'w', newline='') as meta_file:
+                    
+                    meta_file.write(headers)
+                    meta_file.write(self.metadata)
             else:
-                with open(f"{self.trial_path.replace(self.trial_path.split('/')[-1], 'metadata.csv')}", 'a',newline='') as wr:
-                    writer = csv.writer(wr)
-                    writer.writerow(l_metadata)               
+                with open(metadata_file_path, 'a',newline='') as meta_file:
+
+                    meta_file.write(self.metadata)               
         else:
             qmb = QMessageBox()
             qmb.setWindowTitle("Save Error")
