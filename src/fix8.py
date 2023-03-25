@@ -172,7 +172,7 @@ class Fix8(QMainWindow):
             return
         # self.selected_fixation = None
 
-        self.canvas.draw_idle()
+        self.canvas.update()
 
 
     def motion_notify_callback(self, event):
