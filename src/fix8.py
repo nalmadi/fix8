@@ -27,7 +27,6 @@ import threading
 import copy
 import matplotlib.animation as animation
 from datetime import date
-import csv
 from pathlib import Path
 
 # from PySide2 import QtWidgets
@@ -173,7 +172,6 @@ class Fix8(QMainWindow):
         # self.selected_fixation = None
 
         self.canvas.update()
-
 
     def motion_notify_callback(self, event):
         if self.selected_fixation is None:
@@ -526,7 +524,7 @@ class Fix8(QMainWindow):
             if self.algorithm == 'attach':
                 self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()  # update the current suggestion aswell
+                self.update_suggestion()  # update the current suggestion as well
             elif self.algorithm == 'chain':
                 self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
