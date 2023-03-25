@@ -90,7 +90,7 @@ class Fix8(QMainWindow):
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
         self.file_saved = 0
-        self.b = 0 # beginning time of trial
+        self.timer_start = 0 # beginning time of trial
         self.duration = 0
         self.user = ''
         self.metadata = ""
@@ -298,7 +298,8 @@ class Fix8(QMainWindow):
 
         # set the progress bar to the amount of fixations found
         self.progress_bar.setMaximum(len(self.original_fixations) - 1)
-        self.b = time.time()
+        self.timer_start = time.time()
+        self.metadata = "started,," + str(time.time()) +'\n'
         if self.current_fixation is not None:
             if self.current_fixation == -1:
                 self.label_progress.setText(f"0/{len(self.original_fixations)}")
@@ -653,15 +654,16 @@ class Fix8(QMainWindow):
             with open(f"{self.trial_path.replace('.json', '_CORRECTED' + '.json')}", 'w') as f:
                 json.dump(corrected_fixations, f)
             self.file_saved += 1
-            self.duration = time.time() - self.b  # store in a file called metadata which includes the file name they were correcting, the image, and the duration
+            self.duration = time.time() - self.timer_start  # store in a file called metadata which includes the file name they were correcting, the image, and the duration
             today = date.today()
 
-            headers = "event,event details,timestamp"
+            headers = "event,event details,timestamp\n"
 
-            self.metadata += "Date " + str(today) \
-                           + ",Trial Name \n" + str(self.trial_name)\
-                           + ",File Path " + str(self.file_path)\
-                           + ",Duration " + str(self.duration)
+            self.metadata += "Saved,Date " + str(today) \
+                           + " Trial Name" + str(self.trial_name)\
+                           + " File Path " + str(self.file_path)\
+                           + " Duration " + str(self.duration) \
+                           + "," + str(time.time())
 
             metadata_file_path = Path(f"{self.trial_path.replace(self.trial_path.split('/')[-1], str(self.trial_name) + 'metadata.csv')}")
 
@@ -672,10 +674,12 @@ class Fix8(QMainWindow):
                     
                     meta_file.write(headers)
                     meta_file.write(self.metadata)
+                    self.metadata = ""
             else:
                 with open(metadata_file_path, 'a',newline='') as meta_file:
 
-                    meta_file.write(self.metadata)               
+                    meta_file.write(self.metadata)
+                    self.metadata = ""             
         else:
             qmb = QMessageBox()
             qmb.setWindowTitle("Save Error")
