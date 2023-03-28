@@ -742,6 +742,11 @@ class Fix8(QMainWindow):
         # set lesser_value to value of the greater value filter
         self.lesser_value = self.input_lesser.text()
 
+        # writing a log in metadata
+        self.metadata += "filter,removed fixations less than " + self.lesser_value \
+               + "," + str(time.time()) + '\n'
+
+
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] > int(self.lesser_value)]
         self.current_fixation = 0
         if self.algorithm != 'original' and self.suggested_corrections is not None:
@@ -764,6 +769,10 @@ class Fix8(QMainWindow):
     def greater_value_confirmed(self):
         # set greater_value to value of the greater value filter
         self.greater_value = self.input_greater.text()
+
+        # writing a log in metadata
+        self.metadata += "filter,removed fixations greater than " + self.greater_value \
+               + "," + str(time.time()) + '\n'
 
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] < int(self.greater_value)]
         self.current_fixation = 0
