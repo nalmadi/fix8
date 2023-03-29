@@ -454,7 +454,7 @@ class Fix8(QMainWindow):
     '''remove the saccades from the canvas (this does not erase the data, just visuals)'''
     def clear_saccades(self):
         if self.saccades != None:
-            # self.canvas.ax.lines.clear() <-- This line crashes the tool
+            # self.canvas.ax.lines.clear()
             self.saccades = None
             self.canvas.draw()
 
@@ -464,7 +464,7 @@ class Fix8(QMainWindow):
             self.scatter.remove()
             self.scatter = None
             # clear scatter data from canvas but not the background image
-            # self.canvas.ax.collections.clear() <-- This line crashes the tool
+            # self.canvas.ax.collections.clear()
             self.canvas.draw()
             
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
