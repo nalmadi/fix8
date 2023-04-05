@@ -153,13 +153,35 @@ class Fix8(QMainWindow):
             self.corrected_fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][1]
 
             if self.algorithm != 'original':
+                # run correction
                 fixation_XY = np.array([self.corrected_fixations[self.selected_fixation]])
-                line_Y = self.find_lines_y(self.aoi)
-
-                # todo: problem here I think, it shouldn't pick attach everytime, right?
-                updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[0]
+                fixation_XY = fixation_XY[:, 0:2]
+                line_Y = self.find_lines_y(self.aoi)    
+                line_Y = np.array(line_Y)
                 
-                self.suggested_corrections[self.selected_fixation] = updated_correction
+                word_XY = self.find_word_centers(self.aoi)
+                word_XY = np.array(word_XY)
+                
+                if self.algorithm == 'attach':
+                    updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[0]
+                elif self.algorithm == 'chain':
+                    updated_correction = da.chain(copy.deepcopy(fixation_XY), line_Y)[0]
+                elif self.algorithm == 'cluster':
+                    updated_correction = da.cluster(copy.deepcopy(fixation_XY), line_Y)[0]
+                elif self.algorithm == 'merge':
+                    self.suupdated_correction = da.merge(copy.deepcopy(fixation_XY), line_Y)[0]
+                elif self.algorithm == 'regress':
+                    updated_correction = da.regress(copy.deepcopy(fixation_XY), line_Y)[0]
+                elif self.algorithm == 'segment':
+                    updated_correction = da.segment(copy.deepcopy(fixation_XY), line_Y)[0]
+                elif self.algorithm == 'split':
+                    updated_correction = da.split(copy.deepcopy(fixation_XY), line_Y)[0]
+                elif self.algorithm == 'stretch':
+                    updated_correction = da.stretch(copy.deepcopy(fixation_XY), line_Y)[0]
+                elif self.algorithm == 'warp':
+                    updated_correction = da.warp(copy.deepcopy(fixation_XY), word_XY)[0]
+
+                self.suggested_corrections[self.selected_fixation, :2] = updated_correction
                 self.update_suggestion()
             
             if self.checkbox_show_saccades.isChecked():
@@ -557,19 +579,10 @@ class Fix8(QMainWindow):
                 self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
                 self.update_suggestion()
-            # elif self.algorithm == 'compare':
-            #     self.suggested_corrections[:, 0:2] = da.compare(copy.deepcopy(fixation_XY), word_XY)
-            #     self.relevant_buttons("algorithm_selected")
-            #     self.update_suggestion()
-            #     print("after", self.suggested_corrections)
             elif self.algorithm == 'warp':
                 self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
                 self.relevant_buttons("algorithm_selected")
                 self.update_suggestion()
-            # elif self.algorithm == 'slice':
-            #     self.suggested_corrections[:, 0:2] = da.slice(copy.deepcopy(fixation_XY), line_Y)
-            #     self.relevant_buttons("algorithm_selected")
-            #     self.update_suggestion()
             else:
                 self.relevant_buttons("no_selected_algorithm")
                 self.algorithm = None
