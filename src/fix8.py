@@ -634,7 +634,7 @@ class Fix8(QMainWindow):
 
             # remove and replace the last suggestion for the current suggestion
             if self.single_suggestion != None:
-                self.single_suggestion.remove()
+                #self.single_suggestion.remove()
                 self.single_suggestion = None
                 self.canvas.draw()
             self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
@@ -644,7 +644,7 @@ class Fix8(QMainWindow):
                 self.canvas.draw()
             else:
                 if self.single_suggestion != None:
-                    self.single_suggestion.remove()
+                    #self.single_suggestion.remove()
                     self.single_suggestion = None
                     self.canvas.draw()
 
@@ -1215,5 +1215,5 @@ class Fix8(QMainWindow):
 if __name__ == '__main__':
     fix8 = QApplication([])
     window = Fix8()
-    apply_stylesheet(fix8, 'my_theme.xml')
+    # apply_stylesheet(fix8, 'my_theme.xml')
     fix8.exec_()
