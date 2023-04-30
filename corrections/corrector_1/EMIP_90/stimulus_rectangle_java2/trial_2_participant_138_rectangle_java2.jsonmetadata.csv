@@ -1,0 +1,133 @@
+event,event details,timestamp
+started,,1682121405.472249
+filter,removed fixations greater than 1000,1682121407.4855082
+filter,removed fixations less than 100,1682121408.2850409
+selected,algorithm Attach,1682121412.0191438
+auto_moving, fixation 0 moved from x:675.1128916 y:233.00975899999997 to x:675.1128916 y:232.5,1682121417.724117
+auto_moving, fixation 1 moved from x:719.6280488 y:230.41609759999997 to x:719.6280488 y:232.5,1682121418.7802439
+auto_moving, fixation 2 moved from x:679.69775 y:237.09775 to x:679.69775 y:232.5,1682121419.840706
+auto_moving, fixation 3 moved from x:764.1957143 y:231.305 to x:764.1957143 y:232.5,1682121420.898722
+auto_moving, fixation 4 moved from x:1111.1648 y:720.6774667000001 to x:1111.1648 y:704.5,1682121421.955446
+auto_moving, fixation 5 moved from x:1050.161154 y:721.7769231000001 to x:1050.161154 y:704.5,1682121423.0136561
+auto_moving, fixation 6 moved from x:745.0178947 y:268.0642105 to x:745.0178947 y:269.5,1682121424.0698109
+auto_moving, fixation 7 moved from x:645.6196296 y:234.8382716 to x:645.6196296 y:232.5,1682121425.129035
+auto_moving, fixation 8 moved from x:712.8114286 y:234.5417857 to x:712.8114286 y:232.5,1682121426.192822
+manual_moving, fixation 4 moved from x:1111.1648 y:704.5 to x:1113.2190778568777 y:733.0154693469062,1682121428.584927
+auto_moving, fixation 9 moved from x:666.4351063999999 y:219.91851060000002 to x:666.4351063999999 y:232.5,1682121430.922272
+auto_moving, fixation 10 moved from x:780.7676087 y:270.8206522 to x:780.7676087 y:269.5,1682121431.988131
+auto_moving, fixation 11 moved from x:678.33 y:263.88740740000003 to x:678.33 y:269.5,1682121433.0498319
+auto_moving, fixation 12 moved from x:773.4445 y:258.35625 to x:773.4445 y:269.5,1682121434.13828
+auto_moving, fixation 13 moved from x:775.5168132 y:272.42186810000004 to x:775.5168132 y:269.5,1682121435.3094301
+auto_moving, fixation 14 moved from x:775.5168132 y:272.42186810000004 to x:775.5168132 y:269.5,1682121436.4007208
+auto_moving, fixation 15 moved from x:708.0284375 y:300.929375 to x:708.0284375 y:305.5,1682121437.473336
+auto_moving, fixation 16 moved from x:786.7586111 y:305.8816667 to x:786.7586111 y:305.5,1682121438.550976
+auto_moving, fixation 17 moved from x:784.5189655 y:304.6268966 to x:784.5189655 y:305.5,1682121439.6123462
+auto_moving, fixation 18 moved from x:877.1934286000001 y:299.81771430000003 to x:877.1934286000001 y:305.5,1682121440.67638
+auto_moving, fixation 19 moved from x:955.9547222000001 y:301.48555560000005 to x:955.9547222000001 y:305.5,1682121441.740476
+auto_moving, fixation 20 moved from x:958.3134482999999 y:306.1448276 to x:958.3134482999999 y:305.5,1682121442.806151
+auto_moving, fixation 21 moved from x:1082.032 y:304.882 to x:1082.032 y:305.5,1682121443.874836
+auto_moving, fixation 22 moved from x:772.5244231 y:336.58692310000004 to x:772.5244231 y:340.5,1682121444.95521
+auto_moving, fixation 23 moved from x:754.5771875 y:337.053125 to x:754.5771875 y:340.5,1682121446.023624
+auto_moving, fixation 24 moved from x:792.7664815 y:326.43944439999996 to x:792.7664815 y:340.5,1682121447.09627
+auto_moving, fixation 25 moved from x:669.711875 y:290.2746875 to x:669.711875 y:305.5,1682121448.171309
+auto_moving, fixation 26 moved from x:713.4048147999999 y:293.96592589999995 to x:713.4048147999999 y:305.5,1682121449.238805
+auto_moving, fixation 27 moved from x:763.0929412 y:285.39098039999993 to x:763.0929412 y:269.5,1682121450.314848
+auto_moving, fixation 28 moved from x:795.4274 y:302.4348 to x:795.4274 y:305.5,1682121451.393704
+auto_moving, fixation 29 moved from x:899.4829507999999 y:298.99606560000007 to x:899.4829507999999 y:305.5,1682121452.460777
+auto_moving, fixation 30 moved from x:898.42 y:302.354875 to x:898.42 y:305.5,1682121453.527919
+auto_moving, fixation 31 moved from x:953.5332558 y:287.485814 to x:953.5332558 y:269.5,1682121454.5946681
+auto_moving, fixation 32 moved from x:726.4766667 y:273.10969700000004 to x:726.4766667 y:269.5,1682121455.6672661
+auto_moving, fixation 33 moved from x:776.0163462 y:253.9907692 to x:776.0163462 y:269.5,1682121456.731709
+auto_moving, fixation 34 moved from x:776.0163462 y:253.9907692 to x:776.0163462 y:269.5,1682121457.808285
+auto_moving, fixation 35 moved from x:737.0781481 y:231.51703700000002 to x:737.0781481 y:232.5,1682121458.8908002
+auto_moving, fixation 36 moved from x:750.1735 y:239.645 to x:750.1735 y:232.5,1682121459.969541
+auto_moving, fixation 37 moved from x:804.8727273 y:258.9660606 to x:804.8727273 y:269.5,1682121463.381234
+auto_moving, fixation 38 moved from x:754.23 y:289.845 to x:754.23 y:305.5,1682121464.513344
+auto_moving, fixation 39 moved from x:707.5214286 y:294.3080952 to x:707.5214286 y:305.5,1682121465.592361
+auto_moving, fixation 40 moved from x:970.6501818 y:297.6896364 to x:970.6501818 y:305.5,1682121466.66243
+auto_moving, fixation 41 moved from x:977.0469697000001 y:291.8178788 to x:977.0469697000001 y:305.5,1682121467.87324
+auto_moving, fixation 42 moved from x:1098.762414 y:298.4341379 to x:1098.762414 y:305.5,1682121468.953161
+auto_moving, fixation 43 moved from x:803.7611111 y:364.46955560000004 to x:803.7611111 y:377.5,1682121470.025213
+auto_moving, fixation 44 moved from x:764.8781395 y:399.95558139999997 to x:764.8781395 y:413.5,1682121471.0973608
+auto_moving, fixation 45 moved from x:811.8362162000001 y:451.8675676 to x:811.8362162000001 y:450.5,1682121472.170628
+auto_moving, fixation 46 moved from x:689.5540351 y:505.31298250000003 to x:689.5540351 y:522.5,1682121473.2448902
+auto_moving, fixation 47 moved from x:754.5973585 y:517.1511321 to x:754.5973585 y:522.5,1682121474.323148
+auto_moving, fixation 48 moved from x:738.6892 y:516.0312 to x:738.6892 y:522.5,1682121475.4126022
+auto_moving, fixation 49 moved from x:778.6372307999999 y:514.6012308 to x:778.6372307999999 y:522.5,1682121476.493807
+auto_moving, fixation 50 moved from x:807.2745946 y:514.3818919 to x:807.2745946 y:522.5,1682121477.574243
+auto_moving, fixation 51 moved from x:807.0103703999999 y:516.3474074 to x:807.0103703999999 y:522.5,1682121478.648982
+auto_moving, fixation 52 moved from x:953.0329412000001 y:519.8864706 to x:953.0329412000001 y:522.5,1682121479.727299
+auto_moving, fixation 53 moved from x:1062.10814 y:526.0939535 to x:1062.10814 y:522.5,1682121480.808005
+auto_moving, fixation 54 moved from x:1069.112 y:518.7948571000001 to x:1069.112 y:522.5,1682121481.882664
+auto_moving, fixation 55 moved from x:796.8835713999999 y:561.7564286 to x:796.8835713999999 y:559.5,1682121482.962058
+auto_moving, fixation 56 moved from x:745.041 y:576.309 to x:745.041 y:559.5,1682121484.037722
+auto_moving, fixation 57 moved from x:682.4261364 y:564.9477272999999 to x:682.4261364 y:559.5,1682121485.113357
+auto_moving, fixation 58 moved from x:746.6976471 y:602.0676471 to x:746.6976471 y:595.5,1682121486.1949382
+auto_moving, fixation 59 moved from x:810.3818605 y:600.3555813999999 to x:810.3818605 y:595.5,1682121487.2741902
+auto_moving, fixation 60 moved from x:744.8070455 y:585.3097727 to x:744.8070455 y:595.5,1682121488.365855
+auto_moving, fixation 61 moved from x:822.9565385 y:586.1280768999999 to x:822.9565385 y:595.5,1682121489.444865
+auto_moving, fixation 62 moved from x:947.7385714 y:579.5182857000001 to x:947.7385714 y:595.5,1682121490.523254
+auto_moving, fixation 63 moved from x:1081.113103 y:598.3120690000001 to x:1081.113103 y:595.5,1682121491.600954
+auto_moving, fixation 64 moved from x:1223.5142859999999 y:593.0771428999999 to x:1223.5142859999999 y:595.5,1682121492.680594
+auto_moving, fixation 65 moved from x:854.9185185 y:625.4307407000001 to x:854.9185185 y:631.5,1682121495.41417
+auto_moving, fixation 66 moved from x:849.6827082999998 y:628.7577083 to x:849.6827082999998 y:631.5,1682121496.497851
+auto_moving, fixation 67 moved from x:820.7607576 y:631.8513636 to x:820.7607576 y:631.5,1682121497.579753
+auto_moving, fixation 68 moved from x:860.38925 y:623.2875 to x:860.38925 y:631.5,1682121498.663451
+auto_moving, fixation 69 moved from x:863.15 y:616.5148837 to x:863.15 y:631.5,1682121499.748939
+auto_moving, fixation 70 moved from x:976.2838710000001 y:630.1283871 to x:976.2838710000001 y:631.5,1682121500.830451
+auto_moving, fixation 71 moved from x:973.9981818 y:690.2860000000001 to x:973.9981818 y:704.5,1682121501.9153259
+auto_moving, fixation 72 moved from x:878.9478125 y:694.2628125 to x:878.9478125 y:704.5,1682121503.0035682
+auto_moving, fixation 73 moved from x:918.227619 y:689.9159524 to x:918.227619 y:704.5,1682121504.095829
+auto_moving, fixation 74 moved from x:1039.873421 y:703.4742105 to x:1039.873421 y:704.5,1682121505.191173
+auto_moving, fixation 75 moved from x:861.72375 y:689.4275 to x:861.72375 y:704.5,1682121506.276683
+auto_moving, fixation 76 moved from x:872.771087 y:687.9217391 to x:872.771087 y:704.5,1682121507.363999
+auto_moving, fixation 77 moved from x:822.9560465 y:325.95651160000006 to x:822.9560465 y:340.5,1682121508.463916
+auto_moving, fixation 78 moved from x:1001.233793 y:288.9082759 to x:1001.233793 y:305.5,1682121509.551285
+auto_moving, fixation 79 moved from x:1098.4825 y:657.240625 to x:1098.4825 y:668.0,1682121510.643195
+auto_moving, fixation 80 moved from x:831.1260000000001 y:722.9046667 to x:831.1260000000001 y:741.0,1682121511.7333481
+auto_moving, fixation 81 moved from x:767.6091379 y:730.6315517 to x:767.6091379 y:741.0,1682121512.826546
+auto_moving, fixation 82 moved from x:851.3535294 y:741.7202941 to x:851.3535294 y:741.0,1682121513.919295
+auto_moving, fixation 83 moved from x:968.4075 y:739.2914582999999 to x:968.4075 y:741.0,1682121515.007345
+auto_moving, fixation 84 moved from x:961.8341537999999 y:734.7770768999999 to x:961.8341537999999 y:741.0,1682121516.0975192
+auto_moving, fixation 85 moved from x:1029.837273 y:726.7978787999999 to x:1029.837273 y:741.0,1682121517.187628
+auto_moving, fixation 86 moved from x:1031.321842 y:736.0 to x:1031.321842 y:741.0,1682121518.2834198
+auto_moving, fixation 87 moved from x:851.3522535 y:727.5457746000001 to x:851.3522535 y:741.0,1682121519.3748312
+auto_moving, fixation 88 moved from x:877.5907894999999 y:730.2442105 to x:877.5907894999999 y:741.0,1682121520.464182
+auto_moving, fixation 89 moved from x:879.8561537999999 y:729.8615384999999 to x:879.8561537999999 y:741.0,1682121521.559542
+auto_moving, fixation 90 moved from x:862.0348276000001 y:772.5037930999999 to x:862.0348276000001 y:776.5,1682121522.650379
+auto_moving, fixation 91 moved from x:1011.9911539999999 y:765.5138462 to x:1011.9911539999999 y:776.5,1682121523.7426481
+auto_moving, fixation 92 moved from x:988.84775 y:766.6385 to x:988.84775 y:776.5,1682121524.832418
+auto_moving, fixation 93 moved from x:929.8891892000001 y:774.8291892000001 to x:929.8891892000001 y:776.5,1682121525.928032
+auto_moving, fixation 94 moved from x:745.2227451 y:454.07294119999995 to x:745.2227451 y:450.5,1682121527.026627
+auto_moving, fixation 95 moved from x:789.3955556 y:300.47430560000004 to x:789.3955556 y:305.5,1682121528.119444
+auto_moving, fixation 96 moved from x:797.7637736 y:298.12415089999996 to x:797.7637736 y:305.5,1682121529.2328389
+auto_moving, fixation 0 moved from x:675.1128916 y:232.5 to x:675.1128916 y:232.5,1682121530.317902
+auto_moving, fixation 1 moved from x:719.6280488 y:232.5 to x:719.6280488 y:232.5,1682121531.409865
+auto_moving, fixation 2 moved from x:679.69775 y:232.5 to x:679.69775 y:232.5,1682121532.508178
+auto_moving, fixation 3 moved from x:764.1957143 y:232.5 to x:764.1957143 y:232.5,1682121533.583485
+auto_moving, fixation 4 moved from x:1113.2190778568777 y:733.0154693469062 to x:1113.2190778568777 y:741.0,1682121534.651123
+auto_moving, fixation 5 moved from x:1050.161154 y:704.5 to x:1050.161154 y:704.5,1682121535.714667
+auto_moving, fixation 6 moved from x:745.0178947 y:269.5 to x:745.0178947 y:269.5,1682121536.776674
+auto_moving, fixation 7 moved from x:645.6196296 y:232.5 to x:645.6196296 y:232.5,1682121537.842263
+auto_moving, fixation 8 moved from x:712.8114286 y:232.5 to x:712.8114286 y:232.5,1682121538.9024441
+auto_moving, fixation 9 moved from x:666.4351063999999 y:232.5 to x:666.4351063999999 y:232.5,1682121539.963918
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.55892395973206,1682121541.031203
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.5628159046173,1682121541.03509
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.56641101837158,1682121541.038686
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.57369685173035,1682121541.045975
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.57760381698608,1682121541.049881
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.58174991607666,1682121541.0540302
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.58906292915344,1682121541.0613399
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.59335589408875,1682121541.065631
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.59693479537964,1682121541.06921
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.60096287727356,1682121541.0732899
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.60693097114563,1682121541.079205
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.61097478866577,1682121541.0832498
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 135.61471581459045,1682121541.0869918
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 137.6836268901825,1682121543.15593
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 138.36976194381714,1682121543.842061
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 138.77969098091125,1682121544.25199
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 139.4316918849945,1682121544.90399
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 139.78579187393188,1682121545.258091
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 139.97778511047363,1682121545.450083
+Saved,Date 2023-04-21 Trial Nametrial_2_participant_138_rectangle_java2.json File Path /Users/vega/Desktop/FIX8/golden_set/EMIP_90/stimulus_rectangle_java2/rectangle_java2.png Duration 140.15958976745605,1682121545.631888
