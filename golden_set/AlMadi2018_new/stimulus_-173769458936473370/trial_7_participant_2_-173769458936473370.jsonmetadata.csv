@@ -1,0 +1,22 @@
+event,event details,timestamp
+started,,1683655395.7465832
+filter,removed fixations greater than 1000,1683655397.2101402
+filter,removed fixations less than 100,1683655398.2612884
+selected,algorithm Warp,1683655402.2840126
+auto_moving, fixation 0 moved from x:35.4 y:413.1 to x:35.4 y:385.0,1683655403.1386962
+auto_moving, fixation 1 moved from x:135.7 y:372.0 to x:135.7 y:385.0,1683655404.3489141
+auto_moving, fixation 2 moved from x:200.6 y:383.7 to x:200.6 y:385.0,1683655405.4853222
+auto_moving, fixation 3 moved from x:271.1 y:392.4 to x:271.1 y:385.0,1683655406.6354706
+auto_moving, fixation 4 moved from x:356.5 y:390.3 to x:356.5 y:385.0,1683655407.8473237
+manual_moving, fixation 3 moved from x:271.1 y:385.0 to x:261.6674611011242 y:384.11946756622416,1683655409.802873
+manual_moving, fixation 2 moved from x:200.6 y:385.0 to x:196.60952960221215 y:383.4623167430028,1683655411.1057155
+auto_moving, fixation 5 moved from x:430.5 y:388.2 to x:430.5 y:385.0,1683655412.0863132
+auto_moving, fixation 6 moved from x:503.0 y:381.8 to x:503.0 y:385.0,1683655413.0271094
+auto_moving, fixation 7 moved from x:586.7 y:370.2 to x:586.7 y:385.0,1683655414.303847
+auto_moving, fixation 8 moved from x:667.6 y:360.3 to x:667.6 y:385.0,1683655415.2720957
+auto_moving, fixation 9 moved from x:759.5 y:356.9 to x:759.5 y:385.0,1683655416.3873053
+manual_moving, fixation 8 moved from x:667.6 y:385.0 to x:649.3864468017113 y:384.11946756622416,1683655422.5020905
+auto_moving, fixation 9 moved from x:759.5 y:385.0 to x:759.5 y:385.0,1683655426.0890548
+manual_moving, fixation 9 moved from x:759.5 y:385.0 to x:751.9019752242394 y:385.4337692126668,1683655430.9003105
+auto_moving, fixation 9 moved from x:751.9019752242394 y:385.4337692126668 to x:751.9019752242394 y:385.0,1683655433.66814
+Saved,Date 2023-05-09 Trial Nametrial_7_participant_2_-173769458936473370.json File Path G:/My Drive/.EVERYTHING COLBY/GITHUB/FIX8 - GOLDEN/fix8/golden_set/AlMadi2018_new/stimulus_-173769458936473370/stimulus_-173769458936473370.png Duration 40.218276023864746,1683655435.9648592

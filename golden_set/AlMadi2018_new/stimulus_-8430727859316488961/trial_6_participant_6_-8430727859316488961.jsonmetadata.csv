@@ -1,0 +1,23 @@
+event,event details,timestamp
+started,,1683690706.054573
+filter,removed fixations greater than 1000,1683690706.7577326
+filter,removed fixations less than 100,1683690707.6419437
+selected,algorithm Warp,1683690710.2660627
+auto_moving, fixation 0 moved from x:41.2 y:372.8 to x:41.2 y:385.0,1683690711.0644183
+auto_moving, fixation 1 moved from x:76.4 y:388.1 to x:76.4 y:385.0,1683690711.7655685
+auto_moving, fixation 2 moved from x:122.4 y:403.4 to x:122.4 y:385.0,1683690712.413836
+auto_moving, fixation 3 moved from x:213.9 y:407.8 to x:213.9 y:385.0,1683690713.0652807
+manual_moving, fixation 1 moved from x:76.4 y:385.0 to x:63.98367437458772 y:384.0332878384164,1683690714.8889644
+auto_moving, fixation 4 moved from x:244.4 y:407.4 to x:244.4 y:385.0,1683690716.168301
+auto_moving, fixation 5 moved from x:306.5 y:400.9 to x:306.5 y:385.0,1683690716.8332798
+manual_moving, fixation 2 moved from x:122.4 y:385.0 to x:129.59051147663152 y:381.84639326834827,1683690718.3547852
+auto_moving, fixation 6 moved from x:343.3 y:394.3 to x:343.3 y:385.0,1683690719.2842607
+auto_moving, fixation 7 moved from x:433.1 y:388.5 to x:433.1 y:385.0,1683690719.947474
+manual_moving, fixation 3 moved from x:213.9 y:385.0 to x:197.38424314874342 y:381.84639326834827,1683690721.7125163
+manual_moving, fixation 4 moved from x:244.4 y:385.0 to x:229.64093805724826 y:385.6734587659675,1683690722.7284439
+auto_moving, fixation 8 moved from x:523.1 y:386.5 to x:523.1 y:385.0,1683690723.9868238
+auto_moving, fixation 9 moved from x:566.5 y:385.8 to x:566.5 y:385.0,1683690724.6530383
+auto_moving, fixation 10 moved from x:615.0 y:381.8 to x:615.0 y:385.0,1683690728.397619
+manual_moving, fixation 8 moved from x:523.1 y:385.0 to x:516.1241267361728 y:382.3931169108653,1683690730.4307811
+auto_moving, fixation 11 moved from x:638.9 y:379.6 to x:638.9 y:385.0,1683690731.910998
+Saved,Date 2023-05-09 Trial Nametrial_6_participant_6_-8430727859316488961.json File Path G:/My Drive/.EVERYTHING COLBY/GITHUB/FIX8 - GOLDEN/fix8/golden_set/AlMadi2018_new/stimulus_-8430727859316488961/stimulus_-8430727859316488961.png Duration 28.153358936309814,1683690734.207932

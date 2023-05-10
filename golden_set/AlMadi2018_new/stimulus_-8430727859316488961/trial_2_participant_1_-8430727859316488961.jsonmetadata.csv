@@ -1,0 +1,24 @@
+event,event details,timestamp
+started,,1683690618.0153463
+filter,removed fixations greater than 1000,1683690618.6117191
+filter,removed fixations less than 100,1683690619.379758
+selected,algorithm Warp,1683690621.2177796
+auto_moving, fixation 0 moved from x:83.1 y:371.5 to x:83.1 y:385.0,1683690621.918019
+auto_moving, fixation 1 moved from x:170.0 y:393.0 to x:170.0 y:385.0,1683690622.7896936
+manual_moving, fixation 0 moved from x:83.1 y:385.0 to x:84.75917279023491 y:385.12673512345043,1683690624.6076767
+manual_moving, fixation 1 moved from x:170.0 y:385.0 to x:158.02014088751716 y:384.5800114809334,1683690626.268437
+auto_moving, fixation 2 moved from x:250.9 y:400.0 to x:250.9 y:385.0,1683690627.5138612
+auto_moving, fixation 3 moved from x:206.5 y:399.6 to x:206.5 y:385.0,1683690628.1538253
+auto_moving, fixation 4 moved from x:272.9 y:401.1 to x:272.9 y:385.0,1683690628.771174
+manual_moving, fixation 2 moved from x:250.9 y:385.0 to x:266.2714221058894 y:382.93984055338234,1683690630.1190898
+auto_moving, fixation 5 moved from x:351.7 y:399.2 to x:351.7 y:385.0,1683690631.4740922
+auto_moving, fixation 6 moved from x:452.1 y:401.3 to x:452.1 y:385.0,1683690632.1208122
+auto_moving, fixation 7 moved from x:573.6 y:388.8 to x:573.6 y:385.0,1683690632.7461479
+auto_moving, fixation 8 moved from x:660.8 y:384.1 to x:660.8 y:385.0,1683690633.3694792
+auto_moving, fixation 9 moved from x:103.1 y:401.8 to x:103.1 y:385.0,1683690634.0007892
+manual_moving, fixation 7 moved from x:573.6 y:385.0 to x:586.1047529783528 y:384.0332878384164,1683690635.3987405
+manual_moving, fixation 8 moved from x:660.8 y:385.0 to x:671.3936412110098 y:382.3931169108653,1683690636.81622
+auto_moving, fixation 10 moved from x:56.8 y:405.2 to x:56.8 y:385.0,1683690638.0021174
+auto_moving, fixation 11 moved from x:157.1 y:392.9 to x:157.1 y:385.0,1683690638.6438932
+auto_moving, fixation 0 moved from x:84.75917279023491 y:385.12673512345043 to x:84.75917279023491 y:385.0,1683690639.2805285
+Saved,Date 2023-05-09 Trial Nametrial_2_participant_1_-8430727859316488961.json File Path G:/My Drive/.EVERYTHING COLBY/GITHUB/FIX8 - GOLDEN/fix8/golden_set/AlMadi2018_new/stimulus_-8430727859316488961/stimulus_-8430727859316488961.png Duration 26.291682481765747,1683690644.3070288
