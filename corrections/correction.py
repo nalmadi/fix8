@@ -514,37 +514,47 @@ def draw_comparison(Image_file, fixations, fixations2, match_list):
 
     if len(fixations[0]) == 3:
         x0, y0, duration = fixations[0]
+        #print("len(fixations[0])")
     else:
         x0, y0 = fixations[0]
 
     for index, fixation in enumerate(fixations):
         
         if len(fixations[0]) == 3:
+            #print(index, "len(fixations[0]) == 3")
             duration = fixation[2]
             if 5 * (duration / 100) < 5:
                 r = 3
+                #print(index, "5 * (duration / 100) < 5")
             else:
                  r = 5 * (duration / 100)
+                 #print(index, "r = 5 * (duration / 100)")
         else:
             r = 8
 
         x = fixation[0]
+        
         y = fixation[1]
+        
 
         x2 = fixations2[index][0]
+        
         y2 = fixations2[index][1]
+        
   
         outline_color = (50, 255, 0, 0)
         
         if match_list[index] == 1:
             # match: green
+            #print("in green")
             r = 5 
             bound = (x - r, y - r, x + r, y + r)
             fill_color = (50, 255, 0, 220)
             draw.ellipse(bound, fill=fill_color, outline=outline_color)
-        else:
+        elif match_list[index] == 0:
             # mismatch: blue, red
             # red
+            #print("in blue, red")
             fill_color = (255, 55, 0, 220)
             r = 10
             bound = (x - r, y - r, x + r, y + r)
@@ -554,6 +564,20 @@ def draw_comparison(Image_file, fixations, fixations2, match_list):
             fill_color = (5, 55, 255, 220)
             bound = (x2 - r, y2 - r, x2 + r, y2 + r)
             draw.ellipse(bound, fill=fill_color, outline=outline_color)
+        else: # if match_list[index] == 2
+            # done fixations: light-blue, light-red
+            # light-red
+            #print("in blue, red")
+            fill_color = (255,105,180, 220)
+            r = 10
+            bound = (x - r, y - r, x + r, y + r)
+            draw.ellipse(bound, fill=fill_color, outline=outline_color)
+
+            # light-blue
+            fill_color = (135, 206, 250, 220)
+            bound = (x2 - r, y2 - r, x2 + r, y2 + r)
+            draw.ellipse(bound, fill=fill_color, outline=outline_color)
+
 
 
         #draw.ellipse(bound, fill=fill_color, outline=outline_color)
@@ -571,7 +595,6 @@ def draw_comparison(Image_file, fixations, fixations2, match_list):
 
     plt.figure(figsize=(17, 15))
     plt.imshow(np.asarray(im), interpolation='nearest')
-
 
 
 def find_lines_Y(aois):

@@ -1,0 +1,18 @@
+event,event details,timestamp
+started,,1683661258.103855
+filter,removed fixations greater than 1000,1683661259.1202762
+filter,removed fixations less than 100,1683661260.1136878
+selected,algorithm Warp,1683661263.844374
+auto_moving, fixation 0 moved from x:70.5 y:371.6 to x:70.5 y:385.0,1683661264.9322586
+auto_moving, fixation 1 moved from x:134.9 y:374.3 to x:134.9 y:385.0,1683661265.9023283
+auto_moving, fixation 2 moved from x:214.1 y:378.2 to x:214.1 y:385.0,1683661266.9970517
+auto_moving, fixation 3 moved from x:283.0 y:370.7 to x:283.0 y:385.0,1683661267.8038871
+auto_moving, fixation 4 moved from x:342.2 y:370.6 to x:342.2 y:385.0,1683661268.5957682
+manual_moving, fixation 0 moved from x:70.5 y:385.0 to x:77.94221536696787 y:383.58710456295887,1683661269.7241943
+auto_moving, fixation 5 moved from x:410.8 y:374.5 to x:410.8 y:385.0,1683661271.0583632
+auto_moving, fixation 6 moved from x:465.0 y:374.4 to x:465.0 y:385.0,1683661271.843245
+auto_moving, fixation 7 moved from x:533.0 y:375.7 to x:533.0 y:385.0,1683661272.6281145
+manual_moving, fixation 5 moved from x:410.8 y:385.0 to x:413.48095484703373 y:384.8876423128816,1683661273.7253695
+auto_moving, fixation 8 moved from x:594.5 y:314.7 to x:594.5 y:385.0,1683661278.9245968
+manual_moving, fixation 8 moved from x:594.5 y:385.0 to x:524.8013634288524 y:383.8053097345133,1683661283.9637291
+Saved,Date 2023-05-09 Trial Nametrial_13_participant_2_2370169755802222682.json File Path G:/My Drive/.EVERYTHING COLBY/GITHUB/FIX8 - GOLDEN/fix8/golden_set/AlMadi2018_new/stimulus_2370169755802222682/stimulus_2370169755802222682.png Duration 27.538813591003418,1683661285.643669

@@ -1,0 +1,22 @@
+event,event details,timestamp
+started,,1683661326.6917493
+filter,removed fixations greater than 1000,1683661327.7428343
+filter,removed fixations less than 100,1683661328.860241
+selected,algorithm Warp,1683661346.29213
+auto_moving, fixation 0 moved from x:96.5 y:394.0 to x:96.5 y:385.0,1683661347.0209756
+auto_moving, fixation 1 moved from x:153.0 y:400.7 to x:153.0 y:385.0,1683661348.2596166
+manual_moving, fixation 0 moved from x:96.5 y:385.0 to x:107.40212178160704 y:383.7587950053784,1683661349.985832
+auto_moving, fixation 2 moved from x:185.1 y:403.6 to x:185.1 y:385.0,1683661351.643065
+auto_moving, fixation 3 moved from x:236.5 y:402.6 to x:236.5 y:385.0,1683661352.5460405
+auto_moving, fixation 4 moved from x:278.7 y:402.1 to x:278.7 y:385.0,1683661358.7388773
+auto_moving, fixation 5 moved from x:318.5 y:402.8 to x:318.5 y:385.0,1683661359.5756357
+manual_moving, fixation 4 moved from x:278.7 y:385.0 to x:284.81051284145104 y:381.44275856856586,1683661360.875916
+manual_moving, fixation 3 moved from x:236.5 y:385.0 to x:241.73223511673694 y:380.0531367064783,1683661361.5761042
+auto_moving, fixation 6 moved from x:365.8 y:399.9 to x:365.8 y:385.0,1683661362.6919894
+auto_moving, fixation 7 moved from x:413.0 y:405.4 to x:413.0 y:385.0,1683661363.5417147
+auto_moving, fixation 8 moved from x:444.3 y:404.1 to x:444.3 y:385.0,1683661364.3844619
+manual_moving, fixation 7 moved from x:413.0 y:385.0 to x:416.36138245240585 y:384.68520958010345,1683661365.9438305
+auto_moving, fixation 9 moved from x:412.3 y:405.1 to x:412.3 y:385.0,1683661367.204065
+auto_moving, fixation 10 moved from x:409.8 y:397.4 to x:409.8 y:385.0,1683661368.0488338
+auto_moving, fixation 0 moved from x:107.40212178160704 y:383.7587950053784 to x:107.40212178160704 y:385.0,1683661368.9135277
+Saved,Date 2023-05-09 Trial Nametrial_13_participant_4_2370169755802222682.json File Path G:/My Drive/.EVERYTHING COLBY/GITHUB/FIX8 - GOLDEN/fix8/golden_set/AlMadi2018_new/stimulus_2370169755802222682/stimulus_2370169755802222682.png Duration 44.52755308151245,1683661371.220299

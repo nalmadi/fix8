@@ -1,0 +1,41 @@
+event,event details,timestamp
+started,,1683655285.3529935
+filter,removed fixations greater than 1000,1683655287.162802
+filter,removed fixations less than 100,1683655288.368004
+selected,algorithm Warp,1683655291.7440863
+auto_moving, fixation 0 moved from x:24.6 y:391.1 to x:24.6 y:385.0,1683655293.1487553
+auto_moving, fixation 1 moved from x:66.9 y:402.1 to x:66.9 y:385.0,1683655294.3601024
+auto_moving, fixation 2 moved from x:109.6 y:397.1 to x:109.6 y:385.0,1683655303.422158
+auto_moving, fixation 3 moved from x:152.1 y:393.7 to x:152.1 y:385.0,1683655304.938087
+auto_moving, fixation 4 moved from x:207.7 y:395.6 to x:207.7 y:385.0,1683655306.3054278
+auto_moving, fixation 5 moved from x:247.5 y:392.9 to x:247.5 y:385.0,1683655307.6169198
+manual_moving, fixation 4 moved from x:207.7 y:385.0 to x:223.55271335428685 y:382.80516591978153,1683655309.5746858
+manual_moving, fixation 5 moved from x:247.5 y:385.0 to x:261.01031027790293 y:385.4337692126668,1683655311.0965993
+auto_moving, fixation 6 moved from x:296.2 y:390.1 to x:296.2 y:385.0,1683655312.0373542
+auto_moving, fixation 7 moved from x:357.9 y:388.3 to x:357.9 y:385.0,1683655312.9459853
+auto_moving, fixation 8 moved from x:435.3 y:386.8 to x:435.3 y:385.0,1683655313.8765209
+auto_moving, fixation 9 moved from x:444.8 y:386.5 to x:444.8 y:385.0,1683655314.8588686
+auto_moving, fixation 10 moved from x:491.6 y:383.2 to x:491.6 y:385.0,1683655315.836253
+manual_moving, fixation 8 moved from x:435.3 y:385.0 to x:424.64086526001506 y:384.11946756622416,1683655316.9571161
+manual_moving, fixation 9 moved from x:444.8 y:385.0 to x:458.15555724430305 y:385.4337692126668,1683655318.0806336
+auto_moving, fixation 11 moved from x:544.9 y:375.8 to x:544.9 y:385.0,1683655319.3303435
+auto_moving, fixation 12 moved from x:580.5 y:371.1 to x:580.5 y:385.0,1683655320.3057332
+auto_moving, fixation 13 moved from x:632.0 y:370.3 to x:632.0 y:385.0,1683655321.3599129
+auto_moving, fixation 14 moved from x:728.3 y:363.6 to x:728.3 y:385.0,1683655322.3492649
+auto_moving, fixation 15 moved from x:194.3 y:398.6 to x:194.3 y:385.0,1683655323.3246565
+manual_moving, fixation 12 moved from x:580.5 y:385.0 to x:586.2999677724632 y:385.4337692126668,1683655324.5547273
+auto_moving, fixation 16 moved from x:205.1 y:402.1 to x:205.1 y:385.0,1683655325.7045374
+manual_moving, fixation 16 moved from x:205.1 y:385.0 to x:195.2952279557695 y:382.80516591978153,1683655328.4548106
+auto_moving, fixation 17 moved from x:281.1 y:400.7 to x:281.1 y:385.0,1683655329.9827735
+auto_moving, fixation 18 moved from x:73.8 y:396.1 to x:73.8 y:385.0,1683655334.1069589
+auto_moving, fixation 19 moved from x:137.2 y:390.5 to x:137.2 y:385.0,1683655335.481564
+manual_moving, fixation 19 moved from x:137.2 y:385.0 to x:141.4088604516201 y:381.49086427333884,1683655338.0344784
+auto_moving, fixation 20 moved from x:171.5 y:390.6 to x:171.5 y:385.0,1683655338.9496577
+auto_moving, fixation 21 moved from x:225.5 y:385.4 to x:225.5 y:385.0,1683655340.4082632
+auto_moving, fixation 22 moved from x:307.9 y:379.2 to x:307.9 y:385.0,1683655341.7724452
+auto_moving, fixation 23 moved from x:363.8 y:377.9 to x:363.8 y:385.0,1683655343.0881557
+manual_moving, fixation 17 moved from x:281.1 y:385.0 to x:293.21070061574824 y:384.11946756622416,1683655345.8121564
+auto_moving, fixation 24 moved from x:444.8 y:373.8 to x:444.8 y:385.0,1683655346.8935902
+manual_moving, fixation 24 moved from x:444.8 y:385.0 to x:429.2409210225644 y:385.4337692126668,1683655351.6294894
+auto_moving, fixation 24 moved from x:429.2409210225644 y:385.4337692126668 to x:429.2409210225644 y:385.0,1683655353.7968616
+Saved,Date 2023-05-09 Trial Nametrial_3_participant_4_-173769458936473370.json File Path G:/My Drive/.EVERYTHING COLBY/GITHUB/FIX8 - GOLDEN/fix8/golden_set/AlMadi2018_new/stimulus_-173769458936473370/stimulus_-173769458936473370.png Duration 70.28221368789673,1683655355.6352072

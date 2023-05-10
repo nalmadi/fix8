@@ -1,0 +1,23 @@
+event,event details,timestamp
+started,,1683660732.998324
+filter,removed fixations greater than 1000,1683660756.526355
+filter,removed fixations less than 100,1683660758.6150882
+filter,removed fixations less than 100,1683660765.9438355
+selected,algorithm Warp,1683660786.3111796
+auto_moving, fixation 0 moved from x:61.3 y:391.1 to x:61.3 y:385.0,1683660787.5123165
+auto_moving, fixation 1 moved from x:124.6 y:405.2 to x:124.6 y:385.0,1683660788.7163568
+manual_moving, fixation 0 moved from x:61.3 y:385.0 to x:58.88988549871634 y:384.040878180319,1683660790.5420706
+auto_moving, fixation 2 moved from x:164.8 y:409.2 to x:164.8 y:385.0,1683660791.623556
+auto_moving, fixation 3 moved from x:223.2 y:415.6 to x:223.2 y:385.0,1683660792.5301657
+auto_moving, fixation 4 moved from x:237.2 y:410.6 to x:237.2 y:385.0,1683660793.5656488
+auto_moving, fixation 5 moved from x:236.2 y:420.9 to x:236.2 y:385.0,1683660794.4891748
+manual_moving, fixation 3 moved from x:223.2 y:385.0 to x:223.39031975741364 y:383.0587860354909,1683660796.1826165
+auto_moving, fixation 6 moved from x:320.4 y:559.6 to x:320.4 y:385.0,1683660797.7009172
+auto_moving, fixation 7 moved from x:389.8 y:480.9 to x:389.8 y:385.0,1683660798.6075282
+auto_moving, fixation 8 moved from x:451.5 y:454.8 to x:451.5 y:385.0,1683660799.7981648
+auto_moving, fixation 9 moved from x:483.7 y:440.1 to x:483.7 y:385.0,1683660801.024287
+auto_moving, fixation 10 moved from x:542.4 y:435.2 to x:542.4 y:385.0,1683660802.9127033
+auto_moving, fixation 11 moved from x:221.6 y:451.6 to x:221.6 y:385.0,1683660804.155375
+manual_moving, fixation 11 moved from x:221.6 y:385.0 to x:227.3186883367258 y:383.0587860354909,1683660806.4379659
+auto_moving, fixation 12 moved from x:242.9 y:439.0 to x:242.9 y:385.0,1683660808.081764
+Saved,Date 2023-05-09 Trial Nametrial_12_participant_7_1706913863030379050.json File Path G:/My Drive/.EVERYTHING COLBY/GITHUB/FIX8 - GOLDEN/fix8/golden_set/AlMadi2018_new/stimulus_1706913863030379050/stimulus_1706913863030379050.png Duration 77.70271182060242,1683660810.7010357

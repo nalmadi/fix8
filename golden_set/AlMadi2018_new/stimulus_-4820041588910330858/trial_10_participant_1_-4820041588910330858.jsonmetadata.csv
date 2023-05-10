@@ -1,0 +1,23 @@
+event,event details,timestamp
+started,,1683662192.7320044
+filter,removed fixations greater than 1000,1683662193.5106797
+filter,removed fixations less than 100,1683662194.391125
+selected,algorithm Warp,1683662196.4365215
+auto_moving, fixation 0 moved from x:75.9 y:379.9 to x:75.9 y:385.0,1683662197.4326696
+auto_moving, fixation 1 moved from x:151.5 y:385.0 to x:151.5 y:385.0,1683662198.1736548
+auto_moving, fixation 2 moved from x:225.3 y:384.0 to x:225.3 y:385.0,1683662198.921619
+auto_moving, fixation 3 moved from x:303.0 y:383.3 to x:303.0 y:385.0,1683662199.6337473
+auto_moving, fixation 4 moved from x:269.9 y:382.7 to x:269.9 y:385.0,1683662200.3328762
+auto_moving, fixation 5 moved from x:324.2 y:384.0 to x:324.2 y:385.0,1683662201.0329704
+auto_moving, fixation 6 moved from x:386.8 y:379.0 to x:386.8 y:385.0,1683662201.7346733
+auto_moving, fixation 7 moved from x:474.4 y:381.1 to x:474.4 y:385.0,1683662202.4347997
+auto_moving, fixation 8 moved from x:551.8 y:381.3 to x:551.8 y:385.0,1683662203.1439369
+auto_moving, fixation 9 moved from x:470.5 y:382.7 to x:470.5 y:385.0,1683662203.853906
+auto_moving, fixation 10 moved from x:137.8 y:384.2 to x:137.8 y:385.0,1683662204.5580223
+auto_moving, fixation 11 moved from x:202.8 y:380.3 to x:202.8 y:385.0,1683662205.2691195
+auto_moving, fixation 12 moved from x:204.9 y:372.5 to x:204.9 y:385.0,1683662205.9812515
+manual_moving, fixation 10 moved from x:137.8 y:385.0 to x:125.42091978849633 y:385.25955682880067,1683662207.662816
+auto_moving, fixation 13 moved from x:337.6 y:473.1 to x:337.6 y:385.0,1683662209.0338538
+auto_moving, fixation 14 moved from x:340.5 y:451.3 to x:340.5 y:385.0,1683662209.7479398
+auto_moving, fixation 0 moved from x:75.9 y:385.0 to x:75.9 y:385.0,1683662210.4680133
+Saved,Date 2023-05-09 Trial Nametrial_10_participant_1_-4820041588910330858.json File Path G:/My Drive/.EVERYTHING COLBY/GITHUB/FIX8 - GOLDEN/fix8/golden_set/AlMadi2018_new/stimulus_-4820041588910330858/stimulus_-4820041588910330858.png Duration 19.150602340698242,1683662211.8826067
