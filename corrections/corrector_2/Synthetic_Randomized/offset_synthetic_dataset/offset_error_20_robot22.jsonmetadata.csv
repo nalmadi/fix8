@@ -1,0 +1,63 @@
+event,event details,timestamp
+started,,1682822950.738969
+filter,removed fixations greater than 1000,1682822952.6169956
+filter,removed fixations less than 100,1682822953.5929797
+selected,algorithm Attach,1682822955.7264986
+auto_moving, fixation 0 moved from x:204.17 y:182.0 to x:204.17 y:169.0,1682822957.056729
+auto_moving, fixation 1 moved from x:330.5 y:183.0 to x:330.5 y:169.0,1682822958.553061
+auto_moving, fixation 2 moved from x:433.17 y:180.0 to x:433.17 y:169.0,1682822960.4103673
+auto_moving, fixation 3 moved from x:484.5 y:190.0 to x:484.5 y:169.0,1682822962.649892
+auto_moving, fixation 4 moved from x:552.5 y:185.0 to x:552.5 y:169.0,1682822964.3697422
+auto_moving, fixation 5 moved from x:417.17 y:186.0 to x:417.17 y:169.0,1682822966.8661473
+auto_moving, fixation 6 moved from x:492.5 y:199.0 to x:492.5 y:219.0,1682822970.4891798
+auto_moving, fixation 7 moved from x:567.5 y:196.0 to x:567.5 y:219.0,1682822972.129814
+auto_moving, fixation 8 moved from x:666.17 y:190.0 to x:666.17 y:169.0,1682822973.9528234
+auto_moving, fixation 9 moved from x:323.5 y:189.0 to x:323.5 y:169.0,1682822976.409778
+auto_moving, fixation 10 moved from x:324.5 y:192.0 to x:324.5 y:169.0,1682822978.1459076
+auto_moving, fixation 11 moved from x:489.5 y:193.0 to x:489.5 y:169.0,1682822979.8737712
+auto_moving, fixation 12 moved from x:553.5 y:185.0 to x:553.5 y:169.0,1682822981.3456655
+auto_moving, fixation 13 moved from x:677.17 y:180.0 to x:677.17 y:169.0,1682822982.929721
+manual_moving, fixation 14 moved from x:845.17 y:182.0 to x:840.0589849634226 y:170.26184199724753,1682822987.4513872
+auto_moving, fixation 15 moved from x:899.5 y:185.0 to x:899.5 y:169.0,1682822990.9697745
+auto_moving, fixation 16 moved from x:198.17 y:233.0 to x:198.17 y:219.0,1682822993.145423
+auto_moving, fixation 17 moved from x:323.5 y:248.0 to x:323.5 y:268.0,1682822995.0497148
+auto_moving, fixation 18 moved from x:425.5 y:241.0 to x:425.5 y:219.0,1682822997.2817032
+auto_moving, fixation 19 moved from x:580.83 y:232.0 to x:580.83 y:219.0,1682822998.8737757
+auto_moving, fixation 20 moved from x:728.17 y:244.0 to x:728.17 y:268.0,1682823000.5773613
+manual_moving, fixation 20 moved from x:728.17 y:268.0 to x:717.73476846301 y:269.7643763147474,1682823005.9184477
+auto_moving, fixation 21 moved from x:801.17 y:231.0 to x:801.17 y:219.0,1682823009.5457358
+manual_moving, fixation 22 moved from x:896.5 y:246.0 to x:876.5736764560831 y:267.02577445279786,1682823014.314826
+manual_moving, fixation 23 moved from x:184.17 y:291.0 to x:175.4915997970016 y:269.7643763147474,1682823024.6484692
+auto_moving, fixation 24 moved from x:240.5 y:279.0 to x:240.5 y:268.0,1682823028.0501432
+auto_moving, fixation 25 moved from x:351.17 y:281.0 to x:351.17 y:268.0,1682823029.6975434
+auto_moving, fixation 26 moved from x:441.17 y:291.0 to x:441.17 y:268.0,1682823031.2575114
+auto_moving, fixation 27 moved from x:573.17 y:291.0 to x:573.17 y:268.0,1682823032.896348
+auto_moving, fixation 28 moved from x:674.17 y:283.0 to x:674.17 y:268.0,1682823034.3495727
+auto_moving, fixation 29 moved from x:791.83 y:281.0 to x:791.83 y:268.0,1682823035.8976738
+auto_moving, fixation 30 moved from x:957.17 y:292.0 to x:957.17 y:268.0,1682823037.5309074
+auto_moving, fixation 31 moved from x:186.17 y:345.0 to x:186.17 y:368.0,1682823039.6728883
+auto_moving, fixation 32 moved from x:282.5 y:338.0 to x:282.5 y:318.0,1682823041.5297897
+auto_moving, fixation 33 moved from x:366.17 y:335.0 to x:366.17 y:318.0,1682823043.1296067
+auto_moving, fixation 34 moved from x:489.5 y:337.0 to x:489.5 y:318.0,1682823045.3851216
+auto_moving, fixation 35 moved from x:590.17 y:342.0 to x:590.17 y:318.0,1682823047.7375758
+auto_moving, fixation 36 moved from x:681.83 y:344.0 to x:681.83 y:368.0,1682823049.2895
+auto_moving, fixation 37 moved from x:762.5 y:329.0 to x:762.5 y:318.0,1682823051.2577727
+auto_moving, fixation 38 moved from x:857.17 y:341.0 to x:857.17 y:318.0,1682823052.8091474
+auto_moving, fixation 39 moved from x:991.83 y:331.0 to x:991.83 y:318.0,1682823075.3374918
+auto_moving, fixation 40 moved from x:189.83 y:381.0 to x:189.83 y:368.0,1682823077.2331896
+auto_moving, fixation 41 moved from x:329.5 y:398.0 to x:329.5 y:417.0,1682823079.4970284
+auto_moving, fixation 42 moved from x:424.83 y:391.0 to x:424.83 y:368.0,1682823088.5693953
+auto_moving, fixation 43 moved from x:573.17 y:384.0 to x:573.17 y:368.0,1682823090.2326622
+auto_moving, fixation 44 moved from x:690.83 y:394.0 to x:690.83 y:417.0,1682823091.785465
+manual_moving, fixation 44 moved from x:690.83 y:417.0 to x:677.5686078210834 y:417.6488768600224,1682823096.950656
+manual_moving, fixation 45 moved from x:820.17 y:397.0 to x:788.0255495863814 y:416.73600957270594,1682823102.6538157
+manual_moving, fixation 46 moved from x:1036.17 y:398.0 to x:1033.5868498745233 y:366.5283087702977,1682823108.6495345
+auto_moving, fixation 47 moved from x:202.83 y:431.0 to x:202.83 y:417.0,1682823116.9491277
+auto_moving, fixation 48 moved from x:360.83 y:435.0 to x:360.83 y:417.0,1682823122.9686697
+auto_moving, fixation 49 moved from x:505.17 y:439.0 to x:505.17 y:417.0,1682823125.3291457
+auto_moving, fixation 50 moved from x:587.83 y:434.0 to x:587.83 y:417.0,1682823127.113376
+auto_moving, fixation 51 moved from x:675.17 y:427.0 to x:675.17 y:417.0,1682823131.10432
+auto_moving, fixation 52 moved from x:762.83 y:434.0 to x:762.83 y:417.0,1682823132.7532406
+Saved,Date 2023-04-29 Trial Nameoffset_error_20_robot22.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/offset_synthetic_dataset/synthetic_text.png Duration 184.46334648132324,1682823135.2023156
+Saved,Date 2023-04-29 Trial Nameoffset_error_20_robot22.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/offset_synthetic_dataset/synthetic_text.png Duration 184.6459240913391,1682823135.3848932
+Saved,Date 2023-04-29 Trial Nameoffset_error_20_robot22.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/offset_synthetic_dataset/synthetic_text.png Duration 184.7825117111206,1682823135.5214808

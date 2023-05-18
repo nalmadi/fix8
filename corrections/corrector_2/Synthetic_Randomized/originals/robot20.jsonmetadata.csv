@@ -1,0 +1,59 @@
+event,event details,timestamp
+started,,1682838701.714665
+filter,removed fixations greater than 1000,1682838703.8277144
+filter,removed fixations less than 100,1682838704.7795992
+selected,algorithm Attach,1682838707.063439
+auto_moving, fixation 0 moved from x:167.16666666666666 y:174.0 to x:167.16666666666666 y:169.0,1682838708.4521902
+auto_moving, fixation 1 moved from x:298.5 y:163.0 to x:298.5 y:169.0,1682838709.70928
+auto_moving, fixation 2 moved from x:403.1666666666667 y:175.0 to x:403.1666666666667 y:169.0,1682838711.0448804
+auto_moving, fixation 3 moved from x:466.5 y:178.0 to x:466.5 y:169.0,1682838712.3243253
+auto_moving, fixation 4 moved from x:304.5 y:164.0 to x:304.5 y:169.0,1682838713.709142
+auto_moving, fixation 5 moved from x:404.1666666666667 y:172.0 to x:404.1666666666667 y:169.0,1682838715.0292335
+auto_moving, fixation 6 moved from x:528.5 y:163.0 to x:528.5 y:169.0,1682838716.2515287
+auto_moving, fixation 7 moved from x:643.1666666666666 y:159.0 to x:643.1666666666666 y:169.0,1682838717.3644457
+auto_moving, fixation 8 moved from x:808.1666666666666 y:179.0 to x:808.1666666666666 y:169.0,1682838718.6759531
+auto_moving, fixation 9 moved from x:886.5 y:169.0 to x:886.5 y:169.0,1682838719.875614
+auto_moving, fixation 10 moved from x:190.16666666666666 y:209.0 to x:190.16666666666666 y:219.0,1682838721.2195556
+auto_moving, fixation 11 moved from x:404.5 y:213.0 to x:404.5 y:219.0,1682838726.4840913
+auto_moving, fixation 12 moved from x:564.8333333333334 y:223.0 to x:564.8333333333334 y:219.0,1682838727.8124964
+auto_moving, fixation 13 moved from x:781.1666666666666 y:224.0 to x:781.1666666666666 y:219.0,1682838729.196565
+auto_moving, fixation 14 moved from x:884.5 y:229.0 to x:884.5 y:219.0,1682838730.5244133
+auto_moving, fixation 15 moved from x:164.16666666666666 y:264.0 to x:164.16666666666666 y:268.0,1682838732.0204802
+auto_moving, fixation 16 moved from x:224.5 y:272.0 to x:224.5 y:268.0,1682838733.1482217
+auto_moving, fixation 17 moved from x:329.1666666666667 y:276.0 to x:329.1666666666667 y:268.0,1682838735.669515
+auto_moving, fixation 18 moved from x:566.1666666666666 y:273.0 to x:566.1666666666666 y:268.0,1682838737.1163657
+auto_moving, fixation 19 moved from x:647.1666666666666 y:269.0 to x:647.1666666666666 y:268.0,1682838739.060601
+auto_moving, fixation 20 moved from x:779.8333333333334 y:277.0 to x:779.8333333333334 y:268.0,1682838740.436276
+auto_moving, fixation 21 moved from x:930.1666666666666 y:263.0 to x:930.1666666666666 y:268.0,1682838744.812309
+auto_moving, fixation 22 moved from x:217.5 y:261.0 to x:217.5 y:268.0,1682838851.9550493
+auto_moving, fixation 23 moved from x:330.1666666666667 y:263.0 to x:330.1666666666667 y:268.0,1682838854.0198877
+auto_moving, fixation 24 moved from x:435.1666666666667 y:258.0 to x:435.1666666666667 y:268.0,1682838855.434911
+auto_moving, fixation 25 moved from x:559.1666666666666 y:268.0 to x:559.1666666666666 y:268.0,1682838857.100029
+auto_moving, fixation 26 moved from x:639.1666666666666 y:276.0 to x:639.1666666666666 y:268.0,1682838858.4192028
+auto_moving, fixation 27 moved from x:774.8333333333334 y:270.0 to x:774.8333333333334 y:268.0,1682838859.764449
+auto_moving, fixation 28 moved from x:164.16666666666666 y:317.0 to x:164.16666666666666 y:318.0,1682838861.236453
+auto_moving, fixation 29 moved from x:263.5 y:309.0 to x:263.5 y:318.0,1682838862.5955431
+auto_moving, fixation 30 moved from x:358.1666666666667 y:319.0 to x:358.1666666666667 y:318.0,1682838863.9398735
+auto_moving, fixation 31 moved from x:258.5 y:324.0 to x:258.5 y:318.0,1682838865.4288743
+auto_moving, fixation 32 moved from x:353.1666666666667 y:327.0 to x:353.1666666666667 y:318.0,1682838866.7569633
+auto_moving, fixation 33 moved from x:461.5 y:321.0 to x:461.5 y:318.0,1682838868.148
+auto_moving, fixation 34 moved from x:582.1666666666666 y:320.0 to x:582.1666666666666 y:318.0,1682838870.6919022
+auto_moving, fixation 35 moved from x:754.5 y:327.0 to x:754.5 y:318.0,1682838872.0357516
+auto_moving, fixation 36 moved from x:839.1666666666666 y:314.0 to x:839.1666666666666 y:318.0,1682838873.7879455
+auto_moving, fixation 37 moved from x:968.8333333333334 y:320.0 to x:968.8333333333334 y:318.0,1682838875.3548255
+auto_moving, fixation 38 moved from x:159.83333333333334 y:363.0 to x:159.83333333333334 y:368.0,1682838876.7394912
+auto_moving, fixation 39 moved from x:308.5 y:368.0 to x:308.5 y:368.0,1682838877.7638192
+auto_moving, fixation 40 moved from x:417.8333333333333 y:367.0 to x:417.8333333333333 y:368.0,1682838879.074817
+auto_moving, fixation 41 moved from x:559.1666666666666 y:362.0 to x:559.1666666666666 y:368.0,1682838880.6514318
+auto_moving, fixation 42 moved from x:676.8333333333334 y:374.0 to x:676.8333333333334 y:368.0,1682838886.0848684
+auto_moving, fixation 43 moved from x:789.1666666666666 y:378.0 to x:789.1666666666666 y:368.0,1682838890.299166
+auto_moving, fixation 44 moved from x:195.83333333333334 y:411.0 to x:195.83333333333334 y:417.0,1682838891.7640467
+auto_moving, fixation 45 moved from x:343.8333333333333 y:412.0 to x:343.8333333333333 y:417.0,1682838894.9638681
+auto_moving, fixation 46 moved from x:560.8333333333334 y:407.0 to x:560.8333333333334 y:417.0,1682838898.9869916
+auto_moving, fixation 47 moved from x:643.1666666666666 y:407.0 to x:643.1666666666666 y:417.0,1682838900.5472443
+auto_moving, fixation 48 moved from x:755.8333333333334 y:427.0 to x:755.8333333333334 y:417.0,1682838902.315704
+Saved,Date 2023-04-30 Trial Namerobot20.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/originals/synthetic_text.png Duration 203.58825302124023,1682838905.302918
+Saved,Date 2023-04-30 Trial Namerobot20.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/originals/synthetic_text.png Duration 203.74613499641418,1682838905.4608
+Saved,Date 2023-04-30 Trial Namerobot20.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/originals/synthetic_text.png Duration 203.92186498641968,1682838905.63653
+Saved,Date 2023-04-30 Trial Namerobot20.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/originals/synthetic_text.png Duration 212.84194254875183,1682838914.5566075
+Saved,Date 2023-04-30 Trial Namerobot20.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/originals/synthetic_text.png Duration 213.01031351089478,1682838914.7249784
