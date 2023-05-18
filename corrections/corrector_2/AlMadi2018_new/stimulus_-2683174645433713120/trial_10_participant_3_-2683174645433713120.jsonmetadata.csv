@@ -1,0 +1,24 @@
+event,event details,timestamp
+started,,1682392115.4096806
+filter,removed fixations greater than 1000,1682392116.7212274
+filter,removed fixations less than 100,1682392117.0398753
+filter,removed fixations less than 100,1682392120.36223
+filter,removed fixations greater than 1000,1682392120.7295578
+selected,algorithm Attach,1682392135.8989658
+auto_moving, fixation 0 moved from x:45.1 y:370.4 to x:45.1 y:385.0,1682392139.2185826
+auto_moving, fixation 1 moved from x:94.8 y:379.5 to x:94.8 y:385.0,1682392141.4975724
+auto_moving, fixation 2 moved from x:86.4 y:389.2 to x:86.4 y:385.0,1682392145.2889044
+auto_moving, fixation 3 moved from x:184.3 y:391.9 to x:184.3 y:385.0,1682392146.9871821
+auto_moving, fixation 4 moved from x:259.8 y:383.5 to x:259.8 y:385.0,1682392149.6249924
+auto_moving, fixation 5 moved from x:354.6 y:381.5 to x:354.6 y:385.0,1682392151.872455
+auto_moving, fixation 6 moved from x:403.0 y:384.2 to x:403.0 y:385.0,1682392154.0179932
+auto_moving, fixation 7 moved from x:509.2 y:382.9 to x:509.2 y:385.0,1682392156.0493004
+auto_moving, fixation 8 moved from x:507.0 y:388.8 to x:507.0 y:385.0,1682392158.010046
+auto_moving, fixation 9 moved from x:521.9 y:352.8 to x:521.9 y:385.0,1682392160.4174058
+manual_moving, fixation 10 moved from x:557.5 y:374.5 to x:525.9638915283413 y:384.7017626845094,1682392166.553913
+auto_moving, fixation 11 moved from x:74.7 y:378.3 to x:74.7 y:385.0,1682392175.4490592
+manual_moving, fixation 12 moved from x:37.2 y:392.8 to x:16.703896104569367 y:384.7017626845095,1682392181.8122787
+auto_moving, fixation 13 moved from x:189.3 y:383.4 to x:189.3 y:385.0,1682392189.0011642
+auto_moving, fixation 14 moved from x:451.1 y:383.0 to x:451.1 y:385.0,1682392192.689092
+manual_moving, fixation 15 moved from x:540.2 y:381.2 to x:521.627127577044 y:384.70176268450973,1682392198.4743237
+Saved,Date 2023-04-24 Trial Nametrial_10_participant_3_-2683174645433713120.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_-2683174645433713120/stimulus_-2683174645433713120.png Duration 88.77040576934814,1682392204.1800864

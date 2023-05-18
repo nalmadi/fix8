@@ -1,0 +1,21 @@
+event,event details,timestamp
+started,,1682463662.652791
+filter,removed fixations greater than 1000,1682463664.4845738
+filter,removed fixations less than 100,1682463665.9772072
+selected,algorithm Attach,1682463672.6358678
+manual_moving, fixation 0 moved from x:46.8 y:384.0 to x:49.56700864851561 y:384.2521523427789,1682463680.6975563
+manual_moving, fixation 1 moved from x:99.6 y:399.5 to x:93.3079264804856 y:384.6020796854347,1682463687.0866454
+auto_moving, fixation 2 moved from x:153.3 y:415.8 to x:153.3 y:385.0,1682463691.4809573
+auto_moving, fixation 3 moved from x:229.5 y:424.7 to x:229.5 y:385.0,1682463694.1857858
+manual_moving, fixation 4 moved from x:270.9 y:411.7 to x:265.8221064097753 y:384.2521523427789,1682463700.6310625
+auto_moving, fixation 5 moved from x:343.8 y:391.2 to x:343.8 y:385.0,1682463706.9451709
+auto_moving, fixation 6 moved from x:328.1 y:387.3 to x:328.1 y:385.0,1682463709.961452
+auto_moving, fixation 7 moved from x:398.2 y:388.7 to x:398.2 y:385.0,1682463714.7457025
+auto_moving, fixation 8 moved from x:399.4 y:392.5 to x:399.4 y:385.0,1682463716.7048283
+manual_moving, fixation 9 moved from x:531.8 y:309.5 to x:536.6658696253335 y:383.2023703148117,1682463723.5358427
+auto_moving, fixation 10 moved from x:595.0 y:316.5 to x:595.0 y:385.0,1682463728.3368948
+auto_moving, fixation 11 moved from x:651.7 y:310.8 to x:651.7 y:385.0,1682463730.5054715
+manual_moving, fixation 12 moved from x:732.9 y:290.1 to x:724.9267799741324 y:384.25215234277897,1682463736.652668
+manual_moving, fixation 13 moved from x:784.5 y:288.3 to x:774.966389973906 y:383.9022250001232,1682463749.0856638
+manual_moving, fixation 14 moved from x:961.4 y:481.2 to x:779.165518085775 y:385.3019343707462,1682463759.713415
+Saved,Date 2023-04-25 Trial Nametrial_14_participant_2_3505254255594601664.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_3505254255594601664/stimulus_3505254255594601664.png Duration 102.93296599388123,1682463765.585757

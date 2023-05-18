@@ -1,0 +1,19 @@
+event,event details,timestamp
+started,,1682605171.2818675
+filter,removed fixations greater than 1000,1682605172.970534
+filter,removed fixations less than 100,1682605174.5814571
+selected,algorithm Attach,1682607709.1904848
+auto_moving, fixation 0 moved from x:56.3 y:371.3 to x:56.3 y:385.0,1682607714.477638
+manual_moving, fixation 1 moved from x:39.2 y:376.8 to x:43.05772445983834 y:384.8343068703949,1682607725.0693736
+auto_moving, fixation 2 moved from x:114.5 y:396.4 to x:114.5 y:385.0,1682607782.1638293
+auto_moving, fixation 3 moved from x:169.6 y:402.0 to x:169.6 y:385.0,1682607787.3406272
+auto_moving, fixation 4 moved from x:257.5 y:404.4 to x:257.5 y:385.0,1682607788.7650201
+manual_moving, fixation 5 moved from x:331.9 y:408.9 to x:335.3783774565161 y:385.6816131109651,1682607796.0045626
+auto_moving, fixation 6 moved from x:399.6 y:409.5 to x:399.6 y:385.0,1682607799.1964643
+auto_moving, fixation 7 moved from x:388.0 y:414.3 to x:388.0 y:385.0,1682607800.8926907
+manual_moving, fixation 8 moved from x:484.9 y:417.4 to x:492.13003196198105 y:385.68161311096515,1682607836.4606743
+manual_moving, fixation 9 moved from x:549.9 y:399.6 to x:568.8112467335734 y:384.41065375011004,1682607851.3084333
+manual_moving, fixation 9 moved from x:568.8112467335734 y:384.41065375011004 to x:568.8112467335734 y:384.41065375011004,1682607852.2273555
+Saved,Date 2023-04-27 Trial Nametrial_1_participant_8_5667346413132987794.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_5667346413132987794/stimulus_5667346413132987794.png Duration 2689.427315711975,1682607860.7091832
+Saved,Date 2023-04-27 Trial Nametrial_1_participant_8_5667346413132987794.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_5667346413132987794/stimulus_5667346413132987794.png Duration 2689.634872674942,1682607860.9167402
+Saved,Date 2023-04-27 Trial Nametrial_1_participant_8_5667346413132987794.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_5667346413132987794/stimulus_5667346413132987794.png Duration 2689.8424668312073,1682607861.1243343

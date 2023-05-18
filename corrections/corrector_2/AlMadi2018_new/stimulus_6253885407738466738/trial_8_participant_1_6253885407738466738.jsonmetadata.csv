@@ -1,0 +1,23 @@
+event,event details,timestamp
+started,,1682608815.601806
+filter,removed fixations greater than 1000,1682608817.1517005
+filter,removed fixations less than 100,1682608818.464593
+selected,algorithm Attach,1682608820.6968782
+auto_moving, fixation 0 moved from x:67.2 y:381.3 to x:67.2 y:385.0,1682608830.6244094
+auto_moving, fixation 1 moved from x:276.6 y:370.4 to x:276.6 y:385.0,1682608834.4166467
+auto_moving, fixation 2 moved from x:385.9 y:362.6 to x:385.9 y:385.0,1682608837.5368447
+manual_moving, fixation 3 moved from x:348.0 y:362.3 to x:357.039769389003 y:385.1196876014261,1682608844.4270806
+auto_moving, fixation 4 moved from x:464.6 y:362.4 to x:464.6 y:385.0,1682608847.9205008
+auto_moving, fixation 5 moved from x:543.6 y:361.3 to x:543.6 y:385.0,1682608852.3837056
+auto_moving, fixation 6 moved from x:693.0 y:353.7 to x:693.0 y:385.0,1682608855.4961762
+auto_moving, fixation 7 moved from x:602.9 y:363.9 to x:602.9 y:385.0,1682608857.6398432
+auto_moving, fixation 8 moved from x:605.9 y:373.1 to x:605.9 y:385.0,1682608859.719507
+auto_moving, fixation 9 moved from x:665.7 y:450.9 to x:665.7 y:385.0,1682608861.7592797
+manual_moving, fixation 10 moved from x:705.6 y:392.7 to x:692.6034221534208 y:384.6437107889942,1682608867.9912574
+manual_moving, fixation 11 moved from x:622.2 y:367.7 to x:606.9275959156971 y:384.16773397656243,1682608874.9886312
+manual_moving, fixation 12 moved from x:555.4 y:360.1 to x:544.5746334871316 y:382.739803539267,1682608895.530567
+manual_moving, fixation 13 moved from x:560.8 y:367.6 to x:543.1467030498361 y:381.7878499144034,1682608904.205592
+Saved,Date 2023-04-27 Trial Nametrial_8_participant_1_6253885407738466738.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_6253885407738466738/stimulus_6253885407738466738.png Duration 92.94516921043396,1682608908.5469751
+Saved,Date 2023-04-27 Trial Nametrial_8_participant_1_6253885407738466738.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_6253885407738466738/stimulus_6253885407738466738.png Duration 93.09462594985962,1682608908.6964319
+Saved,Date 2023-04-27 Trial Nametrial_8_participant_1_6253885407738466738.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_6253885407738466738/stimulus_6253885407738466738.png Duration 93.26249051094055,1682608908.8642964
+Saved,Date 2023-04-27 Trial Nametrial_8_participant_1_6253885407738466738.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_6253885407738466738/stimulus_6253885407738466738.png Duration 93.39778566360474,1682608908.9995916

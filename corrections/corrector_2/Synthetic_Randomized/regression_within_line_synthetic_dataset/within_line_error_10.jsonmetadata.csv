@@ -1,0 +1,62 @@
+event,event details,timestamp
+started,,1683680682.4436288
+filter,removed fixations greater than 1000,1683680685.375692
+filter,removed fixations less than 100,1683680686.8074856
+selected,algorithm Attach,1683680689.3380735
+auto_moving, fixation 0 moved from x:169.16666666666666 y:159.0 to x:169.16666666666666 y:169.0,1683680690.8161907
+auto_moving, fixation 1 moved from x:299.5 y:177.0 to x:299.5 y:169.0,1683680692.110353
+auto_moving, fixation 2 moved from x:398.1666666666667 y:178.0 to x:398.1666666666667 y:169.0,1683680693.4708812
+auto_moving, fixation 3 moved from x:469.5 y:160.0 to x:469.5 y:169.0,1683680694.7997983
+auto_moving, fixation 4 moved from x:545.5 y:173.0 to x:545.5 y:169.0,1683680696.2653403
+auto_moving, fixation 5 moved from x:646.1666666666666 y:178.0 to x:646.1666666666666 y:169.0,1683680697.5588753
+auto_moving, fixation 6 moved from x:812.1666666666666 y:168.0 to x:812.1666666666666 y:169.0,1683680699.094966
+auto_moving, fixation 7 moved from x:873.5 y:171.0 to x:873.5 y:169.0,1683680700.4817984
+auto_moving, fixation 8 moved from x:995.1666666666666 y:162.0 to x:995.1666666666666 y:169.0,1683680702.0239863
+auto_moving, fixation 9 moved from x:179.16666666666666 y:228.0 to x:179.16666666666666 y:219.0,1683680703.3364537
+auto_moving, fixation 10 moved from x:318.5 y:218.0 to x:318.5 y:219.0,1683680704.269818
+auto_moving, fixation 11 moved from x:412.5 y:215.0 to x:412.5 y:219.0,1683680705.192779
+auto_moving, fixation 12 moved from x:579.8333333333334 y:209.0 to x:579.8333333333334 y:219.0,1683680706.1161208
+auto_moving, fixation 13 moved from x:712.1666666666666 y:211.0 to x:712.1666666666666 y:219.0,1683680708.92691
+auto_moving, fixation 14 moved from x:772.1666666666666 y:217.0 to x:772.1666666666666 y:219.0,1683680709.8383849
+auto_moving, fixation 15 moved from x:872.5 y:223.0 to x:872.5 y:219.0,1683680710.7497468
+auto_moving, fixation 16 moved from x:415.5 y:225.0 to x:415.5 y:219.0,1683680711.6880257
+auto_moving, fixation 17 moved from x:564.8333333333334 y:218.0 to x:564.8333333333334 y:219.0,1683680715.270986
+auto_moving, fixation 18 moved from x:713.1666666666666 y:212.0 to x:713.1666666666666 y:219.0,1683680716.2147548
+auto_moving, fixation 19 moved from x:784.1666666666666 y:216.0 to x:784.1666666666666 y:219.0,1683680717.1577308
+auto_moving, fixation 20 moved from x:883.5 y:224.0 to x:883.5 y:219.0,1683680718.083183
+auto_moving, fixation 21 moved from x:164.16666666666666 y:271.0 to x:164.16666666666666 y:268.0,1683680719.0141382
+auto_moving, fixation 22 moved from x:217.5 y:261.0 to x:217.5 y:268.0,1683680719.93813
+auto_moving, fixation 23 moved from x:338.1666666666667 y:258.0 to x:338.1666666666667 y:268.0,1683680723.5047505
+auto_moving, fixation 24 moved from x:424.1666666666667 y:266.0 to x:424.1666666666667 y:268.0,1683680724.4259224
+auto_moving, fixation 25 moved from x:565.1666666666666 y:269.0 to x:565.1666666666666 y:268.0,1683680725.3659859
+auto_moving, fixation 26 moved from x:642.1666666666666 y:269.0 to x:642.1666666666666 y:268.0,1683680726.2940128
+auto_moving, fixation 27 moved from x:778.8333333333334 y:264.0 to x:778.8333333333334 y:268.0,1683680727.2362704
+auto_moving, fixation 28 moved from x:925.1666666666666 y:269.0 to x:925.1666666666666 y:268.0,1683680728.192166
+auto_moving, fixation 29 moved from x:170.16666666666666 y:315.0 to x:170.16666666666666 y:318.0,1683680729.1337156
+auto_moving, fixation 30 moved from x:264.5 y:316.0 to x:264.5 y:318.0,1683680730.0691931
+auto_moving, fixation 31 moved from x:355.1666666666667 y:309.0 to x:355.1666666666667 y:318.0,1683680731.0638218
+auto_moving, fixation 32 moved from x:467.5 y:310.0 to x:467.5 y:318.0,1683680731.9940987
+auto_moving, fixation 33 moved from x:586.1666666666666 y:322.0 to x:586.1666666666666 y:318.0,1683680734.615056
+auto_moving, fixation 34 moved from x:675.8333333333334 y:314.0 to x:675.8333333333334 y:318.0,1683680735.534173
+auto_moving, fixation 35 moved from x:749.5 y:319.0 to x:749.5 y:318.0,1683680736.4690526
+auto_moving, fixation 36 moved from x:832.1666666666666 y:317.0 to x:832.1666666666666 y:318.0,1683680737.4016578
+auto_moving, fixation 37 moved from x:957.8333333333334 y:317.0 to x:957.8333333333334 y:318.0,1683680738.400065
+auto_moving, fixation 38 moved from x:172.83333333333334 y:361.0 to x:172.83333333333334 y:368.0,1683680739.4933133
+auto_moving, fixation 39 moved from x:238.5 y:369.0 to x:238.5 y:368.0,1683680740.6127045
+auto_moving, fixation 40 moved from x:320.5 y:358.0 to x:320.5 y:368.0,1683680741.7381985
+auto_moving, fixation 41 moved from x:415.8333333333333 y:365.0 to x:415.8333333333333 y:368.0,1683680745.083496
+auto_moving, fixation 42 moved from x:562.1666666666666 y:375.0 to x:562.1666666666666 y:368.0,1683680746.0141249
+auto_moving, fixation 43 moved from x:684.8333333333334 y:371.0 to x:684.8333333333334 y:368.0,1683680746.9534442
+auto_moving, fixation 44 moved from x:794.1666666666666 y:365.0 to x:794.1666666666666 y:368.0,1683680747.9092784
+auto_moving, fixation 45 moved from x:947.1666666666666 y:362.0 to x:947.1666666666666 y:368.0,1683680748.8424358
+auto_moving, fixation 46 moved from x:1011.1666666666666 y:369.0 to x:1011.1666666666666 y:368.0,1683680749.8269928
+auto_moving, fixation 47 moved from x:191.83333333333334 y:426.0 to x:191.83333333333334 y:417.0,1683680750.9325237
+auto_moving, fixation 48 moved from x:344.8333333333333 y:427.0 to x:344.8333333333333 y:417.0,1683680754.7772958
+auto_moving, fixation 49 moved from x:467.1666666666667 y:408.0 to x:467.1666666666667 y:417.0,1683680755.7094927
+auto_moving, fixation 50 moved from x:563.8333333333334 y:419.0 to x:563.8333333333334 y:417.0,1683680756.6444836
+auto_moving, fixation 51 moved from x:658.1666666666666 y:426.0 to x:658.1666666666666 y:417.0,1683680760.536573
+auto_moving, fixation 52 moved from x:739.8333333333334 y:409.0 to x:739.8333333333334 y:417.0,1683680763.0717647
+Saved,Date 2023-05-09 Trial Namewithin_line_error_10.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/regression_within_line_synthetic_dataset/synthetic_text.png Duration 83.13583779335022,1683680765.5794666
+Saved,Date 2023-05-09 Trial Namewithin_line_error_10.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/regression_within_line_synthetic_dataset/synthetic_text.png Duration 83.26687455177307,1683680765.7120805
+Saved,Date 2023-05-09 Trial Namewithin_line_error_10.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/regression_within_line_synthetic_dataset/synthetic_text.png Duration 83.42998909950256,1683680765.873618
+Saved,Date 2023-05-09 Trial Namewithin_line_error_10.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/regression_within_line_synthetic_dataset/synthetic_text.png Duration 83.58031964302063,1683680766.0239484

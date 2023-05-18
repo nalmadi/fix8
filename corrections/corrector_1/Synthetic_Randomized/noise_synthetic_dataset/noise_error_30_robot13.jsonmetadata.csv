@@ -1,0 +1,66 @@
+event,event details,timestamp
+started,,1683435934.8401425
+selected,algorithm Warp,1683435939.3820684
+filter,removed fixations greater than 1000,1683435941.1804962
+filter,removed fixations less than 100,1683435943.876134
+auto_moving, fixation 0 moved from x:170.17 y:131.0 to x:170.17 y:169.0,1683435949.171433
+auto_moving, fixation 1 moved from x:294.5 y:182.0 to x:294.5 y:169.0,1683435951.0518997
+auto_moving, fixation 2 moved from x:538.5 y:138.0 to x:538.5 y:169.0,1683435952.6926086
+auto_moving, fixation 3 moved from x:640.17 y:180.0 to x:640.17 y:169.0,1683435954.3073742
+auto_moving, fixation 4 moved from x:310.5 y:171.0 to x:310.5 y:169.0,1683435955.5691648
+auto_moving, fixation 5 moved from x:462.5 y:139.0 to x:462.5 y:169.0,1683435956.5635805
+auto_moving, fixation 6 moved from x:394.17 y:196.0 to x:394.17 y:169.0,1683435957.5167837
+auto_moving, fixation 7 moved from x:543.5 y:151.0 to x:543.5 y:169.0,1683435958.4592264
+auto_moving, fixation 8 moved from x:639.17 y:185.0 to x:639.17 y:169.0,1683435959.4484231
+auto_moving, fixation 9 moved from x:871.5 y:152.0 to x:871.5 y:169.0,1683435960.4241347
+auto_moving, fixation 10 moved from x:987.17 y:139.0 to x:987.17 y:169.0,1683435964.0024235
+auto_moving, fixation 11 moved from x:186.17 y:231.0 to x:186.17 y:219.0,1683435965.0070307
+auto_moving, fixation 12 moved from x:404.5 y:247.0 to x:404.5 y:219.0,1683435965.9834251
+auto_moving, fixation 13 moved from x:572.83 y:216.0 to x:572.83 y:219.0,1683435969.2691987
+auto_moving, fixation 14 moved from x:699.17 y:187.0 to x:699.17 y:219.0,1683435970.295835
+auto_moving, fixation 15 moved from x:877.5 y:193.0 to x:877.5 y:219.0,1683435971.322938
+auto_moving, fixation 16 moved from x:160.17 y:258.0 to x:160.17 y:268.0,1683435975.383329
+auto_moving, fixation 17 moved from x:228.5 y:274.0 to x:228.5 y:268.0,1683435976.3606656
+auto_moving, fixation 18 moved from x:336.17 y:244.0 to x:336.17 y:268.0,1683435977.3364635
+auto_moving, fixation 19 moved from x:430.17 y:263.0 to x:430.17 y:268.0,1683435980.0594356
+manual_moving, fixation 19 moved from x:430.17 y:268.0 to x:433.0993234735539 y:268.8956717312545,1683435988.0165174
+auto_moving, fixation 19 moved from x:433.0993234735539 y:268.8956717312545 to x:433.0993234735539 y:268.0,1683435990.0860379
+auto_moving, fixation 20 moved from x:510.5 y:262.0 to x:510.5 y:268.0,1683435991.87341
+auto_moving, fixation 21 moved from x:877.5 y:192.0 to x:877.5 y:268.0,1683435996.5466022
+auto_moving, fixation 22 moved from x:164.17 y:279.0 to x:164.17 y:268.0,1683435998.9824386
+auto_moving, fixation 23 moved from x:325.17 y:303.0 to x:325.17 y:268.0,1683436000.752755
+auto_moving, fixation 24 moved from x:429.17 y:263.0 to x:429.17 y:268.0,1683436002.5682127
+manual_moving, fixation 24 moved from x:429.17 y:268.0 to x:433.0993234735539 y:268.1827440162788,1683436009.6848032
+auto_moving, fixation 24 moved from x:433.0993234735539 y:268.1827440162788 to x:433.0993234735539 y:268.0,1683436011.4260864
+auto_moving, fixation 25 moved from x:514.5 y:301.0 to x:514.5 y:268.0,1683436013.3242147
+auto_moving, fixation 26 moved from x:642.17 y:248.0 to x:642.17 y:268.0,1683436015.3187182
+auto_moving, fixation 27 moved from x:778.83 y:254.0 to x:778.83 y:268.0,1683436017.0253482
+manual_moving, fixation 28 moved from x:867.17 y:245.0 to x:872.2627958985836 y:269.60859944623013,1683436023.2426615
+auto_moving, fixation 28 moved from x:872.2627958985836 y:269.60859944623013 to x:872.2627958985836 y:268.0,1683436025.1008997
+auto_moving, fixation 29 moved from x:1007.5 y:261.0 to x:1007.5 y:268.0,1683436027.0476203
+auto_moving, fixation 30 moved from x:269.5 y:308.0 to x:269.5 y:318.0,1683436028.894141
+auto_moving, fixation 31 moved from x:348.17 y:345.0 to x:348.17 y:318.0,1683436030.4746373
+auto_moving, fixation 32 moved from x:468.5 y:299.0 to x:468.5 y:318.0,1683436032.166321
+auto_moving, fixation 33 moved from x:674.83 y:326.0 to x:674.83 y:318.0,1683436034.000337
+auto_moving, fixation 34 moved from x:743.5 y:350.0 to x:743.5 y:318.0,1683436035.6989763
+auto_moving, fixation 35 moved from x:827.17 y:311.0 to x:827.17 y:318.0,1683436037.3906615
+auto_moving, fixation 36 moved from x:350.17 y:299.0 to x:350.17 y:368.0,1683436039.3847616
+auto_moving, fixation 37 moved from x:472.5 y:309.0 to x:472.5 y:368.0,1683436041.0696216
+auto_moving, fixation 38 moved from x:580.17 y:306.0 to x:580.17 y:368.0,1683436042.7136147
+auto_moving, fixation 39 moved from x:673.83 y:353.0 to x:673.83 y:368.0,1683436044.4794378
+auto_moving, fixation 40 moved from x:752.5 y:290.0 to x:752.5 y:368.0,1683436046.1050427
+auto_moving, fixation 41 moved from x:837.17 y:323.0 to x:837.17 y:368.0,1683436047.7504492
+auto_moving, fixation 42 moved from x:957.83 y:301.0 to x:957.83 y:368.0,1683436049.3783739
+auto_moving, fixation 43 moved from x:162.83 y:391.0 to x:162.83 y:417.0,1683436051.3377943
+auto_moving, fixation 44 moved from x:244.5 y:367.0 to x:244.5 y:417.0,1683436053.0772142
+auto_moving, fixation 45 moved from x:319.5 y:367.0 to x:319.5 y:417.0,1683436054.7556903
+auto_moving, fixation 46 moved from x:413.83 y:341.0 to x:413.83 y:417.0,1683436056.4798372
+auto_moving, fixation 47 moved from x:560.17 y:332.0 to x:560.17 y:417.0,1683436058.4580078
+auto_moving, fixation 48 moved from x:681.83 y:392.0 to x:681.83 y:417.0,1683436060.2035775
+auto_moving, fixation 49 moved from x:794.17 y:356.0 to x:794.17 y:417.0,1683436061.925743
+auto_moving, fixation 50 moved from x:184.83 y:430.0 to x:184.83 y:417.0,1683436064.691594
+auto_moving, fixation 51 moved from x:351.83 y:395.0 to x:351.83 y:417.0,1683436066.7103987
+auto_moving, fixation 52 moved from x:649.17 y:396.0 to x:649.17 y:417.0,1683436068.5466158
+auto_moving, fixation 53 moved from x:741.83 y:404.0 to x:741.83 y:417.0,1683436070.2835636
+Saved,Date 2023-05-07 Trial Namenoise_error_30_robot13.json File Path C:/Users/Zaynab Tariq/Downloads/fix8/fix8-main/golden_set/Synthetic_Randomized/noise_synthetic_dataset/synthetic_text.png Duration 138.18262362480164,1683436073.022766
+Saved,Date 2023-05-07 Trial Namenoise_error_30_robot13.json File Path C:/Users/Zaynab Tariq/Downloads/fix8/fix8-main/golden_set/Synthetic_Randomized/noise_synthetic_dataset/synthetic_text.png Duration 138.40569043159485,1683436073.245833

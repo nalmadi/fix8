@@ -1,0 +1,21 @@
+event,event details,timestamp
+started,,1682530808.5714273
+filter,removed fixations greater than 1000,1682530811.257886
+filter,removed fixations less than 100,1682530812.6076682
+selected,algorithm Attach,1682530826.2894344
+auto_moving, fixation 0 moved from x:75.9 y:379.9 to x:75.9 y:385.0,1682530828.423938
+auto_moving, fixation 1 moved from x:151.5 y:385.0 to x:151.5 y:385.0,1682530830.3196511
+auto_moving, fixation 2 moved from x:225.3 y:384.0 to x:225.3 y:385.0,1682530832.775882
+manual_moving, fixation 3 moved from x:303.0 y:383.3 to x:307.1289007328239 y:384.05689354280685,1682530841.1141267
+auto_moving, fixation 4 moved from x:269.9 y:382.7 to x:269.9 y:385.0,1682530846.2385244
+manual_moving, fixation 5 moved from x:324.2 y:384.0 to x:322.61772965623095 y:384.05689354280685,1682530852.439923
+auto_moving, fixation 6 moved from x:386.8 y:379.0 to x:386.8 y:385.0,1682530861.0068932
+manual_moving, fixation 7 moved from x:474.4 y:381.1 to x:467.6494913935886 y:384.5262519950313,1682530866.227455
+auto_moving, fixation 8 moved from x:551.8 y:381.3 to x:551.8 y:385.0,1682530870.6155655
+auto_moving, fixation 9 moved from x:470.5 y:382.7 to x:470.5 y:385.0,1682530873.0630984
+manual_moving, fixation 10 moved from x:137.8 y:384.2 to x:145.6695931676103 y:384.05689354280685,1682530881.1475945
+manual_moving, fixation 11 moved from x:202.8 y:380.3 to x:213.25721028793225 y:383.1181766383579,1682530890.6221614
+manual_moving, fixation 12 moved from x:204.9 y:372.5 to x:213.25721028793225 y:383.5875350905824,1682530899.2032683
+manual_moving, fixation 13 moved from x:337.6 y:473.1 to x:340.9227092929849 y:384.5262519950313,1682530910.2480571
+auto_moving, fixation 14 moved from x:340.5 y:451.3 to x:340.5 y:385.0,1682530919.1513662
+Saved,Date 2023-04-26 Trial Nametrial_10_participant_1_-4820041588910330858.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_-4820041588910330858/stimulus_-4820041588910330858.png Duration 122.1679162979126,1682530930.7393436

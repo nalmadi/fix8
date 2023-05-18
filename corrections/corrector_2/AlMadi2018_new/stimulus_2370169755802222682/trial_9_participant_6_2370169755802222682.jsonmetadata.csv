@@ -1,0 +1,16 @@
+event,event details,timestamp
+started,,1682388375.0252223
+filter,removed fixations greater than 1000,1682388376.99784
+filter,removed fixations less than 100,1682388378.141867
+selected,algorithm Attach,1682388392.2154255
+auto_moving, fixation 0 moved from x:46.0 y:376.0 to x:46.0 y:385.0,1682388393.974048
+auto_moving, fixation 1 moved from x:111.4 y:378.4 to x:111.4 y:385.0,1682388395.781637
+auto_moving, fixation 2 moved from x:157.5 y:385.6 to x:157.5 y:385.0,1682388398.701714
+auto_moving, fixation 3 moved from x:185.4 y:392.6 to x:185.4 y:385.0,1682388401.1420138
+auto_moving, fixation 4 moved from x:241.5 y:393.6 to x:241.5 y:385.0,1682388403.269006
+manual_moving, fixation 5 moved from x:291.1 y:390.6 to x:282.48557254836305 y:384.70176268450865,1682388408.779371
+manual_moving, fixation 6 moved from x:340.5 y:393.7 to x:342.8904990128615 y:385.01153153817273,1682388417.728963
+manual_moving, fixation 7 moved from x:409.6 y:391.5 to x:415.06664191659553 y:384.3919938308447,1682388429.092687
+auto_moving, fixation 8 moved from x:467.1 y:383.1 to x:467.1 y:385.0,1682388433.3651912
+auto_moving, fixation 9 moved from x:481.7 y:384.3 to x:481.7 y:385.0,1682388435.1176913
+Saved,Date 2023-04-24 Trial Nametrial_9_participant_6_2370169755802222682.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_2370169755802222682/stimulus_2370169755802222682.png Duration 62.49547863006592,1682388437.521701

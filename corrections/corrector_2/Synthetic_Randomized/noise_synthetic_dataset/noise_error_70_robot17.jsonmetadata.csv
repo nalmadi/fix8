@@ -1,0 +1,44 @@
+event,event details,timestamp
+started,,1682821670.730563
+filter,removed fixations greater than 1000,1682821673.5840049
+filter,removed fixations less than 100,1682821674.6784296
+selected,algorithm Attach,1682821676.9984443
+auto_moving, fixation 0 moved from x:411.17 y:242.0 to x:411.17 y:219.0,1682821679.535297
+auto_moving, fixation 1 moved from x:639.17 y:191.0 to x:639.17 y:169.0,1682821683.0631747
+auto_moving, fixation 2 moved from x:811.17 y:134.0 to x:811.17 y:169.0,1682821685.127482
+auto_moving, fixation 3 moved from x:877.5 y:150.0 to x:877.5 y:169.0,1682821687.1355305
+auto_moving, fixation 4 moved from x:997.17 y:228.0 to x:997.17 y:219.0,1682821688.9348788
+auto_moving, fixation 5 moved from x:191.17 y:140.0 to x:191.17 y:169.0,1682821690.9747765
+auto_moving, fixation 6 moved from x:318.5 y:269.0 to x:318.5 y:268.0,1682821692.7586954
+auto_moving, fixation 7 moved from x:403.5 y:190.0 to x:403.5 y:169.0,1682821696.9749596
+manual_moving, fixation 8 moved from x:562.83 y:175.0 to x:539.72564743629 y:168.4361074226145,1682821715.465465
+auto_moving, fixation 9 moved from x:783.17 y:165.0 to x:783.17 y:169.0,1682821719.7031648
+auto_moving, fixation 10 moved from x:995.5 y:170.0 to x:995.5 y:169.0,1682821721.6545115
+auto_moving, fixation 11 moved from x:145.17 y:310.0 to x:145.17 y:318.0,1682821723.4634478
+auto_moving, fixation 12 moved from x:236.5 y:201.0 to x:236.5 y:219.0,1682821725.8222942
+auto_moving, fixation 13 moved from x:335.17 y:284.0 to x:335.17 y:268.0,1682821727.6714044
+auto_moving, fixation 14 moved from x:551.17 y:242.0 to x:551.17 y:219.0,1682821729.5030563
+auto_moving, fixation 15 moved from x:640.17 y:222.0 to x:640.17 y:219.0,1682821730.9180722
+auto_moving, fixation 16 moved from x:941.17 y:235.0 to x:941.17 y:219.0,1682821732.6474652
+auto_moving, fixation 17 moved from x:1006.5 y:239.0 to x:1006.5 y:219.0,1682821734.1912622
+auto_moving, fixation 18 moved from x:257.5 y:339.0 to x:257.5 y:318.0,1682821735.7023163
+auto_moving, fixation 19 moved from x:357.17 y:265.0 to x:357.17 y:268.0,1682821737.5271451
+auto_moving, fixation 20 moved from x:478.5 y:362.0 to x:478.5 y:368.0,1682821739.3908648
+auto_moving, fixation 21 moved from x:755.5 y:314.0 to x:755.5 y:318.0,1682821741.0304315
+auto_moving, fixation 22 moved from x:834.17 y:371.0 to x:834.17 y:368.0,1682821742.6042435
+auto_moving, fixation 23 moved from x:892.5 y:352.0 to x:892.5 y:368.0,1682821744.1751215
+auto_moving, fixation 24 moved from x:954.83 y:260.0 to x:954.83 y:268.0,1682821745.9747722
+auto_moving, fixation 25 moved from x:320.5 y:388.0 to x:320.5 y:368.0,1682821747.727194
+auto_moving, fixation 26 moved from x:406.83 y:355.0 to x:406.83 y:368.0,1682821749.5978174
+auto_moving, fixation 27 moved from x:549.17 y:384.0 to x:549.17 y:368.0,1682821751.2716675
+manual_moving, fixation 28 moved from x:801.17 y:325.0 to x:771.5939384146842 y:321.7978116917886,1682821755.654744
+manual_moving, fixation 28 moved from x:771.5939384146842 y:321.7978116917886 to x:763.3781328288356 y:321.7978116917886,1682821761.854894
+manual_moving, fixation 29 moved from x:1017.17 y:429.0 to x:1010.7651676916105 y:367.4411760576142,1682821767.8850536
+auto_moving, fixation 30 moved from x:180.83 y:385.0 to x:180.83 y:368.0,1682821891.0619547
+auto_moving, fixation 31 moved from x:484.17 y:460.0 to x:484.17 y:417.0,1682821892.805281
+auto_moving, fixation 32 moved from x:575.83 y:345.0 to x:575.83 y:368.0,1682821894.5103397
+auto_moving, fixation 33 moved from x:641.17 y:396.0 to x:641.17 y:417.0,1682821896.062788
+auto_moving, fixation 34 moved from x:754.83 y:460.0 to x:754.83 y:417.0,1682821897.573968
+Saved,Date 2023-04-29 Trial Namenoise_error_70_robot17.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/noise_synthetic_dataset/synthetic_text.png Duration 230.6294686794281,1682821901.3600316
+Saved,Date 2023-04-29 Trial Namenoise_error_70_robot17.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/noise_synthetic_dataset/synthetic_text.png Duration 230.7722864151001,1682821901.5028493
+Saved,Date 2023-04-29 Trial Namenoise_error_70_robot17.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/Synthetic_Randomized/noise_synthetic_dataset/synthetic_text.png Duration 230.89988541603088,1682821901.6304483

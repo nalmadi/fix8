@@ -1,0 +1,23 @@
+event,event details,timestamp
+started,,1681747532.8415887
+filter,removed fixations greater than 1000,1681747534.9716542
+filter,removed fixations less than 100,1681747536.3149648
+selected,algorithm Attach,1681747550.108237
+auto_moving, fixation 1 moved from x:104.2 y:402.1 to x:104.2 y:385.0,1681747558.058659
+auto_moving, fixation 2 moved from x:161.0 y:413.0 to x:161.0 y:385.0,1681747561.4677222
+auto_moving, fixation 3 moved from x:253.0 y:412.9 to x:253.0 y:385.0,1681747569.6907277
+auto_moving, fixation 4 moved from x:290.3 y:408.7 to x:290.3 y:385.0,1681747571.730905
+auto_moving, fixation 5 moved from x:314.8 y:401.7 to x:314.8 y:385.0,1681747573.6507337
+manual_moving, fixation 6 moved from x:412.8 y:394.7 to x:403.12273073269967 y:385.15894883205084,1681747580.1008158
+auto_moving, fixation 7 moved from x:477.6 y:393.4 to x:477.6 y:385.0,1681747586.9463477
+manual_moving, fixation 8 moved from x:514.4 y:393.0 to x:518.475588098778 y:385.15894883205084,1681747613.2889917
+manual_moving, fixation 9 moved from x:561.5 y:389.5 to x:551.1306249266752 y:383.88667466992507,1681747634.400942
+manual_moving, fixation 9 moved from x:551.1306249266752 y:383.88667466992507 to x:556.2197215751787 y:384.73485744467564,1681747636.5297523
+manual_moving, fixation 10 moved from x:582.7 y:386.6 to x:558.7642698994304 y:383.88667466992507,1681747647.7168002
+auto_moving, fixation 11 moved from x:482.8 y:392.3 to x:482.8 y:385.0,1681747653.6657915
+auto_moving, fixation 12 moved from x:335.7 y:401.5 to x:335.7 y:385.0,1681747657.018239
+auto_moving, fixation 13 moved from x:241.8 y:410.8 to x:241.8 y:385.0,1681747662.826081
+manual_moving, fixation 14 moved from x:272.8 y:409.4 to x:258.93165902510145 y:383.0384918951745,1681747669.6366153
+manual_moving, fixation 14 moved from x:258.93165902510145 y:383.0384918951745 to x:258.93165902510145 y:384.73485744467564,1681747671.139454
+auto_moving, fixation 15 moved from x:101.6 y:413.1 to x:101.6 y:385.0,1681747679.330429
+Saved,Date 2023-04-17 Trial Nametrial_12_participant_5_1706913863030379050.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_1706913863030379050/stimulus_1706913863030379050.png Duration 150.46135449409485,1681747683.3029432

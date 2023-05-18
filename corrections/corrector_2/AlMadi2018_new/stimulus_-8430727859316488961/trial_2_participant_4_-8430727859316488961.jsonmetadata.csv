@@ -1,0 +1,43 @@
+event,event details,timestamp
+started,,1682742037.8188014
+filter,removed fixations less than 100,1682742039.8570156
+filter,removed fixations greater than 1000,1682742041.2920666
+filter,removed fixations less than 100,1682742043.442109
+filter,removed fixations less than 100,1682742043.802239
+filter,removed fixations less than 100,1682742044.1678953
+selected,algorithm Attach,1682742046.3212702
+auto_moving, fixation 0 moved from x:380.8 y:353.2 to x:380.8 y:385.0,1682742070.1219397
+manual_moving, fixation 1 moved from x:74.5 y:384.5 to x:68.51692362465137 y:384.8720307573832,1682742079.0413146
+manual_moving, fixation 2 moved from x:122.0 y:403.5 to x:130.36051115755072 y:384.51247501591286,1682742085.4433577
+auto_moving, fixation 3 moved from x:145.5 y:400.6 to x:145.5 y:385.0,1682742088.9366055
+auto_moving, fixation 4 moved from x:201.6 y:395.2 to x:201.6 y:385.0,1682742090.625253
+auto_moving, fixation 5 moved from x:203.2 y:388.0 to x:203.2 y:385.0,1682742092.0893536
+auto_moving, fixation 6 moved from x:266.4 y:388.5 to x:266.4 y:385.0,1682742093.7593358
+auto_moving, fixation 7 moved from x:314.6 y:385.6 to x:314.6 y:385.0,1682742097.7135293
+auto_moving, fixation 8 moved from x:350.1 y:385.8 to x:350.1 y:385.0,1682742099.7134762
+auto_moving, fixation 9 moved from x:424.0 y:386.5 to x:424.0 y:385.0,1682742101.0814228
+manual_moving, fixation 10 moved from x:378.9 y:389.2 to x:380.25175147944066 y:384.8720307573832,1682742109.4899893
+auto_moving, fixation 11 moved from x:425.3 y:386.7 to x:425.3 y:385.0,1682742113.1619143
+auto_moving, fixation 12 moved from x:452.6 y:382.7 to x:452.6 y:385.0,1682742115.0405922
+manual_moving, fixation 13 moved from x:512.4 y:376.6 to x:515.0851545308201 y:383.7933635329721,1682742122.4229112
+manual_moving, fixation 14 moved from x:566.9 y:381.4 to x:554.6362860925581 y:384.8720307573832,1682742132.254806
+auto_moving, fixation 15 moved from x:606.7 y:383.1 to x:606.7 y:385.0,1682742136.1606646
+auto_moving, fixation 16 moved from x:663.6 y:376.1 to x:663.6 y:385.0,1682742138.272834
+auto_moving, fixation 17 moved from x:675.9 y:375.2 to x:675.9 y:385.0,1682742141.6249106
+auto_moving, fixation 18 moved from x:579.9 y:380.9 to x:579.9 y:385.0,1682742143.6174877
+manual_moving, fixation 19 moved from x:564.5 y:384.9 to x:561.8274009219649 y:384.8720307573832,1682742148.8910964
+auto_moving, fixation 20 moved from x:265.4 y:395.2 to x:265.4 y:385.0,1682742156.065482
+manual_moving, fixation 21 moved from x:281.9 y:399.6 to x:275.9805864530404 y:385.5911422403238,1682742161.226811
+auto_moving, fixation 22 moved from x:177.7 y:402.3 to x:177.7 y:385.0,1682742168.1771486
+auto_moving, fixation 23 moved from x:108.9 y:402.4 to x:108.9 y:385.0,1682742171.017367
+auto_moving, fixation 24 moved from x:66.2 y:398.6 to x:66.2 y:385.0,1682742173.2494578
+manual_moving, fixation 25 moved from x:170.0 y:396.1 to x:162.36097214841135 y:384.51247501591274,1682742179.702072
+auto_moving, fixation 26 moved from x:232.7 y:388.6 to x:232.7 y:385.0,1682742183.6572678
+auto_moving, fixation 27 moved from x:337.7 y:376.6 to x:337.7 y:385.0,1682742189.4332242
+auto_moving, fixation 28 moved from x:441.8 y:352.5 to x:441.8 y:385.0,1682742191.329365
+auto_moving, fixation 29 moved from x:441.0 y:346.3 to x:441.0 y:385.0,1682742192.776419
+manual_moving, fixation 30 moved from x:509.1 y:352.2 to x:514.7255987893495 y:384.51247501591274,1682742199.9401639
+auto_moving, fixation 31 moved from x:633.5 y:361.7 to x:633.5 y:385.0,1682742207.0255518
+auto_moving, fixation 32 moved from x:612.2 y:389.8 to x:612.2 y:385.0,1682742209.0085933
+Saved,Date 2023-04-29 Trial Nametrial_2_participant_4_-8430727859316488961.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_-8430727859316488961/stimulus_-8430727859316488961.png Duration 174.54481101036072,1682742212.3636124
+Saved,Date 2023-04-29 Trial Nametrial_2_participant_4_-8430727859316488961.json File Path D:/Tax Documents/fix8-main-April-1st/fix8-main/golden_set/AlMadi2018_new/stimulus_-8430727859316488961/stimulus_-8430727859316488961.png Duration 174.68767046928406,1682742212.5064719
