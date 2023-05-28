@@ -1,0 +1,44 @@
+event,event details,timestamp
+started,,1684793425.661669
+filter,removed fixations greater than 1000,1684793427.20853
+filter,removed fixations less than 100,1684793428.6566038
+filter,removed fixations greater than 1000,1684793430.718322
+selected,algorithm Warp,1684793434.976762
+auto_moving, fixation 0 moved from x:622.1 y:515.5 to x:622.1 y:526.0,1684793436.220025
+auto_moving, fixation 1 moved from x:517.9 y:529.8 to x:517.9 y:526.0,1684793437.559228
+auto_moving, fixation 2 moved from x:549.0 y:526.6 to x:549.0 y:526.0,1684793438.843869
+auto_moving, fixation 3 moved from x:604.1 y:510.2 to x:604.1 y:526.0,1684793440.187208
+auto_moving, fixation 4 moved from x:634.9 y:504.6 to x:634.9 y:526.0,1684793441.679343
+auto_moving, fixation 5 moved from x:631.0 y:503.3 to x:631.0 y:526.0,1684793443.186367
+auto_moving, fixation 6 moved from x:648.0 y:520.0 to x:648.0 y:526.0,1684793444.565761
+auto_moving, fixation 7 moved from x:616.3 y:509.3 to x:616.3 y:526.0,1684793446.1890829
+auto_moving, fixation 8 moved from x:643.3 y:507.6 to x:643.3 y:526.0,1684793447.5056808
+auto_moving, fixation 9 moved from x:690.9 y:514.0 to x:690.9 y:526.0,1684793448.7956748
+auto_moving, fixation 10 moved from x:748.9 y:517.2 to x:748.9 y:526.0,1684793450.059327
+auto_moving, fixation 11 moved from x:787.5 y:522.7 to x:787.5 y:526.0,1684793451.2801669
+auto_moving, fixation 12 moved from x:837.0 y:519.8 to x:837.0 y:526.0,1684793452.57558
+auto_moving, fixation 13 moved from x:863.4 y:518.6 to x:863.4 y:526.0,1684793453.782177
+auto_moving, fixation 14 moved from x:916.1 y:513.2 to x:916.1 y:526.0,1684793454.968014
+auto_moving, fixation 15 moved from x:970.1 y:514.1 to x:970.1 y:526.0,1684793456.201797
+auto_moving, fixation 16 moved from x:1047.3 y:520.3 to x:1047.3 y:526.0,1684793457.576084
+manual_moving, fixation 16 moved from x:1047.3 y:526.0 to x:1032.7066152925042 y:525.3209970387907,1684793462.74673
+manual_moving, fixation 17 moved from x:1047.4 y:507.8 to x:1063.3998174745004 y:525.3209970387907,1684793466.227803
+auto_moving, fixation 18 moved from x:1083.1 y:566.1 to x:1083.1 y:526.0,1684793470.171828
+auto_moving, fixation 19 moved from x:1104.7 y:505.8 to x:1104.7 y:526.0,1684793471.42139
+auto_moving, fixation 20 moved from x:1170.8 y:523.7 to x:1170.8 y:526.0,1684793472.5894778
+auto_moving, fixation 21 moved from x:1203.8 y:525.9 to x:1203.8 y:526.0,1684793473.780638
+auto_moving, fixation 22 moved from x:1263.7 y:532.9 to x:1263.7 y:526.0,1684793474.926558
+auto_moving, fixation 23 moved from x:1305.2 y:524.4 to x:1305.2 y:526.0,1684793476.094862
+auto_moving, fixation 24 moved from x:1324.9 y:528.3 to x:1324.9 y:526.0,1684793477.2305331
+auto_moving, fixation 25 moved from x:1348.8 y:507.5 to x:1348.8 y:526.0,1684793478.427574
+auto_moving, fixation 26 moved from x:1382.8 y:519.5 to x:1382.8 y:526.0,1684793479.588329
+auto_moving, fixation 27 moved from x:1329.4 y:534.5 to x:1329.4 y:526.0,1684793480.811693
+auto_moving, fixation 28 moved from x:1358.8 y:528.4 to x:1358.8 y:526.0,1684793482.062455
+auto_moving, fixation 29 moved from x:1392.7 y:536.2 to x:1392.7 y:526.0,1684793483.2865658
+auto_moving, fixation 30 moved from x:1345.9 y:529.5 to x:1345.9 y:526.0,1684793484.4845839
+auto_moving, fixation 31 moved from x:1403.7 y:533.7 to x:1403.7 y:526.0,1684793485.725555
+auto_moving, fixation 32 moved from x:1397.8 y:528.5 to x:1397.8 y:526.0,1684793489.039252
+auto_moving, fixation 33 moved from x:804.1 y:585.1 to x:804.1 y:526.0,1684793490.625865
+auto_moving, fixation 34 moved from x:958.9 y:548.8 to x:958.9 y:526.0,1684793491.918359
+Saved,Date 2023-05-22 Trial Name024_hindi_single_3_MediumFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Hindi/MediumFont/024_hindi_single_3_MediumFont/024_hindi_single_3.jpg Duration 68.89255881309509,1684793494.5542889
+Saved,Date 2023-05-22 Trial Name024_hindi_single_3_MediumFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Hindi/MediumFont/024_hindi_single_3_MediumFont/024_hindi_single_3.jpg Duration 69.41138577461243,1684793495.073109

@@ -1,0 +1,61 @@
+event,event details,timestamp
+started,,1681447462.703205
+filter,removed fixations greater than 1000,1681447464.5795572
+filter,removed fixations less than 100,1681447466.966343
+selected,algorithm Warp,1681447471.120947
+auto_moving, fixation 0 moved from x:524.7 y:466.5 to x:524.7 y:438.0,1681447483.786123
+manual_moving, fixation 1 moved from x:286.6 y:466.2 to x:278.75957800517546 y:437.16940304659227,1681447489.5398788
+auto_moving, fixation 2 moved from x:248.1 y:464.7 to x:248.1 y:438.0,1681447494.205172
+auto_moving, fixation 3 moved from x:398.2 y:467.7 to x:398.2 y:438.0,1681447496.042387
+auto_moving, fixation 4 moved from x:543.9 y:464.8 to x:543.9 y:438.0,1681447499.3088481
+manual_moving, fixation 4 moved from x:543.9 y:438.0 to x:561.9387395025853 y:435.0077300580624,1681447505.189418
+auto_moving, fixation 5 moved from x:501.0 y:472.2 to x:501.0 y:438.0,1681447508.7863512
+auto_moving, fixation 6 moved from x:433.4 y:474.7 to x:433.4 y:438.0,1681447510.300624
+auto_moving, fixation 7 moved from x:338.7 y:475.6 to x:338.7 y:438.0,1681447511.993015
+auto_moving, fixation 8 moved from x:235.4 y:470.2 to x:235.4 y:438.0,1681447513.672723
+auto_moving, fixation 9 moved from x:241.2 y:468.7 to x:241.2 y:438.0,1681447515.228571
+auto_moving, fixation 10 moved from x:240.3 y:487.8 to x:240.3 y:438.0,1681447516.752645
+auto_moving, fixation 11 moved from x:342.3 y:478.0 to x:342.3 y:438.0,1681447518.392413
+auto_moving, fixation 12 moved from x:409.9 y:475.2 to x:409.9 y:438.0,1681447519.919094
+auto_moving, fixation 13 moved from x:620.6 y:461.2 to x:620.6 y:438.0,1681447521.618182
+auto_moving, fixation 14 moved from x:525.4 y:467.1 to x:525.4 y:438.0,1681447523.137392
+auto_moving, fixation 15 moved from x:790.0 y:447.6 to x:790.0 y:438.0,1681447524.520041
+auto_moving, fixation 16 moved from x:928.3 y:443.3 to x:928.3 y:438.0,1681447525.923172
+auto_moving, fixation 17 moved from x:1084.9 y:441.8 to x:1084.9 y:438.0,1681447527.30361
+auto_moving, fixation 18 moved from x:1039.6 y:438.0 to x:1039.6 y:438.0,1681447528.79793
+auto_moving, fixation 19 moved from x:1289.9 y:431.7 to x:1289.9 y:438.0,1681447530.308397
+auto_moving, fixation 20 moved from x:1468.5 y:438.4 to x:1468.5 y:438.0,1681447532.008739
+auto_moving, fixation 21 moved from x:1368.4 y:433.9 to x:1368.4 y:438.0,1681447533.397408
+auto_moving, fixation 22 moved from x:1500.7 y:437.1 to x:1500.7 y:438.0,1681447534.932757
+auto_moving, fixation 23 moved from x:1670.4 y:445.3 to x:1670.4 y:438.0,1681447536.307681
+auto_moving, fixation 24 moved from x:487.2 y:562.0 to x:487.2 y:524.0,1681447538.170794
+auto_moving, fixation 25 moved from x:321.5 y:546.7 to x:321.5 y:524.0,1681447539.471956
+auto_moving, fixation 26 moved from x:544.7 y:542.3 to x:544.7 y:524.0,1681447540.818219
+auto_moving, fixation 27 moved from x:738.1 y:533.8 to x:738.1 y:524.0,1681447542.188488
+auto_moving, fixation 28 moved from x:1002.0 y:523.9 to x:1002.0 y:524.0,1681447543.641522
+auto_moving, fixation 29 moved from x:915.0 y:529.3 to x:915.0 y:524.0,1681447545.1351092
+auto_moving, fixation 30 moved from x:880.2 y:526.5 to x:880.2 y:524.0,1681447546.624418
+auto_moving, fixation 31 moved from x:998.9 y:526.2 to x:998.9 y:524.0,1681447548.21391
+auto_moving, fixation 32 moved from x:1272.2 y:525.0 to x:1272.2 y:524.0,1681447549.651328
+auto_moving, fixation 33 moved from x:1085.0 y:630.2 to x:1085.0 y:524.0,1681447551.222205
+auto_moving, fixation 34 moved from x:896.7 y:618.5 to x:896.7 y:524.0,1681447552.613117
+auto_moving, fixation 35 moved from x:797.3 y:614.5 to x:797.3 y:524.0,1681447553.9637928
+manual_moving, fixation 35 moved from x:797.3 y:524.0 to x:817.0161521491073 y:521.4746495992563,1681447561.024122
+auto_moving, fixation 36 moved from x:1054.6 y:523.0 to x:1054.6 y:524.0,1681447570.299653
+auto_moving, fixation 37 moved from x:1237.9 y:516.5 to x:1237.9 y:524.0,1681447572.355252
+auto_moving, fixation 38 moved from x:1392.4 y:515.9 to x:1392.4 y:524.0,1681447574.3408
+auto_moving, fixation 39 moved from x:1565.6 y:526.1 to x:1565.6 y:524.0,1681447576.1153011
+auto_moving, fixation 40 moved from x:1693.2 y:523.9 to x:1693.2 y:524.0,1681447578.115767
+auto_moving, fixation 41 moved from x:1537.9 y:526.9 to x:1537.9 y:524.0,1681447580.025135
+auto_moving, fixation 42 moved from x:1462.6 y:531.0 to x:1462.6 y:524.0,1681447581.871819
+auto_moving, fixation 43 moved from x:1610.7 y:529.1 to x:1610.7 y:524.0,1681447583.7720351
+manual_moving, fixation 43 moved from x:1610.7 y:524.0 to x:1621.1585038822104 y:523.6363225877861,1681447589.423423
+auto_moving, fixation 44 moved from x:745.3 y:626.5 to x:745.3 y:610.0,1681447594.561366
+auto_moving, fixation 45 moved from x:664.1 y:628.6 to x:664.1 y:610.0,1681447599.0096462
+manual_moving, fixation 46 moved from x:972.5 y:624.0 to x:981.3032992773758 y:607.9415691404502,1681447603.507643
+auto_moving, fixation 46 moved from x:981.3032992773758 y:607.9415691404502 to x:981.3032992773758 y:610.0,1681447606.0249321
+auto_moving, fixation 47 moved from x:1043.1 y:620.4 to x:1043.1 y:610.0,1681447607.838996
+auto_moving, fixation 48 moved from x:993.6 y:618.8 to x:993.6 y:610.0,1681447609.8336132
+auto_moving, fixation 49 moved from x:1162.0 y:620.3 to x:1162.0 y:610.0,1681447611.545014
+auto_moving, fixation 50 moved from x:1154.5 y:632.0 to x:1154.5 y:610.0,1681447613.129647
+Saved,Date 2023-04-14 Trial Name019_spanish_multi_7_LargeFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Spanish/LargeFont/multi/019_spanish_multi_7_LargeFont/019_spanish_multi_7.jpg Duration 153.37432885169983,1681447616.077656

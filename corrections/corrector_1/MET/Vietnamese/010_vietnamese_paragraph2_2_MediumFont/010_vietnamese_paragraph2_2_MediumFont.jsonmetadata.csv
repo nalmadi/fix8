@@ -1,0 +1,21 @@
+event,event details,timestamp
+started,,1684807105.580141
+filter,removed fixations greater than 1000,1684807107.284336
+filter,removed fixations less than 100,1684807108.125563
+selected,algorithm Warp,1684807111.3019369
+auto_moving, fixation 0 moved from x:764.3 y:457.5 to x:764.3 y:461.0,1684807114.9844108
+auto_moving, fixation 1 moved from x:705.4 y:453.6 to x:705.4 y:461.0,1684807116.1957061
+auto_moving, fixation 2 moved from x:647.8 y:500.5 to x:647.8 y:461.0,1684807117.354151
+auto_moving, fixation 3 moved from x:974.2 y:456.4 to x:974.2 y:461.0,1684807118.688098
+auto_moving, fixation 4 moved from x:914.9 y:454.4 to x:914.9 y:461.0,1684807119.947746
+auto_moving, fixation 5 moved from x:629.8 y:439.6 to x:629.8 y:461.0,1684807121.260532
+auto_moving, fixation 6 moved from x:715.8 y:550.3 to x:715.8 y:461.0,1684807123.382862
+auto_moving, fixation 7 moved from x:815.9 y:455.4 to x:815.9 y:461.0,1684807124.69364
+auto_moving, fixation 8 moved from x:943.6 y:465.7 to x:943.6 y:461.0,1684807125.929445
+auto_moving, fixation 9 moved from x:1036.9 y:444.7 to x:1036.9 y:461.0,1684807127.1911948
+manual_moving, fixation 9 moved from x:1036.9 y:461.0 to x:1029.4757519049256 y:459.0882975934305,1684807129.994358
+auto_moving, fixation 10 moved from x:1174.3 y:440.7 to x:1174.3 y:461.0,1684807132.695622
+manual_moving, fixation 10 moved from x:1174.3 y:461.0 to x:1171.6337409583816 y:462.3191609810091,1684807135.613683
+auto_moving, fixation 11 moved from x:1231.9 y:435.7 to x:1231.9 y:461.0,1684807137.3465338
+manual_moving, fixation 12 moved from x:1094.0 y:426.9 to x:1095.7084513502857 y:457.4728658996413,1684807141.441704
+Saved,Date 2023-05-22 Trial Name010_vietnamese_paragraph2_2_MediumFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Vietnamese/MediumFont/paragraph2/010_vietnamese_paragraph2_2_MediumFont/010_vietnamese_paragraph2_2.jpg Duration 39.10790491104126,1684807144.688075

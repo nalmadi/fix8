@@ -1,0 +1,26 @@
+event,event details,timestamp
+started,,1684800136.2574441
+filter,removed fixations greater than 1000,1684800138.651263
+filter,removed fixations less than 100,1684800141.0810602
+selected,algorithm Warp,1684800145.483836
+auto_moving, fixation 0 moved from x:695.1 y:474.2 to x:695.1 y:461.0,1684800151.857474
+auto_moving, fixation 1 moved from x:596.7 y:483.1 to x:596.7 y:461.0,1684800153.61095
+auto_moving, fixation 2 moved from x:736.7 y:467.1 to x:736.7 y:461.0,1684800155.340608
+auto_moving, fixation 3 moved from x:837.7 y:471.2 to x:837.7 y:461.0,1684800157.1470451
+auto_moving, fixation 4 moved from x:1053.8 y:468.6 to x:1053.8 y:461.0,1684800158.7920692
+auto_moving, fixation 5 moved from x:995.1 y:464.5 to x:995.1 y:461.0,1684800160.161825
+auto_moving, fixation 6 moved from x:1194.4 y:473.8 to x:1194.4 y:461.0,1684800161.777281
+auto_moving, fixation 7 moved from x:1290.7 y:481.3 to x:1290.7 y:461.0,1684800163.186753
+auto_moving, fixation 8 moved from x:1316.3 y:483.6 to x:1316.3 y:461.0,1684800164.56738
+manual_moving, fixation 9 moved from x:901.4 y:475.5 to x:901.8566480955733 y:462.3191609810091,1684800170.077908
+manual_moving, fixation 10 moved from x:615.4 y:477.3 to x:615.9252382948721 y:459.0882975934305,1684800180.347809
+manual_moving, fixation 11 moved from x:758.2 y:470.6 to x:759.6986590421172 y:462.3191609810091,1684800188.4477818
+manual_moving, fixation 12 moved from x:916.7 y:469.2 to x:916.3955333396766 y:462.3191609810091,1684800195.319844
+manual_moving, fixation 13 moved from x:980.2 y:535.4 to x:972.9356426223012 y:530.1672921201585,1684800202.63078
+manual_moving, fixation 13 moved from x:972.9356426223012 y:530.1672921201585 to x:969.7047792347225 y:530.1672921201585,1684800206.090691
+manual_moving, fixation 14 moved from x:978.7 y:548.6 to x:972.9356426223012 y:535.0135872015263,1684800215.976094
+manual_moving, fixation 15 moved from x:1265.3 y:480.2 to x:1279.8676644422628 y:457.4728658996413,1684800223.756874
+manual_moving, fixation 16 moved from x:1324.9 y:479.5 to x:1323.4843201745732 y:460.70372928721986,1684800230.8445709
+manual_moving, fixation 17 moved from x:1324.5 y:481.8 to x:1325.0997518683623 y:462.3191609810091,1684800236.456723
+auto_moving, fixation 21 moved from x:993.2 y:588.3 to x:993.2 y:593.0,1684800246.863492
+Saved,Date 2023-05-22 Trial Name018_russian_paragraph1_2_MediumFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Russian/MediumFont/paragraph1/018_russian_paragraph1_2_MediumFont/018_russian_paragraph1_2.jpg Duration 113.08959579467773,1684800249.3471
