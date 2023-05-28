@@ -1,0 +1,15 @@
+event,event details,timestamp
+started,,1682902759.303566
+filter,removed fixations greater than 1000,1682902761.119457
+filter,removed fixations less than 100,1682902762.4233139
+selected,algorithm Warp,1682902767.677533
+auto_moving, fixation 0 moved from x:818.3 y:511.5 to x:818.3 y:527.0,1682902773.069373
+auto_moving, fixation 1 moved from x:758.9 y:503.2 to x:758.9 y:527.0,1682902774.581942
+auto_moving, fixation 2 moved from x:884.9 y:514.7 to x:884.9 y:527.0,1682902776.22301
+auto_moving, fixation 3 moved from x:988.4 y:522.7 to x:988.4 y:527.0,1682902777.610133
+auto_moving, fixation 4 moved from x:1083.7 y:528.9 to x:1083.7 y:527.0,1682902779.1893818
+auto_moving, fixation 5 moved from x:1034.5 y:532.5 to x:1034.5 y:527.0,1682902780.593088
+auto_moving, fixation 6 moved from x:1137.4 y:536.4 to x:1137.4 y:527.0,1682902782.327997
+auto_moving, fixation 7 moved from x:1194.7 y:546.7 to x:1194.7 y:527.0,1682902784.340724
+auto_moving, fixation 8 moved from x:962.1 y:548.6 to x:962.1 y:527.0,1682902789.1731782
+Saved,Date 2023-04-30 Trial Name001_english_single_2_MediumFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/English/MediumFont/single/001_english_single_2_MediumFont/001_english_single_2.jpg Duration 33.58763098716736,1682902792.8912299

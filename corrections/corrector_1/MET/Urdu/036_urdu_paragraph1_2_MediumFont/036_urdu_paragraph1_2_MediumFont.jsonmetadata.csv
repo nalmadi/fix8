@@ -1,0 +1,23 @@
+event,event details,timestamp
+started,,1684806092.16548
+filter,removed fixations greater than 1000,1684806099.005493
+filter,removed fixations greater than 1000,1684806100.7117891
+filter,removed fixations less than 100,1684806104.2408562
+filter,removed fixations greater than 1000,1684806104.922107
+selected,algorithm Warp,1684806107.676605
+auto_moving, fixation 0 moved from x:1062.2 y:500.7 to x:1062.2 y:495.0,1684806112.6806479
+auto_moving, fixation 1 moved from x:1138.4 y:497.0 to x:1138.4 y:495.0,1684806114.038976
+auto_moving, fixation 2 moved from x:1101.5 y:496.3 to x:1101.5 y:495.0,1684806115.537979
+auto_moving, fixation 3 moved from x:1055.0 y:492.7 to x:1055.0 y:495.0,1684806117.000315
+auto_moving, fixation 4 moved from x:1027.4 y:495.9 to x:1027.4 y:495.0,1684806118.3014941
+auto_moving, fixation 5 moved from x:978.3 y:491.7 to x:978.3 y:495.0,1684806119.538261
+auto_moving, fixation 6 moved from x:918.0 y:491.9 to x:918.0 y:560.0,1684806120.8277051
+manual_moving, fixation 6 moved from x:918.0 y:560.0 to x:913.1646699520982 y:493.01236316300526,1684806125.629643
+auto_moving, fixation 7 moved from x:881.9 y:490.8 to x:881.9 y:560.0,1684806128.167279
+auto_moving, fixation 8 moved from x:838.6 y:487.2 to x:838.6 y:560.0,1684806129.492306
+manual_moving, fixation 7 moved from x:881.9 y:560.0 to x:877.6251726887342 y:496.2432265505838,1684806135.6138399
+manual_moving, fixation 8 moved from x:838.6 y:560.0 to x:840.4702437315809 y:494.6277948567945,1684806138.645098
+manual_moving, fixation 9 moved from x:789.3 y:486.4 to x:790.3918612241134 y:489.7814997754267,1684806143.630785
+auto_moving, fixation 10 moved from x:961.0 y:575.1 to x:961.0 y:560.0,1684806148.753236
+auto_moving, fixation 11 moved from x:952.3 y:627.1 to x:952.3 y:627.0,1684806150.4444811
+Saved,Date 2023-05-22 Trial Name036_urdu_paragraph1_2_MediumFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Urdu/MediumFont/paragraph1/036_urdu_paragraph1_2_MediumFont/036_urdu_paragraph1_2.jpg Duration 60.77508497238159,1684806152.940629

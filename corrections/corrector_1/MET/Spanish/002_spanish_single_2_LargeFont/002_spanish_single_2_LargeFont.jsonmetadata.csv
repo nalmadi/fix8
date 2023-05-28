@@ -1,0 +1,20 @@
+event,event details,timestamp
+started,,1681670364.294095
+filter,removed fixations greater than 1000,1681670367.42695
+filter,removed fixations less than 100,1681670369.908902
+selected,algorithm Warp,1681670379.265589
+manual_moving, fixation 0 moved from x:658.8 y:527.4 to x:653.713854850826 y:525.0787615112606,1681670404.692331
+auto_moving, fixation 1 moved from x:597.1 y:534.0 to x:597.1 y:524.0,1681670409.243503
+auto_moving, fixation 2 moved from x:673.8 y:516.5 to x:673.8 y:524.0,1681670411.760164
+auto_moving, fixation 3 moved from x:737.3 y:524.6 to x:737.3 y:524.0,1681670413.109445
+auto_moving, fixation 4 moved from x:677.2 y:537.5 to x:677.2 y:524.0,1681670415.15965
+manual_moving, fixation 5 moved from x:886.3 y:536.7 to x:874.4972414402262 y:524.0173029218885,1681670420.257236
+auto_moving, fixation 6 moved from x:954.4 y:532.4 to x:954.4 y:524.0,1681670424.776392
+auto_moving, fixation 7 moved from x:1052.1 y:556.7 to x:1052.1 y:524.0,1681670426.693368
+auto_moving, fixation 8 moved from x:1109.2 y:553.1 to x:1109.2 y:524.0,1681670428.5431051
+auto_moving, fixation 9 moved from x:1155.6 y:545.2 to x:1155.6 y:524.0,1681670429.758583
+auto_moving, fixation 10 moved from x:1274.4 y:553.4 to x:1274.4 y:524.0,1681670430.992675
+auto_moving, fixation 11 moved from x:1255.9 y:534.6 to x:1255.9 y:524.0,1681670432.4926279
+auto_moving, fixation 12 moved from x:1265.9 y:536.8 to x:1265.9 y:524.0,1681670433.893055
+auto_moving, fixation 13 moved from x:967.0 y:540.1 to x:967.0 y:524.0,1681670435.459616
+Saved,Date 2023-04-16 Trial Name002_spanish_single_2_LargeFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Spanish/LargeFont/single/002_spanish_single_2_LargeFont/002_spanish_single_2.jpg Duration 73.88360905647278,1681670438.1777651

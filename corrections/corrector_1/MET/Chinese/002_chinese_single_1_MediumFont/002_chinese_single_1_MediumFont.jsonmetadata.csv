@@ -1,0 +1,17 @@
+event,event details,timestamp
+started,,1682893388.468396
+filter,removed fixations greater than 1000,1682893391.2748458
+filter,removed fixations less than 100,1682893393.049435
+selected,algorithm Warp,1682893397.758635
+auto_moving, fixation 0 moved from x:994.0 y:576.8 to x:994.0 y:525.0,1682893402.0745258
+auto_moving, fixation 1 moved from x:832.3 y:527.0 to x:832.3 y:525.0,1682893403.790849
+auto_moving, fixation 2 moved from x:1075.1 y:545.3 to x:1075.1 y:525.0,1682893409.3746529
+auto_moving, fixation 3 moved from x:1114.4 y:541.1 to x:1114.4 y:525.0,1682893411.294548
+auto_moving, fixation 4 moved from x:832.5 y:537.1 to x:832.5 y:525.0,1682893413.141203
+auto_moving, fixation 5 moved from x:808.2 y:540.9 to x:808.2 y:525.0,1682893417.574616
+auto_moving, fixation 6 moved from x:884.5 y:536.4 to x:884.5 y:525.0,1682893419.227701
+auto_moving, fixation 7 moved from x:876.0 y:540.7 to x:876.0 y:525.0,1682893423.6771982
+auto_moving, fixation 8 moved from x:1045.0 y:535.4 to x:1045.0 y:525.0,1682893425.578835
+auto_moving, fixation 9 moved from x:1083.8 y:537.0 to x:1083.8 y:525.0,1682893427.1996841
+auto_moving, fixation 10 moved from x:967.1 y:550.5 to x:967.1 y:525.0,1682893429.351583
+Saved,Date 2023-04-30 Trial Name002_chinese_single_1_MediumFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Chinese/MediumFont/single/002_chinese_single_1_MediumFont/002_chinese_single_1.jpg Duration 44.84520602226257,1682893433.31366

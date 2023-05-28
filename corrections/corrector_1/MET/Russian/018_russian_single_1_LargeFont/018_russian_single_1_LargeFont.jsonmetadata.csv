@@ -1,0 +1,43 @@
+event,event details,timestamp
+started,,1684799866.833842
+filter,removed fixations greater than 1000,1684799869.073954
+filter,removed fixations less than 100,1684799870.837845
+selected,algorithm Warp,1684799888.722764
+auto_moving, fixation 0 moved from x:346.1 y:537.4 to x:346.1 y:523.0,1684799894.238446
+auto_moving, fixation 1 moved from x:245.0 y:530.9 to x:245.0 y:523.0,1684799896.118238
+manual_moving, fixation 1 moved from x:245.0 y:523.0 to x:236.29879025439314 y:523.7055653450014,1684799900.15476
+auto_moving, fixation 2 moved from x:324.3 y:513.3 to x:324.3 y:523.0,1684799902.25342
+auto_moving, fixation 3 moved from x:272.8 y:512.7 to x:272.8 y:523.0,1684799903.762788
+auto_moving, fixation 4 moved from x:219.5 y:510.8 to x:219.5 y:523.0,1684799905.097821
+auto_moving, fixation 5 moved from x:302.2 y:510.6 to x:302.2 y:523.0,1684799906.4201212
+auto_moving, fixation 6 moved from x:294.2 y:519.1 to x:294.2 y:523.0,1684799907.804854
+auto_moving, fixation 7 moved from x:341.8 y:517.4 to x:341.8 y:523.0,1684799909.072713
+auto_moving, fixation 8 moved from x:325.3 y:519.8 to x:325.3 y:523.0,1684799910.438754
+auto_moving, fixation 9 moved from x:366.0 y:512.5 to x:366.0 y:523.0,1684799913.905898
+auto_moving, fixation 10 moved from x:483.9 y:517.2 to x:483.9 y:523.0,1684799915.191859
+auto_moving, fixation 11 moved from x:565.2 y:522.9 to x:565.2 y:523.0,1684799916.4739032
+auto_moving, fixation 12 moved from x:454.1 y:511.0 to x:454.1 y:523.0,1684799917.714607
+auto_moving, fixation 13 moved from x:593.5 y:515.2 to x:593.5 y:523.0,1684799918.973723
+manual_moving, fixation 13 moved from x:593.5 y:523.0 to x:601.3863530507687 y:525.3209970387907,1684799923.127669
+manual_moving, fixation 13 moved from x:601.3863530507687 y:525.3209970387907 to x:599.7709213569793 y:525.3209970387907,1684799925.520232
+manual_moving, fixation 13 moved from x:599.7709213569793 y:525.3209970387907 to x:598.1554896631901 y:523.7055653450014,1684799929.679761
+auto_moving, fixation 14 moved from x:572.9 y:518.9 to x:572.9 y:523.0,1684799931.820887
+auto_moving, fixation 15 moved from x:685.6 y:512.7 to x:685.6 y:523.0,1684799933.200337
+auto_moving, fixation 16 moved from x:890.4 y:508.4 to x:890.4 y:523.0,1684799934.362528
+auto_moving, fixation 17 moved from x:891.8 y:527.9 to x:891.8 y:523.0,1684799935.6254668
+auto_moving, fixation 18 moved from x:973.4 y:503.2 to x:973.4 y:523.0,1684799936.834697
+auto_moving, fixation 19 moved from x:1078.2 y:504.8 to x:1078.2 y:523.0,1684799938.83802
+auto_moving, fixation 20 moved from x:1218.2 y:507.7 to x:1218.2 y:523.0,1684799942.186264
+auto_moving, fixation 21 moved from x:1067.7 y:509.7 to x:1067.7 y:523.0,1684799943.656842
+auto_moving, fixation 22 moved from x:989.4 y:510.7 to x:989.4 y:523.0,1684799945.160481
+auto_moving, fixation 23 moved from x:1114.8 y:508.2 to x:1114.8 y:523.0,1684799951.2704031
+auto_moving, fixation 24 moved from x:1402.5 y:516.9 to x:1402.5 y:523.0,1684799952.852045
+auto_moving, fixation 25 moved from x:1330.9 y:519.8 to x:1330.9 y:523.0,1684799954.407819
+auto_moving, fixation 26 moved from x:1515.8 y:520.8 to x:1515.8 y:523.0,1684799955.915067
+auto_moving, fixation 27 moved from x:1610.1 y:517.9 to x:1610.1 y:523.0,1684799957.473587
+auto_moving, fixation 28 moved from x:1572.8 y:515.7 to x:1572.8 y:523.0,1684799959.244861
+auto_moving, fixation 29 moved from x:1697.4 y:522.7 to x:1697.4 y:523.0,1684799970.569925
+auto_moving, fixation 30 moved from x:1251.2 y:511.8 to x:1251.2 y:523.0,1684799972.294178
+auto_moving, fixation 31 moved from x:1253.1 y:512.2 to x:1253.1 y:523.0,1684799975.2431202
+Saved,Date 2023-05-22 Trial Name018_russian_single_1_LargeFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Russian/LargeFont/single/018_russian_single_1_LargeFont/018_russian_single_1.jpg Duration 110.97592401504517,1684799977.809844
+Saved,Date 2023-05-22 Trial Name018_russian_single_1_LargeFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Russian/LargeFont/single/018_russian_single_1_LargeFont/018_russian_single_1.jpg Duration 111.14616990089417,1684799977.9800751

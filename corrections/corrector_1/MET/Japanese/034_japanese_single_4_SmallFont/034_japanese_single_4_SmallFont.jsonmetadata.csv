@@ -1,0 +1,23 @@
+event,event details,timestamp
+started,,1684795311.719161
+filter,removed fixations greater than 1000,1684795314.342329
+filter,removed fixations less than 100,1684795315.44381
+selected,algorithm Warp,1684795318.042176
+auto_moving, fixation 0 moved from x:805.7 y:541.7 to x:805.7 y:528.0,1684795321.660595
+auto_moving, fixation 1 moved from x:787.0 y:550.3 to x:787.0 y:528.0,1684795322.885296
+auto_moving, fixation 2 moved from x:803.0 y:547.9 to x:803.0 y:528.0,1684795324.0510411
+auto_moving, fixation 3 moved from x:834.0 y:550.5 to x:834.0 y:528.0,1684795325.179753
+auto_moving, fixation 4 moved from x:870.7 y:541.4 to x:870.7 y:528.0,1684795326.2558138
+auto_moving, fixation 5 moved from x:899.8 y:528.9 to x:899.8 y:528.0,1684795327.2978141
+auto_moving, fixation 6 moved from x:915.6 y:525.8 to x:915.6 y:528.0,1684795328.411736
+auto_moving, fixation 7 moved from x:991.8 y:512.6 to x:991.8 y:528.0,1684795329.504697
+auto_moving, fixation 8 moved from x:1051.9 y:526.2 to x:1051.9 y:528.0,1684795330.655172
+auto_moving, fixation 9 moved from x:1069.1 y:532.3 to x:1069.1 y:528.0,1684795331.774824
+auto_moving, fixation 10 moved from x:1103.6 y:536.3 to x:1103.6 y:528.0,1684795332.905809
+auto_moving, fixation 11 moved from x:1077.3 y:533.8 to x:1077.3 y:528.0,1684795334.167606
+auto_moving, fixation 12 moved from x:1111.1 y:542.4 to x:1111.1 y:528.0,1684795335.4638872
+auto_moving, fixation 13 moved from x:1105.6 y:559.1 to x:1105.6 y:528.0,1684795336.809765
+auto_moving, fixation 14 moved from x:955.3 y:556.0 to x:955.3 y:528.0,1684795338.255973
+Saved,Date 2023-05-22 Trial Name034_japanese_single_4_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Japanese/SmallFont/single/034_japanese_single_4_SmallFont/034_japanese_single_4.jpg Duration 29.017788887023926,1684795340.737011
+Saved,Date 2023-05-22 Trial Name034_japanese_single_4_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Japanese/SmallFont/single/034_japanese_single_4_SmallFont/034_japanese_single_4.jpg Duration 29.223086833953857,1684795340.942304
+Saved,Date 2023-05-22 Trial Name034_japanese_single_4_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Japanese/SmallFont/single/034_japanese_single_4_SmallFont/034_japanese_single_4.jpg Duration 29.408223867416382,1684795341.127431

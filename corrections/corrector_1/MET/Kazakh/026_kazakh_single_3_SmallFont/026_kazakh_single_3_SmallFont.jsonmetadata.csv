@@ -1,0 +1,31 @@
+event,event details,timestamp
+started,,1684799129.344716
+filter,removed fixations greater than 1000,1684799131.3766148
+filter,removed fixations less than 100,1684799132.580102
+selected,algorithm Warp,1684799135.8032289
+auto_moving, fixation 0 moved from x:559.2 y:510.5 to x:559.2 y:530.0,1684799140.742702
+auto_moving, fixation 1 moved from x:642.9 y:512.7 to x:642.9 y:530.0,1684799142.5529568
+auto_moving, fixation 2 moved from x:720.0 y:510.5 to x:720.0 y:530.0,1684799143.9193878
+auto_moving, fixation 3 moved from x:672.8 y:500.7 to x:672.8 y:530.0,1684799145.29285
+auto_moving, fixation 4 moved from x:720.4 y:496.1 to x:720.4 y:530.0,1684799146.5909472
+auto_moving, fixation 5 moved from x:787.7 y:499.1 to x:787.7 y:530.0,1684799147.778255
+auto_moving, fixation 6 moved from x:757.8 y:498.3 to x:757.8 y:530.0,1684799149.378122
+auto_moving, fixation 7 moved from x:848.0 y:503.2 to x:848.0 y:530.0,1684799150.647729
+auto_moving, fixation 8 moved from x:901.9 y:506.2 to x:901.9 y:530.0,1684799151.92607
+auto_moving, fixation 9 moved from x:1001.2 y:509.7 to x:1001.2 y:530.0,1684799153.168278
+auto_moving, fixation 10 moved from x:1044.8 y:517.5 to x:1044.8 y:530.0,1684799154.404215
+auto_moving, fixation 11 moved from x:1176.5 y:535.2 to x:1176.5 y:530.0,1684799155.7232242
+auto_moving, fixation 12 moved from x:1261.5 y:545.8 to x:1261.5 y:530.0,1684799156.933703
+auto_moving, fixation 13 moved from x:1229.4 y:538.3 to x:1229.4 y:530.0,1684799158.260114
+auto_moving, fixation 14 moved from x:1288.4 y:543.1 to x:1288.4 y:530.0,1684799159.440812
+auto_moving, fixation 15 moved from x:1356.4 y:546.4 to x:1356.4 y:530.0,1684799160.646703
+auto_moving, fixation 16 moved from x:1377.8 y:538.8 to x:1377.8 y:530.0,1684799161.976135
+manual_moving, fixation 15 moved from x:1356.4 y:530.0 to x:1341.2540688062552 y:531.7827238139478,1684799165.700514
+manual_moving, fixation 16 moved from x:1377.8 y:530.0 to x:1373.5627026820405 y:533.3981555077371,1684799167.9960861
+manual_moving, fixation 16 moved from x:1373.5627026820405 y:533.3981555077371 to x:1375.1781343758298 y:533.3981555077371,1684799171.7386491
+manual_moving, fixation 15 moved from x:1341.2540688062552 y:531.7827238139478 to x:1352.56209066278 y:533.3981555077371,1684799174.540082
+auto_moving, fixation 17 moved from x:1172.2 y:537.5 to x:1172.2 y:530.0,1684799177.65959
+auto_moving, fixation 18 moved from x:1016.5 y:528.3 to x:1016.5 y:530.0,1684799179.084964
+Saved,Date 2023-05-22 Trial Name026_kazakh_single_3_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Kazakh/SmallFont/single/026_kazakh_single_3_SmallFont/026_kazakh_single_3.jpg Duration 51.83923292160034,1684799181.183991
+Saved,Date 2023-05-22 Trial Name026_kazakh_single_3_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Kazakh/SmallFont/single/026_kazakh_single_3_SmallFont/026_kazakh_single_3.jpg Duration 52.01106786727905,1684799181.3558369
+Saved,Date 2023-05-22 Trial Name026_kazakh_single_3_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Kazakh/SmallFont/single/026_kazakh_single_3_SmallFont/026_kazakh_single_3.jpg Duration 52.167428731918335,1684799181.5121942

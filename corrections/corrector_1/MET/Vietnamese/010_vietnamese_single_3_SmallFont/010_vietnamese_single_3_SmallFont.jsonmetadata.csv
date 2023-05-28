@@ -1,0 +1,25 @@
+event,event details,timestamp
+started,,1684807639.42509
+filter,removed fixations greater than 1000,1684807641.37516
+filter,removed fixations less than 100,1684807643.1373959
+selected,algorithm Warp,1684807645.459457
+auto_moving, fixation 0 moved from x:723.6 y:509.3 to x:723.6 y:529.0,1684807650.043678
+auto_moving, fixation 1 moved from x:722.8 y:511.2 to x:722.8 y:529.0,1684807651.426444
+auto_moving, fixation 2 moved from x:788.1 y:519.8 to x:788.1 y:529.0,1684807652.727337
+auto_moving, fixation 3 moved from x:886.8 y:539.4 to x:886.8 y:529.0,1684807653.692996
+auto_moving, fixation 4 moved from x:849.4 y:529.9 to x:849.4 y:529.0,1684807654.638918
+auto_moving, fixation 5 moved from x:1001.1 y:524.9 to x:1001.1 y:529.0,1684807655.656704
+manual_moving, fixation 3 moved from x:886.8 y:529.0 to x:898.6257847079946 y:533.3981555077371,1684807658.900948
+manual_moving, fixation 3 moved from x:898.6257847079946 y:533.3981555077371 to x:897.0103530142053 y:533.3981555077371,1684807662.897511
+auto_moving, fixation 6 moved from x:1146.1 y:517.2 to x:1146.1 y:529.0,1684807664.525412
+auto_moving, fixation 7 moved from x:1065.2 y:534.2 to x:1065.2 y:529.0,1684807665.81
+auto_moving, fixation 8 moved from x:1050.4 y:542.7 to x:1050.4 y:529.0,1684807666.8389928
+auto_moving, fixation 9 moved from x:1127.4 y:605.7 to x:1127.4 y:529.0,1684807667.966793
+auto_moving, fixation 10 moved from x:1195.0 y:553.1 to x:1195.0 y:529.0,1684807669.023642
+auto_moving, fixation 11 moved from x:1229.6 y:544.7 to x:1229.6 y:529.0,1684807670.106487
+auto_moving, fixation 12 moved from x:1195.1 y:511.2 to x:1195.1 y:529.0,1684807671.1835892
+auto_moving, fixation 13 moved from x:1163.6 y:516.9 to x:1163.6 y:529.0,1684807672.34846
+auto_moving, fixation 14 moved from x:1163.7 y:521.4 to x:1163.7 y:529.0,1684807673.471583
+Saved,Date 2023-05-22 Trial Name010_vietnamese_single_3_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Vietnamese/SmallFont/single/010_vietnamese_single_3_SmallFont/010_vietnamese_single_3.jpg Duration 36.10980987548828,1684807675.534982
+Saved,Date 2023-05-22 Trial Name010_vietnamese_single_3_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Vietnamese/SmallFont/single/010_vietnamese_single_3_SmallFont/010_vietnamese_single_3.jpg Duration 37.141562938690186,1684807676.566711
+Saved,Date 2023-05-22 Trial Name010_vietnamese_single_3_SmallFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Vietnamese/SmallFont/single/010_vietnamese_single_3_SmallFont/010_vietnamese_single_3.jpg Duration 56.09643077850342,1684807695.5215812

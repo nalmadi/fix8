@@ -1,0 +1,23 @@
+event,event details,timestamp
+started,,1682892927.4010618
+filter,removed fixations greater than 1000,1682892930.149371
+filter,removed fixations less than 100,1682892932.070867
+selected,algorithm Warp,1682892934.896064
+auto_moving, fixation 0 moved from x:1009.3 y:550.6 to x:1009.3 y:461.0,1682892979.135044
+auto_moving, fixation 1 moved from x:863.7 y:484.7 to x:863.7 y:461.0,1682892983.914659
+auto_moving, fixation 2 moved from x:794.1 y:453.5 to x:794.1 y:461.0,1682892985.588682
+auto_moving, fixation 3 moved from x:751.4 y:448.4 to x:751.4 y:461.0,1682892987.003721
+auto_moving, fixation 4 moved from x:976.4 y:464.5 to x:976.4 y:461.0,1682892988.847494
+auto_moving, fixation 5 moved from x:874.7 y:470.6 to x:874.7 y:461.0,1682892990.572502
+manual_moving, fixation 6 moved from x:1122.1 y:489.3 to x:1132.620408474465 y:459.8669694261556,1682892995.480845
+auto_moving, fixation 7 moved from x:1252.7 y:489.3 to x:1252.7 y:461.0,1682893003.829957
+auto_moving, fixation 8 moved from x:1139.9 y:493.8 to x:1139.9 y:461.0,1682893005.661119
+auto_moving, fixation 9 moved from x:972.2 y:547.6 to x:972.2 y:527.0,1682893007.361415
+auto_moving, fixation 10 moved from x:969.6 y:603.0 to x:969.6 y:527.0,1682893008.866455
+manual_moving, fixation 10 moved from x:969.6 y:527.0 to x:967.2524248519317 y:587.4056757494166,1682893014.737382
+manual_moving, fixation 10 moved from x:967.2524248519317 y:587.4056757494166 to x:973.7374438175211 y:591.7290217264763,1682893018.102016
+manual_moving, fixation 11 moved from x:895.2 y:470.2 to x:885.1088512877975 y:460.9478059204206,1682893149.626109
+auto_moving, fixation 12 moved from x:956.6 y:611.3 to x:956.6 y:593.0,1682893155.1814241
+auto_moving, fixation 13 moved from x:948.8 y:609.8 to x:948.8 y:593.0,1682893157.560153
+manual_moving, fixation 14 moved from x:1048.2 y:438.1 to x:1056.9618538759203 y:457.70529643762575,1682893161.88727
+Saved,Date 2023-04-30 Trial Name002_chinese_paragraph1_2_MediumFont.json File Path /Users/owen/Desktop/fix8-main/golden_set/MET_Dataset/Chinese/MediumFont/paragraph1/002_chinese_paragraph1_2_MediumFont/002_chinese_paragraph1_2.jpg Duration 238.77994084358215,1682893166.181081
