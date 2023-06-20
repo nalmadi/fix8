@@ -476,7 +476,11 @@ class Fix8(QMainWindow):
     '''remove the saccades from the canvas (this does not erase the data, just visuals)'''
     def clear_saccades(self):
         if self.saccades != None:
-            self.canvas.ax.lines.clear() #<-- This line crashes the tool
+            self.canvas.ax.lines.clear() #<-- if this line crashes the tool
+
+            #for line in self.canvas.ax.lines:  #<-- use this instead
+            #    line.remove()
+
             self.saccades = None
             self.canvas.draw()
 
@@ -486,7 +490,11 @@ class Fix8(QMainWindow):
             self.scatter.remove()
             self.scatter = None
             # clear scatter data from canvas but not the background image
-            self.canvas.ax.collections.clear() #<-- This line crashes the tool
+            self.canvas.ax.collections.clear() #<-- If this line crashes the tool
+
+            #for collection in self.canvas.ax.collections: #<-- use this instead
+            #    collection.remove()
+
             self.canvas.draw()
             
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
@@ -597,29 +605,29 @@ class Fix8(QMainWindow):
             self.draw_canvas(self.corrected_fixations)
             
     def previous_fixation(self):
-        if self.suggested_corrections is not None:
-            if self.current_fixation == 0:
-                self.current_fixation = len(self.suggested_corrections)
-            self.current_fixation -= 1
+        #if self.suggested_corrections is not None:
+        if self.current_fixation == 0:
+            self.current_fixation = len(self.corrected_fixations)
+        self.current_fixation -= 1
 
-            self.draw_canvas(self.corrected_fixations)
-            self.progress_bar_updated(self.current_fixation, draw=False)
-            
-            if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-                self.update_suggestion()
+        self.draw_canvas(self.corrected_fixations)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+        
+        if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+            self.update_suggestion()
 
     '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
     def next_fixation(self):
-        if self.suggested_corrections is not None:
-            if self.current_fixation == len(self.suggested_corrections) - 1:
-                self.current_fixation = -1
-            self.current_fixation += 1
+        #if self.suggested_corrections is not None:
+        if self.current_fixation == len(self.corrected_fixations) - 1:
+            self.current_fixation = -1
+        self.current_fixation += 1
 
-            self.draw_canvas(self.corrected_fixations)
-            self.progress_bar_updated(self.current_fixation, draw=False)
+        self.draw_canvas(self.corrected_fixations)
+        self.progress_bar_updated(self.current_fixation, draw=False)
 
-            if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-                self.update_suggestion()
+        if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+            self.update_suggestion()
             
 
     def show_suggestion(self,state):
@@ -860,7 +868,7 @@ class Fix8(QMainWindow):
         self.input_lesser = QLineEdit()
         self.input_lesser.textChanged.connect(self.lesser_value_changed)
         self.input_lesser.setEnabled(False)
-        self.input_lesser.setText("100")
+        self.input_lesser.setText("50")
         self.button_lesser = QPushButton("Remove Fixations <")
         self.button_lesser.setEnabled(False)
         self.button_lesser.clicked.connect(self.lesser_value_confirmed)
@@ -891,6 +899,11 @@ class Fix8(QMainWindow):
         self.toolbar.setEnabled(False)
         self.progress_tools.addWidget(self.toolbar)
 
+        self.button_previous_fixation = QPushButton("Previous Fixation", self)
+        self.button_previous_fixation.setEnabled(False)
+        self.button_previous_fixation.clicked.connect(self.previous_fixation)
+        self.progress_tools.addWidget(self.button_previous_fixation)
+
         self.progress_bar = QSlider(Qt.Horizontal)
         self.progress_bar.setMinimum(0)
         self.progress_bar.setMaximum(100)
@@ -900,6 +913,11 @@ class Fix8(QMainWindow):
 
         self.label_progress = QLabel("0/0")
         self.progress_tools.addWidget(self.label_progress)
+
+        self.button_next_fixation = QPushButton("Next Fixation", self)
+        self.button_next_fixation.setEnabled(False)
+        self.button_next_fixation.clicked.connect(self.next_fixation)
+        self.progress_tools.addWidget(self.button_next_fixation)
 
         self.right_side.addLayout(self.progress_tools)
 
@@ -914,16 +932,16 @@ class Fix8(QMainWindow):
 
         self.semi_automation_second_row = QHBoxLayout()
 
-        self.button_next_fixation = QPushButton("Next Fixation", self)
-        self.button_next_fixation.setEnabled(False)
-        self.button_next_fixation.clicked.connect(self.next_fixation)
+        # self.button_next_fixation = QPushButton("Next Fixation", self)
+        # #self.button_next_fixation.setEnabled(False)
+        # self.button_next_fixation.clicked.connect(self.next_fixation)
 
-        self.button_previous_fixation = QPushButton("Previous Fixation", self)
-        self.button_previous_fixation.setEnabled(False)
-        self.button_previous_fixation.clicked.connect(self.previous_fixation)
+        # self.button_previous_fixation = QPushButton("Previous Fixation", self)
+        # self.button_previous_fixation.setEnabled(False)
+        # self.button_previous_fixation.clicked.connect(self.previous_fixation)
 
-        self.semi_automation_second_row.addWidget(self.button_previous_fixation)
-        self.semi_automation_second_row.addWidget(self.button_next_fixation)
+        #self.semi_automation_second_row.addWidget(self.button_previous_fixation)
+        #self.semi_automation_second_row.addWidget(self.button_next_fixation)
 
         self.semi_automation.addLayout(self.semi_automation_second_row)
 
@@ -1160,8 +1178,8 @@ class Fix8(QMainWindow):
         elif feature == "trial_clicked":
             self.button_save_corrections.setEnabled(True)
 
-            self.button_previous_fixation.setEnabled(False)
-            self.button_next_fixation.setEnabled(False)
+            self.button_previous_fixation.setEnabled(True)
+            self.button_next_fixation.setEnabled(True)
             self.button_correct_all_fixations.setEnabled(False)
             self.button_confirm_suggestion.setEnabled(False)
 
@@ -1196,8 +1214,8 @@ class Fix8(QMainWindow):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.progress_bar.setEnabled(True)
         elif feature == "no_selected_algorithm":
-            self.button_previous_fixation.setEnabled(False)
-            self.button_next_fixation.setEnabled(False)
+            #self.button_previous_fixation.setEnabled(False)
+            #self.button_next_fixation.setEnabled(False)
             self.button_correct_all_fixations.setEnabled(False)
             self.button_confirm_suggestion.setEnabled(False)
             self.checkbox_show_suggestion.setCheckable(False)
