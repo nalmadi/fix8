@@ -597,6 +597,9 @@ class Fix8(QMainWindow):
                 self.update_suggestion()
             self.checkbox_show_suggestion.setChecked(True)
 
+            # reset progress bar when algorithm is selected, saving the user one manual step
+            self.progress_bar.setValue(self.progress_bar.minimum())
+
     '''if the user presses the correct all fixations button,
     make the corrected fixations the suggested ones from the correction algorithm'''
     def correct_all_fixations(self):
