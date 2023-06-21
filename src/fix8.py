@@ -482,12 +482,12 @@ class Fix8(QMainWindow):
             #    line.remove()
 
             self.saccades = None
-            self.canvas.draw()
+            #self.canvas.draw()
 
     '''clear the fixations from the canvas'''
     def clear_fixations(self):
         if self.scatter != None:
-            self.scatter.remove()
+            #self.scatter.remove()
             self.scatter = None
             # clear scatter data from canvas but not the background image
             self.canvas.ax.collections.clear() #<-- If this line crashes the tool
@@ -495,7 +495,7 @@ class Fix8(QMainWindow):
             #for collection in self.canvas.ax.collections: #<-- use this instead
             #    collection.remove()
 
-            self.canvas.draw()
+            #self.canvas.draw()
             
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
     def draw_canvas(self, fixations, draw_all = False):
@@ -616,8 +616,8 @@ class Fix8(QMainWindow):
         self.draw_canvas(self.corrected_fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
         
-        if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-            self.update_suggestion()
+        #if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+        #    self.update_suggestion()
 
     '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
     def next_fixation(self):
@@ -629,8 +629,8 @@ class Fix8(QMainWindow):
         self.draw_canvas(self.corrected_fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
-        if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-            self.update_suggestion()
+        #if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+        #    self.update_suggestion()
             
 
     def show_suggestion(self,state):
@@ -638,23 +638,27 @@ class Fix8(QMainWindow):
             self.update_suggestion()
 
     def update_suggestion(self):
+        
         if self.current_fixation != -1:
-            x = self.suggested_corrections[self.current_fixation][0]
-            y = self.suggested_corrections[self.current_fixation][1]
-            duration = self.corrected_fixations[self.current_fixation][2]
+
 
             # remove and replace the last suggestion for the current suggestion
-            if self.single_suggestion != None:
+            #if self.single_suggestion != None:
                 #self.single_suggestion.remove()
-                self.single_suggestion = None
-                self.canvas.draw()
-            self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
+                #self.single_suggestion = None
+                #self.canvas.draw()
+            
 
             # if checkbox is checked draw the suggestion, else remove it
             if self.checkbox_show_suggestion.isChecked():
+                x = self.suggested_corrections[self.current_fixation][0]
+                y = self.suggested_corrections[self.current_fixation][1]
+                duration = self.corrected_fixations[self.current_fixation][2]
+
+                self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
                 self.canvas.draw()
-            else:
-                if self.single_suggestion != None:
+            
+            elif self.single_suggestion != None:
                     #self.single_suggestion.remove()
                     self.single_suggestion = None
                     self.canvas.draw()
@@ -754,7 +758,7 @@ class Fix8(QMainWindow):
             self.draw_canvas(self.corrected_fixations)
 
         if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-            self.update_suggestion()
+           self.update_suggestion()
             
     
     '''Activates when the lesser value filter changes'''
