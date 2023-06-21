@@ -989,7 +989,7 @@ class Fix8(QMainWindow):
 
         self.dropdown_select_algorithm = QComboBox()
         self.dropdown_select_algorithm.setEditable(True)
-        self.dropdown_select_algorithm.addItem('Select Correction Algorithm')
+        self.dropdown_select_algorithm.addItem('Manual Correction')
         self.dropdown_select_algorithm.addItem('Attach')
         self.dropdown_select_algorithm.addItem('Chain')
         self.dropdown_select_algorithm.addItem('Cluster')
