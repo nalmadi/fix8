@@ -1,10 +1,6 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-import sys
 import time
 from PyQt5.QtCore import *
-from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
                              QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, QLineEdit, QListWidget, QListWidgetItem, QSpinBox)
@@ -12,18 +8,14 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from matplotlib.backends.backend_qt5agg import \
-    NavigationToolbar2QT as NavigationToolBar
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
 import emip_toolkit as emtk
 from matplotlib.patches import Rectangle
-from matplotlib.patches import Circle
 import json
 from os import listdir
-from os.path import isfile, join
 import driftAlgorithms as da
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-import threading
 import copy
 import matplotlib.animation as animation
 from datetime import date
@@ -31,7 +23,7 @@ from pathlib import Path
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
-from qt_material import apply_stylesheet
+#from qt_material import apply_stylesheet
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -606,6 +598,9 @@ class Fix8(QMainWindow):
         if self.suggested_corrections is not None:
             self.corrected_fixations = copy.deepcopy(self.suggested_corrections)
             self.draw_canvas(self.corrected_fixations)
+
+        self.metadata += "correct_all, all fixations corrected automatically" \
+               + "," + str(time.time()) + '\n'
             
     def previous_fixation(self):
         #if self.suggested_corrections is not None:
