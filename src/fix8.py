@@ -1250,6 +1250,7 @@ class Fix8(QMainWindow):
             #self.button_next_fixation.setEnabled(False)
             self.button_correct_all_fixations.setEnabled(False)
             self.button_confirm_suggestion.setEnabled(False)
+            self.button_undo_suggestion.setEnabled(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setChecked(False) # the no algorithm selection updates the suggestions which clears them in the function itself
             self.checkbox_show_suggestion.setEnabled(False)
