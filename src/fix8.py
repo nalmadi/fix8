@@ -76,7 +76,7 @@ class Fix8(QMainWindow):
         self.patches, self.aoi, self.background_color = None, None, None
 
         # fields relating to the correction algorithm
-        self.algorithm = 'original'
+        self.algorithm = 'manual'
         self.suggested_corrections, self.single_suggestion = None, None # single suggestion is the current suggestion
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
@@ -144,7 +144,7 @@ class Fix8(QMainWindow):
             self.corrected_fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
             self.corrected_fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][1]
 
-            if self.algorithm != 'original':
+            if self.algorithm != 'manual' and self.algorithm is not None:
                 # run correction
                 fixation_XY = np.array([self.corrected_fixations[self.selected_fixation]])
                 fixation_XY = fixation_XY[:, 0:2]
@@ -188,6 +188,7 @@ class Fix8(QMainWindow):
         self.draw_canvas(self.corrected_fixations)
         #self.canvas.update()
 
+
     def motion_notify_callback(self, event):
         if self.selected_fixation is None:
             return
@@ -201,10 +202,28 @@ class Fix8(QMainWindow):
         self.xy[self.selected_fixation] = np.array([x, y])
         self.scatter.set_offsets(self.xy)
 
+
     def keyPressEvent(self, e):
+        print(e.key())
+        # a: next is 65
+        if e.key() == 65 and self.button_next_fixation.isEnabled():
+            self.metadata += "key,next," + str(time.time()) +'\n'
+            self.next_fixation()
+
+        # z: back is 90
+        if e.key() == 90 and self.button_previous_fixation.isEnabled():
+            self.metadata += "key,previous," + str(time.time()) +'\n'
+            self.previous_fixation()
+
+        # alt: accept and next 16777251
+        if e.key() == 16777251 and self.button_confirm_suggestion.isEnabled():
+            self.metadata += "key,accept suggestion," + str(time.time()) +'\n'
+            self.confirm_suggestion()
+
         # backspace
         if e.key() == 16777219:
 
+            self.metadata += "key,remove fixation," + str(time.time()) +'\n'
             if(self.corrected_fixations is not None and self.selected_fixation is not None):
                 if self.selected_fixation < len(self.corrected_fixations):
                     self.corrected_fixations = np.delete(self.corrected_fixations, self.selected_fixation, 0) # delete the row of selected fixation
@@ -224,7 +243,7 @@ class Fix8(QMainWindow):
                         
                     self.selected_fixation = None
 
-                    if self.algorithm != 'original':
+                    if self.algorithm != 'manual':
                         if self.current_fixation == len(self.corrected_fixations):
                             # off by one error
                             self.current_fixation-=1
@@ -327,6 +346,7 @@ class Fix8(QMainWindow):
         self.progress_bar.setMaximum(len(self.original_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "started,," + str(time.time()) +'\n'
+        
         if self.current_fixation is not None:
             if self.current_fixation == -1:
                 self.label_progress.setText(f"0/{len(self.original_fixations)}")
@@ -782,7 +802,7 @@ class Fix8(QMainWindow):
 
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] > int(self.lesser_value)]
         self.current_fixation = 0
-        if self.algorithm != 'original' and self.suggested_corrections is not None:
+        if self.algorithm != 'manual' and self.suggested_corrections is not None:
             if self.current_fixation == len(self.corrected_fixations):
                 # off by one error, since deleting fixation moves current onto the next fixation
                 self.current_fixation-=1
@@ -809,7 +829,7 @@ class Fix8(QMainWindow):
 
         self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] < int(self.greater_value)]
         self.current_fixation = 0
-        if self.algorithm != 'original' and self.suggested_corrections is not None:
+        if self.algorithm != 'manual' and self.suggested_corrections is not None:
             if self.current_fixation == len(self.corrected_fixations):
                 # off by one error, since deleting fixation moves current onto the next fixation
                 self.current_fixation-=1
