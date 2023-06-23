@@ -174,7 +174,7 @@ class Fix8(QMainWindow):
                     updated_correction = da.warp(copy.deepcopy(fixation_XY), word_XY)[0]
 
                 self.suggested_corrections[self.selected_fixation, :2] = updated_correction
-                self.update_suggestion()
+                #self.update_suggestion()
             
             if self.checkbox_show_saccades.isChecked():
                 self.clear_saccades()
@@ -185,7 +185,8 @@ class Fix8(QMainWindow):
             return
         # self.selected_fixation = None
 
-        self.canvas.update()
+        self.draw_canvas(self.corrected_fixations)
+        #self.canvas.update()
 
     def motion_notify_callback(self, event):
         if self.selected_fixation is None:
@@ -201,6 +202,7 @@ class Fix8(QMainWindow):
         self.scatter.set_offsets(self.xy)
 
     def keyPressEvent(self, e):
+        # backspace
         if e.key() == 16777219:
 
             if(self.corrected_fixations is not None and self.selected_fixation is not None):
@@ -226,7 +228,7 @@ class Fix8(QMainWindow):
                         if self.current_fixation == len(self.corrected_fixations):
                             # off by one error
                             self.current_fixation-=1
-                        self.update_suggestion()
+                        #self.update_suggestion()
                         
                     self.draw_canvas(self.corrected_fixations)
                     self.progress_bar_updated(self.current_fixation, draw=False)
@@ -512,12 +514,21 @@ class Fix8(QMainWindow):
 
                 list_colors = [self.fixation_color] * (len(x)-1)
                 colors = np.array(list_colors + ['yellow'])
-                self.scatter = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha = self.fixation_opacity, c = colors)
+                self.scatter = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha=self.fixation_opacity, c=colors)
                 #self.scatter = self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
 
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
                 self.saccades = self.canvas.ax.plot(x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1)       
+        
+        # draw suggested fixation in blue
+        if self.checkbox_show_suggestion.isChecked():
+            x = self.suggested_corrections[self.current_fixation][0]
+            y = self.suggested_corrections[self.current_fixation][1]
+            duration = self.corrected_fixations[self.current_fixation][2]
+
+            self.single_suggestion = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha=self.fixation_opacity, c='blue')
+        
         # draw whatever was updated
         self.canvas.draw()
 
@@ -550,43 +561,43 @@ class Fix8(QMainWindow):
             if self.algorithm == 'attach':
                 self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()  # update the current suggestion as well
+                #self.update_suggestion()  # update the current suggestion as well
             elif self.algorithm == 'chain':
                 self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()
+                #self.update_suggestion()
             elif self.algorithm == 'cluster':
                 self.suggested_corrections[:, 0:2] = da.cluster(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()
+                #self.update_suggestion()
             elif self.algorithm == 'merge':
                 self.suggested_corrections[:, 0:2] = da.merge(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()
+                #self.update_suggestion()
             elif self.algorithm == 'regress':
                 self.suggested_corrections[:, 0:2] = da.regress(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()
+                #self.update_suggestion()
             elif self.algorithm == 'segment':
                 self.suggested_corrections[:, 0:2] = da.segment(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()
+                #self.update_suggestion()
             elif self.algorithm == 'split':
                 self.suggested_corrections[:, 0:2] = da.split(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()
+                #self.update_suggestion()
             elif self.algorithm == 'stretch':
                 self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()
+                #self.update_suggestion()
             elif self.algorithm == 'warp':
                 self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
                 self.relevant_buttons("algorithm_selected")
-                self.update_suggestion()
+                #self.update_suggestion()
             else:
                 self.relevant_buttons("no_selected_algorithm")
                 self.algorithm = None
-                self.update_suggestion()
+                #self.update_suggestion()
             self.checkbox_show_suggestion.setChecked(True)
 
             # reset progress bar when algorithm is selected, saving the user one manual step
@@ -628,35 +639,34 @@ class Fix8(QMainWindow):
         #    self.update_suggestion()
             
 
-    def show_suggestion(self,state):
-        if self.checkbox_show_suggestion.isCheckable():
-            self.update_suggestion()
+    # def show_suggestion(self,state):
+    #     if self.checkbox_show_suggestion.isCheckable():
+    #         self.update_suggestion()
 
-    def update_suggestion(self):
+
+    # def update_suggestion(self):
         
-        if self.current_fixation != -1:
-
-
+    #     if self.current_fixation != -1:
+    #         pass
             # remove and replace the last suggestion for the current suggestion
-            #if self.single_suggestion != None:
-                #self.single_suggestion.remove()
-                #self.single_suggestion = None
-                #self.canvas.draw()
+            # if self.single_suggestion != None:
+            #     #self.single_suggestion.remove()
+            #     self.single_suggestion = None
+            #     self.canvas.draw()
             
-
             # if checkbox is checked draw the suggestion, else remove it
-            if self.checkbox_show_suggestion.isChecked():
-                x = self.suggested_corrections[self.current_fixation][0]
-                y = self.suggested_corrections[self.current_fixation][1]
-                duration = self.corrected_fixations[self.current_fixation][2]
+            # if self.checkbox_show_suggestion.isChecked():
+            #     x = self.suggested_corrections[self.current_fixation][0]
+            #     y = self.suggested_corrections[self.current_fixation][1]
+            #     duration = self.corrected_fixations[self.current_fixation][2]
 
-                self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
-                self.canvas.draw()
+            #     self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
+            #     self.canvas.draw()
             
-            elif self.single_suggestion != None:
-                    #self.single_suggestion.remove()
-                    self.single_suggestion = None
-                    self.canvas.draw()
+            # elif self.single_suggestion != None:
+            #         #self.single_suggestion.remove()
+            #         self.single_suggestion = None
+            #         self.canvas.draw()
 
 
     def back_to_beginning(self):
@@ -752,8 +762,8 @@ class Fix8(QMainWindow):
         if draw:
             self.draw_canvas(self.corrected_fixations)
 
-        if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-           self.update_suggestion()
+        # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
+        #    self.update_suggestion()
             
     
     '''Activates when the lesser value filter changes'''
@@ -847,7 +857,7 @@ class Fix8(QMainWindow):
         self.button_open_folder.setEnabled(True)
         self.button_open_folder.clicked.connect(self.open_trial_folder)
 
-        self.button_save_corrections = QPushButton("Save Corrrections", self)
+        self.button_save_corrections = QPushButton("Save Corrections", self)
         self.button_save_corrections.setEnabled(False)
         self.button_save_corrections.clicked.connect(self.save_corrections)
 
@@ -906,6 +916,11 @@ class Fix8(QMainWindow):
         self.button_previous_fixation.clicked.connect(self.previous_fixation)
         self.progress_tools.addWidget(self.button_previous_fixation)
 
+        self.button_next_fixation = QPushButton("Next Fixation", self)
+        self.button_next_fixation.setEnabled(False)
+        self.button_next_fixation.clicked.connect(self.next_fixation)
+        self.progress_tools.addWidget(self.button_next_fixation)
+
         self.progress_bar = QSlider(Qt.Horizontal)
         self.progress_bar.setMinimum(0)
         self.progress_bar.setMaximum(100)
@@ -915,11 +930,6 @@ class Fix8(QMainWindow):
 
         self.label_progress = QLabel("0/0")
         self.progress_tools.addWidget(self.label_progress)
-
-        self.button_next_fixation = QPushButton("Next Fixation", self)
-        self.button_next_fixation.setEnabled(False)
-        self.button_next_fixation.clicked.connect(self.next_fixation)
-        self.progress_tools.addWidget(self.button_next_fixation)
 
         self.right_side.addLayout(self.progress_tools)
 
@@ -1081,7 +1091,7 @@ class Fix8(QMainWindow):
 
         self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction")
         self.checkbox_show_suggestion.setEnabled(False)
-        self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
+        # self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
         self.filters.addWidget(self.checkbox_show_suggestion)
         self.frame3 = QFrame()
         self.frame3.setStyleSheet(" QFrame {border: 2px solid black; margin: 0px; padding: 0px;}")
