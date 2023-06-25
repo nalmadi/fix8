@@ -1,3 +1,21 @@
+# Fix8
+#
+# Authors: Naser Al Madi <nsalmadi@colby.edu>
+#          Brett Torra
+#          Najam Tariq
+#
+# URL: <https://github.com/nalmadi/fix8>
+# For license information, see LICENSE.TXT
+
+"""
+Fix8 (Fixate) is an open source Python GUI tool for visualizing and correcting
+eye tracking data.  Fix8 supports manual, automated, and semi-automated 
+correction methods for eye tracking data in reading tasks.
+
+(If you use the library for academic research, please cite the our paper.)
+
+"""
+
 from PyQt5.QtWidgets import *
 import time
 from PyQt5.QtCore import *
@@ -17,7 +35,7 @@ import driftAlgorithms as da
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import copy
-import matplotlib.animation as animation
+#import matplotlib.animation as animation
 from datetime import date
 from pathlib import Path
 
@@ -28,7 +46,6 @@ from pathlib import Path
 
 class QtCanvas(FigureCanvasQTAgg):
 
-    '''Credit: Dr. Naser Al Madi and Ricky Peng'''
     def __init__(self, parent=None, width=12, height=8, dpi=100):
         self.figure, self.ax = plt.subplots(
             ncols=1, nrows=1, figsize=(width, height))
@@ -204,14 +221,16 @@ class Fix8(QMainWindow):
 
 
     def keyPressEvent(self, e):
-        print(e.key())
+        #print(e.key())
         # a: next is 65
-        if e.key() == 65 and self.button_next_fixation.isEnabled():
+        ###### the part after and should be removed in production
+        if e.key() == 65 and self.button_next_fixation.isEnabled() and self.button_confirm_suggestion.isEnabled():
             self.metadata += "key,next," + str(time.time()) +'\n'
             self.next_fixation()
 
         # z: back is 90
-        if e.key() == 90 and self.button_previous_fixation.isEnabled():
+        ###### the part after and should be removed in production
+        if e.key() == 90 and self.button_previous_fixation.isEnabled() and self.button_confirm_suggestion.isEnabled():
             self.metadata += "key,previous," + str(time.time()) +'\n'
             self.previous_fixation()
 
