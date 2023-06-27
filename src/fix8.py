@@ -12,7 +12,7 @@ Fix8 (Fixate) is an open source Python GUI tool for visualizing and correcting
 eye tracking data.  Fix8 supports manual, automated, and semi-automated 
 correction methods for eye tracking data in reading tasks.
 
-(If you use the library for academic research, please cite the our paper.)
+(If you use Fix8 in academic research, please cite the our paper)
 
 """
 
@@ -118,7 +118,7 @@ class Fix8(QMainWindow):
         self.fixation_color = 'red'
         self.saccade_color = 'blue' 
                
-        # fields related to filters
+        # fields related to duration filters
         self.lesser_value = 0
         self.greater_value = 0
 
@@ -192,7 +192,7 @@ class Fix8(QMainWindow):
 
                 self.suggested_corrections[self.selected_fixation, :2] = updated_correction
                 #self.update_suggestion()
-            
+
             if self.checkbox_show_saccades.isChecked():
                 self.clear_saccades()
                 self.show_saccades(Qt.Checked)
@@ -204,7 +204,6 @@ class Fix8(QMainWindow):
 
         self.draw_canvas(self.corrected_fixations)
         #self.canvas.update()
-
 
     def motion_notify_callback(self, event):
         if self.selected_fixation is None:
@@ -269,8 +268,7 @@ class Fix8(QMainWindow):
                         #self.update_suggestion()
                         
                     self.draw_canvas(self.corrected_fixations)
-                    self.progress_bar_updated(self.current_fixation, draw=False)
-                    
+                    self.progress_bar_updated(self.current_fixation, draw=False)           
 
     '''open trial folder, display it to trial list window with list of JSON trials'''
     def open_trial_folder(self):
@@ -926,7 +924,6 @@ class Fix8(QMainWindow):
         self.lesser_inputs.addWidget(self.input_lesser)
         self.lesser_inputs.addWidget(self.button_lesser)
         
-
         widget_list = [self.button_open_folder, self.button_save_corrections,
                         self.trial_list]
         
@@ -935,7 +932,7 @@ class Fix8(QMainWindow):
             
         self.left_side.addLayout(self.greater_inputs)
         self.left_side.addLayout(self.lesser_inputs)
-        # ---
+        # --- 
 
         # --- canvas
         self.right_side = QVBoxLayout()
@@ -945,7 +942,13 @@ class Fix8(QMainWindow):
 
         self.progress_tools = QHBoxLayout()
 
-        self.toolbar = NavigationToolBar(self.canvas, self)
+
+        # this is needed to remove the coodinates next to the navigation panel when hovering over canvas 
+        class Toolbar(NavigationToolBar):
+            def set_message(self, s):
+                pass
+
+        self.toolbar = Toolbar(self.canvas, self)
         self.toolbar.setStyleSheet("QToolBar { border: 0px }")
         self.toolbar.setEnabled(False)
         self.progress_tools.addWidget(self.toolbar)
@@ -1054,7 +1057,6 @@ class Fix8(QMainWindow):
         self.automation.addWidget(self.dropdown_select_algorithm)
         self.automation.addWidget(self.button_correct_all_fixations)
         
-
         # buttons to fill in space
         self.button2 = QPushButton()
         self.automation.addWidget(self.button2)
@@ -1069,8 +1071,6 @@ class Fix8(QMainWindow):
         retain.setRetainSizeWhenHidden(True)
         self.button3.setSizePolicy(retain)
         self.button3.hide()
-
-
 
         self.frame2 = QFrame()
         self.frame2.setStyleSheet(" QFrame {border: 2px solid black; margin: 0px; padding: 0px;}")
@@ -1127,7 +1127,6 @@ class Fix8(QMainWindow):
         self.toggle_saccade_opacity.setEnabled(False)
         # ---
         
-
         self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction")
         self.checkbox_show_suggestion.setEnabled(False)
         # self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
@@ -1209,8 +1208,10 @@ class Fix8(QMainWindow):
             self.button_lesser.setEnabled(False)
             self.button_greater.setEnabled(False)          
 
-            # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
-            # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions, so clearing suggestions isn't called anywhere in the code
+            # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal 
+            # happens in the checkbox connected method,
+            # then make in uncheckable so it won't activate by accident anymore; there is no helper function 
+            # for removing suggestions, so clearing suggestions isn't called anywhere in the code
             self.checkbox_show_suggestion.setChecked(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setEnabled(False)
@@ -1256,8 +1257,10 @@ class Fix8(QMainWindow):
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
 
-            # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal happens in the checkbox connected method,
-            # then make in uncheckable so it won't activate by accident anymore; there is no helper function for removing suggestions
+            # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal 
+            # happens in the checkbox connected method,
+            # then make in uncheckable so it won't activate by accident anymore; there is no helper 
+            # function for removing suggestions
             self.checkbox_show_suggestion.setChecked(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setEnabled(False)
@@ -1271,7 +1274,8 @@ class Fix8(QMainWindow):
             self.button_confirm_suggestion.setEnabled(False)
             self.button_undo_suggestion.setEnabled(False)
             self.checkbox_show_suggestion.setCheckable(False)
-            self.checkbox_show_suggestion.setChecked(False) # the no algorithm selection updates the suggestions which clears them in the function itself
+            self.checkbox_show_suggestion.setChecked(False) # the no algorithm selection updates the suggestions 
+            #which clears them in the function itself
             self.checkbox_show_suggestion.setEnabled(False)
         elif feature == "algorithm_selected":
             self.button_previous_fixation.setEnabled(True)
