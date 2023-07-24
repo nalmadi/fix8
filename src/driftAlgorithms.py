@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.optimize import minimize
 from scipy.stats import norm
-from sklearn.cluster import KMeans
+# from sklearn.cluster import KMeans
 
 ######################################################################
 # ATTACH
@@ -40,16 +40,16 @@ def chain(fixation_XY, line_Y, x_thresh=192, y_thresh=32):
 # https://github.com/sascha2schroeder/popEye/
 ######################################################################
 
-def cluster(fixation_XY, line_Y):
-	m = len(line_Y)
-	fixation_Y = fixation_XY[:, 1].reshape(-1, 1)
-	clusters = KMeans(m, n_init=100, max_iter=300).fit_predict(fixation_Y)
-	centers = [fixation_Y[clusters == i].mean() for i in range(m)]
-	ordered_cluster_indices = np.argsort(centers)
-	for fixation_i, cluster_i in enumerate(clusters):
-		line_i = np.where(ordered_cluster_indices == cluster_i)[0][0]
-		fixation_XY[fixation_i, 1] = line_Y[line_i]
-	return fixation_XY
+# def cluster(fixation_XY, line_Y):
+# 	m = len(line_Y)
+# 	fixation_Y = fixation_XY[:, 1].reshape(-1, 1)
+# 	clusters = KMeans(m, n_init=100, max_iter=300).fit_predict(fixation_Y)
+# 	centers = [fixation_Y[clusters == i].mean() for i in range(m)]
+# 	ordered_cluster_indices = np.argsort(centers)
+# 	for fixation_i, cluster_i in enumerate(clusters):
+# 		line_i = np.where(ordered_cluster_indices == cluster_i)[0][0]
+# 		fixation_XY[fixation_i, 1] = line_Y[line_i]
+# 	return fixation_XY
 
 ######################################################################
 # COMPARE
@@ -308,21 +308,21 @@ def slice(fixation_XY, line_Y, x_thresh=100, y_thresh=32, w_thresh=32, n_thresh=
 # https://github.com/jwcarr/drift
 ######################################################################
 
-def split(fixation_XY, line_Y):
-	n = len(fixation_XY)
-	diff_X = np.diff(fixation_XY[:, 0])
-	clusters = KMeans(2, n_init=10, max_iter=300).fit_predict(diff_X.reshape(-1, 1))
-	centers = [diff_X[clusters == 0].mean(), diff_X[clusters == 1].mean()]
-	sweep_marker = np.argmin(centers)
-	end_line_indices = list(np.where(clusters == sweep_marker)[0] + 1)
-	end_line_indices.append(n)
-	start_of_line = 0
-	for end_of_line in end_line_indices:
-		mean_y = np.mean(fixation_XY[start_of_line:end_of_line, 1])
-		line_i = np.argmin(abs(line_Y - mean_y))
-		fixation_XY[start_of_line:end_of_line, 1] = line_Y[line_i]
-		start_of_line = end_of_line
-	return fixation_XY
+# def split(fixation_XY, line_Y):
+# 	n = len(fixation_XY)
+# 	diff_X = np.diff(fixation_XY[:, 0])
+# 	clusters = KMeans(2, n_init=10, max_iter=300).fit_predict(diff_X.reshape(-1, 1))
+# 	centers = [diff_X[clusters == 0].mean(), diff_X[clusters == 1].mean()]
+# 	sweep_marker = np.argmin(centers)
+# 	end_line_indices = list(np.where(clusters == sweep_marker)[0] + 1)
+# 	end_line_indices.append(n)
+# 	start_of_line = 0
+# 	for end_of_line in end_line_indices:
+# 		mean_y = np.mean(fixation_XY[start_of_line:end_of_line, 1])
+# 		line_i = np.argmin(abs(line_Y - mean_y))
+# 		fixation_XY[start_of_line:end_of_line, 1] = line_Y[line_i]
+# 		start_of_line = end_of_line
+# 	return fixation_XY
 
 ######################################################################
 # STRETCH
