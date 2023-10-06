@@ -3,8 +3,8 @@
 ![Welcome](./welcome_docs.png)
 
 > **Software Name**: Fix8  
-> **Version**: 0.03
-> **Date**: 2023-02-16
+> **Version**: 1.0
+> **Date**: 2023-07-16
 
 # Latest Additions ⭐
 
