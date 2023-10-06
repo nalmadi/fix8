@@ -4,7 +4,7 @@
 
 > **Software Name**: Fix8  
 > **Version**: 1.0
-> **Date**: 2023-07-16
+> **Date**: 2023-07-23
 
 # Latest Additions ⭐
 
