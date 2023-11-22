@@ -295,7 +295,9 @@ class Fix8(QMainWindow):
 
             # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
             self.relevant_buttons("opened_folder")
-            self.feature = "Trial Folder Opened: "+ self.folder_path
+            self.status_text = "Trial Folder Opened: "+ self.folder_path
+            self.status_update()
+            
 
             files = listdir(self.folder_path)
             
@@ -387,7 +389,8 @@ class Fix8(QMainWindow):
         self.draw_canvas(self.corrected_fixations,draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
-        self.feature = self.trial_name + " Opened (Default: Manual Mode)"
+        self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
+        self.status_update()
 
 ######################## from EMTK #################################
     
@@ -798,12 +801,14 @@ class Fix8(QMainWindow):
         if len(self.corrected_fixations) > 0:
             if self.algorithm == 'attach':
                 self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
-                self.feature = self.algorithm + " Algorithm Selected"
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()  # update the current suggestion as well
             elif self.algorithm == 'chain':
                 self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
-                self.feature = self.algorithm + " Algorithm Selected"
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             # elif self.algorithm == 'cluster':
@@ -812,17 +817,20 @@ class Fix8(QMainWindow):
                 #self.update_suggestion()
             elif self.algorithm == 'merge':
                 self.suggested_corrections[:, 0:2] = da.merge(copy.deepcopy(fixation_XY), line_Y)
-                self.feature = self.algorithm + " Algorithm Selected"
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'regress':
                 self.suggested_corrections[:, 0:2] = da.regress(copy.deepcopy(fixation_XY), line_Y)
-                self.feature = self.algorithm + " Algorithm Selected"
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'segment':
                 self.suggested_corrections[:, 0:2] = da.segment(copy.deepcopy(fixation_XY), line_Y)
-                self.feature = self.algorithm + " Algorithm Selected"
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             # elif self.algorithm == 'split':
@@ -831,16 +839,19 @@ class Fix8(QMainWindow):
                 #self.update_suggestion()
             elif self.algorithm == 'stretch':
                 self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
-                self.feature = self.algorithm + " Algorithm Selected"
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'warp':
                 self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
-                self.feature = self.algorithm + " Algorithm Selected"
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             else:
-                self.feature = "No Selected Algorithm"
+                self.status_text = "No Selected Algorithm"
+                self.status_update()
                 self.relevant_buttons("no_selected_algorithm")
                 self.algorithm = None
                 #self.update_suggestion()
@@ -858,7 +869,8 @@ class Fix8(QMainWindow):
 
         self.metadata += "correct_all, all fixations corrected automatically" \
                + "," + str(time.time()) + '\n'
-        self.feature = "Correct All Fixations!"
+        self.status_text = "Correct All Fixations!"
+        self.status_update()
             
     def previous_fixation(self):
         #if self.suggested_corrections is not None:
@@ -990,7 +1002,8 @@ class Fix8(QMainWindow):
                     meta_file.write(self.metadata)
                     self.metadata = "" 
 
-            self.feature = "Corrections Saved to"+" "+self.trial_path
+            self.status_text = "Corrections Saved to"+" "+self.trial_path
+            self.status_update()
 
         else:
             qmb = QMessageBox()
@@ -1100,9 +1113,8 @@ class Fix8(QMainWindow):
         self.fixation_opacity = float(value / 10)
         self.draw_canvas(self.corrected_fixations)
 
-    def status_update(self, message):
-        message = self.feature
-        self.statusBar.showMessage(message)
+    def status_update(self):
+        self.statusBar.showMessage(self.status_text)
         
     '''initalize the tool window'''
     def init_UI(self): 
@@ -1116,16 +1128,13 @@ class Fix8(QMainWindow):
         self.button_open_folder = QPushButton("Open Folder", self)
         self.button_open_folder.setEnabled(True)
         self.button_open_folder.clicked.connect(self.open_trial_folder)
-        self.button_open_folder.clicked.connect(self.status_update)
 
         self.button_save_corrections = QPushButton("Save Corrections", self)
         self.button_save_corrections.setEnabled(False)
         self.button_save_corrections.clicked.connect(self.save_corrections)
-        self.button_save_corrections.clicked.connect(self.status_update)
 
         self.trial_list = QListWidget()
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
-        self.trial_list.itemDoubleClicked.connect(self.status_update)
         
         # section for fixation size filters
         self.greater_inputs = QHBoxLayout()
@@ -1168,11 +1177,11 @@ class Fix8(QMainWindow):
 
         self.progress_tools = QHBoxLayout()
         
-        #StatusBar
-        self.feature = "Beginning..."
+        # initialize status bar
+        self.status_text = "Beginning..."
         self.statusBar = QStatusBar()
         self.setStatusBar(self.statusBar)
-        self.statusBar.showMessage(self.feature)
+        self.statusBar.showMessage(self.status_text)
 
 
         # this is needed to remove the coodinates next to the navigation panel when hovering over canvas 
@@ -1265,7 +1274,6 @@ class Fix8(QMainWindow):
         self.button_correct_all_fixations = QPushButton("Correct All Fixations", self)
         self.button_correct_all_fixations.setEnabled(False)
         self.button_correct_all_fixations.clicked.connect(self.correct_all_fixations)
-        self.button_correct_all_fixations.clicked.connect(self.status_update)
 
         self.dropdown_select_algorithm = QComboBox()
         self.dropdown_select_algorithm.setEditable(True)
@@ -1286,7 +1294,6 @@ class Fix8(QMainWindow):
         self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
         self.dropdown_select_algorithm.setEnabled(False)
         self.dropdown_select_algorithm.currentTextChanged.connect(self.get_algorithm_picked)
-        self.dropdown_select_algorithm.currentTextChanged.connect(self.status_update)
 
         self.automation.addWidget(self.dropdown_select_algorithm)
         self.automation.addWidget(self.button_correct_all_fixations)
