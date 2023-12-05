@@ -3,6 +3,9 @@
 # Authors: Naser Al Madi <nsalmadi@colby.edu>
 #          Brett Torra
 #          Najam Tariq
+#          Agnes Li
+#          Ricky Peng
+#
 #
 # URL: <https://github.com/nalmadi/fix8>
 #
@@ -300,7 +303,6 @@ class Fix8(QMainWindow):
             self.status_text = "Trial Folder Opened: "+ self.folder_path
             self.status_update()
             
-
             files = listdir(self.folder_path)
             
             image_file = ''
