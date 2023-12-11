@@ -20,7 +20,7 @@ Fix8 (Fixate) is an open source Python GUI tool for visualizing and correcting
 eye tracking data.  Fix8 supports manual, automated, and semi-automated 
 correction methods for eye tracking data in reading tasks.
 
-(If you use Fix8 in academic research, please cite the our paper)
+(If you use Fix8 in academic research, please cite our paper)
 
 """
 
@@ -234,14 +234,12 @@ class Fix8(QMainWindow):
     def keyPressEvent(self, e):
         #print(e.key())
         # a: next is 65
-        ###### the part after and should be removed in production
-        if e.key() == 65 and self.button_next_fixation.isEnabled() and self.button_confirm_suggestion.isEnabled():
+        if e.key() == 65 and self.button_next_fixation.isEnabled():
             self.metadata += "key,next," + str(time.time()) +'\n'
             self.next_fixation()
 
         # z: back is 90
-        ###### the part after and should be removed in production
-        if e.key() == 90 and self.button_previous_fixation.isEnabled() and self.button_confirm_suggestion.isEnabled():
+        if e.key() == 90 and self.button_previous_fixation.isEnabled():
             self.metadata += "key,previous," + str(time.time()) +'\n'
             self.previous_fixation()
 
