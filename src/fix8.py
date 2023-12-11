@@ -1403,7 +1403,7 @@ class Fix8(QMainWindow):
         self.button_fixation_color.setEnabled(False)
         self.button_saccade_color.setEnabled(False)
 
-        self.button_coloblind_assist = QPushButton("Colorblind Assit")
+        self.button_coloblind_assist = QPushButton("Colorblind Assist")
         self.button_coloblind_assist.clicked.connect(self.colorblind_assist)
         self.button_coloblind_assist.setEnabled(False)
         
