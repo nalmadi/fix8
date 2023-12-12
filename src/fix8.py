@@ -129,6 +129,8 @@ class Fix8(QMainWindow):
         # fields relating to color filters
         self.fixation_color = 'red'
         self.saccade_color = 'blue' 
+        self.aoi_color = 'yellow'
+        self.colorblind_assist_status = False
         
         # fields related to duration filters
         self.lesser_value = 0
@@ -588,7 +590,7 @@ class Fix8(QMainWindow):
 
     '''draw the found aois to the canvas'''
     def draw_aoi(self):
-        color = "yellow" if self.background_color == "black" else "black"
+        color = self.aoi_color if self.background_color == "black" else "black"
         self.patches = []
 
         for row in self.aoi.iterrows():
@@ -754,7 +756,7 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isChecked():
 
                 list_colors = [self.fixation_color] * (len(x)-1)
-                colors = np.array(list_colors + ['yellow'])
+                colors = np.array(list_colors + [self.aoi_color])
                 self.scatter = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha=self.fixation_opacity, c=colors)
                 #self.scatter = self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
 
@@ -1103,6 +1105,20 @@ class Fix8(QMainWindow):
             self.saccade_color = 'blue'
         
         self.draw_canvas(self.corrected_fixations)
+
+    def colorblind_assist(self):
+        if self.colorblind_assist_status == False:
+            self.fixation_color = '#FF9E0A'
+            self.saccade_color =  '#3D00CC'
+            self.aoi_color = '#28AAFF'
+            self.colorblind_assist_status = True
+            self.draw_canvas(self.corrected_fixations)
+        else: 
+            self.fixation_color = 'red'
+            self.saccade_color = 'blue' 
+            self.aoi_color = 'yellow'
+            self.colorblind_assist_status = False
+            self.draw_canvas(self.corrected_fixations)
         
     def saccade_opacity_changed(self, value):
         self.saccade_opacity = float(value / 10)
@@ -1386,9 +1402,14 @@ class Fix8(QMainWindow):
         self.button_saccade_color.clicked.connect(self.select_saccade_color)
         self.button_fixation_color.setEnabled(False)
         self.button_saccade_color.setEnabled(False)
+
+        self.button_coloblind_assist = QPushButton("Colorblind Assist")
+        self.button_coloblind_assist.clicked.connect(self.colorblind_assist)
+        self.button_coloblind_assist.setEnabled(False)
         
         self.layer_fixation_color.addWidget(self.button_fixation_color)
         self.layer_fixation_color.addWidget(self.button_saccade_color)
+        self.layer_fixation_color.addWidget(self.button_coloblind_assist)
         
         self.filters.addLayout(self.layer_fixation_color)
         # --
@@ -1464,6 +1485,7 @@ class Fix8(QMainWindow):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.button_fixation_color.setEnabled(False)
             self.button_saccade_color.setEnabled(False)
+            self.button_coloblind_assist.setEnabled(False)
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
 
@@ -1497,6 +1519,7 @@ class Fix8(QMainWindow):
             self.button_saccade_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
+            self.button_coloblind_assist.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal 
             # happens in the checkbox connected method,
