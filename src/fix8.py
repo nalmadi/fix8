@@ -152,6 +152,30 @@ class Fix8(QMainWindow):
                 self.selected_fixation = None
 
             return self.selected_fixation
+        
+    def move_left_selected_fixation(self):
+        if self.selected_fixation != None:
+            self.corrected_fixations[self.selected_fixation][0] = self.corrected_fixations[self.selected_fixation][0]-2
+        
+        self.draw_canvas(self.corrected_fixations)
+
+    def move_right_selected_fixation(self):
+        if self.selected_fixation != None:
+            self.corrected_fixations[self.selected_fixation][0] = self.corrected_fixations[self.selected_fixation][0]+2
+        
+        self.draw_canvas(self.corrected_fixations)
+
+    def move_down_selected_fixation(self):
+        if self.selected_fixation != None:
+            self.corrected_fixations[self.selected_fixation][1] = self.corrected_fixations[self.selected_fixation][1]+2
+        
+        self.draw_canvas(self.corrected_fixations)
+
+    def move_up_selected_fixation(self):
+        if self.selected_fixation != None:
+            self.corrected_fixations[self.selected_fixation][1] = self.corrected_fixations[self.selected_fixation][1]-2
+        
+        self.draw_canvas(self.corrected_fixations)
 
     def button_press_callback(self, event):
         if event.inaxes is None:
@@ -164,6 +188,8 @@ class Fix8(QMainWindow):
     '''when released the fixation, update the corrected fixations'''
     def button_release_callback(self, event):
         if self.selected_fixation is not None:
+
+            
 
             self.metadata += "manual_moving, fixation " + str(self.selected_fixation) \
                              + " moved from x:" + str(self.corrected_fixations[self.selected_fixation][0]) \
@@ -234,6 +260,22 @@ class Fix8(QMainWindow):
 
 
     def keyPressEvent(self, e):
+        # j: move to the left is 74
+        if e.key() == 74:
+            self.move_left_selected_fixation()
+        
+        # l: move to the right is 76
+        if e.key() == 76:
+            self.move_right_selected_fixation()
+        
+        # k: move down is 75
+        if e.key() == 75:
+            self.move_down_selected_fixation()
+
+        # i: move up is 73
+        if e.key() == 73:
+            self.move_up_selected_fixation()
+
         #print(e.key())
         # a: next is 65
         if e.key() == 65 and self.button_next_fixation.isEnabled():
