@@ -6,7 +6,6 @@
 > **Version**: 1.0
 > **Date**: 2023-07-23
 
-# Demo for Agnes
 
 # Latest Additions ⭐
 
@@ -65,6 +64,16 @@ This section of tools is straight forward. Just click the 'Correct All Fixations
 ### 7. Manual Correction
 
 In order to do manual correction, all you need to do is select a fixation with your mouse and drag it to where you wish for it to be. Once you do this, the suggested correction for that fixation, along with the saccade, will update based on the new position of the manual correction. Drag and drop animation is very laggy in the current version, so animation is disabled.
+
+### 8. Keyboard Shortcuts
+a: 		next fixation
+z: 		previous fixation
+alt: 		accept suggestion
+backspace: 	delete current fixation
+j:      move the selected fixation to the left
+l:      move the selected fixation to the right
+i:      move the selected fixation upward
+k:      move the selected fixation downward
 
 * * *
 
