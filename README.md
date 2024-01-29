@@ -1,6 +1,6 @@
 # Fix8
 
-![Welcome](./welcome_docs.png)
+![Welcome](./screenshot-fix8.png)
 
 > **Software Name**: Fix8  
 > **Version**: 1.0
