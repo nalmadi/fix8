@@ -2,6 +2,12 @@
 
 ![Welcome](./screenshot-fix8.png)
 
+# Software Summary 💻
+
+Fix8 is a tool that provides manual, automated, and semi-automated correction methods for eye tracking data in reading tasks with a graphical user interface.
+
+Currently, Fix8 is in Pre-Alpha testing, so please give it try and give us feedback!
+
 > **Software Name**: Fix8  
 > **Version**: 1.0
 > **Date**: 2023-07-23
@@ -15,11 +21,7 @@
 # Bug Fixes
 - 02/16/23 - Next, Previous, and Confirm Suggestion buttons update fixations as intended
 
-# Software Summary 💻
 
-Fix8 is a tool that provides manual, automated, and semi-automated correction methods for eye tracking data in reading tasks with a graphical user interface.
-
-Currently, Fix8 is in Pre-Alpha testing, so please give it try and give us feedback!
 
 # Requirements ⚙️
 
