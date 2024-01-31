@@ -155,25 +155,25 @@ class Fix8(QMainWindow):
         
     def move_left_selected_fixation(self):
         if self.selected_fixation != None:
-            self.corrected_fixations[self.selected_fixation][0] = self.corrected_fixations[self.selected_fixation][0]-2
+            self.corrected_fixations[self.selected_fixation][0] -= 2
         
         self.draw_canvas(self.corrected_fixations)
 
     def move_right_selected_fixation(self):
         if self.selected_fixation != None:
-            self.corrected_fixations[self.selected_fixation][0] = self.corrected_fixations[self.selected_fixation][0]+2
+            self.corrected_fixations[self.selected_fixation][0] += 2
         
         self.draw_canvas(self.corrected_fixations)
 
     def move_down_selected_fixation(self):
         if self.selected_fixation != None:
-            self.corrected_fixations[self.selected_fixation][1] = self.corrected_fixations[self.selected_fixation][1]+2
+            self.corrected_fixations[self.selected_fixation][1] += 2
         
         self.draw_canvas(self.corrected_fixations)
 
     def move_up_selected_fixation(self):
         if self.selected_fixation != None:
-            self.corrected_fixations[self.selected_fixation][1] = self.corrected_fixations[self.selected_fixation][1]-2
+            self.corrected_fixations[self.selected_fixation][1] -= 2
         
         self.draw_canvas(self.corrected_fixations)
 
