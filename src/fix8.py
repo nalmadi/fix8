@@ -27,6 +27,7 @@ correction methods for eye tracking data in reading tasks.
 
 import time
 # from PyQt5.QtCore import *
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 # from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import (QFrame, QApplication, QCheckBox, QComboBox, QFileDialog, QColorDialog,
@@ -89,6 +90,7 @@ class Fix8(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Fix8")
+        self.setWindowIcon(QIcon('icon.ico'))
         self.init_UI()
 
         # fields relating to the stimulus
