@@ -1244,6 +1244,21 @@ class Fix8(QMainWindow):
 
         # this is needed to remove the coodinates next to the navigation panel when hovering over canvas 
         class Toolbar(NavigationToolBar):
+            def __init__(self, canvas, parent):
+                super().__init__(canvas, parent)
+
+                # Remove unwanted default actions
+                self.removeUnwantedActions()
+
+            def removeUnwantedActions(self):
+                # List of action names/icons to be kept
+                wanted_actions = ['Home', 'Pan', 'Zoom', 'Save']  # Adjust as needed
+
+                # Iterate through existing actions and remove unwanted ones
+                for action in self.actions():
+                    if action.text() not in wanted_actions:
+                        self.removeAction(action)
+
             def set_message(self, s):
                 pass
 
