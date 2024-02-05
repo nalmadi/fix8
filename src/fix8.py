@@ -127,6 +127,10 @@ class Fix8(QMainWindow):
         # fields relating to color filters
         self.fixation_color = 'red'
         self.saccade_color = 'blue' 
+
+        # fields relating to aoi margin
+        self.aoi_width = 7
+        self.aoi_height = 4
         
         # fields related to duration filters
         self.lesser_value = 0
@@ -427,7 +431,7 @@ class Fix8(QMainWindow):
         return bg_color
 
 
-    def EMTK_find_aoi(self, image=None, image_path=None, img=None, level="sub-line", margin_height=4, margin_width=7):
+    def EMTK_find_aoi(self, image=None, image_path=None, img=None, level="sub-line", margin_height=None, margin_width=None):
         """Find Area of Interest in the given image and store the aoi attributes in a Pandas Dataframe
         Parameters
         ----------
@@ -579,7 +583,7 @@ class Fix8(QMainWindow):
     '''find the areas of interest (aoi) for the selected stimulus'''
     def find_aoi(self):
         if self.file_path != '':
-            self.aoi, self.background_color = self.EMTK_find_aoi(self.file_name, self.file_path.replace(self.file_name, ''))
+            self.aoi, self.background_color = self.EMTK_find_aoi(self.file_name, self.file_path.replace(self.file_name, ''),margin_height=self.aoi_height,margin_width=self.aoi_width)
 
     '''draw the found aois to the canvas'''
     def draw_aoi(self):
@@ -1059,6 +1063,18 @@ class Fix8(QMainWindow):
         self.draw_canvas(self.corrected_fixations, draw_all = True) 
         self.progress_bar_updated(self.current_fixation, draw=False)    
         
+    def aoi_height_changed(self,value):
+        self.aoi_height = value
+        self.find_aoi()
+        self.clear_aoi()
+        self.draw_aoi()
+    
+    def aoi_width_changed(self,value):
+        self.aoi_width = value
+        self.find_aoi()
+        self.clear_aoi()
+        self.draw_aoi()
+
     def select_fixation_color(self):
         color = QColorDialog.getColor()
         self.fixation_color = str(color.name())
@@ -1075,10 +1091,10 @@ class Fix8(QMainWindow):
         self.saccade_opacity = float(value / 10)
         self.draw_canvas(self.corrected_fixations)
         
-        
     def fixation_opacity_changed(self, value):
         self.fixation_opacity = float(value / 10)
         self.draw_canvas(self.corrected_fixations)
+
         
     '''initalize the tool window'''
     def init_UI(self): 
@@ -1286,10 +1302,40 @@ class Fix8(QMainWindow):
         self.label_filters.setAlignment(Qt.AlignCenter)
         self.filters.addWidget(self.label_filters)
 
+        # laers for aoi margin width and height
+        self.aoi_layer_width = QHBoxLayout()
+        self.aoi_layer_height = QHBoxLayout()
         self.checkbox_show_aoi = QCheckBox("Show AOIs")
         self.checkbox_show_aoi.setEnabled(False)
+        self.checkbox_show_aoi_fillSpace = QCheckBox("Show AOIs")
+        self.checkbox_show_aoi_fillSpace.setEnabled(False)
+        self.checkbox_show_aoi_fillSpace.hide()
         self.checkbox_show_aoi.stateChanged.connect(self.show_aoi)
-        self.filters.addWidget(self.checkbox_show_aoi)
+        self.toggle_aoi_width = QSpinBox()
+        self.toggle_aoi_width.setMaximum(50)
+        self.toggle_aoi_width.setMinimum(1)
+        self.toggle_aoi_width.setValue(7)
+        self.toggle_aoi_height = QSpinBox()
+        self.toggle_aoi_height.setMaximum(100)
+        self.toggle_aoi_height.setMinimum(1)
+        self.toggle_aoi_height.setValue(4)
+        self.toggle_aoi_width.valueChanged.connect(self.aoi_width_changed)
+        self.toggle_aoi_height.valueChanged.connect(self.aoi_height_changed)
+        self.aoi_width_text = QLabel("Width")
+        self.aoi_height_text = QLabel("Height")
+        self.aoi_layer_width.addWidget(self.checkbox_show_aoi)
+        self.aoi_layer_width.addWidget(self.toggle_aoi_width)
+        self.aoi_layer_width.addWidget(self.aoi_width_text)
+        self.aoi_layer_height.addWidget(self.checkbox_show_aoi)
+        self.aoi_layer_height.addWidget(self.toggle_aoi_height)
+        self.aoi_layer_height.addWidget(self.aoi_height_text)
+
+        self.filters.addLayout(self.aoi_layer_width)
+        self.filters.addLayout(self.aoi_layer_height)
+
+        self.toggle_aoi_width.setEnabled(False)
+        self.toggle_aoi_height.setEnabled(False)
+        # ---
 
         # layers for fixation and saccade visuals
         self.fixation_layer = QHBoxLayout()
@@ -1422,6 +1468,8 @@ class Fix8(QMainWindow):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.button_fixation_color.setEnabled(False)
             self.button_saccade_color.setEnabled(False)
+            self.toggle_aoi_width.setEnabled(False)
+            self.toggle_aoi_height.setEnabled(False)
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
 
@@ -1450,6 +1498,9 @@ class Fix8(QMainWindow):
             self.input_greater.setEnabled(True)
             self.button_lesser.setEnabled(True)
             self.button_greater.setEnabled(True)
+
+            self.toggle_aoi_width.setEnabled(True)
+            self.toggle_aoi_height.setEnabled(True)
             
             self.button_fixation_color.setEnabled(True)
             self.button_saccade_color.setEnabled(True)
