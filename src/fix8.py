@@ -124,13 +124,13 @@ class Fix8(QMainWindow):
         self.canvas.mpl_connect('button_release_event', self.button_release_callback)
         self.canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
         
-        # fields relating to color filters
-        self.fixation_color = 'red'
-        self.saccade_color = 'blue' 
-
         # fields relating to aoi margin
         self.aoi_width = 7
         self.aoi_height = 4
+        
+        # fields relating to color filters
+        self.fixation_color = 'red'
+        self.saccade_color = 'blue' 
         
         # fields related to duration filters
         self.lesser_value = 0
@@ -431,7 +431,7 @@ class Fix8(QMainWindow):
         return bg_color
 
 
-    def EMTK_find_aoi(self, image=None, image_path=None, img=None, level="sub-line", margin_height=None, margin_width=None):
+    def EMTK_find_aoi(self, image=None, image_path=None, img=None, level="sub-line", margin_height=4, margin_width=7):
         """Find Area of Interest in the given image and store the aoi attributes in a Pandas Dataframe
         Parameters
         ----------
