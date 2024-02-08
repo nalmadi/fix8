@@ -3,6 +3,9 @@
 # Authors: Naser Al Madi <nsalmadi@colby.edu>
 #          Brett Torra
 #          Najam Tariq
+#          Agnes Li
+#          Ricky Peng
+#
 #
 # URL: <https://github.com/nalmadi/fix8>
 #
@@ -17,18 +20,19 @@ Fix8 (Fixate) is an open source Python GUI tool for visualizing and correcting
 eye tracking data.  Fix8 supports manual, automated, and semi-automated 
 correction methods for eye tracking data in reading tasks.
 
-(If you use Fix8 in academic research, please cite the our paper)
+(If you use Fix8 in academic research, please cite our paper)
 
 """
 
-# from PyQt5.QtWidgets import *
+
 import time
 # from PyQt5.QtCore import *
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QFrame, QApplication, QCheckBox, QComboBox, QFileDialog,
+# from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import (QFrame, QApplication, QCheckBox, QComboBox, QFileDialog, QColorDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
-                             QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, QLineEdit, QListWidget, QListWidgetItem, QSpinBox)
+                             QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, QLineEdit, QListWidget, QListWidgetItem, QSpinBox, QStatusBar)
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -131,6 +135,8 @@ class Fix8(QMainWindow):
         # fields relating to color filters
         self.fixation_color = 'red'
         self.saccade_color = 'blue' 
+        self.aoi_color = 'yellow'
+        self.colorblind_assist_status = False
         
         # fields related to duration filters
         self.lesser_value = 0
@@ -152,6 +158,30 @@ class Fix8(QMainWindow):
                 self.selected_fixation = None
 
             return self.selected_fixation
+        
+    def move_left_selected_fixation(self):
+        if self.selected_fixation != None:
+            self.corrected_fixations[self.selected_fixation][0] -= 2
+        
+        self.draw_canvas(self.corrected_fixations)
+
+    def move_right_selected_fixation(self):
+        if self.selected_fixation != None:
+            self.corrected_fixations[self.selected_fixation][0] += 2
+        
+        self.draw_canvas(self.corrected_fixations)
+
+    def move_down_selected_fixation(self):
+        if self.selected_fixation != None:
+            self.corrected_fixations[self.selected_fixation][1] += 2
+        
+        self.draw_canvas(self.corrected_fixations)
+
+    def move_up_selected_fixation(self):
+        if self.selected_fixation != None:
+            self.corrected_fixations[self.selected_fixation][1] -= 2
+        
+        self.draw_canvas(self.corrected_fixations)
 
     def button_press_callback(self, event):
         if event.inaxes is None:
@@ -164,6 +194,8 @@ class Fix8(QMainWindow):
     '''when released the fixation, update the corrected fixations'''
     def button_release_callback(self, event):
         if self.selected_fixation is not None:
+
+            
 
             self.metadata += "manual_moving, fixation " + str(self.selected_fixation) \
                              + " moved from x:" + str(self.corrected_fixations[self.selected_fixation][0]) \
@@ -234,16 +266,30 @@ class Fix8(QMainWindow):
 
 
     def keyPressEvent(self, e):
+        # j: move to the left is 74
+        if e.key() == 74:
+            self.move_left_selected_fixation()
+        
+        # l: move to the right is 76
+        if e.key() == 76:
+            self.move_right_selected_fixation()
+        
+        # k: move down is 75
+        if e.key() == 75:
+            self.move_down_selected_fixation()
+
+        # i: move up is 73
+        if e.key() == 73:
+            self.move_up_selected_fixation()
+
         #print(e.key())
         # a: next is 65
-        ###### the part after and should be removed in production
-        if e.key() == 65 and self.button_next_fixation.isEnabled() and self.button_confirm_suggestion.isEnabled():
+        if e.key() == 65 and self.button_next_fixation.isEnabled():
             self.metadata += "key,next," + str(time.time()) +'\n'
             self.next_fixation()
 
         # z: back is 90
-        ###### the part after and should be removed in production
-        if e.key() == 90 and self.button_previous_fixation.isEnabled() and self.button_confirm_suggestion.isEnabled():
+        if e.key() == 90 and self.button_previous_fixation.isEnabled():
             self.metadata += "key,previous," + str(time.time()) +'\n'
             self.previous_fixation()
 
@@ -300,7 +346,9 @@ class Fix8(QMainWindow):
 
             # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
             self.relevant_buttons("opened_folder")
-
+            self.status_text = "Trial Folder Opened: "+ self.folder_path
+            self.status_update()
+            
             files = listdir(self.folder_path)
             
             image_file = ''
@@ -390,6 +438,9 @@ class Fix8(QMainWindow):
         
         self.draw_canvas(self.corrected_fixations,draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
+
+        self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
+        self.status_update()
 
 ######################## from EMTK #################################
     
@@ -587,7 +638,7 @@ class Fix8(QMainWindow):
 
     '''draw the found aois to the canvas'''
     def draw_aoi(self):
-        color = "yellow" if self.background_color == "black" else "black"
+        color = self.aoi_color if self.background_color == "black" else "black"
         self.patches = []
 
         for row in self.aoi.iterrows():
@@ -753,7 +804,7 @@ class Fix8(QMainWindow):
             if self.checkbox_show_fixations.isChecked():
 
                 list_colors = [self.fixation_color] * (len(x)-1)
-                colors = np.array(list_colors + ['yellow'])
+                colors = np.array(list_colors + [self.aoi_color])
                 self.scatter = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha=self.fixation_opacity, c=colors)
                 #self.scatter = self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
 
@@ -800,10 +851,14 @@ class Fix8(QMainWindow):
         if len(self.corrected_fixations) > 0:
             if self.algorithm == 'attach':
                 self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()  # update the current suggestion as well
             elif self.algorithm == 'chain':
                 self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             # elif self.algorithm == 'cluster':
@@ -812,14 +867,20 @@ class Fix8(QMainWindow):
                 #self.update_suggestion()
             elif self.algorithm == 'merge':
                 self.suggested_corrections[:, 0:2] = da.merge(copy.deepcopy(fixation_XY), line_Y)
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'regress':
                 self.suggested_corrections[:, 0:2] = da.regress(copy.deepcopy(fixation_XY), line_Y)
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'segment':
                 self.suggested_corrections[:, 0:2] = da.segment(copy.deepcopy(fixation_XY), line_Y)
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             # elif self.algorithm == 'split':
@@ -828,13 +889,19 @@ class Fix8(QMainWindow):
                 #self.update_suggestion()
             elif self.algorithm == 'stretch':
                 self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'warp':
                 self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
+                self.status_text = self.algorithm + " Algorithm Selected"
+                self.status_update()
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             else:
+                self.status_text = "No Selected Algorithm"
+                self.status_update()
                 self.relevant_buttons("no_selected_algorithm")
                 self.algorithm = None
                 #self.update_suggestion()
@@ -852,6 +919,8 @@ class Fix8(QMainWindow):
 
         self.metadata += "correct_all, all fixations corrected automatically" \
                + "," + str(time.time()) + '\n'
+        self.status_text = "Correct All Fixations!"
+        self.status_update()
             
     def previous_fixation(self):
         #if self.suggested_corrections is not None:
@@ -981,7 +1050,11 @@ class Fix8(QMainWindow):
                 with open(metadata_file_path, 'a',newline='') as meta_file:
 
                     meta_file.write(self.metadata)
-                    self.metadata = ""             
+                    self.metadata = "" 
+
+            self.status_text = "Corrections Saved to"+" "+self.trial_path
+            self.status_update()
+
         else:
             qmb = QMessageBox()
             qmb.setWindowTitle("Save Error")
@@ -1076,16 +1149,36 @@ class Fix8(QMainWindow):
         self.draw_aoi()
 
     def select_fixation_color(self):
-        color = QColorDialog.getColor()
-        self.fixation_color = str(color.name())
+        color = QColorDialog.getColor(initial = Qt.red)
+        if color.isValid():
+            self.fixation_color = str(color.name())
+        else:
+            self.fixation_color = 'red'
         
         self.draw_canvas(self.corrected_fixations)
         
     def select_saccade_color(self):
-        color = QColorDialog.getColor()
-        self.saccade_color = str(color.name())  
+        color = QColorDialog.getColor(initial = Qt.blue)
+        if color.isValid():
+            self.saccade_color = str(color.name())
+        else:
+            self.saccade_color = 'blue'
         
         self.draw_canvas(self.corrected_fixations)
+
+    def colorblind_assist(self):
+        if self.colorblind_assist_status == False:
+            self.fixation_color = '#FF9E0A'
+            self.saccade_color =  '#3D00CC'
+            self.aoi_color = '#28AAFF'
+            self.colorblind_assist_status = True
+            self.draw_canvas(self.corrected_fixations)
+        else: 
+            self.fixation_color = 'red'
+            self.saccade_color = 'blue' 
+            self.aoi_color = 'yellow'
+            self.colorblind_assist_status = False
+            self.draw_canvas(self.corrected_fixations)
         
     def saccade_opacity_changed(self, value):
         self.saccade_opacity = float(value / 10)
@@ -1095,6 +1188,11 @@ class Fix8(QMainWindow):
         self.fixation_opacity = float(value / 10)
         self.draw_canvas(self.corrected_fixations)
 
+<<<<<<< HEAD
+=======
+    def status_update(self):
+        self.statusBar.showMessage(self.status_text)
+>>>>>>> a1d8a8899dfdafa42657d884b4494bb339a56e7e
         
     '''initalize the tool window'''
     def init_UI(self): 
@@ -1156,10 +1254,31 @@ class Fix8(QMainWindow):
         self.right_side.addWidget(self.canvas)
 
         self.progress_tools = QHBoxLayout()
+        
+        # initialize status bar
+        self.status_text = "Beginning..."
+        self.statusBar = QStatusBar()
+        self.setStatusBar(self.statusBar)
+        self.statusBar.showMessage(self.status_text)
 
 
         # this is needed to remove the coodinates next to the navigation panel when hovering over canvas 
         class Toolbar(NavigationToolBar):
+            def __init__(self, canvas, parent):
+                super().__init__(canvas, parent)
+
+                # Remove unwanted default actions
+                self.removeUnwantedActions()
+
+            def removeUnwantedActions(self):
+                # List of action names/icons to be kept
+                wanted_actions = ['Home', 'Pan', 'Zoom', 'Save']  # Adjust as needed
+
+                # Iterate through existing actions and remove unwanted ones
+                for action in self.actions():
+                    if action.text() not in wanted_actions:
+                        self.removeAction(action)
+
             def set_message(self, s):
                 pass
 
@@ -1390,9 +1509,14 @@ class Fix8(QMainWindow):
         self.button_saccade_color.clicked.connect(self.select_saccade_color)
         self.button_fixation_color.setEnabled(False)
         self.button_saccade_color.setEnabled(False)
+
+        self.button_coloblind_assist = QPushButton("Colorblind Assist")
+        self.button_coloblind_assist.clicked.connect(self.colorblind_assist)
+        self.button_coloblind_assist.setEnabled(False)
         
         self.layer_fixation_color.addWidget(self.button_fixation_color)
         self.layer_fixation_color.addWidget(self.button_saccade_color)
+        self.layer_fixation_color.addWidget(self.button_coloblind_assist)
         
         self.filters.addLayout(self.layer_fixation_color)
         # --
@@ -1468,8 +1592,12 @@ class Fix8(QMainWindow):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.button_fixation_color.setEnabled(False)
             self.button_saccade_color.setEnabled(False)
+<<<<<<< HEAD
             self.toggle_aoi_width.setEnabled(False)
             self.toggle_aoi_height.setEnabled(False)
+=======
+            self.button_coloblind_assist.setEnabled(False)
+>>>>>>> a1d8a8899dfdafa42657d884b4494bb339a56e7e
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
 
@@ -1506,6 +1634,7 @@ class Fix8(QMainWindow):
             self.button_saccade_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
+            self.button_coloblind_assist.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal 
             # happens in the checkbox connected method,

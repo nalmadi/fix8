@@ -1,12 +1,17 @@
 # Fix8
 
-![Welcome](./welcome_docs.png)
+![Welcome](./screenshot-fix8.png)
+
+# Software Summary 💻
+
+Fix8 is a tool that provides manual, automated, and semi-automated correction methods for eye tracking data in reading tasks with a graphical user interface.
+
+Currently, Fix8 is in Pre-Alpha testing, so please give it try and give us feedback!
 
 > **Software Name**: Fix8  
 > **Version**: 1.0
 > **Date**: 2023-07-23
 
-# Demo for Agnes
 
 # Latest Additions ⭐
 
@@ -16,11 +21,7 @@
 # Bug Fixes
 - 02/16/23 - Next, Previous, and Confirm Suggestion buttons update fixations as intended
 
-# Software Summary 💻
 
-Fix8 is a tool that provides manual, automated, and semi-automated correction methods for eye tracking data in reading tasks with a graphical user interface.
-
-Currently, Fix8 is in Pre-Alpha testing, so please give it try and give us feedback!
 
 # Requirements ⚙️
 
@@ -65,6 +66,16 @@ This section of tools is straight forward. Just click the 'Correct All Fixations
 ### 7. Manual Correction
 
 In order to do manual correction, all you need to do is select a fixation with your mouse and drag it to where you wish for it to be. Once you do this, the suggested correction for that fixation, along with the saccade, will update based on the new position of the manual correction. Drag and drop animation is very laggy in the current version, so animation is disabled.
+
+### 8. Keyboard Shortcuts
+a: 		next fixation
+z: 		previous fixation
+alt: 		accept suggestion
+backspace: 	delete current fixation
+j:      move the selected fixation to the left
+l:      move the selected fixation to the right
+i:      move the selected fixation upward
+k:      move the selected fixation downward
 
 * * *
 
