@@ -1188,11 +1188,8 @@ class Fix8(QMainWindow):
         self.fixation_opacity = float(value / 10)
         self.draw_canvas(self.corrected_fixations)
 
-<<<<<<< HEAD
-=======
     def status_update(self):
         self.statusBar.showMessage(self.status_text)
->>>>>>> a1d8a8899dfdafa42657d884b4494bb339a56e7e
         
     '''initalize the tool window'''
     def init_UI(self): 
@@ -1592,12 +1589,9 @@ class Fix8(QMainWindow):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.button_fixation_color.setEnabled(False)
             self.button_saccade_color.setEnabled(False)
-<<<<<<< HEAD
             self.toggle_aoi_width.setEnabled(False)
             self.toggle_aoi_height.setEnabled(False)
-=======
             self.button_coloblind_assist.setEnabled(False)
->>>>>>> a1d8a8899dfdafa42657d884b4494bb339a56e7e
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
 
