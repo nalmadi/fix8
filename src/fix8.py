@@ -1552,6 +1552,8 @@ class Fix8(QMainWindow):
             self.checkbox_show_aoi.setCheckable(True)
             self.checkbox_show_aoi.setChecked(False)
             self.checkbox_show_aoi.setEnabled(True)
+            self.toggle_aoi_width.setEnabled(True)
+            self.toggle_aoi_height.setEnabled(True)
             self.toolbar.setEnabled(True)
             self.checkbox_show_fixations.setCheckable(False)
             self.checkbox_show_fixations.setChecked(False)
