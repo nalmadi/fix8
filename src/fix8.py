@@ -162,6 +162,7 @@ class Fix8(QMainWindow):
         
         self.warp_auto_action.triggered.connect(self.warp_auto)
         self.warp_semi_action.triggered.connect(self.warp_semi)
+        self.manual_correction_action.triggered.connect(self.manual_correction)
 
         # add actions to menu
         self.file_menu.addAction(self.new_file_action)
@@ -283,6 +284,14 @@ class Fix8(QMainWindow):
 
         # update progress bar to end
         self.progress_bar.setValue(self.progress_bar.minimum())
+
+    def manual_correction(self):
+
+        self.suggested_corrections = copy.deepcopy(self.fixations)
+        self.checkbox_show_suggestion.setEnabled(False)
+
+        # show suggestion
+        self.checkbox_show_suggestion.setChecked(False)
 
     """get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon),
     selected_fixation is an index, not the actual scatter point"""
