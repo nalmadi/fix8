@@ -94,24 +94,56 @@ class Fix8(QMainWindow):
         self.setWindowIcon(QIcon('icon.ico'))
         self.init_UI()
 
+        # add menues
         self.file_menu = self.menuBar().addMenu('File')
+        self.edit_menu = self.menuBar().addMenu('Edit')
+        self.filters_menu = self.menuBar().addMenu('Filters')
+        self.generate_menu = self.menuBar().addMenu('Generate')
+        self.correction_menu = self.menuBar().addMenu('Correction')
+        self.automated_correction_menu = self.correction_menu.addMenu('Automatic')
+        self.semi_auto_correction_menu = self.correction_menu.addMenu('Semi-automatic')
 
         # add actions
         self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
         self.save_correction_action = QAction(QIcon("./.images/save.png"), "Save Correction", self)
         
+        self.next_fixation_action = QAction("Next Fixation", self)
+        self.previous_fixation_action = QAction("Previous Fixation", self)
+        self.accept_and_next_action = QAction("Accept suggestion and next", self)
+        self.delete_fixation_action = QAction("Delete Fixation", self)
+
+        self.manual_correction_action = QAction('Manual', self)
+        self.warp_action = QAction('Warp', self)
+
+        
         # add shortcuts
         self.new_file_action.setShortcut('Ctrl+O')
         self.save_correction_action.setShortcut('Ctrl+S')
 
+        self.next_fixation_action.setShortcut('a')
+        self.previous_fixation_action.setShortcut('z')
+        self.accept_and_next_action.setShortcut('Alt')
+        self.delete_fixation_action.setShortcut('Del')
+
+        # enable/disable
+        self.save_correction_action.setEnabled(False)
+
         # connect functions
         self.new_file_action.triggered.connect(self.open_trial_folder)
         self.save_correction_action.triggered.connect(self.save_corrections)
-        self.save_correction_action.setEnabled(False)
+        self.warp_action.triggered.connect(self.warp_auto)
 
         # add actions to menu
         self.file_menu.addAction(self.new_file_action)
         self.file_menu.addAction(self.save_correction_action)
+
+        self.edit_menu.addAction(self.next_fixation_action)
+        self.edit_menu.addAction(self.previous_fixation_action)
+        self.edit_menu.addAction(self.accept_and_next_action)
+        self.edit_menu.addAction(self.delete_fixation_action)
+
+        self.correction_menu.addAction(self.manual_correction_action)
+        self.automated_correction_menu.addAction(self.warp_action)
 
         # fields relating to the stimulus
         self.file, self.file_path, self.file_name = None, None, None
@@ -120,7 +152,7 @@ class Fix8(QMainWindow):
         self.folder_path, self.trial_path, self.trial_data, self.trial_name = None, None, None, None
 
         # fields relating to fixations
-        self.original_fixations, self.corrected_fixations, self.scatter, self.saccades = None, None, None, None
+        self.original_fixations, self.fixations, self.scatter, self.saccades = None, None, None, None
         self.current_fixation = -1
 
         # fields relating to AOIs
@@ -162,6 +194,33 @@ class Fix8(QMainWindow):
         self.lesser_value = 0
         self.greater_value = 0
 
+
+    def warp_auto(self):
+
+        # run correction
+        fixation_XY = copy.deepcopy(self.fixations)
+        fixation_XY = fixation_XY[:, 0:2]
+        fixation_XY = np.array(fixation_XY)
+        line_Y = self.find_lines_y(self.aoi)    
+        line_Y = np.array(line_Y)
+        word_XY = self.find_word_centers(self.aoi)
+        word_XY = np.array(word_XY)
+
+        self.suggested_corrections = copy.deepcopy(self.fixations)
+
+        # select warp as an algorithm
+        self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
+        self.status_text = self.algorithm + " Algorithm Selected"
+        self.statusBar.showMessage(self.status_text)
+        self.relevant_buttons("algorithm_selected")
+
+        # correct all
+        self.correct_all_fixations()
+
+        # update progress bar to end
+        self.progress_bar.setValue(self.progress_bar.maximum())
+
+
     '''get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon),
     selected_fixation is an index, not the actual scatter point'''
     def get_selected_fixation(self, event):
@@ -181,27 +240,27 @@ class Fix8(QMainWindow):
         
     def move_left_selected_fixation(self):
         if self.selected_fixation != None:
-            self.corrected_fixations[self.selected_fixation][0] -= 2
+            self.fixations[self.selected_fixation][0] -= 2
         
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
 
     def move_right_selected_fixation(self):
         if self.selected_fixation != None:
-            self.corrected_fixations[self.selected_fixation][0] += 2
+            self.fixations[self.selected_fixation][0] += 2
         
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
 
     def move_down_selected_fixation(self):
         if self.selected_fixation != None:
-            self.corrected_fixations[self.selected_fixation][1] += 2
+            self.fixations[self.selected_fixation][1] += 2
         
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
 
     def move_up_selected_fixation(self):
         if self.selected_fixation != None:
-            self.corrected_fixations[self.selected_fixation][1] -= 2
+            self.fixations[self.selected_fixation][1] -= 2
         
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
 
     def button_press_callback(self, event):
         if event.inaxes is None:
@@ -218,18 +277,18 @@ class Fix8(QMainWindow):
             
 
             self.metadata += "manual_moving, fixation " + str(self.selected_fixation) \
-                             + " moved from x:" + str(self.corrected_fixations[self.selected_fixation][0]) \
-                             + " y:" + str(self.corrected_fixations[self.selected_fixation][1]) \
+                             + " moved from x:" + str(self.fixations[self.selected_fixation][0]) \
+                             + " y:" + str(self.fixations[self.selected_fixation][1]) \
                              + ' to x:' + str(self.xy[self.selected_fixation][0]) \
                              + ' y:' + str(self.xy[self.selected_fixation][1]) \
                              + ',' + str(time.time()) + '\n'
 
-            self.corrected_fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
-            self.corrected_fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][1]
+            self.fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
+            self.fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][1]
 
             if self.algorithm != 'manual' and self.algorithm is not None:
                 # run correction
-                fixation_XY = np.array([self.corrected_fixations[self.selected_fixation]])
+                fixation_XY = np.array([self.fixations[self.selected_fixation]])
                 fixation_XY = fixation_XY[:, 0:2]
                 line_Y = self.find_lines_y(self.aoi)    
                 line_Y = np.array(line_Y)
@@ -268,7 +327,7 @@ class Fix8(QMainWindow):
             return
         # self.selected_fixation = None
 
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
         #self.canvas.update()
 
     def motion_notify_callback(self, event):
@@ -322,18 +381,18 @@ class Fix8(QMainWindow):
         if e.key() == 16777219:
 
             self.metadata += "key,remove fixation," + str(time.time()) +'\n'
-            if(self.corrected_fixations is not None and self.selected_fixation is not None):
-                if self.selected_fixation < len(self.corrected_fixations):
-                    self.corrected_fixations = np.delete(self.corrected_fixations, self.selected_fixation, 0) # delete the row of selected fixation
+            if(self.fixations is not None and self.selected_fixation is not None):
+                if self.selected_fixation < len(self.fixations):
+                    self.fixations = np.delete(self.fixations, self.selected_fixation, 0) # delete the row of selected fixation
                     if self.current_fixation == 0:
-                        self.current_fixation = len(self.corrected_fixations)
+                        self.current_fixation = len(self.fixations)
                         self.current_fixation -= 1
                         temp = self.current_fixation
                     else:
                         self.current_fixation-=1
                         temp = self.current_fixation
                         
-                    self.progress_bar.setMaximum(len(self.corrected_fixations) - 1)
+                    self.progress_bar.setMaximum(len(self.fixations) - 1)
                     self.progress_bar_updated(temp, draw = False)
                     
                     if self.suggested_corrections is not None:
@@ -342,12 +401,12 @@ class Fix8(QMainWindow):
                     self.selected_fixation = None
 
                     if self.algorithm != 'manual':
-                        if self.current_fixation == len(self.corrected_fixations):
+                        if self.current_fixation == len(self.fixations):
                             # off by one error
                             self.current_fixation-=1
                         #self.update_suggestion()
                         
-                    self.draw_canvas(self.corrected_fixations)
+                    self.draw_canvas(self.fixations)
                     self.progress_bar_updated(self.current_fixation, draw=False)           
 
     '''open trial folder, display it to trial list window with list of JSON trials'''
@@ -367,7 +426,7 @@ class Fix8(QMainWindow):
             # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
             self.relevant_buttons("opened_folder")
             self.status_text = "Trial Folder Opened: "+ self.folder_path
-            self.status_update()
+            self.statusBar.showMessage(self.status_text)
             
             files = listdir(self.folder_path)
             
@@ -452,15 +511,15 @@ class Fix8(QMainWindow):
             else:
                 self.label_progress.setText(f"{self.current_fixation}/{len(self.original_fixations)}")
         
-        self.corrected_fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
+        self.fixations = copy.deepcopy(self.original_fixations) # corrected fixations will be the current fixations on the screen and in the data
         self.checkbox_show_fixations.setChecked(True)
         self.checkbox_show_saccades.setChecked(True)
         
-        self.draw_canvas(self.corrected_fixations,draw_all=True)
+        self.draw_canvas(self.fixations,draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
-        self.status_update()
+        self.statusBar.showMessage(self.status_text)
 
 ######################## from EMTK #################################
     
@@ -738,7 +797,7 @@ class Fix8(QMainWindow):
         1 the original fixations is manually chosen (not currently needed as this isn't in option in algorithms)'''
     def draw_fixations(self, fixations = 0):
         if fixations == 0: # default fixations to use
-            fixations = self.corrected_fixations
+            fixations = self.fixations
         elif fixations == 1:
             fixations = self.original_fixations
             
@@ -771,7 +830,7 @@ class Fix8(QMainWindow):
 
     '''draw the scatter plot to the canvas'''
     def draw_saccades(self):
-        fixations = self.corrected_fixations
+        fixations = self.fixations
         x = fixations[0:self.current_fixation + 1, 0]
         y = fixations[0:self.current_fixation + 1, 1]
         duration = fixations[0:self.current_fixation + 1, 2]
@@ -836,7 +895,7 @@ class Fix8(QMainWindow):
         if self.checkbox_show_suggestion.isChecked():
             x = self.suggested_corrections[self.current_fixation][0]
             y = self.suggested_corrections[self.current_fixation][1]
-            duration = self.corrected_fixations[self.current_fixation][2]
+            duration = self.fixations[self.current_fixation][2]
 
             self.single_suggestion = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha=self.fixation_opacity, c='blue')
         
@@ -856,7 +915,7 @@ class Fix8(QMainWindow):
                          + "," + str(time.time()) + '\n'
 
         # run correction
-        fixation_XY = copy.deepcopy(self.corrected_fixations)
+        fixation_XY = copy.deepcopy(self.fixations)
         fixation_XY = fixation_XY[:, 0:2]
         fixation_XY = np.array(fixation_XY)
         line_Y = self.find_lines_y(self.aoi)    
@@ -865,20 +924,20 @@ class Fix8(QMainWindow):
         word_XY = self.find_word_centers(self.aoi)
         word_XY = np.array(word_XY)
         
-        self.suggested_corrections = copy.deepcopy(self.corrected_fixations)
+        self.suggested_corrections = copy.deepcopy(self.fixations)
         #print(self.corrected_fixations)
 
-        if len(self.corrected_fixations) > 0:
+        if len(self.fixations) > 0:
             if self.algorithm == 'attach':
                 self.suggested_corrections[:, 0:2] = da.attach(copy.deepcopy(fixation_XY), line_Y)
                 self.status_text = self.algorithm + " Algorithm Selected"
-                self.status_update()
+                self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()  # update the current suggestion as well
             elif self.algorithm == 'chain':
                 self.suggested_corrections[:, 0:2] = da.chain(copy.deepcopy(fixation_XY), line_Y)
                 self.status_text = self.algorithm + " Algorithm Selected"
-                self.status_update()
+                self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             # elif self.algorithm == 'cluster':
@@ -888,19 +947,19 @@ class Fix8(QMainWindow):
             elif self.algorithm == 'merge':
                 self.suggested_corrections[:, 0:2] = da.merge(copy.deepcopy(fixation_XY), line_Y)
                 self.status_text = self.algorithm + " Algorithm Selected"
-                self.status_update()
+                self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'regress':
                 self.suggested_corrections[:, 0:2] = da.regress(copy.deepcopy(fixation_XY), line_Y)
                 self.status_text = self.algorithm + " Algorithm Selected"
-                self.status_update()
+                self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'segment':
                 self.suggested_corrections[:, 0:2] = da.segment(copy.deepcopy(fixation_XY), line_Y)
                 self.status_text = self.algorithm + " Algorithm Selected"
-                self.status_update()
+                self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             # elif self.algorithm == 'split':
@@ -910,18 +969,18 @@ class Fix8(QMainWindow):
             elif self.algorithm == 'stretch':
                 self.suggested_corrections[:, 0:2] = da.stretch(copy.deepcopy(fixation_XY), line_Y)
                 self.status_text = self.algorithm + " Algorithm Selected"
-                self.status_update()
+                self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             elif self.algorithm == 'warp':
                 self.suggested_corrections[:, 0:2] = da.warp(copy.deepcopy(fixation_XY), word_XY)
                 self.status_text = self.algorithm + " Algorithm Selected"
-                self.status_update()
+                self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("algorithm_selected")
                 #self.update_suggestion()
             else:
                 self.status_text = "No Selected Algorithm"
-                self.status_update()
+                self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("no_selected_algorithm")
                 self.algorithm = None
                 #self.update_suggestion()
@@ -934,21 +993,21 @@ class Fix8(QMainWindow):
     make the corrected fixations the suggested ones from the correction algorithm'''
     def correct_all_fixations(self):
         if self.suggested_corrections is not None:
-            self.corrected_fixations = copy.deepcopy(self.suggested_corrections)
-            self.draw_canvas(self.corrected_fixations)
+            self.fixations = copy.deepcopy(self.suggested_corrections)
+            self.draw_canvas(self.fixations)
 
         self.metadata += "correct_all, all fixations corrected automatically" \
                + "," + str(time.time()) + '\n'
         self.status_text = "Correct All Fixations!"
-        self.status_update()
+        self.statusBar.showMessage(self.status_text)
             
     def previous_fixation(self):
         #if self.suggested_corrections is not None:
         if self.current_fixation == 0:
-            self.current_fixation = len(self.corrected_fixations)
+            self.current_fixation = len(self.fixations)
         self.current_fixation -= 1
 
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
         
         #if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
@@ -957,11 +1016,11 @@ class Fix8(QMainWindow):
     '''when the next fixation button is clicked, call this function and find the suggested correction for this fixation'''
     def next_fixation(self):
         #if self.suggested_corrections is not None:
-        if self.current_fixation == len(self.corrected_fixations) - 1:
+        if self.current_fixation == len(self.fixations) - 1:
             self.current_fixation = -1
         self.current_fixation += 1
 
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
         #if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
@@ -1006,41 +1065,41 @@ class Fix8(QMainWindow):
     def confirm_suggestion(self):
         
         self.metadata += "auto_moving, fixation " + str(self.current_fixation) \
-         + " moved from x:" + str(self.corrected_fixations[self.current_fixation][0]) \
-         + " y:" + str(self.corrected_fixations[self.current_fixation][1]) \
+         + " moved from x:" + str(self.fixations[self.current_fixation][0]) \
+         + " y:" + str(self.fixations[self.current_fixation][1]) \
          + ' to x:' + str(self.suggested_corrections[self.current_fixation][0]) \
          + ' y:' + str(self.suggested_corrections[self.current_fixation][1]) \
          + ',' + str(time.time()) + '\n'
 
         x = self.suggested_corrections[self.current_fixation][0]
         y = self.suggested_corrections[self.current_fixation][1]
-        self.corrected_fixations[self.current_fixation][0] = x
-        self.corrected_fixations[self.current_fixation][1] = y
+        self.fixations[self.current_fixation][0] = x
+        self.fixations[self.current_fixation][1] = y
         
         self.next_fixation()
 
     def undo_suggestion(self):
 
         self.metadata += "auto_undo, fixation " + str(self.current_fixation - 1) \
-         + " moved from x:" + str(self.corrected_fixations[self.current_fixation - 1][0]) \
-         + " y:" + str(self.corrected_fixations[self.current_fixation - 1][1]) \
+         + " moved from x:" + str(self.fixations[self.current_fixation - 1][0]) \
+         + " y:" + str(self.fixations[self.current_fixation - 1][1]) \
          + ' to x:' + str(self.original_fixations[self.current_fixation - 1][0]) \
          + ' y:' + str(self.original_fixations[self.current_fixation - 1][1]) \
          + ',' + str(time.time()) + '\n'
         
         x = self.original_fixations[self.current_fixation - 1][0]
         y = self.original_fixations[self.current_fixation - 1][1]
-        self.corrected_fixations[self.current_fixation - 1][0] = x
-        self.corrected_fixations[self.current_fixation - 1][1] = y
+        self.fixations[self.current_fixation - 1][0] = x
+        self.fixations[self.current_fixation - 1][1] = y
         
         self.previous_fixation()
 
     '''save a JSON object of the corrections to a file'''
     def save_corrections(self):
-        if self.corrected_fixations is not None:
-            list = self.corrected_fixations.tolist()
+        if self.fixations is not None:
+            list = self.fixations.tolist()
             corrected_fixations = {}
-            for i in range(len(self.corrected_fixations)):
+            for i in range(len(self.fixations)):
                 corrected_fixations[i + 1] = list[i]
             with open(f"{self.trial_path.replace('.json', '_CORRECTED' + '.json')}", 'w') as f:
                 json.dump(corrected_fixations, f)
@@ -1073,7 +1132,7 @@ class Fix8(QMainWindow):
                     self.metadata = "" 
 
             self.status_text = "Corrections Saved to"+" "+self.trial_path
-            self.status_update()
+            self.statusBar.showMessage(self.status_text)
 
         else:
             qmb = QMessageBox()
@@ -1089,11 +1148,11 @@ class Fix8(QMainWindow):
 
         # update current suggestion to the progress bar
         if self.current_fixation is not None:
-            self.label_progress.setText(f"{self.current_fixation}/{len(self.corrected_fixations)}")
+            self.label_progress.setText(f"{self.current_fixation}/{len(self.fixations)}")
             self.progress_bar.setValue(self.current_fixation)
         
         if draw:
-            self.draw_canvas(self.corrected_fixations)
+            self.draw_canvas(self.fixations)
 
         # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
         #    self.update_suggestion()
@@ -1113,19 +1172,19 @@ class Fix8(QMainWindow):
                + "," + str(time.time()) + '\n'
 
 
-        self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] > int(self.lesser_value)]
+        self.fixations = self.fixations[self.fixations[:, 2] > int(self.lesser_value)]
         self.current_fixation = 0
         if self.algorithm != 'manual' and self.suggested_corrections is not None:
-            if self.current_fixation == len(self.corrected_fixations):
+            if self.current_fixation == len(self.fixations):
                 # off by one error, since deleting fixation moves current onto the next fixation
                 self.current_fixation-=1
             self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] > int(self.lesser_value)]
             
         temp = self.current_fixation
-        self.progress_bar.setMaximum(len(self.corrected_fixations) - 1)
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(temp)
         
-        self.draw_canvas(self.corrected_fixations, draw_all = True)
+        self.draw_canvas(self.fixations, draw_all = True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
     '''Activates when the greater value filter changes'''
@@ -1140,20 +1199,20 @@ class Fix8(QMainWindow):
         self.metadata += "filter,removed fixations greater than " + self.greater_value \
                + "," + str(time.time()) + '\n'
 
-        self.corrected_fixations = self.corrected_fixations[self.corrected_fixations[:, 2] < int(self.greater_value)]
+        self.fixations = self.fixations[self.fixations[:, 2] < int(self.greater_value)]
         self.current_fixation = 0
         if self.algorithm != 'manual' and self.suggested_corrections is not None:
-            if self.current_fixation == len(self.corrected_fixations):
+            if self.current_fixation == len(self.fixations):
                 # off by one error, since deleting fixation moves current onto the next fixation
                 self.current_fixation-=1
             
             self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < int(self.greater_value)]
             
         temp = self.current_fixation
-        self.progress_bar.setMaximum(len(self.corrected_fixations) - 1)
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(temp)
         
-        self.draw_canvas(self.corrected_fixations, draw_all = True) 
+        self.draw_canvas(self.fixations, draw_all = True) 
         self.progress_bar_updated(self.current_fixation, draw=False)    
         
     def aoi_height_changed(self,value):
@@ -1175,7 +1234,7 @@ class Fix8(QMainWindow):
         else:
             self.fixation_color = 'red'
         
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
         
     def select_saccade_color(self):
         color = QColorDialog.getColor(initial = Qt.blue)
@@ -1184,7 +1243,7 @@ class Fix8(QMainWindow):
         else:
             self.saccade_color = 'blue'
         
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
 
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
@@ -1192,24 +1251,21 @@ class Fix8(QMainWindow):
             self.saccade_color =  '#3D00CC'
             self.aoi_color = '#28AAFF'
             self.colorblind_assist_status = True
-            self.draw_canvas(self.corrected_fixations)
+            self.draw_canvas(self.fixations)
         else: 
             self.fixation_color = 'red'
             self.saccade_color = 'blue' 
             self.aoi_color = 'yellow'
             self.colorblind_assist_status = False
-            self.draw_canvas(self.corrected_fixations)
+            self.draw_canvas(self.fixations)
         
     def saccade_opacity_changed(self, value):
         self.saccade_opacity = float(value / 10)
-        self.draw_canvas(self.corrected_fixations)
+        self.draw_canvas(self.fixations)
         
     def fixation_opacity_changed(self, value):
         self.fixation_opacity = float(value / 10)
-        self.draw_canvas(self.corrected_fixations)
-
-    def status_update(self):
-        self.statusBar.showMessage(self.status_text)
+        self.draw_canvas(self.fixations)
         
     '''initalize the tool window'''
     def init_UI(self): 
