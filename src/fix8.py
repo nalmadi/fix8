@@ -138,7 +138,8 @@ class Fix8(QMainWindow):
         self.delete_fixation_action = QAction("Delete Fixation", self)
 
         self.manual_correction_action = QAction("Manual", self)
-        self.warp_action = QAction("Warp", self)
+        self.warp_auto_action = QAction("Warp", self)
+        self.warp_semi_action = QAction("Warp", self)
 
         # add shortcuts
         self.new_file_action.setShortcut("Ctrl+O")
@@ -155,7 +156,12 @@ class Fix8(QMainWindow):
         # connect functions
         self.new_file_action.triggered.connect(self.open_trial_folder)
         self.save_correction_action.triggered.connect(self.save_corrections)
-        self.warp_action.triggered.connect(self.warp_auto)
+
+        self.next_fixation_action.triggered.connect(self.next_fixation)
+        self.previous_fixation_action.triggered.connect(self.previous_fixation)
+        
+        self.warp_auto_action.triggered.connect(self.warp_auto)
+        self.warp_semi_action.triggered.connect(self.warp_semi)
 
         # add actions to menu
         self.file_menu.addAction(self.new_file_action)
@@ -167,7 +173,8 @@ class Fix8(QMainWindow):
         self.edit_menu.addAction(self.delete_fixation_action)
 
         self.correction_menu.addAction(self.manual_correction_action)
-        self.automated_correction_menu.addAction(self.warp_action)
+        self.automated_correction_menu.addAction(self.warp_auto_action)
+        self.semi_auto_correction_menu.addAction(self.warp_semi_action)
 
         # fields relating to the stimulus
         self.file, self.file_path, self.file_name = None, None, None
@@ -232,7 +239,6 @@ class Fix8(QMainWindow):
         self.greater_value = 0
 
     def warp_auto(self):
-        # run correction
         fixation_XY = copy.deepcopy(self.fixations)
         fixation_XY = fixation_XY[:, 0:2]
         fixation_XY = np.array(fixation_XY)
@@ -244,9 +250,7 @@ class Fix8(QMainWindow):
         self.suggested_corrections = copy.deepcopy(self.fixations)
 
         # select warp as an algorithm
-        self.suggested_corrections[:, 0:2] = da.warp(
-            copy.deepcopy(fixation_XY), word_XY
-        )
+        self.suggested_corrections[:, 0:2] = da.warp(fixation_XY, word_XY)
         self.status_text = self.algorithm + " Algorithm Selected"
         self.statusBar.showMessage(self.status_text)
         self.relevant_buttons("algorithm_selected")
@@ -256,6 +260,29 @@ class Fix8(QMainWindow):
 
         # update progress bar to end
         self.progress_bar.setValue(self.progress_bar.maximum())
+
+    def warp_semi(self):
+        fixation_XY = copy.deepcopy(self.fixations)
+        fixation_XY = fixation_XY[:, 0:2]
+        fixation_XY = np.array(fixation_XY)
+        line_Y = self.find_lines_y(self.aoi)
+        line_Y = np.array(line_Y)
+        word_XY = self.find_word_centers(self.aoi)
+        word_XY = np.array(word_XY)
+
+        self.suggested_corrections = copy.deepcopy(self.fixations)
+
+        # select warp as an algorithm
+        self.suggested_corrections[:, 0:2] = da.warp(fixation_XY, word_XY)
+        self.status_text = self.algorithm + " Algorithm Selected"
+        self.statusBar.showMessage(self.status_text)
+        self.relevant_buttons("algorithm_selected")
+
+        # show suggestion
+        self.checkbox_show_suggestion.setChecked(True)
+
+        # update progress bar to end
+        self.progress_bar.setValue(self.progress_bar.minimum())
 
     """get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon),
     selected_fixation is an index, not the actual scatter point"""
@@ -373,9 +400,7 @@ class Fix8(QMainWindow):
                 elif self.algorithm == "warp":
                     updated_correction = da.warp(copy.deepcopy(fixation_XY), word_XY)[0]
 
-                self.suggested_corrections[
-                    self.selected_fixation, :2
-                ] = updated_correction
+                self.suggested_corrections[self.selected_fixation, :2] = updated_correction
                 # self.update_suggestion()
 
             if self.checkbox_show_saccades.isChecked():
@@ -1139,9 +1164,7 @@ class Fix8(QMainWindow):
                 self.relevant_buttons("algorithm_selected")
                 # self.update_suggestion()
             elif self.algorithm == "warp":
-                self.suggested_corrections[:, 0:2] = da.warp(
-                    copy.deepcopy(fixation_XY), word_XY
-                )
+                self.suggested_corrections[:, 0:2] = da.warp(fixation_XY, word_XY)
                 self.status_text = self.algorithm + " Algorithm Selected"
                 self.statusBar.showMessage(self.status_text)
                 self.relevant_buttons("algorithm_selected")
