@@ -32,7 +32,8 @@ from PyQt5.QtCore import Qt
 # from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import (QFrame, QApplication, QCheckBox, QComboBox, QFileDialog, QColorDialog,
                              QHBoxLayout, QLabel, QSlider, QMainWindow, QMessageBox,
-                             QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, QLineEdit, QListWidget, QListWidgetItem, QSpinBox, QStatusBar)
+                             QPushButton, QSizePolicy, QVBoxLayout, QWidget, QButtonGroup, 
+                             QLineEdit, QListWidget, QListWidgetItem, QSpinBox, QStatusBar, QAction)
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -92,6 +93,25 @@ class Fix8(QMainWindow):
         self.setWindowTitle("Fix8")
         self.setWindowIcon(QIcon('icon.ico'))
         self.init_UI()
+
+        self.file_menu = self.menuBar().addMenu('File')
+
+        # add actions
+        self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
+        self.save_correction_action = QAction(QIcon("./.images/save.png"), "Save Correction", self)
+        
+        # add shortcuts
+        self.new_file_action.setShortcut('Ctrl+O')
+        self.save_correction_action.setShortcut('Ctrl+S')
+
+        # connect functions
+        self.new_file_action.triggered.connect(self.open_trial_folder)
+        self.save_correction_action.triggered.connect(self.save_corrections)
+        self.save_correction_action.setEnabled(False)
+
+        # add actions to menu
+        self.file_menu.addAction(self.new_file_action)
+        self.file_menu.addAction(self.save_correction_action)
 
         # fields relating to the stimulus
         self.file, self.file_path, self.file_name = None, None, None
@@ -1200,13 +1220,13 @@ class Fix8(QMainWindow):
         # --- left side
         self.left_side = QVBoxLayout()
 
-        self.button_open_folder = QPushButton("Open Folder", self)
-        self.button_open_folder.setEnabled(True)
-        self.button_open_folder.clicked.connect(self.open_trial_folder)
+        # self.button_open_folder = QPushButton("Open Folder", self)
+        # self.button_open_folder.setEnabled(True)
+        # self.button_open_folder.clicked.connect(self.open_trial_folder)
 
-        self.button_save_corrections = QPushButton("Save Corrections", self)
-        self.button_save_corrections.setEnabled(False)
-        self.button_save_corrections.clicked.connect(self.save_corrections)
+        # self.button_save_corrections = QPushButton("Save Corrections", self)
+        # self.button_save_corrections.setEnabled(False)
+        # self.button_save_corrections.clicked.connect(self.save_corrections)
 
         self.trial_list = QListWidget()
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
@@ -1234,8 +1254,7 @@ class Fix8(QMainWindow):
         self.lesser_inputs.addWidget(self.input_lesser)
         self.lesser_inputs.addWidget(self.button_lesser)
         
-        widget_list = [self.button_open_folder, self.button_save_corrections,
-                        self.trial_list]
+        widget_list = [self.trial_list]
         
         for w in widget_list:
             self.left_side.addWidget(w)
@@ -1527,8 +1546,8 @@ class Fix8(QMainWindow):
         self.wrapper_layout.setStretch(1,3)
 
         # initial button states
-        self.button_open_folder.setEnabled(True)
-        self.button_save_corrections.setEnabled(False)
+        # self.button_open_folder.setEnabled(True)
+        # self.button_save_corrections.setEnabled(False)
         self.toolbar.setEnabled(False)
         self.checkbox_show_aoi.setChecked(False)
         self.checkbox_show_aoi.setCheckable(False)
@@ -1548,7 +1567,8 @@ class Fix8(QMainWindow):
 
     def relevant_buttons(self, feature):
         if feature == "opened_stimulus":
-            self.button_open_folder.setEnabled(True)
+            # self.button_open_folder.setEnabled(True)
+            self.save_correction_action.setEnabled(True)
             self.checkbox_show_aoi.setCheckable(True)
             self.checkbox_show_aoi.setChecked(False)
             self.checkbox_show_aoi.setEnabled(True)
@@ -1562,7 +1582,7 @@ class Fix8(QMainWindow):
             self.checkbox_show_saccades.setChecked(False)
             self.checkbox_show_saccades.setCheckable(True)
         elif feature == "opened_folder":
-            self.button_save_corrections.setEnabled(False)
+            # self.button_save_corrections.setEnabled(False)
             self.button_previous_fixation.setEnabled(False)
             self.button_next_fixation.setEnabled(False)
             self.button_correct_all_fixations.setEnabled(False)
@@ -1599,7 +1619,8 @@ class Fix8(QMainWindow):
 
             self.dropdown_select_algorithm.setEnabled(False)
         elif feature == "trial_clicked":
-            self.button_save_corrections.setEnabled(True)
+            # self.button_save_corrections.setEnabled(True)
+            
 
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
