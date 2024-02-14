@@ -137,7 +137,22 @@ class Fix8(QMainWindow):
 
         self.manual_correction_action = QAction("Manual", self)
         self.warp_auto_action = QAction("Warp", self)
+        self.attach_auto_action = QAction("Attach", self)
+        self.chain_auto_action = QAction("Chain", self)
+        self.cluster_auto_action = QAction("Cluster", self)
+        self.merge_auto_action = QAction("Merge", self)
+        self.regress_auto_action = QAction("Regress", self)
+        self.segment_auto_action = QAction("Segment", self)
+        self.stretch_auto_action = QAction("Stretch", self)
+
         self.warp_semi_action = QAction("Warp", self)
+        self.attach_semi_action = QAction("Attach", self)
+        self.chain_semi_action = QAction("Chain", self)
+        self.cluster_semi_action = QAction("Cluster", self)
+        self.merge_semi_action = QAction("Merge", self)
+        self.regress_semi_action = QAction("Regress", self)
+        self.segment_semi_action = QAction("Segment", self)
+        self.stretch_semi_action = QAction("Stretch", self)
 
         # add shortcuts
         self.new_file_action.setShortcut("Ctrl+O")
@@ -166,7 +181,23 @@ class Fix8(QMainWindow):
         self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
         
         self.warp_auto_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'auto'))
+        self.attach_auto_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'auto'))
+        self.chain_auto_action.triggered.connect(lambda: self.run_algorithm('chain', da.chain, 'auto'))
+        self.cluster_auto_action.triggered.connect(lambda: self.run_algorithm('cluster', da.cluster, 'auto'))
+        self.merge_auto_action.triggered.connect(lambda: self.run_algorithm('merge', da.merge, 'auto'))
+        self.regress_auto_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'auto'))
+        self.segment_auto_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'auto'))
+        self.stretch_auto_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'auto'))
+        
         self.warp_semi_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'semi'))
+        self.attach_semi_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'semi'))
+        self.chain_semi_action.triggered.connect(lambda: self.run_algorithm('chain', da.chain, 'semi'))
+        self.cluster_semi_action.triggered.connect(lambda: self.run_algorithm('cluster', da.cluster, 'semi'))
+        self.merge_semi_action.triggered.connect(lambda: self.run_algorithm('merge', da.merge, 'semi'))
+        self.regress_semi_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'semi'))
+        self.segment_semi_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'semi'))
+        self.stretch_semi_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'semi'))
+
         self.manual_correction_action.triggered.connect(self.manual_correction)
 
         # add actions to menu
@@ -184,7 +215,22 @@ class Fix8(QMainWindow):
 
         self.correction_menu.addAction(self.manual_correction_action)
         self.automated_correction_menu.addAction(self.warp_auto_action)
+        self.automated_correction_menu.addAction(self.attach_auto_action)
+        self.automated_correction_menu.addAction(self.chain_auto_action)
+        self.automated_correction_menu.addAction(self.cluster_auto_action)
+        self.automated_correction_menu.addAction(self.merge_auto_action)
+        self.automated_correction_menu.addAction(self.regress_auto_action)
+        self.automated_correction_menu.addAction(self.segment_auto_action)
+        self.automated_correction_menu.addAction(self.stretch_auto_action)
+
         self.semi_auto_correction_menu.addAction(self.warp_semi_action)
+        self.semi_auto_correction_menu.addAction(self.attach_semi_action)
+        self.semi_auto_correction_menu.addAction(self.chain_semi_action)
+        self.semi_auto_correction_menu.addAction(self.cluster_semi_action)
+        self.semi_auto_correction_menu.addAction(self.merge_semi_action)
+        self.semi_auto_correction_menu.addAction(self.regress_semi_action)
+        self.semi_auto_correction_menu.addAction(self.segment_semi_action)
+        self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
 
         # fields relating to the stimulus
         self.file, self.file_path, self.file_name = None, None, None
