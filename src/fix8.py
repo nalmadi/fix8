@@ -350,9 +350,10 @@ class Fix8(QMainWindow):
         index = 0
         while index < len(new_fixations) - 1:
 
+            # if either fixation is short and distance is small, merge
             if ((new_fixations[index][2] <= duration_threshold or new_fixations[index+1][2] <= duration_threshold)
                 and mini_emtk.distance(new_fixations[index], new_fixations[index + 1]) <= dispersion_threshold):
-                print('here')
+
                 new_fixations[index + 1][2] += new_fixations[index][2]
                 new_fixations.pop(index)
             else:
