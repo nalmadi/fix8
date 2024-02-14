@@ -1091,12 +1091,14 @@ class Fix8(QMainWindow):
         # draw whatever was updated
         self.canvas.draw()
 
-    """when the user selects an algorithm from the drop down menu,
+    def get_algorithm_picked(self, algorithm):
+        """
+        when the user selects an algorithm from the drop down menu,
         make it the current algorithm to use for automated and semi automated use
         parameters:
-        algorithm - the selected correction algorithm"""
+        algorithm - the selected correction algorithm
+        """
 
-    def get_algorithm_picked(self, algorithm):
         self.algorithm = algorithm
         self.algorithm = self.algorithm.lower()
 
@@ -1318,12 +1320,28 @@ class Fix8(QMainWindow):
         self.previous_fixation()
 
 
+    def save_metadata_file(self, new_correction_file_path):
+    
+        metadata_file_name = new_correction_file_path.replace('.json', '') + '_metadata.csv'
+        metadata_file_path = Path(f"{metadata_file_name}")
+
+        headers = "event,event details,timestamp\n"
+
+        with open(metadata_file_path, "w", newline="") as meta_file:
+                meta_file.write(headers)
+                meta_file.write(self.metadata)
+                self.metadata = ""
+
+
     def save_corrections(self):
         """save a JSON object of the corrections to a file"""
 
         qfd = QFileDialog()
         default_file_name = self.trial_path.replace('.json', '') + '_CORRECTED_json'
-        new_correction_file_path, _ = qfd.getSaveFileName(self, "Save correction", default_file_name)
+        new_correction_file_name, _ = qfd.getSaveFileName(self, "Save correction", default_file_name)
+
+        if '.json' not in new_correction_file_name:
+            new_correction_file_name += '.json'
 
         if len(self.fixations) > 0:
             list = self.fixations.tolist()
@@ -1332,15 +1350,13 @@ class Fix8(QMainWindow):
             for i in range(len(self.fixations)):
                 corrected_fixations[i + 1] = list[i]
 
-            with open(f"{new_correction_file_path.replace('.json', '') + '_CORRECTED.json'}", "w") as f:
+            with open(f"{new_correction_file_name}", "w") as f:
                 json.dump(corrected_fixations, f)
 
             # TODO: write a function for adding things to metadata and another function to save metadata file
                 
             self.duration = (time.time() - self.timer_start)
             today = date.today()
-
-            headers = "event,event details,timestamp\n"
 
             self.metadata += (
                 "Saved,Date "
@@ -1356,15 +1372,9 @@ class Fix8(QMainWindow):
                 + "\n"
             )
 
-            metadata_file_name = new_correction_file_path + '_metadata.csv'
-            metadata_file_path = Path(f"{metadata_file_name}")
+            self.save_metadata_file(new_correction_file_name)
 
-            with open(metadata_file_path, "w", newline="") as meta_file:
-                    meta_file.write(headers)
-                    meta_file.write(self.metadata)
-                    self.metadata = ""
-
-            self.status_text = "Corrections Saved to" + " " + metadata_file_name
+            self.status_text = "Corrections Saved to" + " " + new_correction_file_name
             self.statusBar.showMessage(self.status_text)
 
         else:
