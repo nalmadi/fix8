@@ -349,7 +349,7 @@ class Fix8(QMainWindow):
         new_fixations = list(self.fixations).copy()
         index = 0
         while index < len(new_fixations) - 1:
-
+            
             # if either fixation is short and distance is small, merge
             if ((new_fixations[index][2] <= duration_threshold or new_fixations[index+1][2] <= duration_threshold)
                 and mini_emtk.distance(new_fixations[index], new_fixations[index + 1]) <= dispersion_threshold):
@@ -405,6 +405,11 @@ class Fix8(QMainWindow):
         # correct all
         self.correct_all_fixations()
 
+        # hide suggestion
+        self.checkbox_show_suggestion.setEnabled(False)
+        self.checkbox_show_suggestion.setChecked(False)
+        self.checkbox_show_suggestion.setCheckable(False)
+
         # update progress bar to end
         self.progress_bar.setValue(self.progress_bar.maximum())
 
@@ -416,7 +421,10 @@ class Fix8(QMainWindow):
         self.metadata += ("selected, algorithm " + str(self.algorithm) + "," + str(time.time()) + "\n")
 
         # show suggestion
+        self.checkbox_show_suggestion.setCheckable(True)
+        self.checkbox_show_suggestion.setEnabled(True)
         self.checkbox_show_suggestion.setChecked(True)
+        
 
         # update progress bar to end
         self.progress_bar.setValue(self.progress_bar.minimum())
@@ -1151,9 +1159,8 @@ class Fix8(QMainWindow):
 
     def previous_fixation(self):
         # if self.suggested_corrections is not None:
-        if self.current_fixation == 0:
-            self.current_fixation = len(self.fixations)
-        self.current_fixation -= 1
+        if self.current_fixation != 0:
+            self.current_fixation -= 1
 
         self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
@@ -1166,9 +1173,8 @@ class Fix8(QMainWindow):
     def next_fixation(self):
         """when the next fixation button is clicked, call this function and find the suggested correction for this fixation"""
         # if self.suggested_corrections is not None:
-        if self.current_fixation == len(self.fixations) - 1:
-            self.current_fixation = -1
-        self.current_fixation += 1
+        if self.current_fixation != len(self.fixations) - 1:
+            self.current_fixation += 1
 
         self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
@@ -1984,8 +1990,7 @@ class Fix8(QMainWindow):
             # self.button_correct_all_fixations.setEnabled(True)
             # self.button_confirm_suggestion.setEnabled(True)
             # self.button_undo_suggestion.setEnabled(True)
-            self.checkbox_show_suggestion.setCheckable(True)
-            self.checkbox_show_suggestion.setEnabled(True)
+            
 
 
 if __name__ == "__main__":
