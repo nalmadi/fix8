@@ -236,6 +236,8 @@ class Fix8(QMainWindow):
 
         # fields relating to color filters
         self.fixation_color = "red"
+        self.current_fixation_color = "yellow"
+        self.suggested_fixation_color = "blue"
         self.saccade_color = "blue"
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
@@ -934,7 +936,7 @@ class Fix8(QMainWindow):
         if self.checkbox_show_fixations.isCheckable():
             if self.checkbox_show_fixations.isChecked():
                 list_colors = [self.fixation_color] * (len(x) - 1)
-                colors = np.array(list_colors + [self.aoi_color])
+                colors = np.array(list_colors + [self.current_fixation_color])
                 self.scatter = self.canvas.ax.scatter(
                     x,
                     y,
@@ -961,7 +963,7 @@ class Fix8(QMainWindow):
                 y,
                 s=30 * (duration / 50) ** 1.8,
                 alpha=self.fixation_opacity,
-                c="blue",
+                c=self.suggested_fixation_color,
             )
 
         # draw whatever was updated
@@ -1369,6 +1371,24 @@ class Fix8(QMainWindow):
 
         self.draw_canvas(self.fixations)
 
+    def select_current_fixation_color(self):
+        color = QColorDialog.getColor(initial=Qt.red)
+        if color.isValid():
+            self.current_fixation_color = str(color.name())
+        else:
+            self.current_fixation_color = "yellow"
+
+        self.draw_canvas(self.fixations)
+
+    def select_suggested_fixation_color(self):
+        color = QColorDialog.getColor(initial=Qt.red)
+        if color.isValid():
+            self.suggested_fixation_color = str(color.name())
+        else:
+            self.suggested_fixation_color = "blue"
+
+        self.draw_canvas(self.fixations)
+
     def select_saccade_color(self):
         color = QColorDialog.getColor(initial=Qt.blue)
         if color.isValid():
@@ -1381,6 +1401,7 @@ class Fix8(QMainWindow):
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
             self.fixation_color = "#FF9E0A"
+            # self.current_fixation_color = "yellow"
             self.saccade_color = "#3D00CC"
             self.aoi_color = "#28AAFF"
             self.colorblind_assist_status = True
@@ -1716,21 +1737,38 @@ class Fix8(QMainWindow):
         # --
         self.button_fixation_color = QPushButton("Select Fixation Color")
         self.button_fixation_color.clicked.connect(self.select_fixation_color)
-        self.layer_fixation_color = QHBoxLayout()
+        
         self.button_saccade_color = QPushButton("Select Saccade Color")
         self.button_saccade_color.clicked.connect(self.select_saccade_color)
-        self.button_fixation_color.setEnabled(False)
-        self.button_saccade_color.setEnabled(False)
+
+        self.button_current_fixation_color = QPushButton("Current Fixation Color")
+        self.button_current_fixation_color.clicked.connect(self.select_current_fixation_color)
+
+        self.button_suggested_fixation_color = QPushButton("Suggestion Color")
+        self.button_suggested_fixation_color.clicked.connect(self.select_suggested_fixation_color)
 
         self.button_coloblind_assist = QPushButton("Colorblind Assist")
         self.button_coloblind_assist.clicked.connect(self.colorblind_assist)
+
+        self.button_fixation_color.setEnabled(False)
+        self.button_saccade_color.setEnabled(False)
+        self.button_current_fixation_color.setEnabled(False)
+        self.button_suggested_fixation_color.setEnabled(False)
         self.button_coloblind_assist.setEnabled(False)
 
+        self.layer_fixation_color = QHBoxLayout()
         self.layer_fixation_color.addWidget(self.button_fixation_color)
         self.layer_fixation_color.addWidget(self.button_saccade_color)
-        self.layer_fixation_color.addWidget(self.button_coloblind_assist)
+        self.layer_fixation_color.addWidget(self.button_current_fixation_color)
+
+        self.second_layer_fixation_color = QHBoxLayout()
+
+        self.second_layer_fixation_color.addWidget(self.button_suggested_fixation_color)
+        self.second_layer_fixation_color.addWidget(self.button_coloblind_assist)
 
         self.filters.addLayout(self.layer_fixation_color)
+        self.filters.addLayout(self.second_layer_fixation_color)
+
         self.left_side.addLayout(self.below_canvas)
         # --
 
@@ -1809,6 +1847,8 @@ class Fix8(QMainWindow):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.button_fixation_color.setEnabled(False)
             self.button_saccade_color.setEnabled(False)
+            self.button_suggested_fixation_color.setEnabled(False)
+            self.button_current_fixation_color.setEnabled(False)
             self.toggle_aoi_width.setEnabled(False)
             self.toggle_aoi_height.setEnabled(False)
             self.button_coloblind_assist.setEnabled(False)
@@ -1847,9 +1887,10 @@ class Fix8(QMainWindow):
 
             self.toggle_aoi_width.setEnabled(True)
             self.toggle_aoi_height.setEnabled(True)
-
             self.button_fixation_color.setEnabled(True)
             self.button_saccade_color.setEnabled(True)
+            self.button_suggested_fixation_color.setEnabled(False)
+            self.button_current_fixation_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
             self.button_coloblind_assist.setEnabled(True)
@@ -1879,6 +1920,7 @@ class Fix8(QMainWindow):
         elif feature == "algorithm_selected":
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
+            self.button_suggested_fixation_color.setEnabled(True)
             # self.button_correct_all_fixations.setEnabled(True)
             # self.button_confirm_suggestion.setEnabled(True)
             # self.button_undo_suggestion.setEnabled(True)
