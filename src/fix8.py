@@ -34,7 +34,6 @@ from PyQt5.QtWidgets import (
     QFrame,
     QApplication,
     QCheckBox,
-    QComboBox,
     QFileDialog,
     QColorDialog,
     QHBoxLayout,
@@ -47,7 +46,6 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QInputDialog,
-    QLineEdit,
     QListWidget,
     QListWidgetItem,
     QSpinBox,
@@ -591,9 +589,10 @@ class Fix8(QMainWindow):
                     self.draw_canvas(self.fixations)
                     self.progress_bar_updated(self.current_fixation, draw=False)
 
-    """open trial folder, display it to trial list window with list of JSON trials"""
+    
 
     def open_trial_folder(self):
+        """open trial folder, display it to trial list window with list of JSON trials"""
         qfd = QFileDialog()
         self.folder_path = qfd.getExistingDirectory(self, "Select Folder")
 
@@ -774,11 +773,11 @@ class Fix8(QMainWindow):
             elif state == Qt.Unchecked:
                 self.clear_aoi()
 
-    """find all the fixations of the trial that was double clicked
+    
+    def find_fixations(self, trial_path):
+        """find all the fixations of the trial that was double clicked
         parameters:
         trial_path - the trial file path of the trial clicked on"""
-
-    def find_fixations(self, trial_path):
         self.original_fixations = []
         with open(trial_path, "r") as trial:
             try:
@@ -824,12 +823,14 @@ class Fix8(QMainWindow):
 
         return results
 
-    """draw the fixations to the canvas
+    
+
+    def draw_fixations(self, fixations=0):
+        """draw the fixations to the canvas
         parameters:
         fixations - 0 is default since the corrected fixations are the main thing to be shown,
         1 the original fixations is manually chosen (not currently needed as this isn't in option in algorithms)"""
 
-    def draw_fixations(self, fixations=0):
         if fixations == 0:  # default fixations to use
             fixations = self.fixations
         elif fixations == 1:
@@ -848,11 +849,12 @@ class Fix8(QMainWindow):
 
         self.canvas.draw()
 
-    """if the user clicks the show fixations checkbox, show or hide the fixations
-        parameters:
-        state - the checkbox being checked or unchecked"""
+    
 
     def show_fixations(self, state):
+        """if the user clicks the show fixations checkbox, show or hide the fixations
+        parameters:
+        state - the checkbox being checked or unchecked"""
         if self.folder_path != "":
             if self.checkbox_show_fixations.isCheckable():
                 if state == Qt.Checked:
@@ -860,9 +862,10 @@ class Fix8(QMainWindow):
                 elif state == Qt.Unchecked:
                     self.clear_fixations()
 
-    """if the user clicks saccades, show or hide them"""
+    
 
     def show_saccades(self, state):
+        """if the user clicks saccades, show or hide them"""
         if self.folder_path != "":
             if self.checkbox_show_saccades.isCheckable():
                 if state == Qt.Checked:
@@ -870,9 +873,10 @@ class Fix8(QMainWindow):
                 elif state == Qt.Unchecked:
                     self.clear_saccades()
 
-    """draw the scatter plot to the canvas"""
+    
 
     def draw_saccades(self):
+        """draw the scatter plot to the canvas"""
         fixations = self.fixations
         x = fixations[0 : self.current_fixation + 1, 0]
         y = fixations[0 : self.current_fixation + 1, 1]
@@ -882,9 +886,10 @@ class Fix8(QMainWindow):
         )
         self.canvas.draw()
 
-    """remove the saccades from the canvas (this does not erase the data, just visuals)"""
+    
 
     def clear_saccades(self):
+        """remove the saccades from the canvas (this does not erase the data, just visuals)"""
         if self.saccades != None:
             self.canvas.ax.lines.clear()  # <-- if this line crashes the tool
 
@@ -894,9 +899,10 @@ class Fix8(QMainWindow):
             self.saccades = None
             # self.canvas.draw()
 
-    """clear the fixations from the canvas"""
+    
 
     def clear_fixations(self):
+        """clear the fixations from the canvas"""
         if self.scatter != None:
             # self.scatter.remove()
             self.scatter = None
@@ -1063,10 +1069,11 @@ class Fix8(QMainWindow):
     #         # reset progress bar when algorithm is selected, saving the user one manual step
     #         self.progress_bar.setValue(self.progress_bar.minimum())
 
-    """if the user presses the correct all fixations button,
-    make the corrected fixations the suggested ones from the correction algorithm"""
+    
 
     def correct_all_fixations(self):
+        """if the user presses the correct all fixations button,
+        make the corrected fixations the suggested ones from the correction algorithm"""
         if self.suggested_corrections is not None:
             self.fixations = copy.deepcopy(self.suggested_corrections)
             self.draw_canvas(self.fixations)
@@ -1393,9 +1400,10 @@ class Fix8(QMainWindow):
         self.fixation_opacity = float(value / 10)
         self.draw_canvas(self.fixations)
 
-    """initalize the tool window"""
+    
 
     def init_UI(self):
+        """initalize the tool window"""
         # wrapper layout
         self.wrapper_layout = QHBoxLayout()
 
