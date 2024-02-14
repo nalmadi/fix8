@@ -260,7 +260,7 @@ class Fix8(QMainWindow):
             return
 
         self.metadata += (
-            "filter,removed fixations less than than "
+            "filter,removed fixations less than "
             + str(threshold)
             + ","
             + str(time.time())
@@ -295,7 +295,7 @@ class Fix8(QMainWindow):
             return
 
         self.metadata += (
-            "filter,removed fixations greater than than "
+            "filter,removed fixations greater than "
             + str(threshold)
             + ","
             + str(time.time())
@@ -321,8 +321,57 @@ class Fix8(QMainWindow):
     def merge_fixations(self):
         dialog = InputDialog()
         dialog.exec()
-        print(dialog.getInputs())
-        pass
+        
+        duration_threshold, dispersion_threshold = dialog.getInputs()
+        # check empty
+        if duration_threshold == '' and dispersion_threshold == '':
+            return
+        
+        # check ints
+        try:
+            duration_threshold = int(duration_threshold)
+            dispersion_threshold = int(dispersion_threshold)
+        except:
+            return
+    
+        # write metadata
+        self.metadata += (
+            "filter,merge fixations less than "
+            + str(duration_threshold)
+            + ", dispersion_threshold"
+            + str(dispersion_threshold)
+            + ", "
+            + str(time.time())
+            + "\n"
+        )
+
+        # merge fixations
+        new_fixations = list(self.fixations).copy()
+        index = 0
+        while index < len(new_fixations) - 1:
+
+            if ((new_fixations[index][2] <= duration_threshold or new_fixations[index+1][2] <= duration_threshold)
+                and mini_emtk.distance(new_fixations[index], new_fixations[index + 1]) <= dispersion_threshold):
+                print('here')
+                new_fixations[index + 1][2] += new_fixations[index][2]
+                new_fixations.pop(index)
+            else:
+                index += 1
+
+        self.fixations = np.array(new_fixations)
+
+        if self.algorithm != "manual" and self.suggested_corrections is not None:
+            self.run_warp()
+
+        if self.current_fixation >= len(self.fixations):
+            self.current_fixation = len(self.fixations) - 1
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation)
+
+        self.draw_canvas(self.fixations, draw_all=True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+
 
     def run_warp(self):
 

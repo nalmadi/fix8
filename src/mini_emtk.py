@@ -207,3 +207,7 @@ def EMTK_find_aoi(image=None, image_path=None, img=None, level="sub-line", margi
     return aoi, bg_color
 
 ######################## end from EMTK #################################
+
+def distance(fix1, fix2):
+    ''' returns distance between two fixations '''
+    return ((fix1[0] - fix2[0])**2 + (fix1[1] - fix2[1])**2)**0.5

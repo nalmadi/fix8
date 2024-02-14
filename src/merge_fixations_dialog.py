@@ -7,6 +7,11 @@ class InputDialog(QDialog):
 
         self.duration_threshold = QLineEdit(self)
         self.visual_angle_pixels = QLineEdit(self)
+
+        # default values
+        self.duration_threshold.setText('50')
+        self.visual_angle_pixels.setText('20')
+
         self.setWindowTitle("Merge Fixations") 
         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
 
