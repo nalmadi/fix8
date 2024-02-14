@@ -428,7 +428,6 @@ class Fix8(QMainWindow):
         # print(self.selected_fixation)
 
 
-
     def button_release_callback(self, event):
         """when released the fixation, update the corrected fixations"""
 
@@ -1939,9 +1938,10 @@ class Fix8(QMainWindow):
         self.layer_fixation_color.addWidget(self.button_coloblind_assist)
 
         self.filters.addLayout(self.layer_fixation_color)
+        self.left_side.addLayout(self.below_canvas)
         # --
 
-        self.right_side.addLayout(self.below_canvas)
+        #self.right_side.addLayout(self.below_canvas)
 
         # add both sides to overall wrapper layout
         self.wrapper_layout.addLayout(self.left_side)
