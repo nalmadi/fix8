@@ -204,6 +204,7 @@ class Fix8(QMainWindow):
 
         # fields relating to the correction algorithm
         self.algorithm = "manual"
+        self.algorithm_function = None
         self.suggested_corrections, self.single_suggestion = (
             None,
             None,
@@ -240,7 +241,11 @@ class Fix8(QMainWindow):
         self.lesser_value = 0
         self.greater_value = 0
 
-    def warp_auto(self):
+    def run_warp(self):
+
+        self.algorithm_function = self.run_warp
+        self.algorithm = "warp"
+
         fixation_XY = copy.deepcopy(self.fixations)
         fixation_XY = fixation_XY[:, 0:2]
         fixation_XY = np.array(fixation_XY)
@@ -251,11 +256,15 @@ class Fix8(QMainWindow):
 
         self.suggested_corrections = copy.deepcopy(self.fixations)
 
-        # select warp as an algorithm
+        # run warp as an algorithm
         self.suggested_corrections[:, 0:2] = da.warp(fixation_XY, word_XY)
         self.status_text = self.algorithm + " Algorithm Selected"
         self.statusBar.showMessage(self.status_text)
         self.relevant_buttons("algorithm_selected")
+
+    def warp_auto(self):
+
+        self.run_warp()
 
         # correct all
         self.correct_all_fixations()
@@ -264,21 +273,8 @@ class Fix8(QMainWindow):
         self.progress_bar.setValue(self.progress_bar.maximum())
 
     def warp_semi(self):
-        fixation_XY = copy.deepcopy(self.fixations)
-        fixation_XY = fixation_XY[:, 0:2]
-        fixation_XY = np.array(fixation_XY)
-        line_Y = self.find_lines_y(self.aoi)
-        line_Y = np.array(line_Y)
-        word_XY = self.find_word_centers(self.aoi)
-        word_XY = np.array(word_XY)
 
-        self.suggested_corrections = copy.deepcopy(self.fixations)
-
-        # select warp as an algorithm
-        self.suggested_corrections[:, 0:2] = da.warp(fixation_XY, word_XY)
-        self.status_text = self.algorithm + " Algorithm Selected"
-        self.statusBar.showMessage(self.status_text)
-        self.relevant_buttons("algorithm_selected")
+        self.run_warp()
 
         # show suggestion
         self.checkbox_show_suggestion.setChecked(True)
@@ -294,10 +290,14 @@ class Fix8(QMainWindow):
         # show suggestion
         self.checkbox_show_suggestion.setChecked(False)
 
-    """get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon),
-    selected_fixation is an index, not the actual scatter point"""
+
 
     def get_selected_fixation(self, event):
+        """
+        get the selected fixation that the user picks, with the selection 
+        inside a specific diameter range (epsilon), selected_fixation is an 
+        index, not the actual scatter point
+        """
         if self.scatter is not None:
             self.xy = np.asarray(self.scatter.get_offsets())
 
@@ -344,10 +344,13 @@ class Fix8(QMainWindow):
         self.selected_fixation = self.get_selected_fixation(event)
         # print(self.selected_fixation)
 
-    """when released the fixation, update the corrected fixations"""
+
 
     def button_release_callback(self, event):
+        """when released the fixation, update the corrected fixations"""
+
         if self.selected_fixation is not None:
+            # write metadata
             self.metadata += (
                 "manual_moving, fixation "
                 + str(self.selected_fixation)
@@ -364,53 +367,53 @@ class Fix8(QMainWindow):
                 + "\n"
             )
 
-            self.fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][
-                0
-            ]
-            self.fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][
-                1
-            ]
+            # move fixation
+            self.fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
+            self.fixations[self.selected_fixation][1] = self.xy[self.selected_fixation][1]
+
+            # update correction based on algorithm
 
             if self.algorithm != "manual" and self.algorithm is not None:
-                # run correction
-                fixation_XY = np.array([self.fixations[self.selected_fixation]])
-                fixation_XY = fixation_XY[:, 0:2]
-                line_Y = self.find_lines_y(self.aoi)
-                line_Y = np.array(line_Y)
+                self.algorithm_function()
+                # # run correction
+                # fixation_XY = np.array([self.fixations[self.selected_fixation]])
+                # fixation_XY = fixation_XY[:, 0:2]
+                # line_Y = self.find_lines_y(self.aoi)
+                # line_Y = np.array(line_Y)
 
-                word_XY = self.find_word_centers(self.aoi)
-                word_XY = np.array(word_XY)
+                # word_XY = self.find_word_centers(self.aoi)
+                # word_XY = np.array(word_XY)
 
-                if self.algorithm == "attach":
-                    updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[
-                        0
-                    ]
-                elif self.algorithm == "chain":
-                    updated_correction = da.chain(copy.deepcopy(fixation_XY), line_Y)[0]
-                # elif self.algorithm == 'cluster':
-                #     updated_correction = da.cluster(copy.deepcopy(fixation_XY), line_Y)[0]
-                elif self.algorithm == "merge":
-                    self.suupdated_correction = da.merge(
-                        copy.deepcopy(fixation_XY), line_Y
-                    )[0]
-                elif self.algorithm == "regress":
-                    updated_correction = da.regress(copy.deepcopy(fixation_XY), line_Y)[
-                        0
-                    ]
-                elif self.algorithm == "segment":
-                    updated_correction = da.segment(copy.deepcopy(fixation_XY), line_Y)[
-                        0
-                    ]
-                # elif self.algorithm == 'split':
-                #     updated_correction = da.split(copy.deepcopy(fixation_XY), line_Y)[0]
-                elif self.algorithm == "stretch":
-                    updated_correction = da.stretch(copy.deepcopy(fixation_XY), line_Y)[
-                        0
-                    ]
-                elif self.algorithm == "warp":
-                    updated_correction = da.warp(copy.deepcopy(fixation_XY), word_XY)[0]
+                # if self.algorithm == "attach":
+                #     updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[
+                #         0
+                #     ]
+                # elif self.algorithm == "chain":
+                #     updated_correction = da.chain(copy.deepcopy(fixation_XY), line_Y)[0]
+                # # elif self.algorithm == 'cluster':
+                # #     updated_correction = da.cluster(copy.deepcopy(fixation_XY), line_Y)[0]
+                # elif self.algorithm == "merge":
+                #     self.suupdated_correction = da.merge(
+                #         copy.deepcopy(fixation_XY), line_Y
+                #     )[0]
+                # elif self.algorithm == "regress":
+                #     updated_correction = da.regress(copy.deepcopy(fixation_XY), line_Y)[
+                #         0
+                #     ]
+                # elif self.algorithm == "segment":
+                #     updated_correction = da.segment(copy.deepcopy(fixation_XY), line_Y)[
+                #         0
+                #     ]
+                # # elif self.algorithm == 'split':
+                # #     updated_correction = da.split(copy.deepcopy(fixation_XY), line_Y)[0]
+                # elif self.algorithm == "stretch":
+                #     updated_correction = da.stretch(copy.deepcopy(fixation_XY), line_Y)[
+                #         0
+                #     ]
+                # elif self.algorithm == "warp":
+                #     updated_correction = da.warp(copy.deepcopy(fixation_XY), word_XY)[0]
 
-                self.suggested_corrections[self.selected_fixation, :2] = updated_correction
+                # self.suggested_corrections[self.selected_fixation, :2] = updated_correction
                 # self.update_suggestion()
 
             if self.checkbox_show_saccades.isChecked():
@@ -418,6 +421,7 @@ class Fix8(QMainWindow):
                 self.show_saccades(Qt.Checked)
             else:
                 self.show_saccades(Qt.Unchecked)
+        
         if event.button != 1:
             return
         # self.selected_fixation = None
@@ -1334,7 +1338,7 @@ class Fix8(QMainWindow):
 
 
     def save_corrections(self):
-        """save a JSON object of the corrections to a file"""
+        """ save correction to a json file and metadata to csv file """
 
         qfd = QFileDialog()
         default_file_name = self.trial_path.replace('.json', '') + '_CORRECTED_json'
@@ -1352,8 +1356,6 @@ class Fix8(QMainWindow):
 
             with open(f"{new_correction_file_name}", "w") as f:
                 json.dump(corrected_fixations, f)
-
-            # TODO: write a function for adding things to metadata and another function to save metadata file
                 
             self.duration = (time.time() - self.timer_start)
             today = date.today()
