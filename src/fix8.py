@@ -71,6 +71,7 @@ from datetime import date
 from pathlib import Path
 
 import mini_emtk
+from merge_fixations_dialog import InputDialog
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
@@ -132,6 +133,7 @@ class Fix8(QMainWindow):
 
         self.lowpass_duration_filter_action = QAction("Filters less than", self)
         self.highpass_duration_filter_action = QAction("Filters greater than", self)
+        self.merge_fixations_filter_action = QAction("Merge Fixations", self)
 
         self.manual_correction_action = QAction("Manual", self)
         self.warp_auto_action = QAction("Warp", self)
@@ -161,6 +163,7 @@ class Fix8(QMainWindow):
 
         self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
+        self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
         
         self.warp_auto_action.triggered.connect(self.warp_auto)
         self.warp_semi_action.triggered.connect(self.warp_semi)
@@ -177,6 +180,7 @@ class Fix8(QMainWindow):
 
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
         self.filters_menu.addAction(self.highpass_duration_filter_action)
+        self.filters_menu.addAction(self.merge_fixations_filter_action)
 
         self.correction_menu.addAction(self.manual_correction_action)
         self.automated_correction_menu.addAction(self.warp_auto_action)
@@ -313,6 +317,12 @@ class Fix8(QMainWindow):
         self.draw_canvas(self.fixations, draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
+
+    def merge_fixations(self):
+        dialog = InputDialog()
+        dialog.exec()
+        print(dialog.getInputs())
+        pass
 
     def run_warp(self):
 
