@@ -21,7 +21,6 @@ eye tracking data.  Fix8 supports manual, automated, and semi-automated
 correction methods for eye tracking data in reading tasks.
 
 (If you use Fix8 in academic research, please cite our paper)
-
 """
 
 
@@ -121,10 +120,10 @@ class Fix8(QMainWindow):
         self.file_menu = self.menuBar().addMenu("File")
         self.edit_menu = self.menuBar().addMenu("Edit")
         self.filters_menu = self.menuBar().addMenu("Filters")
-        self.generate_menu = self.menuBar().addMenu("Generate")
+        #self.generate_menu = self.menuBar().addMenu("Generate")
         self.correction_menu = self.menuBar().addMenu("Correction")
         self.automated_correction_menu = self.correction_menu.addMenu("Automatic")
-        self.semi_auto_correction_menu = self.correction_menu.addMenu("Semi-automatic")
+        self.semi_auto_correction_menu = self.correction_menu.addMenu("Assisted")
 
         # add actions
         self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
@@ -152,6 +151,9 @@ class Fix8(QMainWindow):
 
         # enable/disable
         self.save_correction_action.setEnabled(False)
+        self.edit_menu.setEnabled(False)
+        self.filters_menu.setEnabled(False)
+        self.correction_menu.setEnabled(False)
 
         # connect functions
         self.new_file_action.triggered.connect(self.open_trial_folder)
@@ -208,7 +210,6 @@ class Fix8(QMainWindow):
         )  # single suggestion is the current suggestion
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
-        self.file_saved = 0
         self.timer_start = 0  # beginning time of trial
         self.duration = 0
         self.user = ""
@@ -587,15 +588,17 @@ class Fix8(QMainWindow):
 
                 self.relevant_buttons("opened_stimulus")
 
-    """when a trial from the trial list is double clicked, find the fixations of the trial
-        parameters:
-        item - the value passed through when clicking a trial object in the list"""
+
 
     def trial_double_clicked(self, item):
+        """
+        when a trial from the trial list is double clicked, find the fixations of the trial
+        parameters:
+        item - the value passed through when clicking a trial object in the list
+        """
+        
         # reset times saved if a DIFFERENT trial was selected
         self.trial_name = item.text()
-        if self.trials[item.text()] != self.trial_path:
-            self.file_saved = 0
         self.trial_path = self.trials[item.text()]
 
         self.find_fixations(self.trial_path)
@@ -1314,22 +1317,27 @@ class Fix8(QMainWindow):
 
         self.previous_fixation()
 
-    """save a JSON object of the corrections to a file"""
 
     def save_corrections(self):
-        if self.fixations is not None:
+        """save a JSON object of the corrections to a file"""
+
+        qfd = QFileDialog()
+        default_file_name = self.trial_path.replace('.json', '') + '_CORRECTED_json'
+        new_correction_file_path, _ = qfd.getSaveFileName(self, "Save correction", default_file_name)
+
+        if len(self.fixations) > 0:
             list = self.fixations.tolist()
+
             corrected_fixations = {}
             for i in range(len(self.fixations)):
                 corrected_fixations[i + 1] = list[i]
-            with open(
-                f"{self.trial_path.replace('.json', '_CORRECTED' + '.json')}", "w"
-            ) as f:
+
+            with open(f"{new_correction_file_path.replace('.json', '') + '_CORRECTED.json'}", "w") as f:
                 json.dump(corrected_fixations, f)
-            self.file_saved += 1
-            self.duration = (
-                time.time() - self.timer_start
-            )  # store in a file called metadata which includes the file name they were correcting, the image, and the duration
+
+            # TODO: write a function for adding things to metadata and another function to save metadata file
+                
+            self.duration = (time.time() - self.timer_start)
             today = date.today()
 
             headers = "event,event details,timestamp\n"
@@ -1348,23 +1356,15 @@ class Fix8(QMainWindow):
                 + "\n"
             )
 
-            metadata_file_path = Path(
-                f"{self.trial_path.replace(self.trial_path.split('/')[-1], str(self.trial_name) + 'metadata.csv')}"
-            )
+            metadata_file_name = new_correction_file_path + '_metadata.csv'
+            metadata_file_path = Path(f"{metadata_file_name}")
 
-            metadata_file_exists = metadata_file_path.is_file()
-
-            if metadata_file_exists == False:
-                with open(metadata_file_path, "w", newline="") as meta_file:
+            with open(metadata_file_path, "w", newline="") as meta_file:
                     meta_file.write(headers)
                     meta_file.write(self.metadata)
                     self.metadata = ""
-            else:
-                with open(metadata_file_path, "a", newline="") as meta_file:
-                    meta_file.write(self.metadata)
-                    self.metadata = ""
 
-            self.status_text = "Corrections Saved to" + " " + self.trial_path
+            self.status_text = "Corrections Saved to" + " " + metadata_file_name
             self.statusBar.showMessage(self.status_text)
 
         else:
@@ -1877,7 +1877,6 @@ class Fix8(QMainWindow):
     def relevant_buttons(self, feature):
         if feature == "opened_stimulus":
             # self.button_open_folder.setEnabled(True)
-            self.save_correction_action.setEnabled(True)
             self.checkbox_show_aoi.setCheckable(True)
             self.checkbox_show_aoi.setChecked(False)
             self.checkbox_show_aoi.setEnabled(True)
@@ -1929,6 +1928,10 @@ class Fix8(QMainWindow):
             self.dropdown_select_algorithm.setEnabled(False)
         elif feature == "trial_clicked":
             # self.button_save_corrections.setEnabled(True)
+            self.save_correction_action.setEnabled(True)
+            self.edit_menu.setEnabled(True)
+            self.filters_menu.setEnabled(True)
+            self.correction_menu.setEnabled(True)
 
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
