@@ -7,12 +7,12 @@
 #          Ricky Peng
 #
 #
-# URL: <https://github.com/nalmadi/fix8>
+# URL: https://github.com/nalmadi/fix8
 #
 #
 # The algorithms were implemented by:
 #          Jon Carr
-# URL: <https://github.com/jwcarr/drift>
+# URL: https://github.com/jwcarr/drift
 # For license information, see LICENSE.TXT
 
 """
@@ -22,7 +22,6 @@ correction methods for eye tracking data in reading tasks.
 
 (If you use Fix8 in academic research, please cite our paper)
 """
-
 
 import time
 
@@ -47,7 +46,7 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QVBoxLayout,
     QWidget,
-    QButtonGroup,
+    QInputDialog,
     QLineEdit,
     QListWidget,
     QListWidgetItem,
@@ -127,14 +126,15 @@ class Fix8(QMainWindow):
 
         # add actions
         self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
-        self.save_correction_action = QAction(
-            QIcon("./.images/save.png"), "Save Correction", self
-        )
+        self.save_correction_action = QAction( QIcon("./.images/save.png"), "Save Correction", self)
 
         self.next_fixation_action = QAction("Next Fixation", self)
         self.previous_fixation_action = QAction("Previous Fixation", self)
         self.accept_and_next_action = QAction("Accept suggestion and next", self)
         self.delete_fixation_action = QAction("Delete Fixation", self)
+
+        self.lowpass_duration_filter_action = QAction("Filters less than", self)
+        self.highpass_duration_filter_action = QAction("Filters greater than", self)
 
         self.manual_correction_action = QAction("Manual", self)
         self.warp_auto_action = QAction("Warp", self)
@@ -161,6 +161,9 @@ class Fix8(QMainWindow):
 
         self.next_fixation_action.triggered.connect(self.next_fixation)
         self.previous_fixation_action.triggered.connect(self.previous_fixation)
+
+        self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
+        self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
         
         self.warp_auto_action.triggered.connect(self.warp_auto)
         self.warp_semi_action.triggered.connect(self.warp_semi)
@@ -174,6 +177,9 @@ class Fix8(QMainWindow):
         self.edit_menu.addAction(self.previous_fixation_action)
         self.edit_menu.addAction(self.accept_and_next_action)
         self.edit_menu.addAction(self.delete_fixation_action)
+
+        self.filters_menu.addAction(self.lowpass_duration_filter_action)
+        self.filters_menu.addAction(self.highpass_duration_filter_action)
 
         self.correction_menu.addAction(self.manual_correction_action)
         self.automated_correction_menu.addAction(self.warp_auto_action)
@@ -237,9 +243,77 @@ class Fix8(QMainWindow):
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
 
-        # fields related to duration filters
-        self.lesser_value = 0
-        self.greater_value = 0
+
+    def lowpass_duration_filter(self):
+        
+        minimum_value = 1
+        maximum_value = 99
+        default_value = 80
+        title = "Less Than Duration Filter"
+        message = "Remove fixations with durations less than"
+        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        self.metadata += (
+            "filter,removed fixations less than than "
+            + str(threshold)
+            + ","
+            + str(time.time())
+            + "\n"
+        )
+
+        self.fixations = self.fixations[self.fixations[:, 2] > int(threshold)]
+        self.current_fixation = 0
+
+        if self.algorithm != "manual" and self.suggested_corrections is not None:
+            if self.current_fixation == len(self.fixations):
+                self.current_fixation = len(self.fixations) - 1
+
+            self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] > int(threshold)]
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation)
+
+        self.draw_canvas(self.fixations, draw_all=True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+
+    
+    def highpass_duration_filter(self):
+        minimum_value = 100
+        maximum_value = 2000
+        default_value = 800
+        title = "Greater Than Duration Filter"
+        message = "Remove fixations with durations greater than"
+        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        self.metadata += (
+            "filter,removed fixations greater than than "
+            + str(threshold)
+            + ","
+            + str(time.time())
+            + "\n"
+        )
+
+        self.fixations = self.fixations[self.fixations[:, 2] < int(threshold)]
+        self.current_fixation = 0
+
+        if self.algorithm != "manual" and self.suggested_corrections is not None:
+            if self.current_fixation == len(self.fixations):
+                self.current_fixation = len(self.fixations) - 1
+
+            self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < int(threshold)]
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation)
+
+        self.draw_canvas(self.fixations, draw_all=True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+
 
     def run_warp(self):
 
@@ -289,6 +363,9 @@ class Fix8(QMainWindow):
         self.progress_bar.setValue(self.progress_bar.minimum())
 
     def manual_correction(self):
+
+        self.algorithm_function = None
+        self.algorithm = "manual"
 
         self.suggested_corrections = copy.deepcopy(self.fixations)
         self.checkbox_show_suggestion.setEnabled(False)
@@ -477,7 +554,7 @@ class Fix8(QMainWindow):
             self.previous_fixation()
 
         # alt: accept and next 16777251
-        if e.key() == 16777251 and self.button_confirm_suggestion.isEnabled():
+        if e.key() == 16777251 and self.algorithm_function != None:
             self.metadata += "key,accept suggestion," + str(time.time()) + "\n"
             self.confirm_suggestion()
 
@@ -1231,9 +1308,10 @@ class Fix8(QMainWindow):
         # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
         #    self.update_suggestion()
 
-    """when the next fixation button is clicked, call this function and find the suggested correction for this fixation"""
+
 
     def next_fixation(self):
+        """when the next fixation button is clicked, call this function and find the suggested correction for this fixation"""
         # if self.suggested_corrections is not None:
         if self.current_fixation == len(self.fixations) - 1:
             self.current_fixation = -1
@@ -1277,9 +1355,10 @@ class Fix8(QMainWindow):
         self.current_fixation = 1
         self.update_suggestion()
 
-    """ when the confirm button is clicked, the suggested correction replaces the current fixation"""
+
 
     def confirm_suggestion(self):
+        """ when the confirm button is clicked, the suggested correction replaces the current fixation"""
         self.metadata += (
             "auto_moving, fixation "
             + str(self.current_fixation)
@@ -1302,6 +1381,7 @@ class Fix8(QMainWindow):
         self.fixations[self.current_fixation][1] = y
 
         self.next_fixation()
+
 
     def undo_suggestion(self):
         self.metadata += (
@@ -1389,7 +1469,6 @@ class Fix8(QMainWindow):
             qmb.setText("No Corrections Made")
             qmb.exec_()
 
-    # progress bar updated in tool
     def progress_bar_updated(self, value, draw=True):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
@@ -1407,76 +1486,76 @@ class Fix8(QMainWindow):
         # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
         #    self.update_suggestion()
 
-    """Activates when the lesser value filter changes"""
 
-    def lesser_value_changed(self, value):
-        self.lesser_value = value
+    # def lesser_value_changed(self, value):
+    #     """Activates when the lesser value filter changes"""
+    #     self.lesser_value = value
 
-    def lesser_value_confirmed(self):
-        # set lesser_value to value of the greater value filter
-        self.lesser_value = self.input_lesser.text()
+    # def lesser_value_confirmed(self):
+    #     # set lesser_value to value of the greater value filter
+    #     self.lesser_value = self.input_lesser.text()
 
-        # writing a log in metadata
-        self.metadata += (
-            "filter,removed fixations less than "
-            + self.lesser_value
-            + ","
-            + str(time.time())
-            + "\n"
-        )
+    #     # writing a log in metadata
+    #     self.metadata += (
+    #         "filter,removed fixations less than "
+    #         + self.lesser_value
+    #         + ","
+    #         + str(time.time())
+    #         + "\n"
+    #     )
 
-        self.fixations = self.fixations[self.fixations[:, 2] > int(self.lesser_value)]
-        self.current_fixation = 0
-        if self.algorithm != "manual" and self.suggested_corrections is not None:
-            if self.current_fixation == len(self.fixations):
-                # off by one error, since deleting fixation moves current onto the next fixation
-                self.current_fixation -= 1
-            self.suggested_corrections = self.suggested_corrections[
-                self.suggested_corrections[:, 2] > int(self.lesser_value)
-            ]
+    #     self.fixations = self.fixations[self.fixations[:, 2] > int(self.lesser_value)]
+    #     self.current_fixation = 0
+    #     if self.algorithm != "manual" and self.suggested_corrections is not None:
+    #         if self.current_fixation == len(self.fixations):
+    #             # off by one error, since deleting fixation moves current onto the next fixation
+    #             self.current_fixation -= 1
+    #         self.suggested_corrections = self.suggested_corrections[
+    #             self.suggested_corrections[:, 2] > int(self.lesser_value)
+    #         ]
 
-        temp = self.current_fixation
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
-        self.progress_bar_updated(temp)
+    #     temp = self.current_fixation
+    #     self.progress_bar.setMaximum(len(self.fixations) - 1)
+    #     self.progress_bar_updated(temp)
 
-        self.draw_canvas(self.fixations, draw_all=True)
-        self.progress_bar_updated(self.current_fixation, draw=False)
+    #     self.draw_canvas(self.fixations, draw_all=True)
+    #     self.progress_bar_updated(self.current_fixation, draw=False)
 
-    """Activates when the greater value filter changes"""
 
-    def greater_value_changed(self, value):
-        self.greater_value = value
+    # def greater_value_changed(self, value):
+    #     """Activates when the greater value filter changes"""
+    #     self.greater_value = value
 
-    def greater_value_confirmed(self):
-        # set greater_value to value of the greater value filter
-        self.greater_value = self.input_greater.text()
+    # def greater_value_confirmed(self):
+    #     # set greater_value to value of the greater value filter
+    #     self.greater_value = self.input_greater.text()
 
-        # writing a log in metadata
-        self.metadata += (
-            "filter,removed fixations greater than "
-            + self.greater_value
-            + ","
-            + str(time.time())
-            + "\n"
-        )
+    #     # writing a log in metadata
+    #     self.metadata += (
+    #         "filter,removed fixations greater than "
+    #         + self.greater_value
+    #         + ","
+    #         + str(time.time())
+    #         + "\n"
+    #     )
 
-        self.fixations = self.fixations[self.fixations[:, 2] < int(self.greater_value)]
-        self.current_fixation = 0
-        if self.algorithm != "manual" and self.suggested_corrections is not None:
-            if self.current_fixation == len(self.fixations):
-                # off by one error, since deleting fixation moves current onto the next fixation
-                self.current_fixation -= 1
+    #     self.fixations = self.fixations[self.fixations[:, 2] < int(self.greater_value)]
+    #     self.current_fixation = 0
+    #     if self.algorithm != "manual" and self.suggested_corrections is not None:
+    #         if self.current_fixation == len(self.fixations):
+    #             # off by one error, since deleting fixation moves current onto the next fixation
+    #             self.current_fixation -= 1
 
-            self.suggested_corrections = self.suggested_corrections[
-                self.suggested_corrections[:, 2] < int(self.greater_value)
-            ]
+    #         self.suggested_corrections = self.suggested_corrections[
+    #             self.suggested_corrections[:, 2] < int(self.greater_value)
+    #         ]
 
-        temp = self.current_fixation
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
-        self.progress_bar_updated(temp)
+    #     temp = self.current_fixation
+    #     self.progress_bar.setMaximum(len(self.fixations) - 1)
+    #     self.progress_bar_updated(temp)
 
-        self.draw_canvas(self.fixations, draw_all=True)
-        self.progress_bar_updated(self.current_fixation, draw=False)
+    #     self.draw_canvas(self.fixations, draw_all=True)
+    #     self.progress_bar_updated(self.current_fixation, draw=False)
 
     def aoi_height_changed(self, value):
         self.aoi_height = value
@@ -1551,35 +1630,35 @@ class Fix8(QMainWindow):
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
 
         # section for fixation size filters
-        self.greater_inputs = QHBoxLayout()
-        self.input_greater = QLineEdit()
-        self.input_greater.textChanged.connect(self.greater_value_changed)
-        self.input_greater.setEnabled(False)
-        self.input_greater.setText("1000")
-        self.button_greater = QPushButton("Remove Fixations >")
-        self.button_greater.setEnabled(False)
-        self.button_greater.clicked.connect(self.greater_value_confirmed)
-        self.greater_inputs.addWidget(self.input_greater)
-        self.greater_inputs.addWidget(self.button_greater)
+        # self.greater_inputs = QHBoxLayout()
+        # self.input_greater = QLineEdit()
+        # self.input_greater.textChanged.connect(self.greater_value_changed)
+        # self.input_greater.setEnabled(False)
+        # self.input_greater.setText("1000")
+        # self.button_greater = QPushButton("Remove Fixations >")
+        # self.button_greater.setEnabled(False)
+        # self.button_greater.clicked.connect(self.greater_value_confirmed)
+        # self.greater_inputs.addWidget(self.input_greater)
+        # self.greater_inputs.addWidget(self.button_greater)
 
-        self.lesser_inputs = QHBoxLayout()
-        self.input_lesser = QLineEdit()
-        self.input_lesser.textChanged.connect(self.lesser_value_changed)
-        self.input_lesser.setEnabled(False)
-        self.input_lesser.setText("50")
-        self.button_lesser = QPushButton("Remove Fixations <")
-        self.button_lesser.setEnabled(False)
-        self.button_lesser.clicked.connect(self.lesser_value_confirmed)
-        self.lesser_inputs.addWidget(self.input_lesser)
-        self.lesser_inputs.addWidget(self.button_lesser)
+        # self.lesser_inputs = QHBoxLayout()
+        # self.input_lesser = QLineEdit()
+        # self.input_lesser.textChanged.connect(self.lesser_value_changed)
+        # self.input_lesser.setEnabled(False)
+        # self.input_lesser.setText("50")
+        # self.button_lesser = QPushButton("Remove Fixations <")
+        # self.button_lesser.setEnabled(False)
+        # self.button_lesser.clicked.connect(self.lesser_value_confirmed)
+        # self.lesser_inputs.addWidget(self.input_lesser)
+        # self.lesser_inputs.addWidget(self.button_lesser)
 
         widget_list = [self.trial_list]
 
         for w in widget_list:
             self.left_side.addWidget(w)
 
-        self.left_side.addLayout(self.greater_inputs)
-        self.left_side.addLayout(self.lesser_inputs)
+        # self.left_side.addLayout(self.greater_inputs)
+        # self.left_side.addLayout(self.lesser_inputs)
         # ---
 
         # --- canvas
@@ -1917,10 +1996,10 @@ class Fix8(QMainWindow):
             self.checkbox_show_fixations.setCheckable(False)
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setEnabled(False)
-            self.input_lesser.setEnabled(False)
-            self.input_greater.setEnabled(False)
-            self.button_lesser.setEnabled(False)
-            self.button_greater.setEnabled(False)
+            # self.input_lesser.setEnabled(False)
+            # self.input_greater.setEnabled(False)
+            # self.button_lesser.setEnabled(False)
+            # self.button_greater.setEnabled(False)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal
             # happens in the checkbox connected method,
@@ -1968,10 +2047,10 @@ class Fix8(QMainWindow):
             self.checkbox_show_saccades.setCheckable(True)
             self.checkbox_show_saccades.setEnabled(True)
 
-            self.input_lesser.setEnabled(True)
-            self.input_greater.setEnabled(True)
-            self.button_lesser.setEnabled(True)
-            self.button_greater.setEnabled(True)
+            # self.input_lesser.setEnabled(True)
+            # self.input_greater.setEnabled(True)
+            # self.button_lesser.setEnabled(True)
+            # self.button_greater.setEnabled(True)
 
             self.toggle_aoi_width.setEnabled(True)
             self.toggle_aoi_height.setEnabled(True)
