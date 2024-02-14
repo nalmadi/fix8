@@ -165,8 +165,8 @@ class Fix8(QMainWindow):
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
         self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
         
-        self.warp_auto_action.triggered.connect(self.warp_auto)
-        self.warp_semi_action.triggered.connect(self.warp_semi)
+        self.warp_auto_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'auto'))
+        self.warp_semi_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'semi'))
         self.manual_correction_action.triggered.connect(self.manual_correction)
 
         # add actions to menu
@@ -212,10 +212,8 @@ class Fix8(QMainWindow):
         # fields relating to the correction algorithm
         self.algorithm = "manual"
         self.algorithm_function = None
-        self.suggested_corrections, self.single_suggestion = (
-            None,
-            None,
-        )  # single suggestion is the current suggestion
+        self.suggested_corrections, self.suggested_suggestion = None, None
+        # single suggestion is the current suggestion
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
         self.timer_start = 0  # beginning time of trial
@@ -362,7 +360,7 @@ class Fix8(QMainWindow):
         self.fixations = np.array(new_fixations)
 
         if self.algorithm != "manual" and self.suggested_corrections is not None:
-            self.run_warp()
+            self.run_correction()
 
         if self.current_fixation >= len(self.fixations):
             self.current_fixation = len(self.fixations) - 1
@@ -374,10 +372,7 @@ class Fix8(QMainWindow):
         self.progress_bar_updated(self.current_fixation, draw=False)
 
 
-    def run_warp(self):
-
-        self.algorithm_function = self.run_warp
-        self.algorithm = "warp"
+    def run_correction(self):
 
         fixation_XY = copy.deepcopy(self.fixations)
         fixation_XY = fixation_XY[:, 0:2]
@@ -390,57 +385,54 @@ class Fix8(QMainWindow):
         self.suggested_corrections = copy.deepcopy(self.fixations)
 
         # run warp as an algorithm
-        self.suggested_corrections[:, 0:2] = da.warp(fixation_XY, word_XY)
+        if self.algorithm != "warp":
+            self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, line_Y)
+        else:
+            self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, word_XY)
+
         self.status_text = self.algorithm + " Algorithm Selected"
         self.statusBar.showMessage(self.status_text)
         self.relevant_buttons("algorithm_selected")
 
-    def warp_auto(self):
+    def run_algorithm(self, algorithm_name, algorithm_function, mode):
 
-        self.run_warp()
-
-        # write metadata
-        self.metadata += ("selected, algorithm " + str(self.algorithm) + "," + str(time.time()) + "\n")
-
-        # correct all
-        self.correct_all_fixations()
-
-        # hide suggestion
-        self.checkbox_show_suggestion.setEnabled(False)
-        self.checkbox_show_suggestion.setChecked(False)
-        self.checkbox_show_suggestion.setCheckable(False)
-
-        # update progress bar to end
-        self.progress_bar.setValue(self.progress_bar.maximum())
-
-    def warp_semi(self):
-
-        self.run_warp()
+        self.algorithm = algorithm_name
+        self.algorithm_function = algorithm_function
+        self.run_correction()
 
         # write metadata
         self.metadata += ("selected, algorithm " + str(self.algorithm) + "," + str(time.time()) + "\n")
 
-        # show suggestion
-        self.checkbox_show_suggestion.setCheckable(True)
-        self.checkbox_show_suggestion.setEnabled(True)
-        self.checkbox_show_suggestion.setChecked(True)
-        
-
-        # update progress bar to end
-        self.progress_bar.setValue(self.progress_bar.minimum())
+        if mode == 'semi':
+            # show suggestion
+            self.checkbox_show_suggestion.setCheckable(True)
+            self.checkbox_show_suggestion.setEnabled(True)
+            self.checkbox_show_suggestion.setChecked(True)
+            # update progress bar to end
+            self.progress_bar.setValue(self.progress_bar.minimum())
+        else:
+            # correct all
+            self.correct_all_fixations()
+            # hide suggestion
+            self.checkbox_show_suggestion.setEnabled(False)
+            self.checkbox_show_suggestion.setChecked(False)
+            self.checkbox_show_suggestion.setCheckable(False)
+            # update progress bar to end
+            self.progress_bar.setValue(self.progress_bar.maximum())
 
     def manual_correction(self):
 
         self.algorithm_function = None
         self.algorithm = "manual"
 
+        # write metadata
+        self.metadata += ("selected, " + str(self.algorithm) + "," + str(time.time()) + "\n")
+
         self.suggested_corrections = copy.deepcopy(self.fixations)
         self.checkbox_show_suggestion.setEnabled(False)
 
         # show suggestion
         self.checkbox_show_suggestion.setChecked(False)
-
-
 
     def get_selected_fixation(self, event):
         """
@@ -523,7 +515,7 @@ class Fix8(QMainWindow):
             # update correction based on algorithm
 
             if self.algorithm != "manual" and self.algorithm is not None:
-                self.algorithm_function()
+                self.run_correction()
                 # # run correction
                 # fixation_XY = np.array([self.fixations[self.selected_fixation]])
                 # fixation_XY = fixation_XY[:, 0:2]
@@ -1026,7 +1018,7 @@ class Fix8(QMainWindow):
             y = self.suggested_corrections[self.current_fixation][1]
             duration = self.fixations[self.current_fixation][2]
 
-            self.single_suggestion = self.canvas.ax.scatter(
+            self.suggested_suggestion = self.canvas.ax.scatter(
                 x,
                 y,
                 s=30 * (duration / 50) ** 1.8,
@@ -1167,7 +1159,6 @@ class Fix8(QMainWindow):
 
         # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
         #    self.update_suggestion()
-
 
 
     def next_fixation(self):
