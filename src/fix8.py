@@ -562,46 +562,6 @@ class Fix8(QMainWindow):
 
             if self.algorithm != "manual" and self.algorithm is not None:
                 self.run_correction()
-                # # run correction
-                # fixation_XY = np.array([self.fixations[self.selected_fixation]])
-                # fixation_XY = fixation_XY[:, 0:2]
-                # line_Y = self.find_lines_y(self.aoi)
-                # line_Y = np.array(line_Y)
-
-                # word_XY = self.find_word_centers(self.aoi)
-                # word_XY = np.array(word_XY)
-
-                # if self.algorithm == "attach":
-                #     updated_correction = da.attach(copy.deepcopy(fixation_XY), line_Y)[
-                #         0
-                #     ]
-                # elif self.algorithm == "chain":
-                #     updated_correction = da.chain(copy.deepcopy(fixation_XY), line_Y)[0]
-                # # elif self.algorithm == 'cluster':
-                # #     updated_correction = da.cluster(copy.deepcopy(fixation_XY), line_Y)[0]
-                # elif self.algorithm == "merge":
-                #     self.suupdated_correction = da.merge(
-                #         copy.deepcopy(fixation_XY), line_Y
-                #     )[0]
-                # elif self.algorithm == "regress":
-                #     updated_correction = da.regress(copy.deepcopy(fixation_XY), line_Y)[
-                #         0
-                #     ]
-                # elif self.algorithm == "segment":
-                #     updated_correction = da.segment(copy.deepcopy(fixation_XY), line_Y)[
-                #         0
-                #     ]
-                # # elif self.algorithm == 'split':
-                # #     updated_correction = da.split(copy.deepcopy(fixation_XY), line_Y)[0]
-                # elif self.algorithm == "stretch":
-                #     updated_correction = da.stretch(copy.deepcopy(fixation_XY), line_Y)[
-                #         0
-                #     ]
-                # elif self.algorithm == "warp":
-                #     updated_correction = da.warp(copy.deepcopy(fixation_XY), word_XY)[0]
-
-                # self.suggested_corrections[self.selected_fixation, :2] = updated_correction
-                # self.update_suggestion()
 
             if self.checkbox_show_saccades.isChecked():
                 self.clear_saccades()
@@ -1075,110 +1035,6 @@ class Fix8(QMainWindow):
         # draw whatever was updated
         self.canvas.draw()
 
-    # def get_algorithm_picked(self, algorithm):
-    #     """
-    #     when the user selects an algorithm from the drop down menu,
-    #     make it the current algorithm to use for automated and semi automated use
-    #     parameters:
-    #     algorithm - the selected correction algorithm
-    #     """
-
-    #     self.algorithm = algorithm.lower()
-
-    #     # write metadata
-    #     self.metadata += (
-    #         "selected,algorithm " + str(algorithm) + "," + str(time.time()) + "\n"
-    #     )
-
-    #     # run correction
-    #     fixation_XY = copy.deepcopy(self.fixations)
-    #     fixation_XY = fixation_XY[:, 0:2]
-    #     fixation_XY = np.array(fixation_XY)
-    #     line_Y = self.find_lines_y(self.aoi)
-    #     line_Y = np.array(line_Y)
-
-    #     word_XY = self.find_word_centers(self.aoi)
-    #     word_XY = np.array(word_XY)
-
-    #     self.suggested_corrections = copy.deepcopy(self.fixations)
-    #     # print(self.corrected_fixations)
-
-    #     if len(self.fixations) > 0:
-    #         if self.algorithm == "attach":
-    #             self.suggested_corrections[:, 0:2] = da.attach(
-    #                 copy.deepcopy(fixation_XY), line_Y
-    #             )
-    #             self.status_text = self.algorithm + " Algorithm Selected"
-    #             self.statusBar.showMessage(self.status_text)
-    #             self.relevant_buttons("algorithm_selected")
-    #             # self.update_suggestion()  # update the current suggestion as well
-    #         elif self.algorithm == "chain":
-    #             self.suggested_corrections[:, 0:2] = da.chain(
-    #                 copy.deepcopy(fixation_XY), line_Y
-    #             )
-    #             self.status_text = self.algorithm + " Algorithm Selected"
-    #             self.statusBar.showMessage(self.status_text)
-    #             self.relevant_buttons("algorithm_selected")
-    #             # self.update_suggestion()
-    #         # elif self.algorithm == 'cluster':
-    #         #     self.suggested_corrections[:, 0:2] = da.cluster(copy.deepcopy(fixation_XY), line_Y)
-    #         #     self.relevant_buttons("algorithm_selected")
-    #         # self.update_suggestion()
-    #         elif self.algorithm == "merge":
-    #             self.suggested_corrections[:, 0:2] = da.merge(
-    #                 copy.deepcopy(fixation_XY), line_Y
-    #             )
-    #             self.status_text = self.algorithm + " Algorithm Selected"
-    #             self.statusBar.showMessage(self.status_text)
-    #             self.relevant_buttons("algorithm_selected")
-    #             # self.update_suggestion()
-    #         elif self.algorithm == "regress":
-    #             self.suggested_corrections[:, 0:2] = da.regress(
-    #                 copy.deepcopy(fixation_XY), line_Y
-    #             )
-    #             self.status_text = self.algorithm + " Algorithm Selected"
-    #             self.statusBar.showMessage(self.status_text)
-    #             self.relevant_buttons("algorithm_selected")
-    #             # self.update_suggestion()
-    #         elif self.algorithm == "segment":
-    #             self.suggested_corrections[:, 0:2] = da.segment(
-    #                 copy.deepcopy(fixation_XY), line_Y
-    #             )
-    #             self.status_text = self.algorithm + " Algorithm Selected"
-    #             self.statusBar.showMessage(self.status_text)
-    #             self.relevant_buttons("algorithm_selected")
-    #             # self.update_suggestion()
-    #         # elif self.algorithm == 'split':
-    #         #     self.suggested_corrections[:, 0:2] = da.split(copy.deepcopy(fixation_XY), line_Y)
-    #         #     self.relevant_buttons("algorithm_selected")
-    #         # self.update_suggestion()
-    #         elif self.algorithm == "stretch":
-    #             self.suggested_corrections[:, 0:2] = da.stretch(
-    #                 copy.deepcopy(fixation_XY), line_Y
-    #             )
-    #             self.status_text = self.algorithm + " Algorithm Selected"
-    #             self.statusBar.showMessage(self.status_text)
-    #             self.relevant_buttons("algorithm_selected")
-    #             # self.update_suggestion()
-    #         elif self.algorithm == "warp":
-    #             self.suggested_corrections[:, 0:2] = da.warp(fixation_XY, word_XY)
-    #             self.status_text = self.algorithm + " Algorithm Selected"
-    #             self.statusBar.showMessage(self.status_text)
-    #             self.relevant_buttons("algorithm_selected")
-    #             # self.update_suggestion()
-    #         else:
-    #             self.status_text = "No Selected Algorithm"
-    #             self.statusBar.showMessage(self.status_text)
-    #             self.relevant_buttons("no_selected_algorithm")
-    #             self.algorithm = None
-    #             # self.update_suggestion()
-    #         self.checkbox_show_suggestion.setChecked(True)
-
-    #         # reset progress bar when algorithm is selected, saving the user one manual step
-    #         self.progress_bar.setValue(self.progress_bar.minimum())
-
-    
-
     def correct_all_fixations(self):
         """if the user presses the correct all fixations button,
         make the corrected fixations the suggested ones from the correction algorithm"""
@@ -1216,41 +1072,10 @@ class Fix8(QMainWindow):
         self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
-        # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-        #    self.update_suggestion()
-
-    # def show_suggestion(self,state):
-    #     if self.checkbox_show_suggestion.isCheckable():
-    #         self.update_suggestion()
-
-    # def update_suggestion(self):
-
-    #     if self.current_fixation != -1:
-    #         pass
-    # remove and replace the last suggestion for the current suggestion
-    # if self.single_suggestion != None:
-    #     #self.single_suggestion.remove()
-    #     self.single_suggestion = None
-    #     self.canvas.draw()
-
-    # if checkbox is checked draw the suggestion, else remove it
-    # if self.checkbox_show_suggestion.isChecked():
-    #     x = self.suggested_corrections[self.current_fixation][0]
-    #     y = self.suggested_corrections[self.current_fixation][1]
-    #     duration = self.corrected_fixations[self.current_fixation][2]
-
-    #     self.single_suggestion = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = 0.4, c = 'blue')
-    #     self.canvas.draw()
-
-    # elif self.single_suggestion != None:
-    #         #self.single_suggestion.remove()
-    #         self.single_suggestion = None
-    #         self.canvas.draw()
 
     def back_to_beginning(self):
         self.current_fixation = 1
         self.update_suggestion()
-
 
 
     def confirm_suggestion(self):
@@ -1379,79 +1204,6 @@ class Fix8(QMainWindow):
         if draw:
             self.draw_canvas(self.fixations)
 
-        # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-        #    self.update_suggestion()
-
-
-    # def lesser_value_changed(self, value):
-    #     """Activates when the lesser value filter changes"""
-    #     self.lesser_value = value
-
-    # def lesser_value_confirmed(self):
-    #     # set lesser_value to value of the greater value filter
-    #     self.lesser_value = self.input_lesser.text()
-
-    #     # writing a log in metadata
-    #     self.metadata += (
-    #         "filter,removed fixations less than "
-    #         + self.lesser_value
-    #         + ","
-    #         + str(time.time())
-    #         + "\n"
-    #     )
-
-    #     self.fixations = self.fixations[self.fixations[:, 2] > int(self.lesser_value)]
-    #     self.current_fixation = 0
-    #     if self.algorithm != "manual" and self.suggested_corrections is not None:
-    #         if self.current_fixation == len(self.fixations):
-    #             # off by one error, since deleting fixation moves current onto the next fixation
-    #             self.current_fixation -= 1
-    #         self.suggested_corrections = self.suggested_corrections[
-    #             self.suggested_corrections[:, 2] > int(self.lesser_value)
-    #         ]
-
-    #     temp = self.current_fixation
-    #     self.progress_bar.setMaximum(len(self.fixations) - 1)
-    #     self.progress_bar_updated(temp)
-
-    #     self.draw_canvas(self.fixations, draw_all=True)
-    #     self.progress_bar_updated(self.current_fixation, draw=False)
-
-
-    # def greater_value_changed(self, value):
-    #     """Activates when the greater value filter changes"""
-    #     self.greater_value = value
-
-    # def greater_value_confirmed(self):
-    #     # set greater_value to value of the greater value filter
-    #     self.greater_value = self.input_greater.text()
-
-    #     # writing a log in metadata
-    #     self.metadata += (
-    #         "filter,removed fixations greater than "
-    #         + self.greater_value
-    #         + ","
-    #         + str(time.time())
-    #         + "\n"
-    #     )
-
-    #     self.fixations = self.fixations[self.fixations[:, 2] < int(self.greater_value)]
-    #     self.current_fixation = 0
-    #     if self.algorithm != "manual" and self.suggested_corrections is not None:
-    #         if self.current_fixation == len(self.fixations):
-    #             # off by one error, since deleting fixation moves current onto the next fixation
-    #             self.current_fixation -= 1
-
-    #         self.suggested_corrections = self.suggested_corrections[
-    #             self.suggested_corrections[:, 2] < int(self.greater_value)
-    #         ]
-
-    #     temp = self.current_fixation
-    #     self.progress_bar.setMaximum(len(self.fixations) - 1)
-    #     self.progress_bar_updated(temp)
-
-    #     self.draw_canvas(self.fixations, draw_all=True)
-    #     self.progress_bar_updated(self.current_fixation, draw=False)
 
     def aoi_height_changed(self, value):
         self.aoi_height = value
@@ -1534,47 +1286,14 @@ class Fix8(QMainWindow):
         # --- left side
         self.left_side = QVBoxLayout()
 
-        # self.button_open_folder = QPushButton("Open Folder", self)
-        # self.button_open_folder.setEnabled(True)
-        # self.button_open_folder.clicked.connect(self.open_trial_folder)
-
-        # self.button_save_corrections = QPushButton("Save Corrections", self)
-        # self.button_save_corrections.setEnabled(False)
-        # self.button_save_corrections.clicked.connect(self.save_corrections)
 
         self.trial_list = QListWidget()
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
-
-        # section for fixation size filters
-        # self.greater_inputs = QHBoxLayout()
-        # self.input_greater = QLineEdit()
-        # self.input_greater.textChanged.connect(self.greater_value_changed)
-        # self.input_greater.setEnabled(False)
-        # self.input_greater.setText("1000")
-        # self.button_greater = QPushButton("Remove Fixations >")
-        # self.button_greater.setEnabled(False)
-        # self.button_greater.clicked.connect(self.greater_value_confirmed)
-        # self.greater_inputs.addWidget(self.input_greater)
-        # self.greater_inputs.addWidget(self.button_greater)
-
-        # self.lesser_inputs = QHBoxLayout()
-        # self.input_lesser = QLineEdit()
-        # self.input_lesser.textChanged.connect(self.lesser_value_changed)
-        # self.input_lesser.setEnabled(False)
-        # self.input_lesser.setText("50")
-        # self.button_lesser = QPushButton("Remove Fixations <")
-        # self.button_lesser.setEnabled(False)
-        # self.button_lesser.clicked.connect(self.lesser_value_confirmed)
-        # self.lesser_inputs.addWidget(self.input_lesser)
-        # self.lesser_inputs.addWidget(self.button_lesser)
 
         widget_list = [self.trial_list]
 
         for w in widget_list:
             self.left_side.addWidget(w)
-
-        # self.left_side.addLayout(self.greater_inputs)
-        # self.left_side.addLayout(self.lesser_inputs)
         # ---
 
         # --- canvas
@@ -1639,114 +1358,6 @@ class Fix8(QMainWindow):
         self.right_side.addLayout(self.progress_tools)
 
         self.below_canvas = QHBoxLayout()
-
-        # --- section for semi automated tools
-        # self.semi_automation = QVBoxLayout()
-
-        # self.label_semi_automation = QLabel("Semi-Automation")
-        # self.label_semi_automation.setAlignment(Qt.AlignCenter)
-        # self.semi_automation.addWidget(self.label_semi_automation)
-
-        # self.semi_automation_second_row = QHBoxLayout()
-
-        # self.button_next_fixation = QPushButton("Next Fixation", self)
-        # #self.button_next_fixation.setEnabled(False)
-        # self.button_next_fixation.clicked.connect(self.next_fixation)
-
-        # self.button_previous_fixation = QPushButton("Previous Fixation", self)
-        # self.button_previous_fixation.setEnabled(False)
-        # self.button_previous_fixation.clicked.connect(self.previous_fixation)
-
-        # self.semi_automation_second_row.addWidget(self.button_previous_fixation)
-        # self.semi_automation_second_row.addWidget(self.button_next_fixation)
-
-        # self.semi_automation.addLayout(self.semi_automation_second_row)
-
-        # self.button_confirm_suggestion = QPushButton("Accept Suggestion and Next", self)
-        # self.button_confirm_suggestion.setEnabled(False)
-        # self.button_confirm_suggestion.clicked.connect(self.confirm_suggestion)
-        # self.semi_automation.addWidget(self.button_confirm_suggestion)
-
-        # self.button_undo_suggestion = QPushButton("Undo Correction", self)
-        # self.button_undo_suggestion.setEnabled(False)
-        # self.button_undo_suggestion.clicked.connect(self.undo_suggestion)
-        # self.semi_automation.addWidget(self.button_undo_suggestion)
-
-        # self.button1 = QPushButton()
-        # self.semi_automation.addWidget(self.button1)
-        # retain = self.button1.sizePolicy()
-        # retain.setRetainSizeWhenHidden(True)
-        # self.button1.setSizePolicy(retain)
-        # self.button1.hide()
-
-        # self.frame = QFrame()
-        # self.frame.setStyleSheet(
-        #     " QFrame {border: 2px solid black; margin: 0px; padding: 0px;}"
-        # )
-        # self.label_semi_automation.setStyleSheet("QLabel { border: 0px }")
-        # self.frame.setLayout(self.semi_automation)
-        # self.below_canvas.addWidget(self.frame)
-        # ---
-
-        # --- section for automated tools
-        # self.automation = QVBoxLayout()
-
-        # self.label_automation = QLabel("Automation")
-        # self.label_automation.setAlignment(Qt.AlignCenter)
-        # self.automation.addWidget(self.label_automation)
-
-        # self.button_correct_all_fixations = QPushButton("Correct All Fixations", self)
-        # self.button_correct_all_fixations.setEnabled(False)
-        # self.button_correct_all_fixations.clicked.connect(self.correct_all_fixations)
-
-        # self.dropdown_select_algorithm = QComboBox()
-        # self.dropdown_select_algorithm.setEditable(True)
-        # self.dropdown_select_algorithm.addItem("Manual Correction")
-        # self.dropdown_select_algorithm.addItem("Attach")
-        # self.dropdown_select_algorithm.addItem("Chain")
-        # # self.dropdown_select_algorithm.addItem('Cluster')
-        # self.dropdown_select_algorithm.addItem("Merge")
-        # self.dropdown_select_algorithm.addItem("Regress")
-        # self.dropdown_select_algorithm.addItem("Segment")
-        # # self.dropdown_select_algorithm.addItem('Split')
-        # self.dropdown_select_algorithm.addItem("Stretch")
-        # # self.dropdown_select_algorithm.addItem('Compare')
-        # self.dropdown_select_algorithm.addItem("Warp")
-        # # self.dropdown_select_algorithm.addItem('Time Warp')
-        # # self.dropdown_select_algorithm.addItem('Slice')
-        # self.dropdown_select_algorithm.lineEdit().setAlignment(Qt.AlignCenter)
-        # self.dropdown_select_algorithm.lineEdit().setReadOnly(True)
-        # self.dropdown_select_algorithm.setEnabled(False)
-        # self.dropdown_select_algorithm.currentTextChanged.connect(
-        #     self.get_algorithm_picked
-        # )
-
-        # self.automation.addWidget(self.dropdown_select_algorithm)
-        # self.automation.addWidget(self.button_correct_all_fixations)
-
-        # buttons to fill in space
-        # self.button2 = QPushButton()
-        # self.automation.addWidget(self.button2)
-        # retain = self.button2.sizePolicy()
-        # retain.setRetainSizeWhenHidden(True)
-        # self.button2.setSizePolicy(retain)
-        # self.button2.hide()
-
-        # self.button3 = QPushButton()
-        # self.automation.addWidget(self.button3)
-        # retain = self.button3.sizePolicy()
-        # retain.setRetainSizeWhenHidden(True)
-        # self.button3.setSizePolicy(retain)
-        # self.button3.hide()
-
-        # self.frame2 = QFrame()
-        # self.frame2.setStyleSheet(
-        #     " QFrame {border: 2px solid black; margin: 0px; padding: 0px;}"
-        # )
-        # self.label_automation.setStyleSheet("QLabel { border: 0px }")
-        # self.frame2.setLayout(self.automation)
-        # self.below_canvas.addWidget(self.frame2)
-        # ---
 
         # --- section for filters
         self.filters = QVBoxLayout()
@@ -1884,17 +1495,12 @@ class Fix8(QMainWindow):
         self.wrapper_layout.setStretch(1, 3)
 
         # initial button states
-        # self.button_open_folder.setEnabled(True)
-        # self.button_save_corrections.setEnabled(False)
         self.toolbar.setEnabled(False)
         self.checkbox_show_aoi.setChecked(False)
         self.checkbox_show_aoi.setCheckable(False)
         self.checkbox_show_fixations.setChecked(False)
         self.checkbox_show_fixations.setCheckable(False)
 
-        # self.dropdown_select_algorithm.setEditable(False)
-        # self.dropdown_select_algorithm.setEnabled(False)
-        # self.button_correct_all_fixations.setEnabled(False)
 
         self.button_next_fixation.setEnabled(False)
         self.checkbox_show_suggestion.setChecked(False)
@@ -1907,7 +1513,6 @@ class Fix8(QMainWindow):
 
     def relevant_buttons(self, feature):
         if feature == "opened_stimulus":
-            # self.button_open_folder.setEnabled(True)
             self.checkbox_show_aoi.setCheckable(True)
             self.checkbox_show_aoi.setChecked(False)
             self.checkbox_show_aoi.setEnabled(True)
@@ -1921,19 +1526,13 @@ class Fix8(QMainWindow):
             self.checkbox_show_saccades.setChecked(False)
             self.checkbox_show_saccades.setCheckable(True)
         elif feature == "opened_folder":
-            # self.button_save_corrections.setEnabled(False)
             self.button_previous_fixation.setEnabled(False)
             self.button_next_fixation.setEnabled(False)
-            # self.button_correct_all_fixations.setEnabled(False)
-            # self.button_confirm_suggestion.setEnabled(False)
+
 
             self.checkbox_show_fixations.setCheckable(False)
             self.checkbox_show_fixations.setChecked(False)
             self.checkbox_show_fixations.setEnabled(False)
-            # self.input_lesser.setEnabled(False)
-            # self.input_greater.setEnabled(False)
-            # self.button_lesser.setEnabled(False)
-            # self.button_greater.setEnabled(False)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal
             # happens in the checkbox connected method,
@@ -1958,9 +1557,7 @@ class Fix8(QMainWindow):
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
 
-            # self.dropdown_select_algorithm.setEnabled(False)
         elif feature == "trial_clicked":
-            # self.button_save_corrections.setEnabled(True)
             self.save_correction_action.setEnabled(True)
             self.edit_menu.setEnabled(True)
             self.filters_menu.setEnabled(True)
@@ -1968,12 +1565,6 @@ class Fix8(QMainWindow):
 
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
-            # self.button_correct_all_fixations.setEnabled(False)
-            # self.button_confirm_suggestion.setEnabled(False)
-
-            # self.dropdown_select_algorithm.setEnabled(True)
-            # self.dropdown_select_algorithm.setCurrentIndex(0)
-
             self.checkbox_show_aoi.setCheckable(True)
             self.checkbox_show_aoi.setEnabled(True)
 
@@ -1982,11 +1573,6 @@ class Fix8(QMainWindow):
 
             self.checkbox_show_saccades.setCheckable(True)
             self.checkbox_show_saccades.setEnabled(True)
-
-            # self.input_lesser.setEnabled(True)
-            # self.input_greater.setEnabled(True)
-            # self.button_lesser.setEnabled(True)
-            # self.button_greater.setEnabled(True)
 
             self.toggle_aoi_width.setEnabled(True)
             self.toggle_aoi_height.setEnabled(True)
@@ -2009,11 +1595,6 @@ class Fix8(QMainWindow):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.progress_bar.setEnabled(True)
         elif feature == "no_selected_algorithm":
-            # self.button_previous_fixation.setEnabled(False)
-            # self.button_next_fixation.setEnabled(False)
-            # self.button_correct_all_fixations.setEnabled(False)
-            # self.button_confirm_suggestion.setEnabled(False)
-            # self.button_undo_suggestion.setEnabled(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setChecked(
                 False
@@ -2024,11 +1605,7 @@ class Fix8(QMainWindow):
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
             self.button_suggested_fixation_color.setEnabled(True)
-            # self.button_correct_all_fixations.setEnabled(True)
-            # self.button_confirm_suggestion.setEnabled(True)
-            # self.button_undo_suggestion.setEnabled(True)
-            
-
+       
 
 if __name__ == "__main__":
     fix8 = QApplication([])
