@@ -313,7 +313,6 @@ class Fix8(QMainWindow, QtStyleTools):
         self.saccade_color = "blue"
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
-        
 
 
     def lowpass_duration_filter(self):
@@ -321,7 +320,7 @@ class Fix8(QMainWindow, QtStyleTools):
         minimum_value = 1
         maximum_value = 99
         default_value = 80
-        title = "Less Than Duration Filter"
+        title = "Duration Filter"
         message = "Remove fixations with durations less than"
         threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
 
@@ -356,7 +355,7 @@ class Fix8(QMainWindow, QtStyleTools):
         minimum_value = 100
         maximum_value = 2000
         default_value = 800
-        title = "Greater Than Duration Filter"
+        title = "Duration Filter"
         message = "Remove fixations with durations greater than"
         threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
 
@@ -938,7 +937,6 @@ class Fix8(QMainWindow, QtStyleTools):
             alpha=self.fixation_opacity,
             c=self.fixation_color,
         )
-
         self.canvas.draw()
 
     
@@ -989,7 +987,7 @@ class Fix8(QMainWindow, QtStyleTools):
             #    line.remove()
 
             self.saccades = None
-            # self.canvas.draw()
+            self.canvas.draw()
 
     
 
@@ -1003,8 +1001,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
             # for collection in self.canvas.ax.collections: #<-- use this instead
             #    collection.remove()
-
-            # self.canvas.draw()
+            self.canvas.draw()
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
     def draw_canvas(self, fixations, draw_all=False):
