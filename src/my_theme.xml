@@ -1,10 +1,17 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-<color name="primaryColor">#C9C900</color>
+<!-- <color name="primaryColor">#C9C900</color>
 <color name="primaryLightColor">#A5A54F</color>
 <color name="secondaryColor">#2E2E2E</color>
 <color name="secondaryLightColor">#6C6C6C</color>
 <color name="secondaryDarkColor">#202020</color>
 <color name="primaryTextColor">#ffffff</color>
-<color name="secondaryTextColor">#B8B8B8</color>
+<color name="secondaryTextColor">#B8B8B8</color> -->
+<color name="primaryColor">#00c9bf</color>
+<color name="primaryLightColor">#4fa5a4</color>
+<color name="secondaryColor">#5e6169</color>
+<color name="secondaryLightColor">#6C6C6C</color>
+<color name="secondaryDarkColor">#3b3b3b</color>
+<color name="primaryTextColor">#ffffff</color>
+<color name="secondaryTextColor">#a8a8a8</color>
 </resources>

@@ -75,7 +75,7 @@ from merge_fixations_dialog import InputDialog
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
-# from qt_material import apply_stylesheet
+from qt_material import apply_stylesheet, QtStyleTools, list_themes
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -106,12 +106,13 @@ class QtCanvas(FigureCanvasQTAgg):
         self.ax.clear()
 
 
-class Fix8(QMainWindow):
+class Fix8(QMainWindow, QtStyleTools):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Fix8")
         self.setWindowIcon(QIcon("icon.ico"))
         self.init_UI()
+        self.apply_stylesheet(fix8, 'my_theme.xml')
 
         # add menues
         self.file_menu = self.menuBar().addMenu("File")
@@ -232,6 +233,28 @@ class Fix8(QMainWindow):
         self.semi_auto_correction_menu.addAction(self.segment_semi_action)
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
 
+        # add menue item called "Style" to the menu bar
+        self.menu_style = self.menuBar().addMenu("Styles")
+
+        action = QAction('Default', self)
+        action.triggered.connect(lambda _, theme='Default': self.apply_stylesheet(fix8, 'my_theme.xml'))
+        self.menu_style.addAction(action)
+
+        # add sub menue to the menue item "Style" for Dark
+        self.dark_menue_style = self.menu_style.addMenu("Dark")
+        self.light_menue_style = self.menu_style.addMenu("Light")
+
+        # add actions to the menu item "Style"
+        for theme in list_themes():
+            action = QAction(theme.replace('.xml', '').replace('_', ' '), self)
+            action.triggered.connect(lambda _, theme=theme: self.apply_stylesheet(fix8, theme))
+
+            if 'dark' in theme.lower():
+                self.dark_menue_style.addAction(action)
+            else:
+                self.light_menue_style.addAction(action)
+
+
         # fields relating to the stimulus
         self.file, self.file_path, self.file_name = None, None, None
 
@@ -289,6 +312,7 @@ class Fix8(QMainWindow):
         self.saccade_color = "blue"
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
+        
 
 
     def lowpass_duration_filter(self):
@@ -416,7 +440,6 @@ class Fix8(QMainWindow):
 
         self.draw_canvas(self.fixations, draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
-
 
     def run_correction(self):
 
@@ -1331,8 +1354,8 @@ class Fix8(QMainWindow):
                 pass
 
         self.toolbar = Toolbar(self.canvas, self)
-        self.toolbar.setStyleSheet("QToolBar { border: 0px }")
-        self.toolbar.setEnabled(False)
+        #self.toolbar.setStyleSheet("QToolBar { border: 0px }")
+        #self.toolbar.setEnabled(False)
         self.progress_tools.addWidget(self.toolbar)
 
         self.button_previous_fixation = QPushButton("Previous Fixation", self)
@@ -1441,10 +1464,10 @@ class Fix8(QMainWindow):
         # self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
         self.filters.addWidget(self.checkbox_show_suggestion)
         self.frame3 = QFrame()
-        self.frame3.setStyleSheet(
-            " QFrame {border: 2px solid black; margin: 0px; padding: 0px;}"
-        )
-        self.label_filters.setStyleSheet("QLabel { border: 0px }")
+        # self.frame3.setStyleSheet(
+        #     " QFrame {border: 2px solid black; margin: 0px; padding: 0px;}"
+        # )
+        # self.label_filters.setStyleSheet("QLabel { border: 0px }")
         self.frame3.setLayout(self.filters)
         self.below_canvas.addWidget(self.frame3)
 
@@ -1605,6 +1628,7 @@ class Fix8(QMainWindow):
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
             self.button_suggested_fixation_color.setEnabled(True)
+
        
 
 if __name__ == "__main__":
