@@ -82,6 +82,7 @@ class QtCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=12, height=8, dpi=100):
         self.figure, self.ax = plt.subplots(ncols=1, nrows=1, figsize=(width, height))
         self.figure.tight_layout()
+        self.figure.patch.set_facecolor('#5e6169')
 
         FigureCanvasQTAgg.__init__(self, self.figure)
         self.setParent(parent)
