@@ -84,6 +84,8 @@ class QtCanvas(FigureCanvasQTAgg):
         self.figure.tight_layout()
         self.figure.patch.set_facecolor('#5e6169')
 
+        self.background = None
+
         FigureCanvasQTAgg.__init__(self, self.figure)
         self.setParent(parent)
 
@@ -607,9 +609,17 @@ class Fix8(QMainWindow, QtStyleTools):
             return
 
         x, y = event.xdata, event.ydata
-        self.xy = np.asarray(self.scatter.get_offsets())
+
+        #self.xy = np.asarray(self.scatter.get_offsets())
         self.xy[self.selected_fixation] = np.array([x, y])
-        self.scatter.set_offsets(self.xy)
+        #self.scatter.set_offsets(self.xy)
+        # self.canvas.draw_idle()
+
+        self.canvas.restore_region(self.canvas.background)
+        self.canvas.ax.draw_artist(self.scatter)
+        self.canvas.blit(self.canvas.ax.bbox)
+        
+
 
     def keyPressEvent(self, e):
         # j: move to the left is 74
@@ -713,6 +723,7 @@ class Fix8(QMainWindow, QtStyleTools):
                         or file.endswith(".jpeg")
                         or file.endswith(".jpg")):
                         if image_file == "":  # only get the first image found
+                            image_file = self.folder_path + "/" + file
                             self.image_file_path = self.folder_path + "/" + file
 
                 if len(self.file_list) > 0:
@@ -1021,6 +1032,7 @@ class Fix8(QMainWindow, QtStyleTools):
                     alpha=self.fixation_opacity,
                     c=colors,
                 )
+                self.canvas.background = self.canvas.copy_from_bbox(self.canvas.ax.bbox)
                 # self.scatter = self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
 
         if self.checkbox_show_saccades.isCheckable():
