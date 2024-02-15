@@ -237,7 +237,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
 
         # add menue item called "Style" to the menu bar
-        self.menu_style = self.menuBar().addMenu("Styles")
+        self.menu_style = self.menuBar().addMenu("Theme")
 
         action = QAction('Default', self)
         action.triggered.connect(lambda _, theme='Default': self.apply_stylesheet(fix8, 'my_theme.xml'))
@@ -279,17 +279,15 @@ class Fix8(QMainWindow, QtStyleTools):
         self.current_fixation = -1
 
         # fields relating to AOIs
-        self.patches, self.aoi, self.background_color = None, None, None
+        self.aoi, self.background_color = None, None
 
         # fields relating to the correction algorithm
         self.algorithm = "manual"
         self.algorithm_function = None
         self.suggested_corrections, self.suggested_fixation = None, None
-        # single suggestion is the current suggestion
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
         self.timer_start = 0  # beginning time of trial
-        self.user = ""
         self.metadata = ""
 
         self.saccade_opacity = 0.4
@@ -297,7 +295,6 @@ class Fix8(QMainWindow, QtStyleTools):
 
         # fields relating to the drag and drop system
         self.selected_fixation = None
-        self.epsilon = 11
         self.xy = None
         self.canvas.mpl_connect("button_press_event", self.button_press_callback)
         self.canvas.mpl_connect("button_release_event", self.button_release_callback)
@@ -519,7 +516,9 @@ class Fix8(QMainWindow, QtStyleTools):
             d = np.sqrt((xt - event.x) ** 2 + (yt - event.y) ** 2)
             self.selected_fixation = d.argmin()
 
-            if d[self.selected_fixation] >= self.epsilon:
+            epsilon = 11  # diameter range
+
+            if d[self.selected_fixation] >= epsilon:
                 self.selected_fixation = None
 
             return self.selected_fixation
@@ -689,6 +688,12 @@ class Fix8(QMainWindow, QtStyleTools):
                     self.draw_canvas(self.fixations)
                     self.progress_bar_updated(self.current_fixation, draw=False)
 
+
+    def show_error_message(self, window_title, message):
+        qmb = QMessageBox()
+        qmb.setWindowTitle(window_title)
+        qmb.setText(message)
+        qmb.exec_()
     
 
     def open_trial_folder(self):
@@ -728,43 +733,30 @@ class Fix8(QMainWindow, QtStyleTools):
 
                 if len(self.file_list) > 0:
                     # add the files to the trial list window
-                    list_index = 0
                     self.trials = {}
                     for file in self.file_list:
                         file_to_add = QListWidgetItem(file)
-                        file_text = str(self.file_list[list_index])
-                        file_to_add_name = file_text.split("/")[
-                            -1
-                        ]  # last part of file text
+                        file_to_add_name = file.split("/")[-1]  # last part of file text
                         self.trials[file_to_add_name] = file
                         file_to_add.setText(file_to_add_name)
                         self.trial_list.addItem(file_to_add)
-                        list_index = list_index + 1
                 else:
-                    qmb = QMessageBox()
-                    qmb.setWindowTitle("Trial Folder Error")
-                    qmb.setText("No JSONS")
-                    qmb.exec_()
+                    self.show_error_message("Trial Folder Error", "No JSONS")
+
             else:
-                qmb = QMessageBox()
-                qmb.setWindowTitle("Trial Folder Error")
-                qmb.setText("Empty Folder")
-                qmb.exec_()
+                self.show_error_message("Trial Folder Error", "Empty Folder")
+
 
             if image_file == "":  # image file wasn't found
-                qmb = QMessageBox()
-                qmb.setWindowTitle("Trial Folder Error")
-                qmb.setText("No Compatible Image")
-                qmb.exec_()
+                self.show_error_message("Trial Folder Error", "No Compatible Image")
+
             else:
                 self.canvas.clear()
                 image = mpimg.imread(image_file)
                 self.canvas.ax.imshow(image)
                 self.canvas.ax.set_title(str(image_name.split(".")[0]))
                 self.canvas.draw()
-
                 self.find_aoi()
-
                 self.relevant_buttons("opened_stimulus")
 
 
@@ -823,7 +815,6 @@ class Fix8(QMainWindow, QtStyleTools):
     def draw_aoi(self):
         """draw the found aois to the canvas"""
         color = self.aoi_color if self.background_color == "black" else "black"
-        self.patches = []
 
         for row in self.aoi.iterrows():
 
@@ -831,30 +822,28 @@ class Fix8(QMainWindow, QtStyleTools):
             ycord = row[1]["y"]
             height = row[1]["height"]
             width = row[1]["width"]
-
-            self.patches.append(
-                self.canvas.ax.add_patch(
-                    Rectangle(
-                        (xcord, ycord),
-                        width - 1,
-                        height - 1,
-                        linewidth=0.8,
-                        edgecolor=color,
-                        facecolor="none",
-                        alpha=0.65,
-                    )
+            
+            self.canvas.ax.add_patch(
+                Rectangle(
+                    (xcord, ycord),
+                    width - 1,
+                    height - 1,
+                    linewidth=0.8,
+                    edgecolor=color,
+                    facecolor="none",
+                    alpha=0.65,
                 )
             )
+            
 
         self.canvas.draw()
 
 
     def clear_aoi(self):
         """clear the aois from the canvas"""
-        if self.patches is not None:
-            for patch in self.patches:
-                patch.remove()
-            self.canvas.draw()
+
+        self.canvas.ax.patches.clear()
+        self.canvas.draw()
 
 
     def show_aoi(self, state):
@@ -1310,14 +1299,10 @@ class Fix8(QMainWindow, QtStyleTools):
         # --- left side
         self.left_side = QVBoxLayout()
 
-
         self.trial_list = QListWidget()
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
 
-        widget_list = [self.trial_list]
-
-        for w in widget_list:
-            self.left_side.addWidget(w)
+        self.left_side.addWidget(self.trial_list)
         # ---
 
         # --- canvas
