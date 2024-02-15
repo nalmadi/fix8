@@ -93,10 +93,6 @@ class QtCanvas(FigureCanvasQTAgg):
         FigureCanvasQTAgg.updateGeometry(self)
 
         self.initialize()
-        self.history = []
-        self.future = []
-        self.suggestion = None
-        self.trial = None
 
     def initialize(self):
         img = mpimg.imread("./.images/fix8_landing.png")
@@ -130,6 +126,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.next_fixation_action = QAction("Next Fixation", self)
         self.previous_fixation_action = QAction("Previous Fixation", self)
+        self.undo_correction_action = QAction("Undo Correction", self)
         self.accept_and_next_action = QAction("Accept suggestion and next", self)
         self.delete_fixation_action = QAction("Delete Fixation", self)
 
@@ -162,6 +159,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.next_fixation_action.setShortcut("a")
         self.previous_fixation_action.setShortcut("z")
+        self.undo_correction_action.setShortcut("Ctrl+Z")
         self.accept_and_next_action.setShortcut("Alt")
         self.delete_fixation_action.setShortcut("Del")
 
@@ -177,6 +175,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.next_fixation_action.triggered.connect(self.next_fixation)
         self.previous_fixation_action.triggered.connect(self.previous_fixation)
+        self.undo_correction_action.triggered.connect(self.undo_correction)
 
         self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
@@ -209,6 +208,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.edit_menu.addAction(self.next_fixation_action)
         self.edit_menu.addAction(self.previous_fixation_action)
         self.edit_menu.addAction(self.accept_and_next_action)
+        self.edit_menu.addAction(self.undo_correction_action)
         self.edit_menu.addAction(self.delete_fixation_action)
 
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
@@ -257,7 +257,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
 
         # fields relating to the stimulus
-        self.file, self.file_path, self.file_name = None, None, None
+        self.image_file_path = None
 
         # fields relating to the trial folder
         self.folder_path, self.trial_path, self.trial_data, self.trial_name = (
@@ -282,12 +282,11 @@ class Fix8(QMainWindow, QtStyleTools):
         # fields relating to the correction algorithm
         self.algorithm = "manual"
         self.algorithm_function = None
-        self.suggested_corrections, self.suggested_suggestion = None, None
+        self.suggested_corrections, self.suggested_fixation = None, None
         # single suggestion is the current suggestion
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
         self.timer_start = 0  # beginning time of trial
-        self.duration = 0
         self.user = ""
         self.metadata = ""
 
@@ -710,18 +709,12 @@ class Fix8(QMainWindow, QtStyleTools):
                     if file.endswith(".json"):
                         self.file_list.append(self.folder_path + "/" + file)
 
-                    elif (
-                        file.endswith(".png")
+                    elif (file.endswith(".png")
                         or file.endswith(".jpeg")
-                        or file.endswith(".jpg")
-                    ):
+                        or file.endswith(".jpg")):
                         if image_file == "":  # only get the first image found
-                            image_file = self.folder_path + "/" + file
-                            image_name = file
+                            self.image_file_path = self.folder_path + "/" + file
 
-                            self.file = image_file
-                            self.file_path = self.file
-                            self.file_name = image_name
                 if len(self.file_list) > 0:
                     # add the files to the trial list window
                     list_index = 0
@@ -778,9 +771,8 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.find_fixations(self.trial_path)
         self.suggested_corrections = None
-        self.current_fixation = (
-            len(self.original_fixations) - 1
-        )  # double clicking trial should show all and make the current fixation the last one
+        # double clicking trial should show all and make the current fixation the last one
+        self.current_fixation = (len(self.original_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
         self.progress_bar.setMaximum(len(self.original_fixations) - 1)
@@ -795,9 +787,8 @@ class Fix8(QMainWindow, QtStyleTools):
                     f"{self.current_fixation}/{len(self.original_fixations)}"
                 )
 
-        self.fixations = copy.deepcopy(
-            self.original_fixations
-        )  # corrected fixations will be the current fixations on the screen and in the data
+        # corrected fixations will be the current fixations on the screen and in the data
+        self.fixations = copy.deepcopy(self.original_fixations)  
         self.checkbox_show_fixations.setChecked(True)
         self.checkbox_show_saccades.setChecked(True)
 
@@ -810,10 +801,9 @@ class Fix8(QMainWindow, QtStyleTools):
 
     def find_aoi(self):
         """find the areas of interest (aoi) for the selected stimulus"""
-        if self.file_path != "":
+        if self.image_file_path != "":
             self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
-                self.file_name,
-                self.file_path.replace(self.file_name, ""),
+                self.image_file_path,
                 margin_height=self.aoi_height,
                 margin_width=self.aoi_width,
             )
@@ -1045,7 +1035,7 @@ class Fix8(QMainWindow, QtStyleTools):
             y = self.suggested_corrections[self.current_fixation][1]
             duration = self.fixations[self.current_fixation][2]
 
-            self.suggested_suggestion = self.canvas.ax.scatter(
+            self.suggested_fixation = self.canvas.ax.scatter(
                 x,
                 y,
                 s=30 * (duration / 50) ** 1.8,
@@ -1125,7 +1115,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.next_fixation()
 
 
-    def undo_suggestion(self):
+    def undo_correction(self):
         self.metadata += (
             "auto_undo, fixation "
             + str(self.current_fixation - 1)
@@ -1142,12 +1132,13 @@ class Fix8(QMainWindow, QtStyleTools):
             + "\n"
         )
 
-        x = self.original_fixations[self.current_fixation - 1][0]
-        y = self.original_fixations[self.current_fixation - 1][1]
-        self.fixations[self.current_fixation - 1][0] = x
-        self.fixations[self.current_fixation - 1][1] = y
+        x = self.original_fixations[self.current_fixation][0]
+        y = self.original_fixations[self.current_fixation][1]
+        self.fixations[self.current_fixation][0] = x
+        self.fixations[self.current_fixation][1] = y
 
-        self.previous_fixation()
+        self.draw_canvas(self.fixations)
+        #self.previous_fixation()
 
 
     def save_metadata_file(self, new_correction_file_path):
@@ -1183,7 +1174,7 @@ class Fix8(QMainWindow, QtStyleTools):
             with open(f"{new_correction_file_name}", "w") as f:
                 json.dump(corrected_fixations, f)
                 
-            self.duration = (time.time() - self.timer_start)
+            duration = (time.time() - self.timer_start)
             today = date.today()
 
             self.metadata += (
@@ -1192,9 +1183,9 @@ class Fix8(QMainWindow, QtStyleTools):
                 + " Trial Name"
                 + str(self.trial_name)
                 + " File Path "
-                + str(self.file_path)
+                + str(new_correction_file_name)
                 + " Duration "
-                + str(self.duration)
+                + str(duration)
                 + ","
                 + str(time.time())
                 + "\n"

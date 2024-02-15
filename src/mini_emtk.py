@@ -44,7 +44,7 @@ def find_background_color(img):
 
     return bg_color
 
-def EMTK_find_aoi(image=None, image_path=None, img=None, level="sub-line", margin_height=4, margin_width=7):
+def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_height=4, margin_width=7):
     """Find Area of Interest in the given image and store the aoi attributes in a Pandas Dataframe
     Parameters
     ----------
@@ -67,10 +67,11 @@ def EMTK_find_aoi(image=None, image_path=None, img=None, level="sub-line", margi
     """
 
     if img is None:
-        if image is None or image_path is None:
+        if image_file_name is None:
             return
+        
         # img = Image.open(image_path + image).convert('1')
-        img = Image.open(image_path + image)
+        img = Image.open(image_file_name)
         img = img.convert("L")  # Convert to grayscale
         threshold = 80
         img = img.point(
@@ -193,7 +194,7 @@ def EMTK_find_aoi(image=None, image_path=None, img=None, level="sub-line", margi
         kind, name, x, y, x0, y0 = entry
         width = x0 - x
         height = y0 - y
-        image = image
+        image = image_file_name.split("/")[-1]
 
         # For better visualization
         x += margin_width / 2
