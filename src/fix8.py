@@ -75,7 +75,7 @@ from merge_fixations_dialog import InputDialog
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
-from qt_material import apply_stylesheet, QtStyleTools, list_themes
+from qt_material import QtStyleTools, list_themes
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -99,7 +99,7 @@ class QtCanvas(FigureCanvasQTAgg):
         self.trial = None
 
     def initialize(self):
-        img = mpimg.imread("./.images/welcome.png")
+        img = mpimg.imread("./.images/fix8_landing.png")
         self.ax.imshow(img)
         self.draw
 
@@ -1497,15 +1497,21 @@ class Fix8(QMainWindow, QtStyleTools):
         self.layer_fixation_color = QHBoxLayout()
         self.layer_fixation_color.addWidget(self.button_fixation_color)
         self.layer_fixation_color.addWidget(self.button_saccade_color)
-        self.layer_fixation_color.addWidget(self.button_current_fixation_color)
+
+        
 
         self.second_layer_fixation_color = QHBoxLayout()
-
+        self.second_layer_fixation_color.addWidget(self.button_current_fixation_color)
         self.second_layer_fixation_color.addWidget(self.button_suggested_fixation_color)
-        self.second_layer_fixation_color.addWidget(self.button_coloblind_assist)
+
+        self.third_layer_fixation_color = QHBoxLayout()
+
+        
+        self.third_layer_fixation_color.addWidget(self.button_coloblind_assist)
 
         self.filters.addLayout(self.layer_fixation_color)
         self.filters.addLayout(self.second_layer_fixation_color)
+        self.filters.addLayout(self.third_layer_fixation_color)
 
         self.left_side.addLayout(self.below_canvas)
         # --
