@@ -1,6 +1,6 @@
 # Fix8
 
-![Welcome](./screenshot-fix8.png)
+![Welcome](./src/.images/fix8_landing.png)
 
 # Software Summary 💻
 
