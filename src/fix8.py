@@ -117,6 +117,7 @@ class Fix8(QMainWindow, QtStyleTools):
         # add menues
         self.file_menu = self.menuBar().addMenu("File")
         self.edit_menu = self.menuBar().addMenu("Edit")
+        self.view_menu = self.menuBar().addMenu("View")
         self.filters_menu = self.menuBar().addMenu("Filters")
         #self.generate_menu = self.menuBar().addMenu("Generate")
         self.correction_menu = self.menuBar().addMenu("Correction")
@@ -132,6 +133,10 @@ class Fix8(QMainWindow, QtStyleTools):
         self.previous_fixation_action = QAction("Previous Fixation", self)
         self.accept_and_next_action = QAction("Accept suggestion and next", self)
         self.delete_fixation_action = QAction("Delete Fixation", self)
+
+        self.trial_list_action = QAction("Show/Hide Trial List", self)
+        self.trial_summary_action = QAction("Show/Hide Trial Summary", self)
+        self.visualization_panel_action = QAction("Show/Hide Visualization Panel", self)
 
         self.lowpass_duration_filter_action = QAction("Filters less than", self)
         self.highpass_duration_filter_action = QAction("Filters greater than", self)
@@ -181,6 +186,10 @@ class Fix8(QMainWindow, QtStyleTools):
         self.previous_fixation_action.triggered.connect(self.previous_fixation)
         self.undo_correction_action.triggered.connect(self.undo)
 
+        self.trial_list_action.triggered.connect(self.show_hide_trial_list)
+        self.trial_summary_action.triggered.connect(self.show_hide_trial_summary)
+        self.visualization_panel_action.triggered.connect(self.show_hide_visualization_panel)
+        
         self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
         self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
@@ -216,6 +225,10 @@ class Fix8(QMainWindow, QtStyleTools):
         self.edit_menu.addAction(self.undo_correction_action)
         self.edit_menu.addAction(self.delete_fixation_action)
 
+        self.view_menu.addAction(self.trial_list_action)
+        self.view_menu.addAction(self.trial_summary_action)
+        self.view_menu.addAction(self.visualization_panel_action)
+        
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
         self.filters_menu.addAction(self.highpass_duration_filter_action)
         self.filters_menu.addAction(self.merge_fixations_filter_action)
@@ -322,8 +335,19 @@ class Fix8(QMainWindow, QtStyleTools):
         # fields relating to fixation size
         self.fixation_size = 30
 
-    # implement undo using memento pattern and state class
+
+    def show_hide_trial_list(self):
+        self.trial_list.setHidden(not self.trial_list.isHidden())
+
+    def show_hide_trial_summary(self):
+        pass
+
+    def show_hide_visualization_panel(self):
+        self.visualization_frame.setHidden(not self.visualization_frame.isHidden())
+
+    
     def undo(self):
+        ''' implement undo using memento pattern and state class ''' 
         if not self.state.is_empty():
             self.fixations = self.state.get_state()
 
@@ -1347,8 +1371,10 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.trial_list = QListWidget()
         self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
+        #self.trial_list.setHidden(True)
 
         self.left_side.addWidget(self.trial_list)
+        
         # ---
 
         # --- canvas
@@ -1516,14 +1542,14 @@ class Fix8(QMainWindow, QtStyleTools):
         self.filters.addLayout(self.fixation_size_layer)
         # ---
 
-        self.frame3 = QFrame()
+        self.visualization_frame = QFrame()
         # self.frame3.setStyleSheet(
         #     " QFrame {border: 2px solid black; margin: 0px; padding: 0px;}"
         # )
         # self.label_filters.setStyleSheet("QLabel { border: 0px }")
-        self.frame3.setLayout(self.filters)
-        self.below_canvas.addWidget(self.frame3)
-
+        self.visualization_frame.setLayout(self.filters)
+        self.below_canvas.addWidget(self.visualization_frame)
+        #self.frame3.setHidden(True)
         # --
         self.button_fixation_color = QPushButton("Fixation Color")
         self.button_fixation_color.clicked.connect(self.select_fixation_color)
