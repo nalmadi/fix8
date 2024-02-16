@@ -135,6 +135,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.lowpass_duration_filter_action = QAction("Filters less than", self)
         self.highpass_duration_filter_action = QAction("Filters greater than", self)
         self.merge_fixations_filter_action = QAction("Merge Fixations", self)
+        self.outside_screen_filter_action = QAction("Outside Screen", self)
 
         self.manual_correction_action = QAction("Manual", self)
         self.warp_auto_action = QAction("Warp", self)
@@ -162,8 +163,8 @@ class Fix8(QMainWindow, QtStyleTools):
         self.next_fixation_action.setShortcut("a")
         self.previous_fixation_action.setShortcut("z")
         self.undo_correction_action.setShortcut("Ctrl+Z")
-        self.accept_and_next_action.setShortcut("Alt")
-        self.delete_fixation_action.setShortcut("Del")
+        self.accept_and_next_action.setShortcut("Alt+")
+        self.delete_fixation_action.setShortcut("backspace")
 
         # enable/disable
         self.save_correction_action.setEnabled(False)
@@ -182,6 +183,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
         self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
+        self.outside_screen_filter_action.triggered.connect(self.outside_screen_filter)
         
         self.warp_auto_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'auto'))
         self.attach_auto_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'auto'))
@@ -216,6 +218,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
         self.filters_menu.addAction(self.highpass_duration_filter_action)
         self.filters_menu.addAction(self.merge_fixations_filter_action)
+        self.filters_menu.addAction(self.outside_screen_filter_action)
 
         self.correction_menu.addAction(self.manual_correction_action)
         self.automated_correction_menu.addAction(self.warp_auto_action)
@@ -262,8 +265,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.image_file_path = None
 
         # fields relating to the trial folder
-        self.folder_path, self.trial_path, self.trial_data, self.trial_name = (
-            None,
+        self.folder_path, self.trial_path, self.trial_name = (
             None,
             None,
             None,
@@ -312,6 +314,36 @@ class Fix8(QMainWindow, QtStyleTools):
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
 
+
+    def outside_screen_filter(self):
+
+        self.metadata += "filter,removed fixations outside screen," + str(time.time()) + "\n"
+
+        # get image dimentions from self.image_file_path
+        image = mpimg.imread(self.image_file_path)
+        screen_width = image.shape[1]
+        screen_height = image.shape[0]
+
+        self.fixations = self.fixations[
+            (self.fixations[:, 0] >= 0)
+            & (self.fixations[:, 0] <= screen_width)
+            & (self.fixations[:, 1] >= 0)
+            & (self.fixations[:, 1] <= screen_height)
+        ]
+
+        if self.algorithm != "manual" and self.suggested_corrections is not None:
+            self.suggested_corrections = self.suggested_corrections[
+                (self.suggested_corrections[:, 0] >= 0)
+                & (self.suggested_corrections[:, 0] <= screen_width)
+                & (self.suggested_corrections[:, 1] >= 0)
+                & (self.suggested_corrections[:, 1] <= screen_height)
+            ]
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation)
+
+        self.draw_canvas(self.fixations, draw_all=True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
 
     def lowpass_duration_filter(self):
         
@@ -448,10 +480,9 @@ class Fix8(QMainWindow, QtStyleTools):
         line_Y = np.array(line_Y)
         word_XY = self.find_word_centers(self.aoi)
         word_XY = np.array(word_XY)
-
         self.suggested_corrections = copy.deepcopy(self.fixations)
 
-        # run warp as an algorithm
+        # run algorithm, warp uses word_xy, others use line_Y
         if self.algorithm != "warp":
             self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, line_Y)
         else:
@@ -834,14 +865,12 @@ class Fix8(QMainWindow, QtStyleTools):
                     alpha=0.65,
                 )
             )
-            
-
+        
         self.canvas.draw()
 
 
     def clear_aoi(self):
         """clear the aois from the canvas"""
-
         self.canvas.ax.patches.clear()
         self.canvas.draw()
 
@@ -862,22 +891,20 @@ class Fix8(QMainWindow, QtStyleTools):
         self.original_fixations = []
         with open(trial_path, "r") as trial:
             try:
-                self.trial_data = json.load(trial)
-                for x in self.trial_data:
+                trial_data = json.load(trial)
+                for key in trial_data:
                     self.original_fixations.append(
                         [
-                            self.trial_data[x][0],
-                            self.trial_data[x][1],
-                            self.trial_data[x][2],
+                            trial_data[key][0],
+                            trial_data[key][1],
+                            trial_data[key][2],
                         ]
                     )
                 self.original_fixations = np.array(self.original_fixations)
                 self.relevant_buttons("trial_clicked")
             except json.decoder.JSONDecodeError:
-                qmb = QMessageBox()
-                qmb.setWindowTitle("Trial File Error")
-                qmb.setText("Trial Error: JSON File Empty")
-                qmb.exec_()
+                self.show_error_message("Trial File Error", "JSON File Empty")
+
 
 
     def find_lines_y(self, aoi):
@@ -1198,10 +1225,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.statusBar.showMessage(self.status_text)
 
         else:
-            qmb = QMessageBox()
-            qmb.setWindowTitle("Save Error")
-            qmb.setText("No Corrections Made")
-            qmb.exec_()
+            self.show_error_message("Save Error", "No Corrections Made")
 
     def progress_bar_updated(self, value, draw=True):
         # update the current suggested correction to the last fixation of the list
@@ -1216,7 +1240,6 @@ class Fix8(QMainWindow, QtStyleTools):
 
         if draw:
             self.draw_canvas(self.fixations)
-
 
     def aoi_height_changed(self, value):
         self.aoi_height = value
@@ -1269,6 +1292,7 @@ class Fix8(QMainWindow, QtStyleTools):
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
             self.fixation_color = "#FF9E0A"
+            # TODO: Agnes, please figure out what color is best for current fixations
             # self.current_fixation_color = "yellow"
             self.saccade_color = "#3D00CC"
             self.aoi_color = "#28AAFF"
