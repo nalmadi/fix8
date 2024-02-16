@@ -72,6 +72,7 @@ from pathlib import Path
 
 import mini_emtk
 from merge_fixations_dialog import InputDialog
+from state import State
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
@@ -126,9 +127,9 @@ class Fix8(QMainWindow, QtStyleTools):
         self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
         self.save_correction_action = QAction( QIcon("./.images/save.png"), "Save Correction", self)
 
+        self.undo_correction_action = QAction("Undo", self)
         self.next_fixation_action = QAction("Next Fixation", self)
         self.previous_fixation_action = QAction("Previous Fixation", self)
-        self.undo_correction_action = QAction("Undo Correction", self)
         self.accept_and_next_action = QAction("Accept suggestion and next", self)
         self.delete_fixation_action = QAction("Delete Fixation", self)
 
@@ -178,7 +179,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.next_fixation_action.triggered.connect(self.next_fixation)
         self.previous_fixation_action.triggered.connect(self.previous_fixation)
-        self.undo_correction_action.triggered.connect(self.undo_correction)
+        self.undo_correction_action.triggered.connect(self.undo)
 
         self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
@@ -280,6 +281,9 @@ class Fix8(QMainWindow, QtStyleTools):
         )
         self.current_fixation = -1
 
+        # filed for tool undo/redo using memento pattern and state class
+        self.state = State()
+
         # fields relating to AOIs
         self.aoi, self.background_color = None, None
 
@@ -314,6 +318,15 @@ class Fix8(QMainWindow, QtStyleTools):
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
 
+    # implement undo using memento pattern and state class
+    def undo(self):
+        if not self.state.is_empty():
+            self.fixations = self.state.get_state()
+            self.draw_canvas(self.fixations, draw_all=True)
+
+    def save_state(self):
+        self.state.set_state(self.fixations)
+
 
     def outside_screen_filter(self):
 
@@ -323,6 +336,8 @@ class Fix8(QMainWindow, QtStyleTools):
         image = mpimg.imread(self.image_file_path)
         screen_width = image.shape[1]
         screen_height = image.shape[0]
+
+        self.save_state()
 
         self.fixations = self.fixations[
             (self.fixations[:, 0] >= 0)
@@ -364,6 +379,7 @@ class Fix8(QMainWindow, QtStyleTools):
             + str(time.time())
             + "\n"
         )
+        self.save_state()
 
         self.fixations = self.fixations[self.fixations[:, 2] > int(threshold)]
         self.current_fixation = 0
@@ -399,6 +415,8 @@ class Fix8(QMainWindow, QtStyleTools):
             + str(time.time())
             + "\n"
         )
+
+        self.save_state()
 
         self.fixations = self.fixations[self.fixations[:, 2] < int(threshold)]
         self.current_fixation = 0
@@ -443,6 +461,8 @@ class Fix8(QMainWindow, QtStyleTools):
             + "\n"
         )
 
+        self.save_state()
+
         # merge fixations
         new_fixations = list(self.fixations).copy()
         index = 0
@@ -470,6 +490,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.draw_canvas(self.fixations, draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
+
 
     def run_correction(self):
 
@@ -556,24 +577,28 @@ class Fix8(QMainWindow, QtStyleTools):
 
     def move_left_selected_fixation(self):
         if self.selected_fixation != None:
+            self.save_state()
             self.fixations[self.selected_fixation][0] -= 2
 
         self.draw_canvas(self.fixations)
 
     def move_right_selected_fixation(self):
         if self.selected_fixation != None:
+            self.save_state()
             self.fixations[self.selected_fixation][0] += 2
 
         self.draw_canvas(self.fixations)
 
     def move_down_selected_fixation(self):
         if self.selected_fixation != None:
+            self.save_state()
             self.fixations[self.selected_fixation][1] += 2
 
         self.draw_canvas(self.fixations)
 
     def move_up_selected_fixation(self):
         if self.selected_fixation != None:
+            self.save_state()
             self.fixations[self.selected_fixation][1] -= 2
 
         self.draw_canvas(self.fixations)
@@ -591,6 +616,7 @@ class Fix8(QMainWindow, QtStyleTools):
         """when released the fixation, update the corrected fixations"""
 
         if self.selected_fixation is not None:
+            
             # write metadata
             self.metadata += (
                 "manual_moving, fixation "
@@ -607,6 +633,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 + str(time.time())
                 + "\n"
             )
+            self.save_state()
 
             # move fixation
             self.fixations[self.selected_fixation][0] = self.xy[self.selected_fixation][0]
@@ -689,9 +716,9 @@ class Fix8(QMainWindow, QtStyleTools):
             self.metadata += "key,remove fixation," + str(time.time()) + "\n"
             if self.fixations is not None and self.selected_fixation is not None:
                 if self.selected_fixation < len(self.fixations):
-                    self.fixations = np.delete(
-                        self.fixations, self.selected_fixation, 0
-                    )  # delete the row of selected fixation
+                    self.save_state()
+
+                    self.fixations = np.delete(self.fixations, self.selected_fixation, 0)  # delete the row of selected fixation
                     if self.current_fixation == 0:
                         self.current_fixation = len(self.fixations)
                         self.current_fixation -= 1
@@ -822,7 +849,8 @@ class Fix8(QMainWindow, QtStyleTools):
                 )
 
         # corrected fixations will be the current fixations on the screen and in the data
-        self.fixations = copy.deepcopy(self.original_fixations)  
+        self.fixations = copy.deepcopy(self.original_fixations)
+        self.save_state()
         self.checkbox_show_fixations.setChecked(True)
         self.checkbox_show_saccades.setChecked(True)
 
@@ -1078,6 +1106,7 @@ class Fix8(QMainWindow, QtStyleTools):
         """if the user presses the correct all fixations button,
         make the corrected fixations the suggested ones from the correction algorithm"""
         if self.suggested_corrections is not None:
+            self.save_state()
             self.fixations = copy.deepcopy(self.suggested_corrections)
             self.draw_canvas(self.fixations)
 
@@ -1134,39 +1163,12 @@ class Fix8(QMainWindow, QtStyleTools):
             + str(time.time())
             + "\n"
         )
+        self.save_state()
 
-        x = self.suggested_corrections[self.current_fixation][0]
-        y = self.suggested_corrections[self.current_fixation][1]
-        self.fixations[self.current_fixation][0] = x
-        self.fixations[self.current_fixation][1] = y
+        self.fixations[self.current_fixation][0] = self.suggested_corrections[self.current_fixation][0]
+        self.fixations[self.current_fixation][1] = self.suggested_corrections[self.current_fixation][1]
 
         self.next_fixation()
-
-
-    def undo_correction(self):
-        self.metadata += (
-            "auto_undo, fixation "
-            + str(self.current_fixation - 1)
-            + " moved from x:"
-            + str(self.fixations[self.current_fixation - 1][0])
-            + " y:"
-            + str(self.fixations[self.current_fixation - 1][1])
-            + " to x:"
-            + str(self.original_fixations[self.current_fixation - 1][0])
-            + " y:"
-            + str(self.original_fixations[self.current_fixation - 1][1])
-            + ","
-            + str(time.time())
-            + "\n"
-        )
-
-        x = self.original_fixations[self.current_fixation][0]
-        y = self.original_fixations[self.current_fixation][1]
-        self.fixations[self.current_fixation][0] = x
-        self.fixations[self.current_fixation][1] = y
-
-        self.draw_canvas(self.fixations)
-        #self.previous_fixation()
 
 
     def save_metadata_file(self, new_correction_file_path):
