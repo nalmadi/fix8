@@ -326,8 +326,8 @@ class Fix8(QMainWindow, QtStyleTools):
             # update progress bar
             self.progress_bar.setMaximum(len(self.fixations) - 1)
             
-            # update canvas
-            self.draw_canvas(self.fixations, draw_all=True)
+            # draw fixations up to current_fixation
+            self.draw_canvas(self.fixations, draw_all=False)
 
     def save_state(self):
         self.state.set_state(self.fixations)
