@@ -351,9 +351,10 @@ class Fix8(QMainWindow, QtStyleTools):
 
 
     def show_hide_side_panel(self):
-        self.show_hide_trial_list()
-        self.show_hide_trial_summary()
-        self.show_hide_visualization_panel()
+        if not self.trial_list.isHidden() or not self.visualization_frame.isHidden():
+            self.hide_side_panel()
+        else:
+            self.show_side_panel()
 
     def hide_side_panel(self):
         self.trial_list.setHidden(True)
@@ -904,7 +905,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.trial_path = self.trials[item.text()]
 
         # clear history for undo
-        self.state.clear()
+        self.state = State()
 
         self.find_fixations(self.trial_path)
         self.suggested_corrections = None
@@ -1126,6 +1127,10 @@ class Fix8(QMainWindow, QtStyleTools):
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
     def draw_canvas(self, fixations, draw_all=False):
+
+        if fixations is None:
+            return
+
         if draw_all:
             x = fixations[:, 0]
             y = fixations[:, 1]
