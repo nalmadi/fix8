@@ -560,20 +560,28 @@ class Fix8(QMainWindow, QtStyleTools):
         index, not the actual scatter point
         """
         if self.scatter is not None:
-            self.xy = np.asarray(self.scatter.get_offsets())
 
+            self.xy = np.asarray(self.scatter.get_offsets())
             xyt = self.canvas.ax.transData.transform(self.xy)
             xt, yt = xyt[:, 0], xyt[:, 1]
-
             d = np.sqrt((xt - event.x) ** 2 + (yt - event.y) ** 2)
             self.selected_fixation = d.argmin()
 
-            epsilon = 11  # diameter range
+            duration = self.fixations[self.selected_fixation][2]
+            #epsilon = 11  # diameter range
+            area = 30 * (duration / 50) ** 2
+
+            # divide are a by pi and take the square root to get the radius
+            epsilon = (area / np.pi) ** 0.5
+
+            if epsilon < 5:
+                epsilon = 5
 
             if d[self.selected_fixation] >= epsilon:
                 self.selected_fixation = None
 
             return self.selected_fixation
+
 
     def move_left_selected_fixation(self):
         if self.selected_fixation != None:
