@@ -318,6 +318,10 @@ class Fix8(QMainWindow, QtStyleTools):
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
 
+        
+        # fields relating to fixation size
+        self.fixation_size = 30
+
     # implement undo using memento pattern and state class
     def undo(self):
         if not self.state.is_empty():
@@ -558,6 +562,7 @@ class Fix8(QMainWindow, QtStyleTools):
         # show suggestion
         self.checkbox_show_suggestion.setChecked(False)
 
+    
     def get_selected_fixation(self, event):
         """
         get the selected fixation that the user picks, with the selection 
@@ -1085,7 +1090,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 self.scatter = self.canvas.ax.scatter(
                     x,
                     y,
-                    s=30 * (duration / 50) ** 1.8,
+                    s=self.fixation_size * (duration / 50) ** 1.8,
                     alpha=self.fixation_opacity,
                     c=colors,
                 )
@@ -1328,7 +1333,9 @@ class Fix8(QMainWindow, QtStyleTools):
         self.fixation_opacity = float(value / 10)
         self.draw_canvas(self.fixations)
 
-    
+    def fixation_size_changed(self, value):
+        self.fixation_size = value*6
+        self.draw_canvas(self.fixations)
 
     def init_UI(self):
         """initalize the tool window"""
@@ -1490,6 +1497,25 @@ class Fix8(QMainWindow, QtStyleTools):
         self.checkbox_show_suggestion.setEnabled(False)
         # self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
         self.filters.addWidget(self.checkbox_show_suggestion)
+
+        # layer for fixation size customization 
+        self.fixation_size_layer = QHBoxLayout()
+
+        self.fixation_size_bar = QSlider(Qt.Horizontal)
+        self.fixation_size_bar.setMinimum(0)
+        self.fixation_size_bar.setMaximum(20)
+        self.fixation_size_bar.setValue(5)
+        self.fixation_size_bar.setEnabled(False)
+        self.fixation_size_bar.valueChanged.connect(self.fixation_size_changed)
+
+        
+        self.fixation_size_text = QLabel("Customize Fixation Size")
+        self.fixation_size_layer.addWidget(self.fixation_size_bar)
+        self.fixation_size_layer.addWidget(self.fixation_size_text)
+
+        self.filters.addLayout(self.fixation_size_layer)
+        # ---
+
         self.frame3 = QFrame()
         # self.frame3.setStyleSheet(
         #     " QFrame {border: 2px solid black; margin: 0px; padding: 0px;}"
@@ -1612,6 +1638,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.button_coloblind_assist.setEnabled(False)
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
+            self.fixation_size_bar.setEnabled(False)
 
         elif feature == "trial_clicked":
             self.save_correction_action.setEnabled(True)
@@ -1638,6 +1665,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.button_current_fixation_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
+            self.fixation_size_bar.setEnabled(True)
             self.button_coloblind_assist.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal
