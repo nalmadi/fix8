@@ -139,12 +139,13 @@ class Fix8(QMainWindow, QtStyleTools):
         self.undo_correction_action = QAction("Undo", self)
         self.next_fixation_action = QAction("Next Fixation", self)
         self.previous_fixation_action = QAction("Previous Fixation", self)
-        self.accept_and_next_action = QAction("Accept suggestion and next", self)
+        self.accept_and_next_action = QAction("Accept suggestion", self)
         self.delete_fixation_action = QAction("Delete Fixation", self)
 
         self.trial_list_action = QAction("Show/Hide Trial List", self)
         self.trial_summary_action = QAction("Show/Hide Trial Summary", self)
         self.visualization_panel_action = QAction("Show/Hide Visualization Panel", self)
+        self.hude_side_panel_action = QAction("Show/Hide Side Panel", self)
 
         self.lowpass_duration_filter_action = QAction("Filters less than", self)
         self.highpass_duration_filter_action = QAction("Filters greater than", self)
@@ -177,7 +178,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.next_fixation_action.setShortcut("a")
         self.previous_fixation_action.setShortcut("z")
         self.undo_correction_action.setShortcut("Ctrl+Z")
-        self.accept_and_next_action.setShortcut("Alt+")
+        self.accept_and_next_action.setShortcut("space")
         self.delete_fixation_action.setShortcut("backspace")
 
         # enable/disable
@@ -192,11 +193,13 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.next_fixation_action.triggered.connect(self.next_fixation)
         self.previous_fixation_action.triggered.connect(self.previous_fixation)
+        self.accept_and_next_action.triggered.connect(self.confirm_suggestion)
         self.undo_correction_action.triggered.connect(self.undo)
 
         self.trial_list_action.triggered.connect(self.show_hide_trial_list)
         self.trial_summary_action.triggered.connect(self.show_hide_trial_summary)
         self.visualization_panel_action.triggered.connect(self.show_hide_visualization_panel)
+        self.hude_side_panel_action.triggered.connect(self.show_hide_side_panel)
         
         self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
@@ -236,6 +239,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.view_menu.addAction(self.trial_list_action)
         self.view_menu.addAction(self.trial_summary_action)
         self.view_menu.addAction(self.visualization_panel_action)
+        self.view_menu.addAction(self.hude_side_panel_action)
         
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
         self.filters_menu.addAction(self.highpass_duration_filter_action)
@@ -342,6 +346,22 @@ class Fix8(QMainWindow, QtStyleTools):
         
         # fields relating to fixation size
         self.fixation_size = 30
+        # hide/show side panel until a folder is opened
+        self.hide_side_panel()
+
+
+    def show_hide_side_panel(self):
+        self.show_hide_trial_list()
+        self.show_hide_trial_summary()
+        self.show_hide_visualization_panel()
+
+    def hide_side_panel(self):
+        self.trial_list.setHidden(True)
+        self.visualization_frame.setHidden(True)
+
+    def show_side_panel(self):
+        self.trial_list.setHidden(False)
+        self.visualization_frame.setHidden(False)
 
 
     def show_hide_trial_list(self):
@@ -756,8 +776,9 @@ class Fix8(QMainWindow, QtStyleTools):
             self.metadata += "key,previous," + str(time.time()) + "\n"
             self.previous_fixation()
 
-        # alt: accept and next 16777251
-        if e.key() == 16777251 and self.algorithm_function != None:
+        # spacebar: accept and next 16777251
+        print(e.key())
+        if e.key() == 32 and self.algorithm_function != None:
             self.metadata += "key,accept suggestion," + str(time.time()) + "\n"
             self.confirm_suggestion()
 
@@ -866,6 +887,8 @@ class Fix8(QMainWindow, QtStyleTools):
                 self.canvas.draw()
                 self.find_aoi()
                 self.relevant_buttons("opened_stimulus")
+                # hide side panel until a folder is opened
+                self.show_side_panel()
 
 
 
@@ -879,6 +902,9 @@ class Fix8(QMainWindow, QtStyleTools):
         # reset times saved if a DIFFERENT trial was selected
         self.trial_name = item.text()
         self.trial_path = self.trials[item.text()]
+
+        # clear history for undo
+        self.state.clear()
 
         self.find_fixations(self.trial_path)
         self.suggested_corrections = None
