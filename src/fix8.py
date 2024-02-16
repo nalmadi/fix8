@@ -78,6 +78,14 @@ from state import State
 # from PyQt5 import QtWidgets
 from qt_material import QtStyleTools, list_themes
 
+import platform
+if platform.system() == "Windows":
+    import ctypes
+    myappid = 'ThisCanBeAnything' # arbitrary string
+
+    # This helps Windows manage and group windows of this application together
+    # And helps us maintain the taskbar icon
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 class QtCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=12, height=8, dpi=100):
