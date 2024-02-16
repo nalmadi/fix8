@@ -322,6 +322,11 @@ class Fix8(QMainWindow, QtStyleTools):
     def undo(self):
         if not self.state.is_empty():
             self.fixations = self.state.get_state()
+
+            # update progress bar
+            self.progress_bar.setMaximum(len(self.fixations) - 1)
+            
+            # update canvas
             self.draw_canvas(self.fixations, draw_all=True)
 
     def save_state(self):
@@ -1132,7 +1137,7 @@ class Fix8(QMainWindow, QtStyleTools):
         if self.current_fixation != 0:
             self.current_fixation -= 1
 
-        self.draw_canvas(self.fixations)
+        #self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
         # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
@@ -1145,7 +1150,7 @@ class Fix8(QMainWindow, QtStyleTools):
         if self.current_fixation != len(self.fixations) - 1:
             self.current_fixation += 1
 
-        self.draw_canvas(self.fixations)
+        #self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
 
@@ -1378,12 +1383,12 @@ class Fix8(QMainWindow, QtStyleTools):
         #self.toolbar.setEnabled(False)
         self.progress_tools.addWidget(self.toolbar)
 
-        self.button_previous_fixation = QPushButton("Previous Fixation", self)
+        self.button_previous_fixation = QPushButton("Back", self)
         self.button_previous_fixation.setEnabled(False)
         self.button_previous_fixation.clicked.connect(self.previous_fixation)
         self.progress_tools.addWidget(self.button_previous_fixation)
 
-        self.button_next_fixation = QPushButton("Next Fixation", self)
+        self.button_next_fixation = QPushButton("Next", self)
         self.button_next_fixation.setEnabled(False)
         self.button_next_fixation.clicked.connect(self.next_fixation)
         self.progress_tools.addWidget(self.button_next_fixation)
@@ -1492,13 +1497,13 @@ class Fix8(QMainWindow, QtStyleTools):
         self.below_canvas.addWidget(self.frame3)
 
         # --
-        self.button_fixation_color = QPushButton("Select Fixation Color")
+        self.button_fixation_color = QPushButton("Fixation Color")
         self.button_fixation_color.clicked.connect(self.select_fixation_color)
         
-        self.button_saccade_color = QPushButton("Select Saccade Color")
+        self.button_saccade_color = QPushButton("Saccade Color")
         self.button_saccade_color.clicked.connect(self.select_saccade_color)
 
-        self.button_current_fixation_color = QPushButton("Current Fixation Color")
+        self.button_current_fixation_color = QPushButton("Current Fix. Color")
         self.button_current_fixation_color.clicked.connect(self.select_current_fixation_color)
 
         self.button_suggested_fixation_color = QPushButton("Suggestion Color")
