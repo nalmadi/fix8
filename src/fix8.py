@@ -128,11 +128,11 @@ class Fix8(QMainWindow):
         self.canvas.mpl_connect('button_release_event', self.button_release_callback)
         self.canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
         
-        # fields relating to aoi margin
+        # fields related to aoi margin
         self.aoi_width = 7
         self.aoi_height = 4
         
-        # fields relating to color filters
+        # fields related to color filters
         self.fixation_color = 'red'
         self.saccade_color = 'blue' 
         self.aoi_color = 'yellow'
@@ -141,6 +141,9 @@ class Fix8(QMainWindow):
         # fields related to duration filters
         self.lesser_value = 0
         self.greater_value = 0
+
+        # fields related to fixation size
+        self.fixation_size = 30
 
     '''get the selected fixation that the user picks, with the selection inside a specific diameter range (epsilon),
     selected_fixation is an index, not the actual scatter point'''
@@ -725,7 +728,7 @@ class Fix8(QMainWindow):
         x = fixations[0:self.current_fixation + 1, 0]
         y = fixations[0:self.current_fixation + 1, 1]
         duration = fixations[0:self.current_fixation + 1, 2]
-        self.scatter = self.canvas.ax.scatter(x,y,s=30 * (duration/50)**1.8, alpha = self.fixation_opacity, c = self.fixation_color)
+        self.scatter = self.canvas.ax.scatter(x,y,s=self.fixation_size * (duration/50)**1.8, alpha = self.fixation_opacity, c = self.fixation_color)
 
         self.canvas.draw()
 
@@ -805,7 +808,7 @@ class Fix8(QMainWindow):
 
                 list_colors = [self.fixation_color] * (len(x)-1)
                 colors = np.array(list_colors + [self.aoi_color])
-                self.scatter = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha=self.fixation_opacity, c=colors)
+                self.scatter = self.canvas.ax.scatter(x, y, s=self.fixation_size * (duration/50)**1.8, alpha=self.fixation_opacity, c=colors)
                 #self.scatter = self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
 
         if self.checkbox_show_saccades.isCheckable():
@@ -818,7 +821,7 @@ class Fix8(QMainWindow):
             y = self.suggested_corrections[self.current_fixation][1]
             duration = self.corrected_fixations[self.current_fixation][2]
 
-            self.single_suggestion = self.canvas.ax.scatter(x, y, s=30 * (duration/50)**1.8, alpha=self.fixation_opacity, c='blue')
+            self.single_suggestion = self.canvas.ax.scatter(x, y, s=self.fixation_size * (duration/50)**1.8, alpha=self.fixation_opacity, c='blue')
         
         # draw whatever was updated
         self.canvas.draw()
@@ -1188,6 +1191,11 @@ class Fix8(QMainWindow):
         self.fixation_opacity = float(value / 10)
         self.draw_canvas(self.corrected_fixations)
 
+    def fixation_size_changed(self, value):
+        self.fixation_size = value*6
+        self.draw_canvas(self.corrected_fixations)
+
+
     def status_update(self):
         self.statusBar.showMessage(self.status_text)
         
@@ -1492,6 +1500,25 @@ class Fix8(QMainWindow):
         self.checkbox_show_suggestion.setEnabled(False)
         # self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
         self.filters.addWidget(self.checkbox_show_suggestion)
+
+        # layer for fixation size customization 
+        self.fixation_size_layer = QHBoxLayout()
+
+        self.fixation_size_bar = QSlider(Qt.Horizontal)
+        self.fixation_size_bar.setMinimum(0)
+        self.fixation_size_bar.setMaximum(20)
+        self.fixation_size_bar.setValue(5)
+        self.fixation_size_bar.setEnabled(False)
+        self.fixation_size_bar.valueChanged.connect(self.fixation_size_changed)
+
+        
+        self.fixation_size_text = QLabel("Customize Fixation Size")
+        self.fixation_size_layer.addWidget(self.fixation_size_bar)
+        self.fixation_size_layer.addWidget(self.fixation_size_text)
+
+        self.filters.addLayout(self.fixation_size_layer)
+        # ---
+
         self.frame3 = QFrame()
         self.frame3.setStyleSheet(" QFrame {border: 2px solid black; margin: 0px; padding: 0px;}")
         self.label_filters.setStyleSheet("QLabel { border: 0px }")
@@ -1596,6 +1623,7 @@ class Fix8(QMainWindow):
             self.button_coloblind_assist.setEnabled(False)
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
+            self.fixation_size_bar.setEnabled(False)
 
             self.dropdown_select_algorithm.setEnabled(False)
         elif feature == "trial_clicked":
@@ -1630,6 +1658,7 @@ class Fix8(QMainWindow):
             self.button_saccade_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
+            self.fixation_size_bar.setEnabled(True)
             self.button_coloblind_assist.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal 
