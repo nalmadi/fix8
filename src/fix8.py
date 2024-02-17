@@ -176,6 +176,44 @@ class Fix8(QMainWindow, QtStyleTools):
         # hide/show side panel until a folder is opened
         self.hide_side_panel()
 
+    def outlier_duration_filter(self):
+
+        minimum_value = 1
+        maximum_value = 4
+        default_value = 2.5
+        title = "Duration Filter"
+        message = "Remove fixations with durations X standard deviations away from the mean"
+        threshold, ok = QInputDialog.getDouble(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        self.metadata += (
+            "filter,removed fixations X standard deviations away from the mean "
+            + str(threshold)
+            + ","
+            + str(time.time())
+            + "\n"
+        )
+        self.save_state()
+
+        # get mean duration and standard deviation
+        mean = np.mean(self.fixations[:, 2])
+        std = np.std(self.fixations[:, 2])
+
+        # remove fixations X standard deviations away from the mean
+        self.fixations = self.fixations[((self.fixations[:, 2] - mean) / std) < threshold]
+
+        self.current_fixation = 0
+
+        if self.algorithm != "manual" and self.suggested_corrections is not None:
+            if self.current_fixation == len(self.fixations):
+                self.current_fixation = len(self.fixations) - 1
+
+            self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < mean + threshold * std]
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation, draw=True)
 
     def show_hide_side_panel(self):
         if not self.trial_list.isHidden() or not self.visualization_frame.isHidden():
@@ -205,13 +243,25 @@ class Fix8(QMainWindow, QtStyleTools):
     def undo(self):
         ''' implement undo using memento pattern and state class ''' 
         if not self.state.is_empty():
+            
+            at_max = False
+            # check if progressbar is at end of progressbar range
+            if self.progress_bar.value() == self.progress_bar.maximum():
+                at_max = True
+             
+        
             self.fixations = self.state.get_state()
 
             # update progress bar
             self.progress_bar.setMaximum(len(self.fixations) - 1)
+
+            if self.current_fixation >= len(self.fixations) or at_max:
+                self.current_fixation = len(self.fixations) - 1
+
+            self.progress_bar_updated(self.current_fixation, draw=True)
             
             # draw fixations up to current_fixation
-            self.draw_canvas(self.fixations, draw_all=False)
+            #self.draw_canvas(self.fixations, draw_all=False)
 
     def save_state(self):
         self.state.set_state(self.fixations)
@@ -1512,6 +1562,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.lowpass_duration_filter_action = QAction("Filters less than", self)
         self.highpass_duration_filter_action = QAction("Filters greater than", self)
+        self.outlier_duration_filter_action = QAction("Outlier Filter", self)
         self.merge_fixations_filter_action = QAction("Merge Fixations", self)
         self.outside_screen_filter_action = QAction("Outside Screen", self)
 
@@ -1566,6 +1617,7 @@ class Fix8(QMainWindow, QtStyleTools):
         
         self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
+        self.outlier_duration_filter_action.triggered.connect(self.outlier_duration_filter)
         self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
         self.outside_screen_filter_action.triggered.connect(self.outside_screen_filter)
         
@@ -1606,6 +1658,7 @@ class Fix8(QMainWindow, QtStyleTools):
         
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
         self.filters_menu.addAction(self.highpass_duration_filter_action)
+        self.filters_menu.addAction(self.outlier_duration_filter_action)
         self.filters_menu.addAction(self.merge_fixations_filter_action)
         self.filters_menu.addAction(self.outside_screen_filter_action)
 
