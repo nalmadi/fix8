@@ -175,11 +175,11 @@ class Fix8(QMainWindow, QtStyleTools):
 
 
     def generate_fixations(self):
-        minimum_value = 1
+        minimum_value = 0
         maximum_value = 100
-        default_value = 15
+        default_value = 20
         title = "Dispersion"
-        message = "Enter value for dispersion around the optimal viewing position"
+        message = "Enter value for dispersion around the optimal viewing position in pixels(0-100)"
         dispersion, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
@@ -227,12 +227,12 @@ class Fix8(QMainWindow, QtStyleTools):
         self.statusBar.showMessage(self.status_text)
 
     def generate_fixations_skip(self):
-        minimum_value = 0
-        maximum_value = 1
-        default_value = .2
+        minimum_value = 1
+        maximum_value = 100
+        default_value = 20
         title = "Skip"
-        message = "Enter skip probability"
-        skip_probability, ok = QInputDialog.getDouble(self, title, message, default_value, minimum_value, maximum_value)
+        message = "Enter skip probability (1-100)"
+        skip_probability, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -248,7 +248,7 @@ class Fix8(QMainWindow, QtStyleTools):
         )
 
         # generate fixations
-        self.original_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, skip_probability))
+        self.original_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, skip_probability/100))
         self.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
@@ -280,11 +280,11 @@ class Fix8(QMainWindow, QtStyleTools):
 
     def generate_within_line_regression(self):
         minimum_value = 0
-        maximum_value = 1
-        default_value = .2
+        maximum_value = 100
+        default_value = 20
         title = "Within-line regression"
-        message = "Enter within-line regression probability"
-        probability, ok = QInputDialog.getDouble(self, title, message, default_value, minimum_value, maximum_value)
+        message = "Enter within-line regression probability (0-100)"
+        probability, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -300,7 +300,7 @@ class Fix8(QMainWindow, QtStyleTools):
         )
 
         # generate fixations
-        self.original_fixations = np.array(mini_emtk.within_line_regression(self.aoi, probability))
+        self.original_fixations = np.array(mini_emtk.within_line_regression(self.aoi, probability/10))
         self.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
@@ -333,11 +333,11 @@ class Fix8(QMainWindow, QtStyleTools):
 
     def generate_between_line_regression(self):
         minimum_value = 0
-        maximum_value = 1
-        default_value = .2
+        maximum_value = 100
+        default_value = 20
         title = "Between-line regression"
-        message = "Enter Between-line regression probability"
-        probability, ok = QInputDialog.getDouble(self, title, message, default_value, minimum_value, maximum_value)
+        message = "Enter Between-line regression probability (0-100)"
+        probability, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -353,7 +353,7 @@ class Fix8(QMainWindow, QtStyleTools):
         )
 
         # generate fixations
-        self.original_fixations = np.array(mini_emtk.between_line_regression(self.aoi, probability))
+        self.original_fixations = np.array(mini_emtk.between_line_regression(self.aoi, probability/10))
         self.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
@@ -441,10 +441,10 @@ class Fix8(QMainWindow, QtStyleTools):
 
     def generate_offset(self):
         minimum_value = 1
-        maximum_value = 200
+        maximum_value = 300
         default_value = 30
         title = "Offset Distortion"
-        message = "Magnitude of offset distortion (1-200)"
+        message = "Magnitude of offset distortion (1-300)"
         threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
@@ -1340,8 +1340,6 @@ class Fix8(QMainWindow, QtStyleTools):
                 elif state == Qt.Unchecked:
                     self.clear_fixations()
 
-        self.canvas.draw_idle()
-
     
 
     def show_saccades(self, state):
@@ -1353,7 +1351,6 @@ class Fix8(QMainWindow, QtStyleTools):
                 elif state == Qt.Unchecked:
                     self.clear_saccades()
 
-        self.canvas.draw_idle()
     
 
     def draw_saccades(self):
@@ -1365,7 +1362,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.saccade_lines = self.canvas.ax.plot(
             x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
         )
-        self.canvas.draw_idle()
+        self.canvas.draw()
 
     
 
@@ -1378,7 +1375,7 @@ class Fix8(QMainWindow, QtStyleTools):
             #    line.remove()
 
             self.saccade_lines = None
-            self.canvas.draw_idle()
+            self.canvas.draw()
 
     
 
@@ -1392,7 +1389,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
             # for collection in self.canvas.ax.collections: #<-- use this instead
             #    collection.remove()
-            self.canvas.draw_idle()
+            self.canvas.draw()
 
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
@@ -1450,7 +1447,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 c=self.suggested_fixation_color,
             )
 
-        self.canvas.draw_idle()
+        self.canvas.draw()
 
 
     def correct_all_fixations(self):
