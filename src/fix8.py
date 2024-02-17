@@ -4,7 +4,7 @@
 #          Brett Torra
 #          Agnes Li
 #          Najam Tariq
-#          Ricky Peng
+#          Ricky Peng (contributed to a previous version)
 #
 #
 # URL: https://github.com/nalmadi/fix8
@@ -77,7 +77,6 @@ from state import State
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
 from qt_material import QtStyleTools, list_themes
-
 import platform
 
 
@@ -118,19 +117,17 @@ class Fix8(QMainWindow, QtStyleTools):
         self.image_file_path = None
 
         # fields relating to the trial folder
-        self.folder_path, self.trial_path, self.trial_name = (
-            None,
-            None,
-            None,
-        )
+        self.folder_path = None
+        self.trial_path = None
+        self.trial_name = None
 
         # fields relating to fixations
-        self.original_fixations, self.fixations, self.scatter, self.saccades = (
-            None,
-            None,
-            None,
-            None,
-        )
+        self.original_fixations = None
+        self.fixations = None   # timestamp, x, y, duration, pupil
+        self.saccades = None    # timestamp, x, y, duration, x1, y1, amplitude, peak velocity 
+        self.blinks = None      # timestamp duration
+        self.fixation_points = None
+        self.saccade_lines = None
         self.current_fixation = -1
 
         # filed for tool undo/redo using memento pattern and state class
@@ -169,7 +166,6 @@ class Fix8(QMainWindow, QtStyleTools):
         self.saccade_color = "blue"
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
-
         
         # fields relating to fixation size
         self.fixation_size = 30
@@ -229,7 +225,6 @@ class Fix8(QMainWindow, QtStyleTools):
         self.trial_list.setHidden(False)
         self.visualization_frame.setHidden(False)
 
-
     def show_hide_trial_list(self):
         self.trial_list.setHidden(not self.trial_list.isHidden())
 
@@ -239,7 +234,6 @@ class Fix8(QMainWindow, QtStyleTools):
     def show_hide_visualization_panel(self):
         self.visualization_frame.setHidden(not self.visualization_frame.isHidden())
 
-    
     def undo(self):
         ''' implement undo using memento pattern and state class ''' 
         if not self.state.is_empty():
@@ -265,7 +259,6 @@ class Fix8(QMainWindow, QtStyleTools):
 
     def save_state(self):
         self.state.set_state(self.fixations)
-
 
     def outside_screen_filter(self):
 
@@ -300,7 +293,6 @@ class Fix8(QMainWindow, QtStyleTools):
         self.progress_bar_updated(self.current_fixation, draw=False)
 
     def lowpass_duration_filter(self):
-        
         minimum_value = 1
         maximum_value = 99
         default_value = 80
@@ -499,9 +491,9 @@ class Fix8(QMainWindow, QtStyleTools):
         inside a specific diameter range (epsilon), selected_fixation is an 
         index, not the actual scatter point
         """
-        if self.scatter is not None:
+        if self.fixation_points is not None:
 
-            self.xy = np.asarray(self.scatter.get_offsets())
+            self.xy = np.asarray(self.fixation_points.get_offsets())
             xyt = self.canvas.ax.transData.transform(self.xy)
             xt, yt = xyt[:, 0], xyt[:, 1]
             d = np.sqrt((xt - event.x) ** 2 + (yt - event.y) ** 2)
@@ -621,7 +613,7 @@ class Fix8(QMainWindow, QtStyleTools):
         # self.canvas.draw_idle()
 
         self.canvas.restore_region(self.canvas.background)
-        self.canvas.ax.draw_artist(self.scatter)
+        self.canvas.ax.draw_artist(self.fixation_points)
         #self.canvas.ax.draw_artist(self.saccades)
         self.canvas.blit(self.canvas.ax.bbox)
         
@@ -727,7 +719,7 @@ class Fix8(QMainWindow, QtStyleTools):
             if len(files) > 0:
                 self.file_list = []
                 for file in files:
-                    if file.endswith(".json"):
+                    if file.endswith(".json") or file.endswith(".csv"):
                         self.file_list.append(self.folder_path + "/" + file)
 
                     elif (file.endswith(".png")
@@ -780,10 +772,15 @@ class Fix8(QMainWindow, QtStyleTools):
         self.trial_name = item.text()
         self.trial_path = self.trials[item.text()]
 
+        if self.trial_path.endswith(".json"):
+            self.read_json_fixations(self.trial_path)
+        elif self.trial_path.endswith(".csv"):
+            self.read_csv_fixations(self.trial_path)
+
         # clear history for undo
         self.state = State()
 
-        self.find_fixations(self.trial_path)
+        #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
         # double clicking trial should show all and make the current fixation the last one
         self.current_fixation = (len(self.original_fixations)-1)  
@@ -863,7 +860,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 self.clear_aoi()
 
     
-    def find_fixations(self, trial_path):
+    def read_json_fixations(self, trial_path):
         """find all the fixations of the trial that was double clicked
         parameters:
         trial_path - the trial file path of the trial clicked on"""
@@ -883,6 +880,28 @@ class Fix8(QMainWindow, QtStyleTools):
                 self.relevant_buttons("trial_clicked")
             except json.decoder.JSONDecodeError:
                 self.show_error_message("Trial File Error", "JSON File Empty")
+
+
+    def read_csv_fixations(self, trial_path):
+        """find all the fixations of the trial that was double clicked
+        parameters:
+        trial_path - the trial file path of the trial clicked on"""
+        self.original_fixations = []
+        with open(trial_path, "r") as trial:
+            try:
+                trial_data = trial.readlines()
+                for line in trial_data:
+                    tokens = line.split(",")
+
+                    if tokens[2] == "fixation":
+                        self.original_fixations.append(
+                            [float(tokens[3]), float(tokens[4]), int(tokens[5])]
+                        )
+
+                self.original_fixations = np.array(self.original_fixations)
+                self.relevant_buttons("trial_clicked")
+            except:
+                self.show_error_message("Trial File Error", "Problem reading CSV File")        
 
 
 
@@ -926,7 +945,7 @@ class Fix8(QMainWindow, QtStyleTools):
         x = fixations[0 : self.current_fixation + 1, 0]
         y = fixations[0 : self.current_fixation + 1, 1]
         duration = fixations[0 : self.current_fixation + 1, 2]
-        self.scatter = self.canvas.ax.scatter(
+        self.fixation_points = self.canvas.ax.scatter(
             x,
             y,
             s=30 * (duration / 50) ** 1.8,
@@ -967,7 +986,7 @@ class Fix8(QMainWindow, QtStyleTools):
         x = fixations[0 : self.current_fixation + 1, 0]
         y = fixations[0 : self.current_fixation + 1, 1]
         duration = fixations[0 : self.current_fixation + 1, 2]
-        self.saccades = self.canvas.ax.plot(
+        self.saccade_lines = self.canvas.ax.plot(
             x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
         )
         self.canvas.draw()
@@ -976,22 +995,22 @@ class Fix8(QMainWindow, QtStyleTools):
 
     def clear_saccades(self):
         """remove the saccades from the canvas (this does not erase the data, just visuals)"""
-        if self.saccades != None:
+        if self.saccade_lines != None:
             self.canvas.ax.lines.clear()  # <-- if this line crashes the tool
 
             # for line in self.canvas.ax.lines:  #<-- use this instead
             #    line.remove()
 
-            self.saccades = None
+            self.saccade_lines = None
             self.canvas.draw()
 
     
 
     def clear_fixations(self):
         """clear the fixations from the canvas"""
-        if self.scatter != None:
+        if self.fixation_points != None:
             # self.scatter.remove()
-            self.scatter = None
+            self.fixation_points = None
             # clear scatter data from canvas but not the background image
             self.canvas.ax.collections.clear()  # <-- If this line crashes the tool
 
@@ -1025,7 +1044,7 @@ class Fix8(QMainWindow, QtStyleTools):
             if self.checkbox_show_fixations.isChecked():
                 list_colors = [self.fixation_color] * (len(x) - 1)
                 colors = np.array(list_colors + [self.current_fixation_color])
-                self.scatter = self.canvas.ax.scatter(
+                self.fixation_points = self.canvas.ax.scatter(
                     x,
                     y,
                     s=self.fixation_size * (duration / 50) ** 1.8,
@@ -1037,7 +1056,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         if self.checkbox_show_saccades.isCheckable():
             if self.checkbox_show_saccades.isChecked():
-                self.saccades = self.canvas.ax.plot(
+                self.saccade_lines = self.canvas.ax.plot(
                     x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
                 )
 
@@ -1444,8 +1463,8 @@ class Fix8(QMainWindow, QtStyleTools):
         self.fixation_size_layer = QHBoxLayout()
 
         self.fixation_size_bar = QSlider(Qt.Horizontal)
-        self.fixation_size_bar.setMinimum(0)
-        self.fixation_size_bar.setMaximum(20)
+        self.fixation_size_bar.setMinimum(1)
+        self.fixation_size_bar.setMaximum(30)
         self.fixation_size_bar.setValue(5)
         self.fixation_size_bar.setEnabled(False)
         self.fixation_size_bar.valueChanged.connect(self.fixation_size_changed)
@@ -1798,8 +1817,6 @@ class Fix8(QMainWindow, QtStyleTools):
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
             self.button_suggested_fixation_color.setEnabled(True)
-
-       
 
 if __name__ == "__main__":
 
