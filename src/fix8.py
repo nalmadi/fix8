@@ -76,6 +76,7 @@ from state import State
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
+import pandas as pd
 from qt_material import QtStyleTools, list_themes
 import platform
 
@@ -193,9 +194,11 @@ class Fix8(QMainWindow, QtStyleTools):
         if '.csv' not in new_correction_file_name:
             new_correction_file_name += '.csv'
 
+        self.show_error_message("Warning", "Conversion may take a while")
+
         # convert and save csv file
         mini_emtk.read_EyeLink1000(ascii_file, new_correction_file_name)
-        
+
 
     def outlier_duration_filter(self):
 
@@ -913,22 +916,23 @@ class Fix8(QMainWindow, QtStyleTools):
         parameters:
         trial_path - the trial file path of the trial clicked on"""
         self.original_fixations = []
-        with open(trial_path, "r") as trial:
-            try:
-                trial_data = trial.readlines()
-                for line in trial_data:
-                    tokens = line.split(",")
 
-                    if tokens[2] == "fixation":
-                        self.original_fixations.append(
-                            [float(tokens[3]), float(tokens[4]), int(tokens[5])]
-                        )
+        try:
+            # open the csv file with pandas
+            eye_events = pd.read_csv(trial_path)
 
-                self.original_fixations = np.array(self.original_fixations)
-                self.relevant_buttons("trial_clicked")
-            except:
+        except:
                 self.show_error_message("Trial File Error", "Problem reading CSV File")        
 
+        # get the fixations from the csv file
+        fixations = eye_events[eye_events["eye_event"] == "fixation"]
+
+        # get the x, y, and duration of the fixations
+        for index, row in fixations.iterrows():
+            self.original_fixations.append([row["x_cord"], row["y_cord"], row["duration"]])
+
+        self.original_fixations = np.array(self.original_fixations)
+        self.relevant_buttons("trial_clicked")
 
 
     def find_lines_y(self, aoi):
