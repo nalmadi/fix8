@@ -512,7 +512,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.suggested_corrections = copy.deepcopy(self.fixations)
         self.checkbox_show_suggestion.setEnabled(False)
 
-        # show suggestion
+        # hide suggestion
         self.checkbox_show_suggestion.setChecked(False)
 
     
@@ -722,7 +722,7 @@ class Fix8(QMainWindow, QtStyleTools):
         qmb.setWindowTitle(window_title)
         qmb.setText(message)
         qmb.exec_()
-    
+
 
     def open_trial_folder(self):
         """open trial folder, display it to trial list window with list of JSON trials"""
@@ -744,7 +744,6 @@ class Fix8(QMainWindow, QtStyleTools):
             files = listdir(self.folder_path)
 
             image_file = ""
-            image_name = ""
 
             if len(files) > 0:
                 self.file_list = []
@@ -758,7 +757,7 @@ class Fix8(QMainWindow, QtStyleTools):
                         if image_file == "":  # only get the first image found
                             image_file = self.folder_path + "/" + file
                             self.image_file_path = self.folder_path + "/" + file
-
+                
                 if len(self.file_list) > 0:
                     # add the files to the trial list window
                     self.trials = {}
@@ -779,15 +778,34 @@ class Fix8(QMainWindow, QtStyleTools):
                 self.show_error_message("Trial Folder Error", "No Compatible Image")
 
             else:
-                self.canvas.clear()
-                image = mpimg.imread(image_file)
-                self.canvas.ax.imshow(image)
-                self.canvas.ax.set_title(str(image_name.split(".")[0]))
+                self.set_canvas_image(image_file)
                 #self.canvas.draw()
                 self.find_aoi()
                 self.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
                 self.show_side_panel()
+
+
+    def open_image(self):
+        qfd = QFileDialog()
+        self.image_file_path = qfd.getOpenFileName(self, "Select Image", "", "Image Files (*.png *.jpg *.jpeg)")[0]
+
+        if self.image_file_path != "":
+            self.set_canvas_image(self.image_file_path)
+            self.find_aoi()
+            self.relevant_buttons("opened_stimulus")
+            self.canvas.draw_idle()
+            # hide side panel until a folder is opened
+            #self.show_side_panel()
+        else:
+            self.show_error_message("Image Error", "No Image Selected")
+
+
+    def set_canvas_image(self, image_file):
+        self.canvas.clear()
+        image = mpimg.imread(image_file)
+        self.canvas.ax.imshow(image)
+        #self.canvas.ax.set_title(str(image_file.split('/')[-1].split(".")[0]))
 
 
     def trial_double_clicked(self, item):
@@ -1195,7 +1213,7 @@ class Fix8(QMainWindow, QtStyleTools):
         """ save correction to a json file and metadata to csv file """
 
         qfd = QFileDialog()
-        default_file_name = self.trial_path.replace('.json', '') + '_CORRECTED_json'
+        default_file_name = self.trial_path.replace('.json', '') + '_CORRECTED.json'
         new_correction_file_name, _ = qfd.getSaveFileName(self, "Save correction", default_file_name)
 
         if '.json' not in new_correction_file_name:
@@ -1588,15 +1606,17 @@ class Fix8(QMainWindow, QtStyleTools):
         self.file_menu = self.menuBar().addMenu("File")
         self.edit_menu = self.menuBar().addMenu("Edit")
         self.view_menu = self.menuBar().addMenu("View")
+        self.generate_menu = self.menuBar().addMenu("Generate")
         self.filters_menu = self.menuBar().addMenu("Filters")
-        #self.generate_menu = self.menuBar().addMenu("Generate")
         self.correction_menu = self.menuBar().addMenu("Correction")
         self.automated_correction_menu = self.correction_menu.addMenu("Automatic")
         self.semi_auto_correction_menu = self.correction_menu.addMenu("Assisted")
+        self.analyses_menu = self.menuBar().addMenu("Analyses")
         self.converters_menu = self.menuBar().addMenu("Converters")
 
         # add actions
         self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
+        self.open_image_action = QAction("Open Image", self)
         self.save_correction_action = QAction( QIcon("./.images/save.png"), "Save Correction", self)
 
         self.undo_correction_action = QAction("Undo", self)
@@ -1652,9 +1672,11 @@ class Fix8(QMainWindow, QtStyleTools):
         self.edit_menu.setEnabled(False)
         self.filters_menu.setEnabled(False)
         self.correction_menu.setEnabled(False)
+        self.analyses_menu.setEnabled(False)
 
         # connect functions
         self.new_file_action.triggered.connect(self.open_trial_folder)
+        self.open_image_action.triggered.connect(self.open_image)
         self.save_correction_action.triggered.connect(self.save_corrections)
 
         self.next_fixation_action.triggered.connect(self.next_fixation)
@@ -1697,6 +1719,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         # add actions to menu
         self.file_menu.addAction(self.new_file_action)
+        self.file_menu.addAction(self.open_image_action)
         self.file_menu.addAction(self.save_correction_action)
 
         self.edit_menu.addAction(self.next_fixation_action)
@@ -1709,6 +1732,8 @@ class Fix8(QMainWindow, QtStyleTools):
         self.view_menu.addAction(self.trial_summary_action)
         self.view_menu.addAction(self.visualization_panel_action)
         self.view_menu.addAction(self.hude_side_panel_action)
+
+        # Generate
         
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
         self.filters_menu.addAction(self.highpass_duration_filter_action)
@@ -1810,6 +1835,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.edit_menu.setEnabled(True)
             self.filters_menu.setEnabled(True)
             self.correction_menu.setEnabled(True)
+            self.analyses_menu.setEnabled(True)
 
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
