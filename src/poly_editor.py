@@ -169,7 +169,6 @@ class PolygonInteractor(object):
             self.canvas.draw_idle()
 
     def motion_notify_callback(self, event):
-        print('here')
         'on mouse movement'
         if not self.showverts:
             return

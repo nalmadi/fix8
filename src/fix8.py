@@ -79,13 +79,7 @@ from state import State
 from qt_material import QtStyleTools, list_themes
 
 import platform
-if platform.system() == "Windows":
-    import ctypes
-    myappid = 'ThisCanBeAnything' # arbitrary string
 
-    # This helps Windows manage and group windows of this application together
-    # And helps us maintain the taskbar icon
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 class QtCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=12, height=8, dpi=100):
@@ -98,9 +92,7 @@ class QtCanvas(FigureCanvasQTAgg):
         FigureCanvasQTAgg.__init__(self, self.figure)
         self.setParent(parent)
 
-        FigureCanvasQTAgg.setSizePolicy(
-            self, QSizePolicy.Expanding, QSizePolicy.Expanding
-        )
+        FigureCanvasQTAgg.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
         FigureCanvasQTAgg.updateGeometry(self)
 
         self.initialize()
@@ -108,7 +100,7 @@ class QtCanvas(FigureCanvasQTAgg):
     def initialize(self):
         img = mpimg.imread("./.images/fix8_landing.png")
         self.ax.imshow(img)
-        self.draw
+        self.draw()
 
     def clear(self):
         self.ax.clear()
@@ -121,171 +113,6 @@ class Fix8(QMainWindow, QtStyleTools):
         self.setWindowIcon(QIcon("icon.ico"))
         self.init_UI()
         self.apply_stylesheet(fix8, 'my_theme.xml')
-
-        # add menues
-        self.file_menu = self.menuBar().addMenu("File")
-        self.edit_menu = self.menuBar().addMenu("Edit")
-        self.view_menu = self.menuBar().addMenu("View")
-        self.filters_menu = self.menuBar().addMenu("Filters")
-        #self.generate_menu = self.menuBar().addMenu("Generate")
-        self.correction_menu = self.menuBar().addMenu("Correction")
-        self.automated_correction_menu = self.correction_menu.addMenu("Automatic")
-        self.semi_auto_correction_menu = self.correction_menu.addMenu("Assisted")
-
-        # add actions
-        self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
-        self.save_correction_action = QAction( QIcon("./.images/save.png"), "Save Correction", self)
-
-        self.undo_correction_action = QAction("Undo", self)
-        self.next_fixation_action = QAction("Next Fixation", self)
-        self.previous_fixation_action = QAction("Previous Fixation", self)
-        self.accept_and_next_action = QAction("Accept suggestion", self)
-        self.delete_fixation_action = QAction("Delete Fixation", self)
-
-        self.trial_list_action = QAction("Show/Hide Trial List", self)
-        self.trial_summary_action = QAction("Show/Hide Trial Summary", self)
-        self.visualization_panel_action = QAction("Show/Hide Visualization Panel", self)
-        self.hude_side_panel_action = QAction("Show/Hide Side Panel", self)
-
-        self.lowpass_duration_filter_action = QAction("Filters less than", self)
-        self.highpass_duration_filter_action = QAction("Filters greater than", self)
-        self.merge_fixations_filter_action = QAction("Merge Fixations", self)
-        self.outside_screen_filter_action = QAction("Outside Screen", self)
-
-        self.manual_correction_action = QAction("Manual", self)
-        self.warp_auto_action = QAction("Warp", self)
-        self.attach_auto_action = QAction("Attach", self)
-        self.chain_auto_action = QAction("Chain", self)
-        self.cluster_auto_action = QAction("Cluster", self)
-        self.merge_auto_action = QAction("Merge", self)
-        self.regress_auto_action = QAction("Regress", self)
-        self.segment_auto_action = QAction("Segment", self)
-        self.stretch_auto_action = QAction("Stretch", self)
-
-        self.warp_semi_action = QAction("Warp", self)
-        self.attach_semi_action = QAction("Attach", self)
-        self.chain_semi_action = QAction("Chain", self)
-        self.cluster_semi_action = QAction("Cluster", self)
-        self.merge_semi_action = QAction("Merge", self)
-        self.regress_semi_action = QAction("Regress", self)
-        self.segment_semi_action = QAction("Segment", self)
-        self.stretch_semi_action = QAction("Stretch", self)
-
-        # add shortcuts
-        self.new_file_action.setShortcut("Ctrl+O")
-        self.save_correction_action.setShortcut("Ctrl+S")
-
-        self.next_fixation_action.setShortcut("a")
-        self.previous_fixation_action.setShortcut("z")
-        self.undo_correction_action.setShortcut("Ctrl+Z")
-        self.accept_and_next_action.setShortcut("space")
-        self.delete_fixation_action.setShortcut("backspace")
-
-        # enable/disable
-        self.save_correction_action.setEnabled(False)
-        self.edit_menu.setEnabled(False)
-        self.filters_menu.setEnabled(False)
-        self.correction_menu.setEnabled(False)
-
-        # connect functions
-        self.new_file_action.triggered.connect(self.open_trial_folder)
-        self.save_correction_action.triggered.connect(self.save_corrections)
-
-        self.next_fixation_action.triggered.connect(self.next_fixation)
-        self.previous_fixation_action.triggered.connect(self.previous_fixation)
-        self.accept_and_next_action.triggered.connect(self.confirm_suggestion)
-        self.undo_correction_action.triggered.connect(self.undo)
-
-        self.trial_list_action.triggered.connect(self.show_hide_trial_list)
-        self.trial_summary_action.triggered.connect(self.show_hide_trial_summary)
-        self.visualization_panel_action.triggered.connect(self.show_hide_visualization_panel)
-        self.hude_side_panel_action.triggered.connect(self.show_hide_side_panel)
-        
-        self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
-        self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
-        self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
-        self.outside_screen_filter_action.triggered.connect(self.outside_screen_filter)
-        
-        self.warp_auto_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'auto'))
-        self.attach_auto_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'auto'))
-        self.chain_auto_action.triggered.connect(lambda: self.run_algorithm('chain', da.chain, 'auto'))
-        self.cluster_auto_action.triggered.connect(lambda: self.run_algorithm('cluster', da.cluster, 'auto'))
-        self.merge_auto_action.triggered.connect(lambda: self.run_algorithm('merge', da.merge, 'auto'))
-        self.regress_auto_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'auto'))
-        self.segment_auto_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'auto'))
-        self.stretch_auto_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'auto'))
-        
-        self.warp_semi_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'semi'))
-        self.attach_semi_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'semi'))
-        self.chain_semi_action.triggered.connect(lambda: self.run_algorithm('chain', da.chain, 'semi'))
-        self.cluster_semi_action.triggered.connect(lambda: self.run_algorithm('cluster', da.cluster, 'semi'))
-        self.merge_semi_action.triggered.connect(lambda: self.run_algorithm('merge', da.merge, 'semi'))
-        self.regress_semi_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'semi'))
-        self.segment_semi_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'semi'))
-        self.stretch_semi_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'semi'))
-
-        self.manual_correction_action.triggered.connect(self.manual_correction)
-
-        # add actions to menu
-        self.file_menu.addAction(self.new_file_action)
-        self.file_menu.addAction(self.save_correction_action)
-
-        self.edit_menu.addAction(self.next_fixation_action)
-        self.edit_menu.addAction(self.previous_fixation_action)
-        self.edit_menu.addAction(self.accept_and_next_action)
-        self.edit_menu.addAction(self.undo_correction_action)
-        self.edit_menu.addAction(self.delete_fixation_action)
-
-        self.view_menu.addAction(self.trial_list_action)
-        self.view_menu.addAction(self.trial_summary_action)
-        self.view_menu.addAction(self.visualization_panel_action)
-        self.view_menu.addAction(self.hude_side_panel_action)
-        
-        self.filters_menu.addAction(self.lowpass_duration_filter_action)
-        self.filters_menu.addAction(self.highpass_duration_filter_action)
-        self.filters_menu.addAction(self.merge_fixations_filter_action)
-        self.filters_menu.addAction(self.outside_screen_filter_action)
-
-        self.correction_menu.addAction(self.manual_correction_action)
-        self.automated_correction_menu.addAction(self.warp_auto_action)
-        self.automated_correction_menu.addAction(self.attach_auto_action)
-        self.automated_correction_menu.addAction(self.chain_auto_action)
-        self.automated_correction_menu.addAction(self.cluster_auto_action)
-        self.automated_correction_menu.addAction(self.merge_auto_action)
-        self.automated_correction_menu.addAction(self.regress_auto_action)
-        self.automated_correction_menu.addAction(self.segment_auto_action)
-        self.automated_correction_menu.addAction(self.stretch_auto_action)
-
-        self.semi_auto_correction_menu.addAction(self.warp_semi_action)
-        self.semi_auto_correction_menu.addAction(self.attach_semi_action)
-        self.semi_auto_correction_menu.addAction(self.chain_semi_action)
-        self.semi_auto_correction_menu.addAction(self.cluster_semi_action)
-        self.semi_auto_correction_menu.addAction(self.merge_semi_action)
-        self.semi_auto_correction_menu.addAction(self.regress_semi_action)
-        self.semi_auto_correction_menu.addAction(self.segment_semi_action)
-        self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
-
-        # add menue item called "Style" to the menu bar
-        self.menu_style = self.menuBar().addMenu("Theme")
-
-        action = QAction('Default', self)
-        action.triggered.connect(lambda _, theme='Default': self.apply_stylesheet(fix8, 'my_theme.xml'))
-        self.menu_style.addAction(action)
-
-        # add sub menue to the menue item "Style" for Dark
-        self.dark_menue_style = self.menu_style.addMenu("Dark")
-        self.light_menue_style = self.menu_style.addMenu("Light")
-
-        # add actions to the menu item "Style"
-        for theme in list_themes():
-            action = QAction(theme.replace('.xml', '').replace('_', ' '), self)
-            action.triggered.connect(lambda _, theme=theme: self.apply_stylesheet(fix8, theme))
-
-            if 'dark' in theme.lower():
-                self.dark_menue_style.addAction(action)
-            else:
-                self.light_menue_style.addAction(action)
-
 
         # fields relating to the stimulus
         self.image_file_path = None
@@ -745,6 +572,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.canvas.restore_region(self.canvas.background)
         self.canvas.ax.draw_artist(self.scatter)
+        #self.canvas.ax.draw_artist(self.saccades)
         self.canvas.blit(self.canvas.ax.bbox)
         
 
@@ -766,7 +594,6 @@ class Fix8(QMainWindow, QtStyleTools):
         if e.key() == 73:
             self.move_up_selected_fixation()
 
-        # print(e.key())
         # a: next is 65
         if e.key() == 65 and self.button_next_fixation.isEnabled():
             self.metadata += "key,next," + str(time.time()) + "\n"
@@ -777,8 +604,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.metadata += "key,previous," + str(time.time()) + "\n"
             self.previous_fixation()
 
-        # spacebar: accept and next 16777251
-        print(e.key())
+        # spacebar: accept and next is 32
         if e.key() == 32 and self.algorithm_function != None:
             self.metadata += "key,accept suggestion," + str(time.time()) + "\n"
             self.confirm_suggestion()
@@ -885,7 +711,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 image = mpimg.imread(image_file)
                 self.canvas.ax.imshow(image)
                 self.canvas.ax.set_title(str(image_name.split(".")[0]))
-                self.canvas.draw()
+                #self.canvas.draw()
                 self.find_aoi()
                 self.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
@@ -930,8 +756,6 @@ class Fix8(QMainWindow, QtStyleTools):
         self.save_state()
         self.checkbox_show_fixations.setChecked(True)
         self.checkbox_show_saccades.setChecked(True)
-
-        self.draw_canvas(self.fixations, draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
@@ -1125,6 +949,7 @@ class Fix8(QMainWindow, QtStyleTools):
             #    collection.remove()
             self.canvas.draw()
 
+
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
     def draw_canvas(self, fixations, draw_all=False):
 
@@ -1180,8 +1005,8 @@ class Fix8(QMainWindow, QtStyleTools):
                 c=self.suggested_fixation_color,
             )
 
-        # draw whatever was updated
         self.canvas.draw()
+
 
     def correct_all_fixations(self):
         """if the user presses the correct all fixations button,
@@ -1218,8 +1043,10 @@ class Fix8(QMainWindow, QtStyleTools):
         if self.current_fixation != len(self.fixations) - 1:
             self.current_fixation += 1
 
+        #self.canvas.ax.lines
         #self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
+
 
 
     def back_to_beginning(self):
@@ -1658,6 +1485,170 @@ class Fix8(QMainWindow, QtStyleTools):
         self.setCentralWidget(widget)
         self.showMaximized()
 
+        # add menues
+        self.file_menu = self.menuBar().addMenu("File")
+        self.edit_menu = self.menuBar().addMenu("Edit")
+        self.view_menu = self.menuBar().addMenu("View")
+        self.filters_menu = self.menuBar().addMenu("Filters")
+        #self.generate_menu = self.menuBar().addMenu("Generate")
+        self.correction_menu = self.menuBar().addMenu("Correction")
+        self.automated_correction_menu = self.correction_menu.addMenu("Automatic")
+        self.semi_auto_correction_menu = self.correction_menu.addMenu("Assisted")
+
+        # add actions
+        self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
+        self.save_correction_action = QAction( QIcon("./.images/save.png"), "Save Correction", self)
+
+        self.undo_correction_action = QAction("Undo", self)
+        self.next_fixation_action = QAction("Next Fixation", self)
+        self.previous_fixation_action = QAction("Previous Fixation", self)
+        self.accept_and_next_action = QAction("Accept suggestion", self)
+        self.delete_fixation_action = QAction("Delete Fixation", self)
+
+        self.trial_list_action = QAction("Show/Hide Trial List", self)
+        self.trial_summary_action = QAction("Show/Hide Trial Summary", self)
+        self.visualization_panel_action = QAction("Show/Hide Visualization Panel", self)
+        self.hude_side_panel_action = QAction("Show/Hide Side Panel", self)
+
+        self.lowpass_duration_filter_action = QAction("Filters less than", self)
+        self.highpass_duration_filter_action = QAction("Filters greater than", self)
+        self.merge_fixations_filter_action = QAction("Merge Fixations", self)
+        self.outside_screen_filter_action = QAction("Outside Screen", self)
+
+        self.manual_correction_action = QAction("Manual", self)
+        self.warp_auto_action = QAction("Warp", self)
+        self.attach_auto_action = QAction("Attach", self)
+        self.chain_auto_action = QAction("Chain", self)
+        self.cluster_auto_action = QAction("Cluster", self)
+        self.merge_auto_action = QAction("Merge", self)
+        self.regress_auto_action = QAction("Regress", self)
+        self.segment_auto_action = QAction("Segment", self)
+        self.stretch_auto_action = QAction("Stretch", self)
+
+        self.warp_semi_action = QAction("Warp", self)
+        self.attach_semi_action = QAction("Attach", self)
+        self.chain_semi_action = QAction("Chain", self)
+        self.cluster_semi_action = QAction("Cluster", self)
+        self.merge_semi_action = QAction("Merge", self)
+        self.regress_semi_action = QAction("Regress", self)
+        self.segment_semi_action = QAction("Segment", self)
+        self.stretch_semi_action = QAction("Stretch", self)
+
+        # add shortcuts
+        self.new_file_action.setShortcut("Ctrl+O")
+        self.save_correction_action.setShortcut("Ctrl+S")
+
+        self.next_fixation_action.setShortcut("a")
+        self.previous_fixation_action.setShortcut("z")
+        self.undo_correction_action.setShortcut("Ctrl+Z")
+        self.accept_and_next_action.setShortcut("space")
+        self.delete_fixation_action.setShortcut("backspace")
+
+        # enable/disable
+        self.save_correction_action.setEnabled(False)
+        self.edit_menu.setEnabled(False)
+        self.filters_menu.setEnabled(False)
+        self.correction_menu.setEnabled(False)
+
+        # connect functions
+        self.new_file_action.triggered.connect(self.open_trial_folder)
+        self.save_correction_action.triggered.connect(self.save_corrections)
+
+        self.next_fixation_action.triggered.connect(self.next_fixation)
+        self.previous_fixation_action.triggered.connect(self.previous_fixation)
+        self.accept_and_next_action.triggered.connect(self.confirm_suggestion)
+        self.undo_correction_action.triggered.connect(self.undo)
+
+        self.trial_list_action.triggered.connect(self.show_hide_trial_list)
+        self.trial_summary_action.triggered.connect(self.show_hide_trial_summary)
+        self.visualization_panel_action.triggered.connect(self.show_hide_visualization_panel)
+        self.hude_side_panel_action.triggered.connect(self.show_hide_side_panel)
+        
+        self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
+        self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
+        self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
+        self.outside_screen_filter_action.triggered.connect(self.outside_screen_filter)
+        
+        self.warp_auto_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'auto'))
+        self.attach_auto_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'auto'))
+        self.chain_auto_action.triggered.connect(lambda: self.run_algorithm('chain', da.chain, 'auto'))
+        self.cluster_auto_action.triggered.connect(lambda: self.run_algorithm('cluster', da.cluster, 'auto'))
+        self.merge_auto_action.triggered.connect(lambda: self.run_algorithm('merge', da.merge, 'auto'))
+        self.regress_auto_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'auto'))
+        self.segment_auto_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'auto'))
+        self.stretch_auto_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'auto'))
+        
+        self.warp_semi_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'semi'))
+        self.attach_semi_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'semi'))
+        self.chain_semi_action.triggered.connect(lambda: self.run_algorithm('chain', da.chain, 'semi'))
+        self.cluster_semi_action.triggered.connect(lambda: self.run_algorithm('cluster', da.cluster, 'semi'))
+        self.merge_semi_action.triggered.connect(lambda: self.run_algorithm('merge', da.merge, 'semi'))
+        self.regress_semi_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'semi'))
+        self.segment_semi_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'semi'))
+        self.stretch_semi_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'semi'))
+
+        self.manual_correction_action.triggered.connect(self.manual_correction)
+
+        # add actions to menu
+        self.file_menu.addAction(self.new_file_action)
+        self.file_menu.addAction(self.save_correction_action)
+
+        self.edit_menu.addAction(self.next_fixation_action)
+        self.edit_menu.addAction(self.previous_fixation_action)
+        self.edit_menu.addAction(self.accept_and_next_action)
+        self.edit_menu.addAction(self.undo_correction_action)
+        self.edit_menu.addAction(self.delete_fixation_action)
+
+        self.view_menu.addAction(self.trial_list_action)
+        self.view_menu.addAction(self.trial_summary_action)
+        self.view_menu.addAction(self.visualization_panel_action)
+        self.view_menu.addAction(self.hude_side_panel_action)
+        
+        self.filters_menu.addAction(self.lowpass_duration_filter_action)
+        self.filters_menu.addAction(self.highpass_duration_filter_action)
+        self.filters_menu.addAction(self.merge_fixations_filter_action)
+        self.filters_menu.addAction(self.outside_screen_filter_action)
+
+        self.correction_menu.addAction(self.manual_correction_action)
+        self.automated_correction_menu.addAction(self.warp_auto_action)
+        self.automated_correction_menu.addAction(self.attach_auto_action)
+        self.automated_correction_menu.addAction(self.chain_auto_action)
+        self.automated_correction_menu.addAction(self.cluster_auto_action)
+        self.automated_correction_menu.addAction(self.merge_auto_action)
+        self.automated_correction_menu.addAction(self.regress_auto_action)
+        self.automated_correction_menu.addAction(self.segment_auto_action)
+        self.automated_correction_menu.addAction(self.stretch_auto_action)
+
+        self.semi_auto_correction_menu.addAction(self.warp_semi_action)
+        self.semi_auto_correction_menu.addAction(self.attach_semi_action)
+        self.semi_auto_correction_menu.addAction(self.chain_semi_action)
+        self.semi_auto_correction_menu.addAction(self.cluster_semi_action)
+        self.semi_auto_correction_menu.addAction(self.merge_semi_action)
+        self.semi_auto_correction_menu.addAction(self.regress_semi_action)
+        self.semi_auto_correction_menu.addAction(self.segment_semi_action)
+        self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
+
+        # add menue item called "Style" to the menu bar
+        self.menu_style = self.menuBar().addMenu("Theme")
+
+        action = QAction('Default', self)
+        action.triggered.connect(lambda _, theme='Default': self.apply_stylesheet(fix8, 'my_theme.xml'))
+        self.menu_style.addAction(action)
+
+        # add sub menue to the menue item "Style" for Dark
+        self.dark_menue_style = self.menu_style.addMenu("Dark")
+        self.light_menue_style = self.menu_style.addMenu("Light")
+
+        # add actions to the menu item "Style"
+        for theme in list_themes():
+            action = QAction(theme.replace('.xml', '').replace('_', ' '), self)
+            action.triggered.connect(lambda _, theme=theme: self.apply_stylesheet(fix8, theme))
+
+            if 'dark' in theme.lower():
+                self.dark_menue_style.addAction(action)
+            else:
+                self.light_menue_style.addAction(action)
+
     def relevant_buttons(self, feature):
         if feature == "opened_stimulus":
             self.checkbox_show_aoi.setCheckable(True)
@@ -1758,6 +1749,15 @@ class Fix8(QMainWindow, QtStyleTools):
        
 
 if __name__ == "__main__":
+
+    if platform.system() == "Windows":
+        import ctypes
+        myappid = 'ThisCanBeAnything' # arbitrary string
+
+        # This helps Windows manage and group windows of this application together
+        # And helps us maintain the taskbar icon
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
     fix8 = QApplication([])
     window = Fix8()
     # apply_stylesheet(fix8, 'my_theme.xml')
