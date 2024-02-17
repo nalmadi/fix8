@@ -795,8 +795,8 @@ class Fix8(QMainWindow, QtStyleTools):
             self.find_aoi()
             self.relevant_buttons("opened_stimulus")
             self.canvas.draw_idle()
-            # hide side panel until a folder is opened
-            #self.show_side_panel()
+            
+            self.generate_menu.setEnabled(True)
         else:
             self.show_error_message("Image Error", "No Image Selected")
 
@@ -1518,7 +1518,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.fixation_size_bar.valueChanged.connect(self.fixation_size_changed)
 
         
-        self.fixation_size_text = QLabel("Customize Fixation Size")
+        self.fixation_size_text = QLabel("Fixation Size")
         self.fixation_size_layer.addWidget(self.fixation_size_bar)
         self.fixation_size_layer.addWidget(self.fixation_size_text)
 
@@ -1670,6 +1670,7 @@ class Fix8(QMainWindow, QtStyleTools):
         # enable/disable
         self.save_correction_action.setEnabled(False)
         self.edit_menu.setEnabled(False)
+        self.generate_menu.setEnabled(False)
         self.filters_menu.setEnabled(False)
         self.correction_menu.setEnabled(False)
         self.analyses_menu.setEnabled(False)
@@ -1834,6 +1835,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.save_correction_action.setEnabled(True)
             self.edit_menu.setEnabled(True)
             self.filters_menu.setEnabled(True)
+            self.generate_menu.setEnabled(True)
             self.correction_menu.setEnabled(True)
             self.analyses_menu.setEnabled(True)
 
