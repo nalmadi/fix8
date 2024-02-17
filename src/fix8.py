@@ -173,6 +173,332 @@ class Fix8(QMainWindow, QtStyleTools):
         # hide/show side panel until a folder is opened
         self.hide_side_panel()
 
+
+    def generate_fixations(self):
+        minimum_value = 1
+        maximum_value = 100
+        default_value = 15
+        title = "Dispersion"
+        message = "Enter value for dispersion around the optimal viewing position"
+        dispersion, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        # clear history for undo
+        self.state = State()
+
+        # get aoi from the image
+        self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
+            self.image_file_path,
+            margin_height=self.aoi_height,
+            margin_width=self.aoi_width,
+        )
+
+        # generate fixations
+        self.original_fixations = np.array(mini_emtk.generate_fixations_left(self.aoi, dispersion))
+        self.relevant_buttons("trial_clicked")
+
+        #self.read_json_fixations(self.trial_path)
+        self.suggested_corrections = None
+        # double clicking trial should show all and make the current fixation the last one
+        self.current_fixation = (len(self.original_fixations)-1)  
+
+        # set the progress bar to the amount of fixations found
+        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.timer_start = time.time()
+        self.metadata = "Generated fixations,," + str(time.time()) + "\n"
+
+        if self.current_fixation is not None:
+            if self.current_fixation == -1:
+                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+            else:
+                self.label_progress.setText(
+                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                )
+
+        # corrected fixations will be the current fixations on the screen and in the data
+        self.fixations = copy.deepcopy(self.original_fixations)
+        self.save_state()
+        self.checkbox_show_fixations.setChecked(True)
+        self.checkbox_show_saccades.setChecked(True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+        self.status_text =" Generated synthetic data"
+        self.statusBar.showMessage(self.status_text)
+
+    def generate_fixations_skip(self):
+        minimum_value = 0
+        maximum_value = 1
+        default_value = .2
+        title = "Skip"
+        message = "Enter skip probability"
+        skip_probability, ok = QInputDialog.getDouble(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        # clear history for undo
+        self.state = State()
+
+        # get aoi from the image
+        self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
+            self.image_file_path,
+            margin_height=self.aoi_height,
+            margin_width=self.aoi_width,
+        )
+
+        # generate fixations
+        self.original_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, skip_probability))
+        self.relevant_buttons("trial_clicked")
+
+        #self.read_json_fixations(self.trial_path)
+        self.suggested_corrections = None
+        # double clicking trial should show all and make the current fixation the last one
+        self.current_fixation = (len(self.original_fixations)-1)  
+
+        # set the progress bar to the amount of fixations found
+        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.timer_start = time.time()
+        self.metadata = "Generated fixations,," + str(time.time()) + "\n"
+
+        if self.current_fixation is not None:
+            if self.current_fixation == -1:
+                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+            else:
+                self.label_progress.setText(
+                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                )
+
+        # corrected fixations will be the current fixations on the screen and in the data
+        self.fixations = copy.deepcopy(self.original_fixations)
+        self.save_state()
+        self.checkbox_show_fixations.setChecked(True)
+        self.checkbox_show_saccades.setChecked(True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+        self.status_text =" Generated synthetic data"
+        self.statusBar.showMessage(self.status_text)
+
+    def generate_within_line_regression(self):
+        minimum_value = 0
+        maximum_value = 1
+        default_value = .2
+        title = "Within-line regression"
+        message = "Enter within-line regression probability"
+        probability, ok = QInputDialog.getDouble(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        # clear history for undo
+        self.state = State()
+
+        # get aoi from the image
+        self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
+            self.image_file_path,
+            margin_height=self.aoi_height,
+            margin_width=self.aoi_width,
+        )
+
+        # generate fixations
+        self.original_fixations = np.array(mini_emtk.within_line_regression(self.aoi, probability))
+        self.relevant_buttons("trial_clicked")
+
+        #self.read_json_fixations(self.trial_path)
+        self.suggested_corrections = None
+        # double clicking trial should show all and make the current fixation the last one
+        self.current_fixation = (len(self.original_fixations)-1)  
+
+        # set the progress bar to the amount of fixations found
+        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.timer_start = time.time()
+        self.metadata = "Generated fixations,," + str(time.time()) + "\n"
+
+        if self.current_fixation is not None:
+            if self.current_fixation == -1:
+                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+            else:
+                self.label_progress.setText(
+                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                )
+
+        # corrected fixations will be the current fixations on the screen and in the data
+        self.fixations = copy.deepcopy(self.original_fixations)
+        self.save_state()
+        
+        self.checkbox_show_fixations.setChecked(True)
+        self.checkbox_show_saccades.setChecked(True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+        self.status_text =" Generated synthetic data"
+        self.statusBar.showMessage(self.status_text)
+
+    def generate_between_line_regression(self):
+        minimum_value = 0
+        maximum_value = 1
+        default_value = .2
+        title = "Between-line regression"
+        message = "Enter Between-line regression probability"
+        probability, ok = QInputDialog.getDouble(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        # clear history for undo
+        self.state = State()
+
+        # get aoi from the image
+        self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
+            self.image_file_path,
+            margin_height=self.aoi_height,
+            margin_width=self.aoi_width,
+        )
+
+        # generate fixations
+        self.original_fixations = np.array(mini_emtk.between_line_regression(self.aoi, probability))
+        self.relevant_buttons("trial_clicked")
+
+        #self.read_json_fixations(self.trial_path)
+        self.suggested_corrections = None
+        # double clicking trial should show all and make the current fixation the last one
+        self.current_fixation = (len(self.original_fixations)-1)  
+
+        # set the progress bar to the amount of fixations found
+        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.timer_start = time.time()
+        self.metadata = "Generated fixations,," + str(time.time()) + "\n"
+
+        if self.current_fixation is not None:
+            if self.current_fixation == -1:
+                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+            else:
+                self.label_progress.setText(
+                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                )
+
+        # corrected fixations will be the current fixations on the screen and in the data
+        self.fixations = copy.deepcopy(self.original_fixations)
+        self.save_state()
+        
+        self.checkbox_show_fixations.setChecked(True)
+        self.checkbox_show_saccades.setChecked(True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+        self.status_text =" Generated synthetic data"
+        self.statusBar.showMessage(self.status_text)
+
+    def generate_noise(self):
+        minimum_value = 1
+        maximum_value = 10
+        default_value = 5
+        title = "Noise Distortion"
+        message = "Magnitude of noise distortion (1-10)"
+        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        self.metadata += (
+            "generate,noise "
+            + str(threshold)
+            + ","
+            + str(time.time())
+            + "\n"
+        )
+        self.save_state()
+
+        self.fixations = self.fixations + np.random.normal(0, threshold, self.fixations.shape)
+
+        if self.algorithm != "manual" and self.suggested_corrections is not None:
+
+            self.suggested_corrections[:, 0] = self.fixations[:, 0]
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation, draw=True)
+
+    def generate_slope(self):
+        minimum_value = 1
+        maximum_value = 10
+        default_value = 5
+        title = "Slope Distortion"
+        message = "Magnitude of skope distortion (1-10)"
+        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        self.metadata += (
+            "generate,slope "
+            + str(threshold)
+            + ","
+            + str(time.time())
+            + "\n"
+        )
+        self.save_state()
+
+        self.fixations = np.array(mini_emtk.error_droop(threshold, self.fixations))
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation, draw=True)
+
+
+    def generate_offset(self):
+        minimum_value = 1
+        maximum_value = 200
+        default_value = 30
+        title = "Offset Distortion"
+        message = "Magnitude of offset distortion (1-200)"
+        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        self.metadata += (
+            "generate,offset "
+            + str(threshold)
+            + ","
+            + str(time.time())
+            + "\n"
+        )
+        self.save_state()
+
+        self.fixations = np.array(mini_emtk.error_offset(threshold, self.fixations))
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation, draw=True)
+
+    def generate_shift(self):
+        minimum_value = 1
+        maximum_value = 10
+        default_value = 5
+        title = "Shift Distortion"
+        message = "Magnitude of Shift distortion (1-10)"
+        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+
+        if not ok:
+            return
+
+        self.metadata += (
+            "generate,shift "
+            + str(threshold)
+            + ","
+            + str(time.time())
+            + "\n"
+        )
+        self.save_state()
+
+        # get aoi from the image
+        self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
+            self.image_file_path,
+            margin_height=self.aoi_height,
+            margin_width=self.aoi_width,
+        )
+
+        # get line_Y from aoi
+        line_Y = self.find_lines_y(self.aoi)
+
+        self.fixations = np.array(mini_emtk.error_shift(threshold, line_Y, self.fixations))
+
+        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.progress_bar_updated(self.current_fixation, draw=True)
+
     def ascii_to_csv_converter(self):
         # open ascii file through file dialog limit to .asc files
         qfd = QFileDialog()
@@ -201,7 +527,6 @@ class Fix8(QMainWindow, QtStyleTools):
 
 
     def outlier_duration_filter(self):
-
         minimum_value = 1
         maximum_value = 4
         default_value = 2.5
@@ -1015,6 +1340,8 @@ class Fix8(QMainWindow, QtStyleTools):
                 elif state == Qt.Unchecked:
                     self.clear_fixations()
 
+        self.canvas.draw_idle()
+
     
 
     def show_saccades(self, state):
@@ -1026,6 +1353,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 elif state == Qt.Unchecked:
                     self.clear_saccades()
 
+        self.canvas.draw_idle()
     
 
     def draw_saccades(self):
@@ -1037,7 +1365,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.saccade_lines = self.canvas.ax.plot(
             x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
         )
-        self.canvas.draw()
+        self.canvas.draw_idle()
 
     
 
@@ -1050,7 +1378,7 @@ class Fix8(QMainWindow, QtStyleTools):
             #    line.remove()
 
             self.saccade_lines = None
-            self.canvas.draw()
+            self.canvas.draw_idle()
 
     
 
@@ -1064,7 +1392,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
             # for collection in self.canvas.ax.collections: #<-- use this instead
             #    collection.remove()
-            self.canvas.draw()
+            self.canvas.draw_idle()
 
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
@@ -1122,7 +1450,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 c=self.suggested_fixation_color,
             )
 
-        self.canvas.draw()
+        self.canvas.draw_idle()
 
 
     def correct_all_fixations(self):
@@ -1606,11 +1934,17 @@ class Fix8(QMainWindow, QtStyleTools):
         self.file_menu = self.menuBar().addMenu("File")
         self.edit_menu = self.menuBar().addMenu("Edit")
         self.view_menu = self.menuBar().addMenu("View")
+
         self.generate_menu = self.menuBar().addMenu("Generate")
+        self.synthetic_data_menu = self.generate_menu.addMenu("Synthetic Data")
+        self.distortions_menu = self.generate_menu.addMenu("Distortions")
+
         self.filters_menu = self.menuBar().addMenu("Filters")
+
         self.correction_menu = self.menuBar().addMenu("Correction")
         self.automated_correction_menu = self.correction_menu.addMenu("Automatic")
         self.semi_auto_correction_menu = self.correction_menu.addMenu("Assisted")
+
         self.analyses_menu = self.menuBar().addMenu("Analyses")
         self.converters_menu = self.menuBar().addMenu("Converters")
 
@@ -1629,6 +1963,15 @@ class Fix8(QMainWindow, QtStyleTools):
         self.trial_summary_action = QAction("Show/Hide Trial Summary", self)
         self.visualization_panel_action = QAction("Show/Hide Visualization Panel", self)
         self.hude_side_panel_action = QAction("Show/Hide Side Panel", self)
+
+        self.generate_fixations_action = QAction("Generate Fixations", self)
+        self.generate_fixations_skip_action = QAction("Generate Fixations (Skip)", self)
+        self.generat_within_line_regression_action = QAction("Generate Within Line Regression", self)
+        self.generate_between_line_regression_action = QAction("Generate Between Line Regression", self)
+        self.generate_noise_action = QAction("Generate Noise", self)
+        self.generate_slope_action = QAction("Generate Slope", self)
+        self.generate_offset_action = QAction("Generate Offset", self)
+        self.generate_shift_action = QAction("Generate Shift", self)
 
         self.lowpass_duration_filter_action = QAction("Filters less than", self)
         self.highpass_duration_filter_action = QAction("Filters greater than", self)
@@ -1689,6 +2032,15 @@ class Fix8(QMainWindow, QtStyleTools):
         self.trial_summary_action.triggered.connect(self.show_hide_trial_summary)
         self.visualization_panel_action.triggered.connect(self.show_hide_visualization_panel)
         self.hude_side_panel_action.triggered.connect(self.show_hide_side_panel)
+
+        self.generate_fixations_action.triggered.connect(self.generate_fixations)
+        self.generate_fixations_skip_action.triggered.connect(self.generate_fixations_skip)
+        self.generat_within_line_regression_action.triggered.connect(self.generate_within_line_regression)
+        self.generate_between_line_regression_action.triggered.connect(self.generate_between_line_regression)
+        self.generate_noise_action.triggered.connect(self.generate_noise)
+        self.generate_slope_action.triggered.connect(self.generate_slope)
+        self.generate_offset_action.triggered.connect(self.generate_offset)
+        self.generate_shift_action.triggered.connect(self.generate_shift)
         
         self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
@@ -1735,6 +2087,14 @@ class Fix8(QMainWindow, QtStyleTools):
         self.view_menu.addAction(self.hude_side_panel_action)
 
         # Generate
+        self.synthetic_data_menu.addAction(self.generate_fixations_action)
+        self.synthetic_data_menu.addAction(self.generate_fixations_skip_action)
+        self.synthetic_data_menu.addAction(self.generat_within_line_regression_action)
+        self.synthetic_data_menu.addAction(self.generate_between_line_regression_action)
+        self.distortions_menu.addAction(self.generate_noise_action)
+        self.distortions_menu.addAction(self.generate_slope_action)
+        self.distortions_menu.addAction(self.generate_offset_action)
+        self.distortions_menu.addAction(self.generate_shift_action)        
         
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
         self.filters_menu.addAction(self.highpass_duration_filter_action)

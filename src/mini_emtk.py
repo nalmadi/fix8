@@ -6,6 +6,7 @@
 from PIL import Image
 import pandas as pd
 import numpy as np
+import random
 
 def find_background_color(img):
     """Private function that identifies the background color of the image
@@ -335,3 +336,338 @@ def read_EyeLink1000(filename, filepath):
     result.to_csv(filepath)
     print("Wrote a csv file to: " + filepath)
     return result
+
+#######################
+##### From Correction.y
+#######################
+
+def generate_fixations_left(aois_with_tokens, dispersion):
+    """
+    function to generate fixations at the optimal viewing poisiton slightly to
+    the left of the center of each word
+
+    Parameters
+    ----------
+    aois_with_tokens : pandas.DataFrame
+        a dataframe containing the AOIs and tokens
+
+    Returns
+    ----------
+    fixations : list
+        a list of generated fixations
+    """
+
+    fixations = []
+
+    for index, row in aois_with_tokens.iterrows():
+        x, y, width, height = (
+            row["x"],
+            row["y"],
+            row["width"],
+            row["height"]
+        )
+
+        fixation_x = x + width / 3  + random.randint(-dispersion, dispersion)
+        fixation_y = y + height / 2  + random.randint(-dispersion, dispersion)
+
+        fixations.append([fixation_x, fixation_y, width * 3])
+
+    return fixations
+
+
+def generate_fixations_left_skip(aois_with_tokens, skip_probability):
+    """
+    function to generate fixations at the optimal viewing poisiton slightly to
+    the left of the center of each word, also skips short words with a probability
+    defined by the user
+
+    Parameters
+    ----------
+    aois_with_tokens : pandas.DataFrame
+        a dataframe containing the AOIs and tokens
+
+    skip_probability : float
+        probability of skipping a word
+
+    Returns
+    ----------
+    fixations : list
+        a list of generated fixations
+    """
+
+    fixations = []
+    word_count = 0
+    skip_count = 0
+
+    for index, row in aois_with_tokens.iterrows():
+        x, y, width, height = (
+            row["x"],
+            row["y"],
+            row["width"],
+            row["height"]
+
+        )
+
+        word_count += 1
+
+        fixation_x = x + width / 3 + random.randint(-10, 10)
+        fixation_y = y + height / 2 + random.randint(-10, 10)
+
+        if random.random() < skip_probability:
+            skip_count += 1 
+        else:
+            fixations.append([fixation_x, fixation_y, width * 3])
+
+    # print(skip_count / word_count)
+    return fixations
+
+
+def within_line_regression(aois_with_tokens, regression_probability):
+    """
+    function to generate fixations at the optimal viewing poisiton slightly to
+    the left of the center of each word, also simulates WITHIN-line regressions
+    with a probability defined by the user
+
+    Parameters
+    ----------
+    aois_with_tokens : pandas.DataFrame
+        a dataframe containing the AOIs and tokens
+
+    regression_probability : float
+        probability of regression
+
+    Returns
+    ----------
+    fixations : list
+        a list of generated fixations
+    """
+        
+    fixations = []
+
+    aoi_list = aois_with_tokens.values.tolist()
+
+    # pick regression indexes
+    regression_indexes = []
+    for index, row in aois_with_tokens.iterrows():
+        if index > 2 and random.random() < regression_probability / 10:
+            regression_indexes.append(index)
+
+    # pick at least one regression index if probability is not 0
+    if len(regression_indexes) == 0 and regression_probability > 0:
+        regression_indexes.append(random.randint(2, len(aoi_list)-1))
+
+
+    index = 0
+    while index < len(aoi_list):
+        # x, y, width, height, token = (
+        x, y, width, height = (
+                                aoi_list[index][2],
+                                aoi_list[index][3],
+                                aoi_list[index][4],
+                                aoi_list[index][5],
+                                #aoi_list[index][7],
+                                )
+
+        line = int(str(aoi_list[index][1]).split(" ")[1])
+
+        fixation_x = x + width / 3 + random.randint(-10, 10)
+        fixation_y = y + height / 2 + random.randint(-10, 10)
+        duration = 100 + (width/15) * 40
+
+        fixations.append([fixation_x, fixation_y, duration])
+
+        if index in regression_indexes:
+            regression_indexes.remove(index)
+            rand_index = random.randint(index-10, index-1)
+
+            attempts = 0
+
+            # keep trying to find a word on a different line
+            while (
+                int(str(aoi_list[rand_index][1]).split(" ")[1]) != line
+                and attempts < 10
+            ):
+                rand_index = random.randint(0, index-1)
+                attempts += 1
+
+            if attempts != 10:
+                index = rand_index
+
+        index += 1
+
+    return fixations
+
+
+def between_line_regression(aois_with_tokens, regression_probability):
+    """
+    function to generate fixations at the optimal viewing poisiton slightly to
+    the left of the center of each word, also simulates BETWEEN-line regressions
+    with a probability defined by the user
+
+    Parameters
+    ----------
+    aois_with_tokens : pandas.DataFrame
+        a dataframe containing the AOIs and tokens
+
+    regression_probability : float
+        probability of regression
+
+    Returns
+    ----------
+    fixations : list
+        a list of generated fixations
+    """
+        
+    fixations = []
+
+    aoi_list = aois_with_tokens.values.tolist()
+
+    # pick regression indexes
+    regression_indexes = []
+    for index, row in aois_with_tokens.iterrows():
+        if index > 2 and random.random() < regression_probability / 10:
+            regression_indexes.append(index)
+
+    # pick at least one regression index if probability is not 0
+    if len(regression_indexes) == 0 and regression_probability > 0:
+        regression_indexes.append(random.randint(2, len(aoi_list)-1))
+
+
+    index = 0
+    while index < len(aoi_list):
+        # x, y, width, height, token = (
+        x, y, width, height = (
+                                aoi_list[index][2],
+                                aoi_list[index][3],
+                                aoi_list[index][4],
+                                aoi_list[index][5],
+                                #aoi_list[index][7],
+                                )
+
+        line = int(str(aoi_list[index][1]).split(" ")[1])
+
+        fixation_x = x + width / 3 + random.randint(-10, 10)
+        fixation_y = y + height / 2 + random.randint(-10, 10)
+        duration = 100 + (width/15) * 40
+
+        fixations.append([fixation_x, fixation_y, duration])
+
+        if index in regression_indexes:
+            regression_indexes.remove(index)
+            rand_index = random.randint(0, index-1)
+
+            attempts = 0
+
+            # keep trying to find a word on a different line
+            while (
+                int(str(aoi_list[rand_index][1]).split(" ")[1]) == line
+                and attempts < 10
+            ):
+                rand_index = random.randint(0, index-1)
+                attempts += 1
+
+            if attempts != 10:
+                index = rand_index
+
+        index += 1
+
+    return fixations
+
+
+def error_offset(y_offset, fixations):
+    """
+    Introduces an offset distortion to the fixations
+
+    Parameters
+    ----------
+    x_offset : int
+        offset in the x direction
+
+    y_offset : int
+        offset in the y direction
+
+    fixations : list
+        a list of fixations
+
+    Returns
+    ----------
+    fixations : list
+        a list of distorted fixations
+    """
+
+    results = []
+
+    for fix in fixations:
+        x, y = fix[0], fix[1]
+        results.append([x, y + y_offset, fix[2]])
+
+    return results
+
+
+def error_shift(y_shift_factor, line_ys, fixations):
+    """
+    Introduces a shift distortion to the fixations
+
+    Parameters
+    ----------
+    y_shift_factor : float
+        shift factor
+
+    line_ys : list
+        a list of line Ys
+        
+    fixations : list
+        a list of fixations
+
+    Returns
+    ----------
+    fixations : list
+        a list of distorted fixations
+    """
+
+    results = []
+
+    line_height = line_ys[1] - line_ys[0]
+
+    for fix in fixations:
+        x, y = fix[0], fix[1]
+
+        distance_from_first_line = abs(y - line_ys[0])
+
+        results.append(
+            [x, y + ((distance_from_first_line/line_height*2) * y_shift_factor/2), fix[2]]
+        )
+
+
+    return results
+
+
+
+def error_droop(droop_factor, fixations):
+    """
+    Introduces a slope/droop distortion to the fixations
+
+    Parameters
+    ----------
+    droop_factor : float
+        droop factor
+        
+    fixations : list
+        a list of fixations
+
+    Returns
+    ----------
+    fixations : list
+        a list of distorted fixations
+    """
+
+    results = []
+
+    first_x = fixations[0][0]
+
+    for fix in fixations:
+        x, y = fix[0], fix[1]
+
+        results.append([x, y + ((x - first_x) / 100 * droop_factor), fix[2]])
+
+    return results
