@@ -172,6 +172,31 @@ class Fix8(QMainWindow, QtStyleTools):
         # hide/show side panel until a folder is opened
         self.hide_side_panel()
 
+    def ascii_to_csv_converter(self):
+        # open ascii file through file dialog limit to .asc files
+        qfd = QFileDialog()
+        ascii_file = qfd.getOpenFileName(self, "Select ascii file", "", "ASCII Files (*.asc)")[0]
+
+        if ascii_file == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        # ask user for file name to save csv through file dialog
+        qfd = QFileDialog()
+        default_file_name = ascii_file.replace('.asc', '') + '.csv'
+        new_correction_file_name, _ = qfd.getSaveFileName(self, "Save converted CSV file", default_file_name)
+        
+        if new_correction_file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        if '.csv' not in new_correction_file_name:
+            new_correction_file_name += '.csv'
+
+        # convert and save csv file
+        mini_emtk.read_EyeLink1000(ascii_file, new_correction_file_name)
+        
+
     def outlier_duration_filter(self):
 
         minimum_value = 1
@@ -260,8 +285,8 @@ class Fix8(QMainWindow, QtStyleTools):
     def save_state(self):
         self.state.set_state(self.fixations)
 
-    def outside_screen_filter(self):
 
+    def outside_screen_filter(self):
         self.metadata += "filter,removed fixations outside screen," + str(time.time()) + "\n"
 
         # get image dimentions from self.image_file_path
@@ -291,6 +316,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.draw_canvas(self.fixations, draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
+
 
     def lowpass_duration_filter(self):
         minimum_value = 1
@@ -327,7 +353,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.draw_canvas(self.fixations, draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
-    
+
     def highpass_duration_filter(self):
         minimum_value = 100
         maximum_value = 2000
@@ -444,6 +470,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.statusBar.showMessage(self.status_text)
         self.relevant_buttons("algorithm_selected")
 
+
     def run_algorithm(self, algorithm_name, algorithm_function, mode):
 
         self.algorithm = algorithm_name
@@ -469,6 +496,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.checkbox_show_suggestion.setCheckable(False)
             # update progress bar to end
             self.progress_bar.setValue(self.progress_bar.maximum())
+
 
     def manual_correction(self):
 
@@ -616,7 +644,6 @@ class Fix8(QMainWindow, QtStyleTools):
         self.canvas.ax.draw_artist(self.fixation_points)
         #self.canvas.ax.draw_artist(self.saccades)
         self.canvas.blit(self.canvas.ax.bbox)
-        
 
 
     def keyPressEvent(self, e):
@@ -758,7 +785,6 @@ class Fix8(QMainWindow, QtStyleTools):
                 self.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
                 self.show_side_panel()
-
 
 
     def trial_double_clicked(self, item):
@@ -1563,6 +1589,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.correction_menu = self.menuBar().addMenu("Correction")
         self.automated_correction_menu = self.correction_menu.addMenu("Automatic")
         self.semi_auto_correction_menu = self.correction_menu.addMenu("Assisted")
+        self.converters_menu = self.menuBar().addMenu("Converters")
 
         # add actions
         self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
@@ -1603,6 +1630,8 @@ class Fix8(QMainWindow, QtStyleTools):
         self.regress_semi_action = QAction("Regress", self)
         self.segment_semi_action = QAction("Segment", self)
         self.stretch_semi_action = QAction("Stretch", self)
+
+        self.ascii_to_csv_converter_action = QAction("ASCII to CSV", self)
 
         # add shortcuts
         self.new_file_action.setShortcut("Ctrl+O")
@@ -1657,8 +1686,10 @@ class Fix8(QMainWindow, QtStyleTools):
         self.regress_semi_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'semi'))
         self.segment_semi_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'semi'))
         self.stretch_semi_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'semi'))
-
         self.manual_correction_action.triggered.connect(self.manual_correction)
+
+        self.ascii_to_csv_converter_action.triggered.connect(self.ascii_to_csv_converter)
+
 
         # add actions to menu
         self.file_menu.addAction(self.new_file_action)
@@ -1699,6 +1730,8 @@ class Fix8(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.regress_semi_action)
         self.semi_auto_correction_menu.addAction(self.segment_semi_action)
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
+
+        self.converters_menu.addAction(self.ascii_to_csv_converter_action)
 
         # add menue item called "Style" to the menu bar
         self.menu_style = self.menuBar().addMenu("Theme")
