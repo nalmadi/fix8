@@ -24,9 +24,6 @@ correction methods for eye tracking data in reading tasks.
 """
 
 import time
-
-# from PyQt5.QtCore import *
-from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
 # from PyQt5.QtWidgets import *
@@ -42,7 +39,6 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QMessageBox,
     QPushButton,
-    QSizePolicy,
     QVBoxLayout,
     QWidget,
     QInputDialog,
@@ -55,8 +51,8 @@ from PyQt5.QtWidgets import (
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
+
+
 from matplotlib.patches import Rectangle
 import json
 from os import listdir
@@ -73,6 +69,8 @@ from pathlib import Path
 import mini_emtk
 from merge_fixations_dialog import InputDialog
 from state import State
+import canvas_resources
+import ui_main_window
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
@@ -81,39 +79,16 @@ from qt_material import QtStyleTools, list_themes
 import platform
 
 
-class QtCanvas(FigureCanvasQTAgg):
-    def __init__(self, parent=None, width=12, height=8, dpi=100):
-        self.figure, self.ax = plt.subplots(ncols=1, nrows=1, figsize=(width, height))
-        self.figure.tight_layout()
-        self.figure.patch.set_facecolor('#5e6169')
 
-        self.background = None
-
-        FigureCanvasQTAgg.__init__(self, self.figure)
-        self.setParent(parent)
-
-        FigureCanvasQTAgg.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
-        FigureCanvasQTAgg.updateGeometry(self)
-
-        self.initialize()
-
-    def initialize(self):
-        #img = mpimg.imread("./.images/fix8_landing.png")
-        img = mpimg.imread("./.images/fix8-landing-logo.png")
-        self.ax.imshow(img, interpolation="hanning")
-        self.draw()
-
-    def clear(self):
-        self.ax.clear()
-
-
-class Fix8(QMainWindow, QtStyleTools):
+class Fix8():
     def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Fix8")
-        self.setWindowIcon(QIcon("icon.ico"))
-        self.init_UI()
-        self.apply_stylesheet(fix8, 'my_theme.xml')
+        self.fix8 = QApplication([])
+        #self.main_window = QMainWindow()
+
+        self.ui = ui_main_window.Ui_Main_Window(self)
+    
+        # apply_stylesheet(fix8, 'my_theme.xml')
+        #self.fix8.exec_()
 
         # fields relating to the stimulus
         self.image_file_path = None
@@ -131,6 +106,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.fixation_points = None
         self.saccade_lines = None
         self.current_fixation = -1
+        print('here')
 
         # filed for tool undo/redo using memento pattern and state class
         self.state = State()
@@ -153,9 +129,10 @@ class Fix8(QMainWindow, QtStyleTools):
         # fields relating to the drag and drop system
         self.selected_fixation = None
         self.xy = None
-        self.canvas.mpl_connect("button_press_event", self.button_press_callback)
-        self.canvas.mpl_connect("button_release_event", self.button_release_callback)
-        self.canvas.mpl_connect("motion_notify_event", self.motion_notify_callback)
+        self.ui.canvas.mpl_connect("button_press_event", self.button_press_callback)
+        self.ui.canvas.mpl_connect("button_release_event", self.button_release_callback)
+        self.ui.canvas.mpl_connect("motion_notify_event", self.motion_notify_callback)
+        
 
         # fields relating to aoi margin
         self.aoi_width = 7
@@ -172,7 +149,7 @@ class Fix8(QMainWindow, QtStyleTools):
         # fields relating to fixation size
         self.fixation_size = 30
         # hide/show side panel until a folder is opened
-        self.hide_side_panel()
+        self.ui.hide_side_panel()
 
 
     def generate_fixations(self):
@@ -181,7 +158,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 20
         title = "Dispersion"
         message = "Enter value for dispersion around the optimal viewing position in pixels(0-100)"
-        dispersion, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        dispersion, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -198,7 +175,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         # generate fixations
         self.original_fixations = np.array(mini_emtk.generate_fixations_left(self.aoi, dispersion))
-        self.relevant_buttons("trial_clicked")
+        self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
@@ -206,26 +183,26 @@ class Fix8(QMainWindow, QtStyleTools):
         self.current_fixation = (len(self.original_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "Generated fixations,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
             else:
-                self.label_progress.setText(
+                self.ui.label_progress.setText(
                     f"{self.current_fixation}/{len(self.original_fixations)}"
                 )
 
         # corrected fixations will be the current fixations on the screen and in the data
         self.fixations = copy.deepcopy(self.original_fixations)
         self.save_state()
-        self.checkbox_show_fixations.setChecked(True)
-        self.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixations.setChecked(True)
+        self.ui.checkbox_show_saccades.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
-        self.statusBar.showMessage(self.status_text)
+        self.ui.statusBar.showMessage(self.status_text)
 
     def generate_fixations_skip(self):
         minimum_value = 1
@@ -233,7 +210,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 20
         title = "Skip"
         message = "Enter skip probability (1-100)"
-        skip_probability, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        skip_probability, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -250,7 +227,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         # generate fixations
         self.original_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, skip_probability/100))
-        self.relevant_buttons("trial_clicked")
+        self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
@@ -258,26 +235,26 @@ class Fix8(QMainWindow, QtStyleTools):
         self.current_fixation = (len(self.original_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "Generated fixations,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
             else:
-                self.label_progress.setText(
+                self.ui.label_progress.setText(
                     f"{self.current_fixation}/{len(self.original_fixations)}"
                 )
 
         # corrected fixations will be the current fixations on the screen and in the data
         self.fixations = copy.deepcopy(self.original_fixations)
         self.save_state()
-        self.checkbox_show_fixations.setChecked(True)
-        self.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixations.setChecked(True)
+        self.ui.checkbox_show_saccades.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
-        self.statusBar.showMessage(self.status_text)
+        self.ui.statusBar.showMessage(self.status_text)
 
     def generate_within_line_regression(self):
         minimum_value = 0
@@ -285,7 +262,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 20
         title = "Within-line regression"
         message = "Enter within-line regression probability (0-100)"
-        probability, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        probability, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -302,7 +279,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         # generate fixations
         self.original_fixations = np.array(mini_emtk.within_line_regression(self.aoi, probability/10))
-        self.relevant_buttons("trial_clicked")
+        self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
@@ -310,15 +287,15 @@ class Fix8(QMainWindow, QtStyleTools):
         self.current_fixation = (len(self.original_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "Generated fixations,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
             else:
-                self.label_progress.setText(
+                self.ui.label_progress.setText(
                     f"{self.current_fixation}/{len(self.original_fixations)}"
                 )
 
@@ -326,11 +303,11 @@ class Fix8(QMainWindow, QtStyleTools):
         self.fixations = copy.deepcopy(self.original_fixations)
         self.save_state()
         
-        self.checkbox_show_fixations.setChecked(True)
-        self.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixations.setChecked(True)
+        self.ui.checkbox_show_saccades.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
-        self.statusBar.showMessage(self.status_text)
+        self.ui.statusBar.showMessage(self.status_text)
 
     def generate_between_line_regression(self):
         minimum_value = 0
@@ -338,7 +315,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 20
         title = "Between-line regression"
         message = "Enter Between-line regression probability (0-100)"
-        probability, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        probability, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -355,7 +332,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         # generate fixations
         self.original_fixations = np.array(mini_emtk.between_line_regression(self.aoi, probability/10))
-        self.relevant_buttons("trial_clicked")
+        self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
@@ -363,15 +340,15 @@ class Fix8(QMainWindow, QtStyleTools):
         self.current_fixation = (len(self.original_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "Generated fixations,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
             else:
-                self.label_progress.setText(
+                self.ui.label_progress.setText(
                     f"{self.current_fixation}/{len(self.original_fixations)}"
                 )
 
@@ -379,11 +356,11 @@ class Fix8(QMainWindow, QtStyleTools):
         self.fixations = copy.deepcopy(self.original_fixations)
         self.save_state()
         
-        self.checkbox_show_fixations.setChecked(True)
-        self.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixations.setChecked(True)
+        self.ui.checkbox_show_saccades.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
-        self.statusBar.showMessage(self.status_text)
+        self.ui.statusBar.showMessage(self.status_text)
 
     def generate_noise(self):
         minimum_value = 1
@@ -391,7 +368,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 5
         title = "Noise Distortion"
         message = "Magnitude of noise distortion (1-10)"
-        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        threshold, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -411,7 +388,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
             self.suggested_corrections[:, 0] = self.fixations[:, 0]
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
 
     def generate_slope(self):
@@ -420,7 +397,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 5
         title = "Slope Distortion"
         message = "Magnitude of skope distortion (1-10)"
-        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        threshold, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -436,7 +413,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.fixations = np.array(mini_emtk.error_droop(threshold, self.fixations))
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
 
 
@@ -446,7 +423,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 30
         title = "Offset Distortion"
         message = "Magnitude of offset distortion (1-300)"
-        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        threshold, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -462,7 +439,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.fixations = np.array(mini_emtk.error_offset(threshold, self.fixations))
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
 
     def generate_shift(self):
@@ -471,7 +448,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 5
         title = "Shift Distortion"
         message = "Magnitude of Shift distortion (1-10)"
-        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        threshold, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -497,13 +474,13 @@ class Fix8(QMainWindow, QtStyleTools):
 
         self.fixations = np.array(mini_emtk.error_shift(threshold, line_Y, self.fixations))
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
 
     def ascii_to_csv_converter(self):
         # open ascii file through file dialog limit to .asc files
         qfd = QFileDialog()
-        ascii_file = qfd.getOpenFileName(self, "Select ascii file", "", "ASCII Files (*.asc)")[0]
+        ascii_file = qfd.getOpenFileName(self.ui, "Select ascii file", "", "ASCII Files (*.asc)")[0]
 
         if ascii_file == "":
             self.show_error_message("Error", "No file selected")
@@ -512,7 +489,7 @@ class Fix8(QMainWindow, QtStyleTools):
         # ask user for file name to save csv through file dialog
         qfd = QFileDialog()
         default_file_name = ascii_file.replace('.asc', '') + '.csv'
-        new_correction_file_name, _ = qfd.getSaveFileName(self, "Save converted CSV file", default_file_name)
+        new_correction_file_name, _ = qfd.getSaveFileName(self.ui, "Save converted CSV file", default_file_name)
         
         if new_correction_file_name == "":
             self.show_error_message("Error", "No file selected")
@@ -533,7 +510,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 2.5
         title = "Duration Filter"
         message = "Remove fixations with durations X standard deviations away from the mean"
-        threshold, ok = QInputDialog.getDouble(self, title, message, default_value, minimum_value, maximum_value)
+        threshold, ok = QInputDialog.getDouble(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -562,31 +539,9 @@ class Fix8(QMainWindow, QtStyleTools):
 
             self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < mean + threshold * std]
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
 
-    def show_hide_side_panel(self):
-        if not self.trial_list.isHidden() or not self.visualization_frame.isHidden():
-            self.hide_side_panel()
-        else:
-            self.show_side_panel()
-
-    def hide_side_panel(self):
-        self.trial_list.setHidden(True)
-        self.visualization_frame.setHidden(True)
-
-    def show_side_panel(self):
-        self.trial_list.setHidden(False)
-        self.visualization_frame.setHidden(False)
-
-    def show_hide_trial_list(self):
-        self.trial_list.setHidden(not self.trial_list.isHidden())
-
-    def show_hide_trial_summary(self):
-        pass
-
-    def show_hide_visualization_panel(self):
-        self.visualization_frame.setHidden(not self.visualization_frame.isHidden())
 
     def undo(self):
         ''' implement undo using memento pattern and state class ''' 
@@ -594,14 +549,14 @@ class Fix8(QMainWindow, QtStyleTools):
             
             at_max = False
             # check if progressbar is at end of progressbar range
-            if self.progress_bar.value() == self.progress_bar.maximum():
+            if self.ui.progress_bar.value() == self.ui.progress_bar.maximum():
                 at_max = True
              
         
             self.fixations = self.state.get_state()
 
             # update progress bar
-            self.progress_bar.setMaximum(len(self.fixations) - 1)
+            self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
 
             if self.current_fixation >= len(self.fixations) or at_max:
                 self.current_fixation = len(self.fixations) - 1
@@ -640,7 +595,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 & (self.suggested_corrections[:, 1] <= screen_height)
             ]
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation)
 
         self.draw_canvas(self.fixations, draw_all=True)
@@ -653,7 +608,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 80
         title = "Duration Filter"
         message = "Remove fixations with durations less than"
-        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        threshold, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -676,7 +631,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
             self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] > int(threshold)]
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation)
 
         self.draw_canvas(self.fixations, draw_all=True)
@@ -689,7 +644,7 @@ class Fix8(QMainWindow, QtStyleTools):
         default_value = 800
         title = "Duration Filter"
         message = "Remove fixations with durations greater than"
-        threshold, ok = QInputDialog.getInt(self, title, message, default_value, minimum_value, maximum_value)
+        threshold, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
             return
@@ -713,7 +668,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
             self.suggested_corrections = self.suggested_corrections[self.suggested_corrections[:, 2] < int(threshold)]
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation)
 
         self.draw_canvas(self.fixations, draw_all=True)
@@ -721,7 +676,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
 
     def merge_fixations(self):
-        dialog = InputDialog()
+        dialog = InputDialog(self.ui)
         dialog.exec()
         
         duration_threshold, dispersion_threshold = dialog.getInputs()
@@ -771,7 +726,7 @@ class Fix8(QMainWindow, QtStyleTools):
         if self.current_fixation >= len(self.fixations):
             self.current_fixation = len(self.fixations) - 1
 
-        self.progress_bar.setMaximum(len(self.fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation)
 
         self.draw_canvas(self.fixations, draw_all=True)
@@ -796,8 +751,8 @@ class Fix8(QMainWindow, QtStyleTools):
             self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, word_XY)
 
         self.status_text = self.algorithm + " Algorithm Selected"
-        self.statusBar.showMessage(self.status_text)
-        self.relevant_buttons("algorithm_selected")
+        self.ui.statusBar.showMessage(self.status_text)
+        self.ui.relevant_buttons("algorithm_selected")
 
 
     def run_algorithm(self, algorithm_name, algorithm_function, mode):
@@ -811,20 +766,20 @@ class Fix8(QMainWindow, QtStyleTools):
 
         if mode == 'semi':
             # show suggestion
-            self.checkbox_show_suggestion.setCheckable(True)
-            self.checkbox_show_suggestion.setEnabled(True)
-            self.checkbox_show_suggestion.setChecked(True)
+            self.ui.checkbox_show_suggestion.setCheckable(True)
+            self.ui.checkbox_show_suggestion.setEnabled(True)
+            self.ui.checkbox_show_suggestion.setChecked(True)
             # update progress bar to end
-            self.progress_bar.setValue(self.progress_bar.minimum())
+            self.ui.progress_bar.setValue(self.ui.progress_bar.minimum())
         else:
             # correct all
             self.correct_all_fixations()
             # hide suggestion
-            self.checkbox_show_suggestion.setEnabled(False)
-            self.checkbox_show_suggestion.setChecked(False)
-            self.checkbox_show_suggestion.setCheckable(False)
+            self.ui.checkbox_show_suggestion.setEnabled(False)
+            self.ui.checkbox_show_suggestion.setChecked(False)
+            self.ui.checkbox_show_suggestion.setCheckable(False)
             # update progress bar to end
-            self.progress_bar.setValue(self.progress_bar.maximum())
+            self.ui.progress_bar.setValue(self.ui.progress_bar.maximum())
 
 
     def manual_correction(self):
@@ -836,10 +791,10 @@ class Fix8(QMainWindow, QtStyleTools):
         self.metadata += ("selected, " + str(self.algorithm) + "," + str(time.time()) + "\n")
 
         self.suggested_corrections = copy.deepcopy(self.fixations)
-        self.checkbox_show_suggestion.setEnabled(False)
+        self.ui.checkbox_show_suggestion.setEnabled(False)
 
         # hide suggestion
-        self.checkbox_show_suggestion.setChecked(False)
+        self.ui.checkbox_show_suggestion.setChecked(False)
 
     
     def get_selected_fixation(self, event):
@@ -851,7 +806,7 @@ class Fix8(QMainWindow, QtStyleTools):
         if self.fixation_points is not None:
 
             self.xy = np.asarray(self.fixation_points.get_offsets())
-            xyt = self.canvas.ax.transData.transform(self.xy)
+            xyt = self.ui.canvas.ax.transData.transform(self.xy)
             xt, yt = xyt[:, 0], xyt[:, 1]
             d = np.sqrt((xt - event.x) ** 2 + (yt - event.y) ** 2)
             self.selected_fixation = d.argmin()
@@ -941,7 +896,7 @@ class Fix8(QMainWindow, QtStyleTools):
             if self.algorithm != "manual" and self.algorithm is not None:
                 self.run_correction()
 
-            if self.checkbox_show_saccades.isChecked():
+            if self.ui.checkbox_show_saccades.isChecked():
                 self.clear_saccades()
                 self.show_saccades(Qt.Checked)
             else:
@@ -952,7 +907,7 @@ class Fix8(QMainWindow, QtStyleTools):
         # self.selected_fixation = None
 
         self.draw_canvas(self.fixations)
-        # self.canvas.update()
+        # self.ui.canvas.update()
 
     def motion_notify_callback(self, event):
         if self.selected_fixation is None:
@@ -967,12 +922,12 @@ class Fix8(QMainWindow, QtStyleTools):
         #self.xy = np.asarray(self.scatter.get_offsets())
         self.xy[self.selected_fixation] = np.array([x, y])
         #self.scatter.set_offsets(self.xy)
-        # self.canvas.draw_idle()
+        # self.ui.canvas.draw_idle()
 
-        self.canvas.restore_region(self.canvas.background)
-        self.canvas.ax.draw_artist(self.fixation_points)
-        #self.canvas.ax.draw_artist(self.saccades)
-        self.canvas.blit(self.canvas.ax.bbox)
+        self.ui.canvas.restore_region(self.ui.canvas.background)
+        self.ui.canvas.ax.draw_artist(self.fixation_points)
+        #self.ui.canvas.ax.draw_artist(self.saccades)
+        self.ui.canvas.blit(self.ui.canvas.ax.bbox)
 
 
     def keyPressEvent(self, e):
@@ -993,12 +948,12 @@ class Fix8(QMainWindow, QtStyleTools):
             self.move_up_selected_fixation()
 
         # a: next is 65
-        if e.key() == 65 and self.button_next_fixation.isEnabled():
+        if e.key() == 65 and self.ui.button_next_fixation.isEnabled():
             self.metadata += "key,next," + str(time.time()) + "\n"
             self.next_fixation()
 
         # z: back is 90
-        if e.key() == 90 and self.button_previous_fixation.isEnabled():
+        if e.key() == 90 and self.ui.button_previous_fixation.isEnabled():
             self.metadata += "key,previous," + str(time.time()) + "\n"
             self.previous_fixation()
 
@@ -1023,7 +978,7 @@ class Fix8(QMainWindow, QtStyleTools):
                         self.current_fixation -= 1
                         temp = self.current_fixation
 
-                    self.progress_bar.setMaximum(len(self.fixations) - 1)
+                    self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
                     self.progress_bar_updated(temp, draw=False)
 
                     if self.suggested_corrections is not None:
@@ -1044,7 +999,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
 
     def show_error_message(self, window_title, message):
-        qmb = QMessageBox()
+        qmb = QMessageBox(self.ui)
         qmb.setWindowTitle(window_title)
         qmb.setText(message)
         qmb.exec_()
@@ -1053,19 +1008,19 @@ class Fix8(QMainWindow, QtStyleTools):
     def open_trial_folder(self):
         """open trial folder, display it to trial list window with list of JSON trials"""
         qfd = QFileDialog()
-        self.folder_path = qfd.getExistingDirectory(self, "Select Folder")
+        self.folder_path = qfd.getExistingDirectory(self.ui, "Select Folder")
 
         # --- make sure a folder was actually chosen, otherwise just cancel ---
         if self.folder_path != "":
             # clear the data since a new folder was open, no trial is chosen at this point
-            self.trial_list.clear()
+            self.ui.trial_list.clear()
             self.clear_fixations()
             self.clear_saccades()
 
             # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
-            self.relevant_buttons("opened_folder")
+            self.ui.relevant_buttons("opened_folder")
             self.status_text = "Trial Folder Opened: " + self.folder_path
-            self.statusBar.showMessage(self.status_text)
+            self.ui.statusBar.showMessage(self.status_text)
 
             files = listdir(self.folder_path)
 
@@ -1092,7 +1047,7 @@ class Fix8(QMainWindow, QtStyleTools):
                         file_to_add_name = file.split("/")[-1]  # last part of file text
                         self.trials[file_to_add_name] = file
                         file_to_add.setText(file_to_add_name)
-                        self.trial_list.addItem(file_to_add)
+                        self.ui.trial_list.addItem(file_to_add)
                 else:
                     self.show_error_message("Trial Folder Error", "No JSONS")
 
@@ -1105,34 +1060,34 @@ class Fix8(QMainWindow, QtStyleTools):
 
             else:
                 self.set_canvas_image(image_file)
-                #self.canvas.draw()
+                #self.ui.canvas.draw()
                 self.find_aoi()
-                self.relevant_buttons("opened_stimulus")
+                self.ui.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
-                self.show_side_panel()
+                self.ui.show_side_panel()
 
 
     def open_image(self):
         qfd = QFileDialog()
-        self.image_file_path = qfd.getOpenFileName(self, "Select Image", "", "Image Files (*.png *.jpg *.jpeg)")[0]
+        self.image_file_path = qfd.getOpenFileName(self.ui, "Select Image", "", "Image Files (*.png *.jpg *.jpeg)")[0]
 
         if self.image_file_path != "":
             self.set_canvas_image(self.image_file_path)
             self.find_aoi()
-            self.relevant_buttons("opened_stimulus")
-            self.canvas.draw_idle()
+            self.ui.relevant_buttons("opened_stimulus")
+            self.ui.canvas.draw_idle()
             
-            self.generate_menu.setEnabled(True)
+            self.ui.generate_menu.setEnabled(True)
         else:
             self.show_error_message("Image Error", "No Image Selected")
 
 
     def set_canvas_image(self, image_file):
-        self.canvas.clear()
+        self.ui.canvas.clear()
         image = mpimg.imread(image_file)
         # show image with highest quality
-        self.canvas.ax.imshow(image, interpolation="hanning")
-        #self.canvas.ax.set_title(str(image_file.split('/')[-1].split(".")[0]))
+        self.ui.canvas.ax.imshow(image, interpolation="hanning")
+        #self.ui.canvas.ax.set_title(str(image_file.split('/')[-1].split(".")[0]))
 
 
     def trial_double_clicked(self, item):
@@ -1160,27 +1115,27 @@ class Fix8(QMainWindow, QtStyleTools):
         self.current_fixation = (len(self.original_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "started,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
             else:
-                self.label_progress.setText(
+                self.ui.label_progress.setText(
                     f"{self.current_fixation}/{len(self.original_fixations)}"
                 )
 
         # corrected fixations will be the current fixations on the screen and in the data
         self.fixations = copy.deepcopy(self.original_fixations)
         self.save_state()
-        self.checkbox_show_fixations.setChecked(True)
-        self.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixations.setChecked(True)
+        self.ui.checkbox_show_saccades.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
-        self.statusBar.showMessage(self.status_text)
+        self.ui.statusBar.showMessage(self.status_text)
 
 
     def find_aoi(self):
@@ -1204,7 +1159,7 @@ class Fix8(QMainWindow, QtStyleTools):
             height = row[1]["height"]
             width = row[1]["width"]
             
-            self.canvas.ax.add_patch(
+            self.ui.canvas.ax.add_patch(
                 Rectangle(
                     (xcord, ycord),
                     width - 1,
@@ -1216,18 +1171,18 @@ class Fix8(QMainWindow, QtStyleTools):
                 )
             )
         
-        self.canvas.draw()
+        self.ui.canvas.draw()
 
 
     def clear_aoi(self):
         """clear the aois from the canvas"""
-        self.canvas.ax.patches.clear()
-        self.canvas.draw()
+        self.ui.canvas.ax.patches.clear()
+        self.ui.canvas.draw()
 
 
     def show_aoi(self, state):
         """when the show aoi button is pressed, show or hide aois based on checkbox"""
-        if self.checkbox_show_aoi.isCheckable():
+        if self.ui.checkbox_show_aoi.isCheckable():
             if state == Qt.Checked:
                 self.draw_aoi()
             elif state == Qt.Unchecked:
@@ -1251,7 +1206,7 @@ class Fix8(QMainWindow, QtStyleTools):
                         ]
                     )
                 self.original_fixations = np.array(self.original_fixations)
-                self.relevant_buttons("trial_clicked")
+                self.ui.relevant_buttons("trial_clicked")
             except json.decoder.JSONDecodeError:
                 self.show_error_message("Trial File Error", "JSON File Empty")
 
@@ -1277,7 +1232,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.original_fixations.append([row["x_cord"], row["y_cord"], row["duration"]])
 
         self.original_fixations = np.array(self.original_fixations)
-        self.relevant_buttons("trial_clicked")
+        self.ui.relevant_buttons("trial_clicked")
 
 
     def find_lines_y(self, aoi):
@@ -1320,14 +1275,14 @@ class Fix8(QMainWindow, QtStyleTools):
         x = fixations[0 : self.current_fixation + 1, 0]
         y = fixations[0 : self.current_fixation + 1, 1]
         duration = fixations[0 : self.current_fixation + 1, 2]
-        self.fixation_points = self.canvas.ax.scatter(
+        self.fixation_points = self.ui.canvas.ax.scatter(
             x,
             y,
             s=30 * (duration / 50) ** 1.8,
             alpha=self.fixation_opacity,
             c=self.fixation_color,
         )
-        self.canvas.draw()
+        self.ui.canvas.draw()
 
     
 
@@ -1336,7 +1291,7 @@ class Fix8(QMainWindow, QtStyleTools):
         parameters:
         state - the checkbox being checked or unchecked"""
         if self.folder_path != "":
-            if self.checkbox_show_fixations.isCheckable():
+            if self.ui.checkbox_show_fixations.isCheckable():
                 if state == Qt.Checked:
                     self.draw_fixations()
                 elif state == Qt.Unchecked:
@@ -1347,7 +1302,7 @@ class Fix8(QMainWindow, QtStyleTools):
     def show_saccades(self, state):
         """if the user clicks saccades, show or hide them"""
         if self.folder_path != "":
-            if self.checkbox_show_saccades.isCheckable():
+            if self.ui.checkbox_show_saccades.isCheckable():
                 if state == Qt.Checked:
                     self.draw_saccades()
                 elif state == Qt.Unchecked:
@@ -1361,23 +1316,23 @@ class Fix8(QMainWindow, QtStyleTools):
         x = fixations[0 : self.current_fixation + 1, 0]
         y = fixations[0 : self.current_fixation + 1, 1]
         duration = fixations[0 : self.current_fixation + 1, 2]
-        self.saccade_lines = self.canvas.ax.plot(
+        self.saccade_lines = self.ui.canvas.ax.plot(
             x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
         )
-        self.canvas.draw()
+        self.ui.canvas.draw()
 
     
 
     def clear_saccades(self):
         """remove the saccades from the canvas (this does not erase the data, just visuals)"""
         if self.saccade_lines != None:
-            self.canvas.ax.lines.clear()  # <-- if this line crashes the tool
+            self.ui.canvas.ax.lines.clear()  # <-- if this line crashes the tool
 
-            # for line in self.canvas.ax.lines:  #<-- use this instead
+            # for line in self.ui.canvas.ax.lines:  #<-- use this instead
             #    line.remove()
 
             self.saccade_lines = None
-            self.canvas.draw()
+            self.ui.canvas.draw()
 
     
 
@@ -1387,11 +1342,11 @@ class Fix8(QMainWindow, QtStyleTools):
             # self.scatter.remove()
             self.fixation_points = None
             # clear scatter data from canvas but not the background image
-            self.canvas.ax.collections.clear()  # <-- If this line crashes the tool
+            self.ui.canvas.ax.collections.clear()  # <-- If this line crashes the tool
 
-            # for collection in self.canvas.ax.collections: #<-- use this instead
+            # for collection in self.ui.canvas.ax.collections: #<-- use this instead
             #    collection.remove()
-            self.canvas.draw()
+            self.ui.canvas.draw()
 
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
@@ -1415,33 +1370,33 @@ class Fix8(QMainWindow, QtStyleTools):
 
         # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
         # do the same for saccades
-        if self.checkbox_show_fixations.isCheckable():
-            if self.checkbox_show_fixations.isChecked():
+        if self.ui.checkbox_show_fixations.isCheckable():
+            if self.ui.checkbox_show_fixations.isChecked():
                 list_colors = [self.fixation_color] * (len(x) - 1)
                 colors = np.array(list_colors + [self.current_fixation_color])
-                self.fixation_points = self.canvas.ax.scatter(
+                self.fixation_points = self.ui.canvas.ax.scatter(
                     x,
                     y,
                     s=self.fixation_size * (duration / 50) ** 1.8,
                     alpha=self.fixation_opacity,
                     c=colors,
                 )
-                self.canvas.background = self.canvas.copy_from_bbox(self.canvas.ax.bbox)
-                # self.scatter = self.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
+                self.ui.canvas.background = self.ui.canvas.copy_from_bbox(self.ui.canvas.ax.bbox)
+                # self.scatter = self.ui.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
 
-        if self.checkbox_show_saccades.isCheckable():
-            if self.checkbox_show_saccades.isChecked():
-                self.saccade_lines = self.canvas.ax.plot(
+        if self.ui.checkbox_show_saccades.isCheckable():
+            if self.ui.checkbox_show_saccades.isChecked():
+                self.saccade_lines = self.ui.canvas.ax.plot(
                     x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
                 )
 
         # draw suggested fixation in blue
-        if self.checkbox_show_suggestion.isChecked():
+        if self.ui.checkbox_show_suggestion.isChecked():
             x = self.suggested_corrections[self.current_fixation][0]
             y = self.suggested_corrections[self.current_fixation][1]
             duration = self.fixations[self.current_fixation][2]
 
-            self.suggested_fixation = self.canvas.ax.scatter(
+            self.suggested_fixation = self.ui.canvas.ax.scatter(
                 x,
                 y,
                 s=30 * (duration / 50) ** 1.8,
@@ -1449,7 +1404,7 @@ class Fix8(QMainWindow, QtStyleTools):
                 c=self.suggested_fixation_color,
             )
 
-        self.canvas.draw()
+        self.ui.canvas.draw()
 
 
     def correct_all_fixations(self):
@@ -1467,7 +1422,7 @@ class Fix8(QMainWindow, QtStyleTools):
             + "\n"
         )
         self.status_text = "Correct All Fixations!"
-        self.statusBar.showMessage(self.status_text)
+        self.ui.statusBar.showMessage(self.status_text)
 
     def previous_fixation(self):
         # if self.suggested_corrections is not None:
@@ -1485,14 +1440,14 @@ class Fix8(QMainWindow, QtStyleTools):
         if self.current_fixation == -1 and self.original_fixations == None:
             # Tour
             self.set_canvas_image('./.images/fix8-tour-1.png')
-            self.canvas.draw()
-            self.button_next_fixation.setEnabled(False)
+            self.ui.canvas.draw()
+            self.ui.button_next_fixation.setEnabled(False)
             return
         
         if self.current_fixation != len(self.fixations) - 1:
             self.current_fixation += 1
 
-        #self.canvas.ax.lines
+        #self.ui.canvas.ax.lines
         #self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
@@ -1546,7 +1501,7 @@ class Fix8(QMainWindow, QtStyleTools):
 
         qfd = QFileDialog()
         default_file_name = self.trial_path.replace('.json', '') + '_CORRECTED.json'
-        new_correction_file_name, _ = qfd.getSaveFileName(self, "Save correction", default_file_name)
+        new_correction_file_name, _ = qfd.getSaveFileName(self.ui, "Save correction", default_file_name)
 
         if '.json' not in new_correction_file_name:
             new_correction_file_name += '.json'
@@ -1581,7 +1536,7 @@ class Fix8(QMainWindow, QtStyleTools):
             self.save_metadata_file(new_correction_file_name)
 
             self.status_text = "Corrections Saved to" + " " + new_correction_file_name
-            self.statusBar.showMessage(self.status_text)
+            self.ui.statusBar.showMessage(self.status_text)
 
         else:
             self.show_error_message("Save Error", "No Corrections Made")
@@ -1592,10 +1547,10 @@ class Fix8(QMainWindow, QtStyleTools):
 
         # update current suggestion to the progress bar
         if self.current_fixation is not None:
-            self.label_progress.setText(
+            self.ui.label_progress.setText(
                 f"{self.current_fixation}/{len(self.fixations)}"
             )
-            self.progress_bar.setValue(self.current_fixation)
+            self.ui.progress_bar.setValue(self.current_fixation)
 
         if draw:
             self.draw_canvas(self.fixations)
@@ -1676,576 +1631,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.fixation_size = value*6
         self.draw_canvas(self.fixations)
 
-    def init_UI(self):
-        """initalize the tool window"""
-        # wrapper layout
-        self.wrapper_layout = QHBoxLayout()
-
-        # --- left side
-        self.left_side = QVBoxLayout()
-
-        self.trial_list = QListWidget()
-        self.trial_list.itemDoubleClicked.connect(self.trial_double_clicked)
-        #self.trial_list.setHidden(True)
-
-        self.left_side.addWidget(self.trial_list)
-        
-        # ---
-
-        # --- canvas
-        self.right_side = QVBoxLayout()
-
-        self.canvas = QtCanvas(self, width=12, height=8, dpi=200)
-        self.right_side.addWidget(self.canvas)
-
-        self.progress_tools = QHBoxLayout()
-
-        # initialize status bar
-        self.status_text = "Beginning..."
-        self.statusBar = QStatusBar()
-        self.setStatusBar(self.statusBar)
-        self.statusBar.showMessage(self.status_text)
-
-        # this is needed to remove the coodinates next to the navigation panel when hovering over canvas
-        class Toolbar(NavigationToolBar):
-            def __init__(self, canvas, parent):
-                super().__init__(canvas, parent)
-
-                # Remove unwanted default actions
-                self.removeUnwantedActions()
-
-            def removeUnwantedActions(self):
-                # List of action names/icons to be kept
-                wanted_actions = ["Home", "Pan", "Zoom", "Save"]  # Adjust as needed
-
-                # Iterate through existing actions and remove unwanted ones
-                for action in self.actions():
-                    if action.text() not in wanted_actions:
-                        self.removeAction(action)
-
-            def set_message(self, s):
-                pass
-
-        self.toolbar = Toolbar(self.canvas, self)
-        #self.toolbar.setStyleSheet("QToolBar { border: 0px }")
-        #self.toolbar.setEnabled(False)
-        self.progress_tools.addWidget(self.toolbar)
-
-        self.button_previous_fixation = QPushButton("Back", self)
-        self.button_previous_fixation.setEnabled(False)
-        self.button_previous_fixation.clicked.connect(self.previous_fixation)
-        self.progress_tools.addWidget(self.button_previous_fixation)
-
-        self.button_next_fixation = QPushButton("Next", self)
-        self.button_next_fixation.setEnabled(True)
-        self.button_next_fixation.clicked.connect(self.next_fixation)
-        self.progress_tools.addWidget(self.button_next_fixation)
-
-        self.progress_bar = QSlider(Qt.Horizontal)
-        self.progress_bar.setMinimum(0)
-        self.progress_bar.setMaximum(100)
-        self.progress_bar.setEnabled(False)
-        self.progress_bar.valueChanged.connect(self.progress_bar_updated)
-        self.progress_tools.addWidget(self.progress_bar)
-
-        self.label_progress = QLabel("0/0")
-        self.progress_tools.addWidget(self.label_progress)
-
-        self.right_side.addLayout(self.progress_tools)
-
-        self.below_canvas = QHBoxLayout()
-
-        # --- section for filters
-        self.filters = QVBoxLayout()
-
-        self.label_filters = QLabel("Visualization")
-        self.label_filters.setAlignment(Qt.AlignCenter)
-        self.filters.addWidget(self.label_filters)
-
-        # laers for aoi margin width and height
-        self.aoi_layer_width = QHBoxLayout()
-        self.aoi_layer_height = QHBoxLayout()
-        self.checkbox_show_aoi = QCheckBox("Show AOIs")
-        self.checkbox_show_aoi.setEnabled(False)
-        self.checkbox_show_aoi_fillSpace = QCheckBox("Show AOIs")
-        self.checkbox_show_aoi_fillSpace.setEnabled(False)
-        self.checkbox_show_aoi_fillSpace.hide()
-        self.checkbox_show_aoi.stateChanged.connect(self.show_aoi)
-        self.toggle_aoi_width = QSpinBox()
-        self.toggle_aoi_width.setMaximum(50)
-        self.toggle_aoi_width.setMinimum(1)
-        self.toggle_aoi_width.setValue(7)
-        self.toggle_aoi_height = QSpinBox()
-        self.toggle_aoi_height.setMaximum(100)
-        self.toggle_aoi_height.setMinimum(1)
-        self.toggle_aoi_height.setValue(4)
-        self.toggle_aoi_width.valueChanged.connect(self.aoi_width_changed)
-        self.toggle_aoi_height.valueChanged.connect(self.aoi_height_changed)
-        self.aoi_width_text = QLabel("Width")
-        self.aoi_height_text = QLabel("Height")
-        self.aoi_layer_width.addWidget(self.checkbox_show_aoi)
-        self.aoi_layer_width.addWidget(self.toggle_aoi_width)
-        self.aoi_layer_width.addWidget(self.aoi_width_text)
-        self.aoi_layer_height.addWidget(self.checkbox_show_aoi)
-        self.aoi_layer_height.addWidget(self.toggle_aoi_height)
-        self.aoi_layer_height.addWidget(self.aoi_height_text)
-
-        self.filters.addLayout(self.aoi_layer_width)
-        self.filters.addLayout(self.aoi_layer_height)
-
-        self.toggle_aoi_width.setEnabled(False)
-        self.toggle_aoi_height.setEnabled(False)
-        # ---
-
-        # layers for fixation and saccade visuals
-        self.fixation_layer = QHBoxLayout()
-        self.checkbox_show_fixations = QCheckBox("Show Fixations")
-        self.checkbox_show_fixations.setEnabled(False)
-        self.checkbox_show_fixations.stateChanged.connect(self.show_fixations)
-        self.toggle_fixation_opacity = QSpinBox()
-        self.toggle_fixation_opacity.setMaximum(10)
-        self.toggle_fixation_opacity.setValue(4)
-        self.toggle_fixation_opacity.setMinimum(1)
-        self.toggle_fixation_opacity.valueChanged.connect(self.fixation_opacity_changed)
-        self.fixation_opacity_text = QLabel("Fixation Opacity")
-        self.fixation_layer.addWidget(self.checkbox_show_fixations)
-        self.fixation_layer.addWidget(self.toggle_fixation_opacity)
-        self.fixation_layer.addWidget(self.fixation_opacity_text)
-
-        self.filters.addLayout(self.fixation_layer)
-
-        self.saccade_layer = QHBoxLayout()
-        self.checkbox_show_saccades = QCheckBox("Show Saccades")
-        self.checkbox_show_saccades.setEnabled(False)
-        self.checkbox_show_saccades.stateChanged.connect(self.show_saccades)
-        self.toggle_saccade_opacity = QSpinBox()
-        self.toggle_saccade_opacity.setMaximum(10)
-        self.toggle_saccade_opacity.setValue(4)
-        self.toggle_saccade_opacity.setMinimum(1)
-        self.toggle_saccade_opacity.valueChanged.connect(self.saccade_opacity_changed)
-        self.saccade_opacity_text = QLabel("Saccade Opacity")
-        self.saccade_layer.addWidget(self.checkbox_show_saccades)
-        self.saccade_layer.addWidget(self.toggle_saccade_opacity)
-        self.saccade_layer.addWidget(self.saccade_opacity_text)
-
-        self.filters.addLayout(self.saccade_layer)
-
-        self.toggle_fixation_opacity.setEnabled(False)
-        self.toggle_saccade_opacity.setEnabled(False)
-        # ---
-
-        self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction")
-        self.checkbox_show_suggestion.setEnabled(False)
-        # self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
-        self.filters.addWidget(self.checkbox_show_suggestion)
-
-        # layer for fixation size customization 
-        self.fixation_size_layer = QHBoxLayout()
-
-        self.fixation_size_bar = QSlider(Qt.Horizontal)
-        self.fixation_size_bar.setMinimum(1)
-        self.fixation_size_bar.setMaximum(30)
-        self.fixation_size_bar.setValue(5)
-        self.fixation_size_bar.setEnabled(False)
-        self.fixation_size_bar.valueChanged.connect(self.fixation_size_changed)
-
-        
-        self.fixation_size_text = QLabel("Fixation Size")
-        self.fixation_size_layer.addWidget(self.fixation_size_bar)
-        self.fixation_size_layer.addWidget(self.fixation_size_text)
-
-        self.filters.addLayout(self.fixation_size_layer)
-        # ---
-
-        self.visualization_frame = QFrame()
-        # self.frame3.setStyleSheet(
-        #     " QFrame {border: 2px solid black; margin: 0px; padding: 0px;}"
-        # )
-        # self.label_filters.setStyleSheet("QLabel { border: 0px }")
-        self.visualization_frame.setLayout(self.filters)
-        self.below_canvas.addWidget(self.visualization_frame)
-        #self.frame3.setHidden(True)
-        # --
-        self.button_fixation_color = QPushButton("Fixation Color")
-        self.button_fixation_color.clicked.connect(self.select_fixation_color)
-        
-        self.button_saccade_color = QPushButton("Saccade Color")
-        self.button_saccade_color.clicked.connect(self.select_saccade_color)
-
-        self.button_current_fixation_color = QPushButton("Current Fix. Color")
-        self.button_current_fixation_color.clicked.connect(self.select_current_fixation_color)
-
-        self.button_suggested_fixation_color = QPushButton("Suggestion Color")
-        self.button_suggested_fixation_color.clicked.connect(self.select_suggested_fixation_color)
-
-        self.button_coloblind_assist = QPushButton("Colorblind Assist")
-        self.button_coloblind_assist.clicked.connect(self.colorblind_assist)
-
-        self.button_fixation_color.setEnabled(False)
-        self.button_saccade_color.setEnabled(False)
-        self.button_current_fixation_color.setEnabled(False)
-        self.button_suggested_fixation_color.setEnabled(False)
-        self.button_coloblind_assist.setEnabled(False)
-
-        self.layer_fixation_color = QHBoxLayout()
-        self.layer_fixation_color.addWidget(self.button_fixation_color)
-        self.layer_fixation_color.addWidget(self.button_saccade_color)
-
-        
-
-        self.second_layer_fixation_color = QHBoxLayout()
-        self.second_layer_fixation_color.addWidget(self.button_current_fixation_color)
-        self.second_layer_fixation_color.addWidget(self.button_suggested_fixation_color)
-
-        self.third_layer_fixation_color = QHBoxLayout()
-
-        
-        self.third_layer_fixation_color.addWidget(self.button_coloblind_assist)
-
-        self.filters.addLayout(self.layer_fixation_color)
-        self.filters.addLayout(self.second_layer_fixation_color)
-        self.filters.addLayout(self.third_layer_fixation_color)
-
-        self.left_side.addLayout(self.below_canvas)
-        # --
-
-        #self.right_side.addLayout(self.below_canvas)
-
-        # add both sides to overall wrapper layout
-        self.wrapper_layout.addLayout(self.left_side)
-        self.wrapper_layout.addLayout(self.right_side)
-        self.wrapper_layout.setStretch(0, 1)
-        self.wrapper_layout.setStretch(1, 3)
-
-        # initial button states
-        self.toolbar.setEnabled(False)
-        self.checkbox_show_aoi.setChecked(False)
-        self.checkbox_show_aoi.setCheckable(False)
-        self.checkbox_show_fixations.setChecked(False)
-        self.checkbox_show_fixations.setCheckable(False)
-
-
-        #self.button_next_fixation.setEnabled(False)
-        self.checkbox_show_suggestion.setChecked(False)
-        self.checkbox_show_suggestion.setCheckable(False)
-
-        widget = QWidget()
-        widget.setLayout(self.wrapper_layout)
-        self.setCentralWidget(widget)
-        self.showMaximized()
-
-        # add menues
-        self.file_menu = self.menuBar().addMenu("File")
-        self.edit_menu = self.menuBar().addMenu("Edit")
-        self.view_menu = self.menuBar().addMenu("View")
-
-        self.generate_menu = self.menuBar().addMenu("Generate")
-        self.synthetic_data_menu = self.generate_menu.addMenu("Synthetic Data")
-        self.distortions_menu = self.generate_menu.addMenu("Distortions")
-
-        self.filters_menu = self.menuBar().addMenu("Filters")
-
-        self.correction_menu = self.menuBar().addMenu("Correction")
-        self.automated_correction_menu = self.correction_menu.addMenu("Automatic")
-        self.semi_auto_correction_menu = self.correction_menu.addMenu("Assisted")
-
-        self.analyses_menu = self.menuBar().addMenu("Analyses")
-        self.converters_menu = self.menuBar().addMenu("Converters")
-
-        # add actions
-        self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
-        self.open_image_action = QAction("Open Image", self)
-        self.save_correction_action = QAction( QIcon("./.images/save.png"), "Save Correction", self)
-
-        self.undo_correction_action = QAction("Undo", self)
-        self.next_fixation_action = QAction("Next Fixation", self)
-        self.previous_fixation_action = QAction("Previous Fixation", self)
-        self.accept_and_next_action = QAction("Accept suggestion", self)
-        self.delete_fixation_action = QAction("Delete Fixation", self)
-
-        self.trial_list_action = QAction("Show/Hide Trial List", self)
-        self.trial_summary_action = QAction("Show/Hide Trial Summary", self)
-        self.visualization_panel_action = QAction("Show/Hide Visualization Panel", self)
-        self.hude_side_panel_action = QAction("Show/Hide Side Panel", self)
-
-        self.generate_fixations_action = QAction("Generate Fixations", self)
-        self.generate_fixations_skip_action = QAction("Generate Fixations (Skip)", self)
-        self.generat_within_line_regression_action = QAction("Generate Within Line Regression", self)
-        self.generate_between_line_regression_action = QAction("Generate Between Line Regression", self)
-        self.generate_noise_action = QAction("Generate Noise", self)
-        self.generate_slope_action = QAction("Generate Slope", self)
-        self.generate_offset_action = QAction("Generate Offset", self)
-        self.generate_shift_action = QAction("Generate Shift", self)
-
-        self.lowpass_duration_filter_action = QAction("Filters less than", self)
-        self.highpass_duration_filter_action = QAction("Filters greater than", self)
-        self.outlier_duration_filter_action = QAction("Outlier Filter", self)
-        self.merge_fixations_filter_action = QAction("Merge Fixations", self)
-        self.outside_screen_filter_action = QAction("Outside Screen", self)
-
-        self.manual_correction_action = QAction("Manual", self)
-        self.warp_auto_action = QAction("Warp", self)
-        self.attach_auto_action = QAction("Attach", self)
-        self.chain_auto_action = QAction("Chain", self)
-        self.cluster_auto_action = QAction("Cluster", self)
-        self.merge_auto_action = QAction("Merge", self)
-        self.regress_auto_action = QAction("Regress", self)
-        self.segment_auto_action = QAction("Segment", self)
-        self.stretch_auto_action = QAction("Stretch", self)
-
-        self.warp_semi_action = QAction("Warp", self)
-        self.attach_semi_action = QAction("Attach", self)
-        self.chain_semi_action = QAction("Chain", self)
-        self.cluster_semi_action = QAction("Cluster", self)
-        self.merge_semi_action = QAction("Merge", self)
-        self.regress_semi_action = QAction("Regress", self)
-        self.segment_semi_action = QAction("Segment", self)
-        self.stretch_semi_action = QAction("Stretch", self)
-
-        self.ascii_to_csv_converter_action = QAction("ASCII to CSV", self)
-
-        # add shortcuts
-        self.new_file_action.setShortcut("Ctrl+O")
-        self.save_correction_action.setShortcut("Ctrl+S")
-
-        self.next_fixation_action.setShortcut("a")
-        self.previous_fixation_action.setShortcut("z")
-        self.undo_correction_action.setShortcut("Ctrl+Z")
-        self.accept_and_next_action.setShortcut("space")
-        self.delete_fixation_action.setShortcut("backspace")
-
-        # enable/disable
-        self.save_correction_action.setEnabled(False)
-        self.edit_menu.setEnabled(False)
-        self.generate_menu.setEnabled(False)
-        self.filters_menu.setEnabled(False)
-        self.correction_menu.setEnabled(False)
-        self.analyses_menu.setEnabled(False)
-
-        # connect functions
-        self.new_file_action.triggered.connect(self.open_trial_folder)
-        self.open_image_action.triggered.connect(self.open_image)
-        self.save_correction_action.triggered.connect(self.save_corrections)
-
-        self.next_fixation_action.triggered.connect(self.next_fixation)
-        self.previous_fixation_action.triggered.connect(self.previous_fixation)
-        self.accept_and_next_action.triggered.connect(self.confirm_suggestion)
-        self.undo_correction_action.triggered.connect(self.undo)
-
-        self.trial_list_action.triggered.connect(self.show_hide_trial_list)
-        self.trial_summary_action.triggered.connect(self.show_hide_trial_summary)
-        self.visualization_panel_action.triggered.connect(self.show_hide_visualization_panel)
-        self.hude_side_panel_action.triggered.connect(self.show_hide_side_panel)
-
-        self.generate_fixations_action.triggered.connect(self.generate_fixations)
-        self.generate_fixations_skip_action.triggered.connect(self.generate_fixations_skip)
-        self.generat_within_line_regression_action.triggered.connect(self.generate_within_line_regression)
-        self.generate_between_line_regression_action.triggered.connect(self.generate_between_line_regression)
-        self.generate_noise_action.triggered.connect(self.generate_noise)
-        self.generate_slope_action.triggered.connect(self.generate_slope)
-        self.generate_offset_action.triggered.connect(self.generate_offset)
-        self.generate_shift_action.triggered.connect(self.generate_shift)
-        
-        self.lowpass_duration_filter_action.triggered.connect(self.lowpass_duration_filter)
-        self.highpass_duration_filter_action.triggered.connect(self.highpass_duration_filter)
-        self.outlier_duration_filter_action.triggered.connect(self.outlier_duration_filter)
-        self.merge_fixations_filter_action.triggered.connect(self.merge_fixations)
-        self.outside_screen_filter_action.triggered.connect(self.outside_screen_filter)
-        
-        self.warp_auto_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'auto'))
-        self.attach_auto_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'auto'))
-        self.chain_auto_action.triggered.connect(lambda: self.run_algorithm('chain', da.chain, 'auto'))
-        self.cluster_auto_action.triggered.connect(lambda: self.run_algorithm('cluster', da.cluster, 'auto'))
-        self.merge_auto_action.triggered.connect(lambda: self.run_algorithm('merge', da.merge, 'auto'))
-        self.regress_auto_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'auto'))
-        self.segment_auto_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'auto'))
-        self.stretch_auto_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'auto'))
-        
-        self.warp_semi_action.triggered.connect(lambda: self.run_algorithm('warp', da.warp, 'semi'))
-        self.attach_semi_action.triggered.connect(lambda: self.run_algorithm('attach', da.attach, 'semi'))
-        self.chain_semi_action.triggered.connect(lambda: self.run_algorithm('chain', da.chain, 'semi'))
-        self.cluster_semi_action.triggered.connect(lambda: self.run_algorithm('cluster', da.cluster, 'semi'))
-        self.merge_semi_action.triggered.connect(lambda: self.run_algorithm('merge', da.merge, 'semi'))
-        self.regress_semi_action.triggered.connect(lambda: self.run_algorithm('regress', da.regress, 'semi'))
-        self.segment_semi_action.triggered.connect(lambda: self.run_algorithm('segment', da.segment, 'semi'))
-        self.stretch_semi_action.triggered.connect(lambda: self.run_algorithm('stretch', da.stretch, 'semi'))
-        self.manual_correction_action.triggered.connect(self.manual_correction)
-
-        self.ascii_to_csv_converter_action.triggered.connect(self.ascii_to_csv_converter)
-
-
-        # add actions to menu
-        self.file_menu.addAction(self.new_file_action)
-        self.file_menu.addAction(self.open_image_action)
-        self.file_menu.addAction(self.save_correction_action)
-
-        self.edit_menu.addAction(self.next_fixation_action)
-        self.edit_menu.addAction(self.previous_fixation_action)
-        self.edit_menu.addAction(self.accept_and_next_action)
-        self.edit_menu.addAction(self.undo_correction_action)
-        self.edit_menu.addAction(self.delete_fixation_action)
-
-        self.view_menu.addAction(self.trial_list_action)
-        self.view_menu.addAction(self.trial_summary_action)
-        self.view_menu.addAction(self.visualization_panel_action)
-        self.view_menu.addAction(self.hude_side_panel_action)
-
-        # Generate
-        self.synthetic_data_menu.addAction(self.generate_fixations_action)
-        self.synthetic_data_menu.addAction(self.generate_fixations_skip_action)
-        self.synthetic_data_menu.addAction(self.generat_within_line_regression_action)
-        self.synthetic_data_menu.addAction(self.generate_between_line_regression_action)
-        self.distortions_menu.addAction(self.generate_noise_action)
-        self.distortions_menu.addAction(self.generate_slope_action)
-        self.distortions_menu.addAction(self.generate_offset_action)
-        self.distortions_menu.addAction(self.generate_shift_action)        
-        
-        self.filters_menu.addAction(self.lowpass_duration_filter_action)
-        self.filters_menu.addAction(self.highpass_duration_filter_action)
-        self.filters_menu.addAction(self.outlier_duration_filter_action)
-        self.filters_menu.addAction(self.merge_fixations_filter_action)
-        self.filters_menu.addAction(self.outside_screen_filter_action)
-
-        self.correction_menu.addAction(self.manual_correction_action)
-        self.automated_correction_menu.addAction(self.warp_auto_action)
-        self.automated_correction_menu.addAction(self.attach_auto_action)
-        self.automated_correction_menu.addAction(self.chain_auto_action)
-        self.automated_correction_menu.addAction(self.cluster_auto_action)
-        self.automated_correction_menu.addAction(self.merge_auto_action)
-        self.automated_correction_menu.addAction(self.regress_auto_action)
-        self.automated_correction_menu.addAction(self.segment_auto_action)
-        self.automated_correction_menu.addAction(self.stretch_auto_action)
-
-        self.semi_auto_correction_menu.addAction(self.warp_semi_action)
-        self.semi_auto_correction_menu.addAction(self.attach_semi_action)
-        self.semi_auto_correction_menu.addAction(self.chain_semi_action)
-        self.semi_auto_correction_menu.addAction(self.cluster_semi_action)
-        self.semi_auto_correction_menu.addAction(self.merge_semi_action)
-        self.semi_auto_correction_menu.addAction(self.regress_semi_action)
-        self.semi_auto_correction_menu.addAction(self.segment_semi_action)
-        self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
-
-        self.converters_menu.addAction(self.ascii_to_csv_converter_action)
-
-        # add menue item called "Style" to the menu bar
-        self.menu_style = self.menuBar().addMenu("Theme")
-
-        action = QAction('Default', self)
-        action.triggered.connect(lambda _, theme='Default': self.apply_stylesheet(fix8, 'my_theme.xml'))
-        self.menu_style.addAction(action)
-
-        # add sub menue to the menue item "Style" for Dark
-        self.dark_menue_style = self.menu_style.addMenu("Dark")
-        self.light_menue_style = self.menu_style.addMenu("Light")
-
-        # add actions to the menu item "Style"
-        for theme in list_themes():
-            action = QAction(theme.replace('.xml', '').replace('_', ' '), self)
-            action.triggered.connect(lambda _, theme=theme: self.apply_stylesheet(fix8, theme))
-
-            if 'dark' in theme.lower():
-                self.dark_menue_style.addAction(action)
-            else:
-                self.light_menue_style.addAction(action)
-
-    def relevant_buttons(self, feature):
-        if feature == "opened_stimulus":
-            self.checkbox_show_aoi.setCheckable(True)
-            self.checkbox_show_aoi.setChecked(False)
-            self.checkbox_show_aoi.setEnabled(True)
-            self.toggle_aoi_width.setEnabled(True)
-            self.toggle_aoi_height.setEnabled(True)
-            self.toolbar.setEnabled(True)
-            self.checkbox_show_fixations.setCheckable(False)
-            self.checkbox_show_fixations.setChecked(False)
-            self.checkbox_show_fixations.setCheckable(True)
-            self.checkbox_show_saccades.setCheckable(False)
-            self.checkbox_show_saccades.setChecked(False)
-            self.checkbox_show_saccades.setCheckable(True)
-        elif feature == "opened_folder":
-            self.button_previous_fixation.setEnabled(False)
-            self.button_next_fixation.setEnabled(False)
-
-
-            self.checkbox_show_fixations.setCheckable(False)
-            self.checkbox_show_fixations.setChecked(False)
-            self.checkbox_show_fixations.setEnabled(False)
-
-            # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal
-            # happens in the checkbox connected method,
-            # then make in uncheckable so it won't activate by accident anymore; there is no helper function
-            # for removing suggestions, so clearing suggestions isn't called anywhere in the code
-            self.checkbox_show_suggestion.setChecked(False)
-            self.checkbox_show_suggestion.setCheckable(False)
-            self.checkbox_show_suggestion.setEnabled(False)
-
-            self.checkbox_show_saccades.setCheckable(False)
-            self.checkbox_show_saccades.setChecked(False)
-            self.checkbox_show_saccades.setEnabled(False)
-            self.progress_bar.setEnabled(False)
-            self.progress_bar.setValue(self.progress_bar.minimum())
-            self.button_fixation_color.setEnabled(False)
-            self.button_saccade_color.setEnabled(False)
-            self.button_suggested_fixation_color.setEnabled(False)
-            self.button_current_fixation_color.setEnabled(False)
-            self.toggle_aoi_width.setEnabled(False)
-            self.toggle_aoi_height.setEnabled(False)
-            self.button_coloblind_assist.setEnabled(False)
-            self.toggle_fixation_opacity.setEnabled(False)
-            self.toggle_saccade_opacity.setEnabled(False)
-            self.fixation_size_bar.setEnabled(False)
-
-        elif feature == "trial_clicked":
-            self.save_correction_action.setEnabled(True)
-            self.edit_menu.setEnabled(True)
-            self.filters_menu.setEnabled(True)
-            self.generate_menu.setEnabled(True)
-            self.correction_menu.setEnabled(True)
-            self.analyses_menu.setEnabled(True)
-
-            self.button_previous_fixation.setEnabled(True)
-            self.button_next_fixation.setEnabled(True)
-            self.checkbox_show_aoi.setCheckable(True)
-            self.checkbox_show_aoi.setEnabled(True)
-
-            self.checkbox_show_fixations.setCheckable(True)
-            self.checkbox_show_fixations.setEnabled(True)
-
-            self.checkbox_show_saccades.setCheckable(True)
-            self.checkbox_show_saccades.setEnabled(True)
-
-            self.toggle_aoi_width.setEnabled(True)
-            self.toggle_aoi_height.setEnabled(True)
-            self.button_fixation_color.setEnabled(True)
-            self.button_saccade_color.setEnabled(True)
-            self.button_suggested_fixation_color.setEnabled(False)
-            self.button_current_fixation_color.setEnabled(True)
-            self.toggle_fixation_opacity.setEnabled(True)
-            self.toggle_saccade_opacity.setEnabled(True)
-            self.fixation_size_bar.setEnabled(True)
-            self.button_coloblind_assist.setEnabled(True)
-
-            # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal
-            # happens in the checkbox connected method,
-            # then make in uncheckable so it won't activate by accident anymore; there is no helper
-            # function for removing suggestions
-            self.checkbox_show_suggestion.setChecked(False)
-            self.checkbox_show_suggestion.setCheckable(False)
-            self.checkbox_show_suggestion.setEnabled(False)
-
-            self.progress_bar.setValue(self.progress_bar.minimum())
-            self.progress_bar.setEnabled(True)
-        elif feature == "no_selected_algorithm":
-            self.checkbox_show_suggestion.setCheckable(False)
-            self.checkbox_show_suggestion.setChecked(
-                False
-            )  # the no algorithm selection updates the suggestions
-            # which clears them in the function itself
-            self.checkbox_show_suggestion.setEnabled(False)
-        elif feature == "algorithm_selected":
-            self.button_previous_fixation.setEnabled(True)
-            self.button_next_fixation.setEnabled(True)
-            self.button_suggested_fixation_color.setEnabled(True)
+    
 
 if __name__ == "__main__":
 
@@ -2257,7 +1643,5 @@ if __name__ == "__main__":
         # And helps us maintain the taskbar icon
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
-    fix8 = QApplication([])
     window = Fix8()
-    # apply_stylesheet(fix8, 'my_theme.xml')
-    fix8.exec_()
+    window.fix8.exec_()
