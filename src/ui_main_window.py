@@ -37,7 +37,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         super().__init__()
         self.fix8 = fix8
         self.setWindowTitle("Fix8")
-        self.setWindowIcon(QIcon("icon.ico"))
+        self.setWindowIcon(QIcon("./.images/icon.ico"))
         self.init_UI()
         self.apply_stylesheet(self, 'my_theme.xml')
 
@@ -348,6 +348,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.stretch_semi_action = QAction("Stretch", self)
 
         self.ascii_to_csv_converter_action = QAction("ASCII to CSV (one trial)", self)
+        self.eyelink_experiment_to_csv_converter_action = QAction("Eyelink Experiment to CSV", self)
 
         # add shortcuts
         self.new_file_action.setShortcut("Ctrl+O")
@@ -419,6 +420,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
 
         self.converters_menu.addAction(self.ascii_to_csv_converter_action)
+        self.converters_menu.addAction(self.eyelink_experiment_to_csv_converter_action)
 
         # add menue item called "Style" to the menu bar
         self.menu_style = self.menuBar().addMenu("Theme")
@@ -512,6 +514,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.manual_correction_action.triggered.connect(self.fix8.manual_correction)
 
         self.ascii_to_csv_converter_action.triggered.connect(self.fix8.ascii_to_csv_converter)
+        self.eyelink_experiment_to_csv_converter_action.triggered.connect(self.fix8.eyelink_experiment_to_csv_converter)
 
     def relevant_buttons(self, feature):
         if feature == "opened_stimulus":

@@ -7,6 +7,7 @@ from PIL import Image
 import pandas as pd
 import numpy as np
 import random
+import os
 
 def find_background_color(img):
     """Private function that identifies the background color of the image
@@ -208,6 +209,193 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
         aoi = aoi.append(dic, ignore_index=True)
 
     return aoi, bg_color
+
+
+# modified from EMTK
+def read_EyeLink1000_experiment(filename, destination_path):
+    """Read asc file from Eye Link 1000 eye tracker
+
+    Parameters
+    ----------
+    filename : str
+        name of the asc file
+        
+    filetype : str
+        filetype of the file, e.g. "tsv"
+    """
+
+    asc_file = open(filename)
+    print("parsing file:", filename)
+
+    text = asc_file.read()
+    text_lines = text.split('\n')
+
+    trial_id = -1
+    participant_id = filename.split('/')[-1].replace('.asc', '')
+
+    header = ["time_stamp", "eye_event", "x_cord", "y_cord", "duration", "pupil", "x1_cord", "y1_cord", "amplitude", "peak_velocity"]
+    result = pd.DataFrame(columns=header)
+
+    count = 0
+
+    for line in text_lines:
+
+        token = line.split()
+
+        if not token:
+            continue
+
+        if 'DISPLAY_COORDS' in token:
+
+            display_width = int(token[-2])
+            display_height = int(token[-1])
+
+        if "TRIALID" in token:
+            # List of eye events
+            if trial_id == -1:
+                trial_id = int(token[-1])
+                continue
+
+            # Read image location
+            index = str(int(trial_id) + 1)
+            experiment = participant_id
+            runtime_folder_path = '/'.join(filename.split('/')[:-1])
+            location = runtime_folder_path + '/runtime/dataviewer/' + experiment + '/graphics/VC_' + index + '.vcl'
+            with open(location, 'r') as file:
+                target_line = file.readlines()[1]
+                tokens = target_line.split()
+                image = tokens[-3]
+                x_offset = tokens[-2]
+                y_offset = tokens[-1]
+                
+            result['trial_id'] = trial_id + 1
+            result['participant_id'] = participant_id
+            result['image'] = image
+            
+            # create a folder with trial number at destination_path
+            trial_folder = destination_path + '/P_' + str(experiment) + '/' + str(trial_id  + 1) + '/'
+            if not os.path.exists(trial_folder):
+                os.makedirs(trial_folder)
+
+            result.to_csv(trial_folder + 'P' + str(experiment) + '_T' + str(trial_id  + 1) + '.csv')
+
+            # create a black background image with the same size as the display
+            img = Image.new('RGB', (display_width, display_height), color = 'black')
+
+            # overlay image on the black background with the offset keeping transparent background
+            layer = Image.open(location.split('VC')[0] + '../../' + image).convert('RGBA')
+            img.paste(layer, (int(x_offset), int(y_offset)), mask=layer) 
+
+            # save the image to the folder
+            img.save(trial_folder + str(trial_id  + 1) + '.png')
+
+            # copy the image to the folder
+            os.system('cp ' + location + ' ' + trial_folder)
+
+            result = pd.DataFrame(columns=header)
+            count = 0
+            trial_id = int(token[-1])
+
+        if token[0] == "EFIX":
+            timestamp = int(token[2])
+            duration = int(token[4])
+            x_cord = float(token[5])
+            y_cord = float(token[6])
+            pupil = int(token[7])
+
+            df = pd.DataFrame([[timestamp,
+                                    "fixation",
+                                    x_cord,
+                                    y_cord,
+                                    duration,
+                                    pupil,
+                                    np.nan,
+                                    np.nan,
+                                    np.nan,
+                                    np.nan]], columns=header)
+            
+            result = result.append(df, ignore_index=True)
+            count += 1
+
+        if token[0] == "ESACC":
+            timestamp = int(token[2])
+            duration = int(token[4])
+            x_cord = float(token[5]) if token[5] != '.' else 0.0
+            y_cord = float(token[6]) if token[6] != '.' else 0.0
+            x1_cord = float(token[7]) if token[7] != '.' else 0.0
+            y1_cord = float(token[8]) if token[8] != '.' else 0.0
+            amplitude = float(token[9])
+            peak_velocity = int(token[10])
+            
+            df = pd.DataFrame([[timestamp,
+                                    "saccade",
+                                    x_cord,
+                                    y_cord,
+                                    duration,
+                                    np.nan,
+                                    x1_cord,
+                                    y1_cord,
+                                    amplitude,
+                                    peak_velocity]], columns=header)
+            
+            result = result.append(df, ignore_index=True)
+            count += 1
+
+        if token[0] == "EBLINK":
+            timestamp = int(token[2])
+            duration = int(token[4])
+            df = pd.DataFrame([[timestamp,
+                                    "blink",
+                                    np.nan,
+                                    np.nan,
+                                    duration,
+                                    np.nan,
+                                    np.nan,
+                                    np.nan,
+                                    np.nan,
+                                    np.nan]], columns=header)
+            
+            result = result.append(df, ignore_index=True)
+            count += 1
+
+    # Read image location
+    index = str(int(trial_id) + 1)
+    experiment = participant_id.split('/')[-1]
+    runtime_folder_path = '/'.join(filename.split('/')[:-1])
+    location = runtime_folder_path + '/runtime/dataviewer/' + experiment + '/graphics/VC_' + index + '.vcl'
+    with open(location, 'r') as file:
+        target_line = file.readlines()[1]
+        tokens = target_line.split()
+        image = tokens[-3]
+        x_offset = tokens[-2]
+        y_offset = tokens[-1]
+        
+    result['trial_id'] = trial_id + 1
+    result['participant_id'] = participant_id
+    result['image'] = image
+    
+    # create a folder with trial number at destination_path
+    trial_folder = destination_path + '/P_' + str(experiment) + '/' + str(trial_id + 1) + '/'
+    if not os.path.exists(trial_folder):
+        os.makedirs(trial_folder)
+
+    result.to_csv(trial_folder + 'P' + str(experiment) + '_T' + str(trial_id + 1) + '.csv')
+
+    # create a black background image with the same size as the display
+    img = Image.new('RGB', (display_width, display_height), color = 'black')
+
+    # overlay image on the black background with the offset keeping transparent background
+    layer = Image.open(location.split('VC')[0] + '../../' + image).convert('RGBA')
+    img.paste(layer, (int(x_offset), int(y_offset)), mask=layer) 
+
+    # save the image to the folder
+    img.save(trial_folder + str(trial_id + 1) + '.png')
+
+    # copy the image to the folder
+    os.system('cp ' + location + ' ' + trial_folder)
+
+    asc_file.close()
+
 
 ######################## end from EMTK #################################
 
