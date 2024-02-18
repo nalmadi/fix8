@@ -93,10 +93,11 @@ class Fix8():
         self.trial_name = None
 
         # fields relating to fixations
-        self.original_fixations = None
-        self.fixations = None   # timestamp, x, y, duration, pupil
-        self.saccades = None    # timestamp, x, y, duration, x1, y1, amplitude, peak velocity 
-        self.blinks = None      # timestamp duration
+        self.eye_events = None              # dataframe of eye events
+        self.original_fixations = None      # TODO: make this original_eye_events
+        self.fixations = None               # TODO: replace with eye events:  timestamp, x, y, duration, pupil
+        self.saccades = None                # TODO: replace with eye events:  timestamp, x, y, duration, x1, y1, amplitude, peak velocity 
+        self.blinks = None                  # TODO: replace with eye events:  timestamp duration
         self.fixation_points = None
         self.saccade_lines = None
         self.current_fixation = -1
@@ -491,6 +492,30 @@ class Fix8():
 
         # convert and save csv file
         mini_emtk.read_EyeLink1000(ascii_file, new_correction_file_name)
+
+
+    def eyelink_experiment_to_csv_converter(self):
+        ''' convert eyelink experiment to csv files from ASCII and runtime folder '''
+        # open ascii file through file dialog limit to .asc files
+        qfd = QFileDialog()
+        ascii_file = qfd.getOpenFileName(self.ui, "Select ascii file", "", "ASCII Files (*.asc)")[0]
+
+        if ascii_file == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        # ask user for file name to save csv through file dialog
+        qfd = QFileDialog()
+        save_folder = qfd.getExistingDirectory(self.ui, "Save experiment trials to folder")
+        
+        if save_folder == "":
+            self.show_error_message("Error", "No save folder selected")
+            return
+
+        self.show_error_message("Warning", "Conversion may take a while")
+
+        # convert and save csv file
+        mini_emtk.read_EyeLink1000_experiment(ascii_file, save_folder)
 
 
     def outlier_duration_filter(self):
@@ -1040,13 +1065,12 @@ class Fix8():
             else:
                 self.show_error_message("Trial Folder Error", "Empty Folder")
 
-
             if image_file == "":  # image file wasn't found
                 self.show_error_message("Trial Folder Error", "No Compatible Image")
 
             else:
                 self.set_canvas_image(image_file)
-                #self.ui.canvas.draw()
+                self.ui.canvas.draw()
                 self.find_aoi()
                 self.ui.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
@@ -1116,6 +1140,7 @@ class Fix8():
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
+        self.draw_canvas(self.fixations, draw_all=True)
 
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
         self.ui.statusBar.showMessage(self.status_text)
@@ -1177,21 +1202,33 @@ class Fix8():
         parameters:
         trial_path - the trial file path of the trial clicked on"""
         self.original_fixations = []
+        x_cord = []
+        y_cord = []
+        duration = []
+
         with open(trial_path, "r") as trial:
             try:
                 trial_data = json.load(trial)
                 for key in trial_data:
-                    self.original_fixations.append(
-                        [
-                            trial_data[key][0],
-                            trial_data[key][1],
-                            trial_data[key][2],
-                        ]
-                    )
-                self.original_fixations = np.array(self.original_fixations)
-                self.ui.relevant_buttons("trial_clicked")
+                    x_cord.append(trial_data[key][0])
+                    y_cord.append(trial_data[key][1])
+                    duration.append(trial_data[key][2])
+
             except json.decoder.JSONDecodeError:
                 self.show_error_message("Trial File Error", "JSON File Empty")
+
+        # create an empty dataframe
+        self.eye_events = pd.DataFrame(columns=["x_cord", "y_cord", "duration"])
+        self.eye_events["x_cord"] = x_cord
+        self.eye_events["y_cord"] = y_cord
+        self.eye_events["duration"] = duration
+        self.eye_events["eye_event"] = "fixation"
+
+        self.original_fixations = self.eye_events[self.eye_events["eye_event"] == "fixation"]
+        self.original_fixations.drop(columns=["eye_event"], inplace=True)
+
+        self.original_fixations = np.array(self.original_fixations)
+        self.ui.relevant_buttons("trial_clicked")
 
 
     def read_csv_fixations(self, trial_path):
@@ -1202,13 +1239,14 @@ class Fix8():
 
         try:
             # open the csv file with pandas
-            eye_events = pd.read_csv(trial_path)
+            self.eye_events = pd.read_csv(trial_path)
 
         except:
-                self.show_error_message("Trial File Error", "Problem reading CSV File")        
+            self.show_error_message("Trial File Error", "Problem reading CSV File")     
+            return
 
         # get the fixations from the csv file
-        fixations = eye_events[eye_events["eye_event"] == "fixation"]
+        fixations = self.eye_events[self.eye_events["eye_event"] == "fixation"]
 
         # get the x, y, and duration of the fixations
         for index, row in fixations.iterrows():
