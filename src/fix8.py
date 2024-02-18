@@ -129,7 +129,7 @@ class Fix8():
 
         # fields relating to color filters
         self.fixation_color = "red"
-        self.current_fixation_color = "yellow"
+        self.current_fixation_color = "magenta"
         self.suggested_fixation_color = "blue"
         self.saccade_color = "blue"
         self.aoi_color = "yellow"
@@ -1095,9 +1095,7 @@ class Fix8():
         # clear history for undo
         self.state = State()
 
-        #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
-        # double clicking trial should show all and make the current fixation the last one
         self.current_fixation = (len(self.original_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
@@ -1113,7 +1111,6 @@ class Fix8():
                     f"{self.current_fixation}/{len(self.original_fixations)}"
                 )
 
-        # corrected fixations will be the current fixations on the screen and in the data
         self.fixations = copy.deepcopy(self.original_fixations)
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
@@ -1406,9 +1403,11 @@ class Fix8():
             y = self.fixations[0 : self.current_fixation + 1, 1]
             duration = self.fixations[0 : self.current_fixation + 1, 2]
 
+        # generate colors for fixations
         list_colors = [self.fixation_color] * (len(x) - 1)
         colors = np.array(list_colors + [self.current_fixation_color])
 
+        # draw fixations
         self.fixation_points = self.ui.canvas.ax.scatter(
             x,
             y,
@@ -1416,12 +1415,30 @@ class Fix8():
             alpha=self.fixation_opacity,
             c=colors,
         )
+
+        # draw saccades
         self.saccade_lines = self.ui.canvas.ax.plot(
             x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
         )
-        #self.ui.canvas.ax.lines = self.saccade_lines
+
+        # draw suggested fixation in blue (or selected color)
+        if self.ui.checkbox_show_suggestion.isChecked():
+            x = self.suggested_corrections[self.current_fixation][0]
+            y = self.suggested_corrections[self.current_fixation][1]
+            duration = self.fixations[self.current_fixation][2]
+
+            self.suggested_fixation = self.ui.canvas.ax.scatter(
+                x,
+                y,
+                s=30 * (duration / 50) ** 1.8,
+                alpha=self.fixation_opacity,
+                c=self.suggested_fixation_color,
+            )
+            self.ui.canvas.ax.draw_artist(self.suggested_fixation)
+
         self.ui.canvas.ax.draw_artist(self.fixation_points)
         self.ui.canvas.ax.draw_artist(self.saccade_lines[0])
+        
         self.ui.canvas.blit(self.ui.canvas.ax.bbox)
 
 
@@ -1498,6 +1515,7 @@ class Fix8():
         self.fixations[self.current_fixation][0] = self.suggested_corrections[self.current_fixation][0]
         self.fixations[self.current_fixation][1] = self.suggested_corrections[self.current_fixation][1]
 
+        self.quick_draw_canvas(all_fixations=False)
         self.next_fixation()
 
 
@@ -1608,7 +1626,7 @@ class Fix8():
         if color.isValid():
             self.current_fixation_color = str(color.name())
         else:
-            self.current_fixation_color = "yellow"
+            self.current_fixation_color = "magenta"
 
         self.quick_draw_canvas(all_fixations=False)
 
