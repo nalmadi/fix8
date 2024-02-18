@@ -100,7 +100,7 @@ class QtCanvas(FigureCanvasQTAgg):
     def initialize(self):
         #img = mpimg.imread("./.images/fix8_landing.png")
         img = mpimg.imread("./.images/fix8-landing-logo.png")
-        self.ax.imshow(img)
+        self.ax.imshow(img, interpolation="hanning")
         self.draw()
 
     def clear(self):
@@ -1130,7 +1130,8 @@ class Fix8(QMainWindow, QtStyleTools):
     def set_canvas_image(self, image_file):
         self.canvas.clear()
         image = mpimg.imread(image_file)
-        self.canvas.ax.imshow(image)
+        # show image with highest quality
+        self.canvas.ax.imshow(image, interpolation="hanning")
         #self.canvas.ax.set_title(str(image_file.split('/')[-1].split(".")[0]))
 
 
