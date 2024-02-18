@@ -441,6 +441,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             else:
                 self.light_menue_style.addAction(action)
 
+        self.canvas.mpl_connect("button_press_event", self.fix8.button_press_callback)
+        self.canvas.mpl_connect("button_release_event", self.fix8.button_release_callback)
+        self.canvas.mpl_connect("motion_notify_event", self.fix8.motion_notify_callback)
+
         self.trial_list.itemDoubleClicked.connect(self.fix8.trial_double_clicked)
         self.button_previous_fixation.clicked.connect(self.fix8.previous_fixation)
         self.button_next_fixation.clicked.connect(self.fix8.next_fixation)

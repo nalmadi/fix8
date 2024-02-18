@@ -79,16 +79,10 @@ from qt_material import QtStyleTools, list_themes
 import platform
 
 
-
 class Fix8():
     def __init__(self):
         self.fix8 = QApplication([])
-        #self.main_window = QMainWindow()
-
         self.ui = ui_main_window.Ui_Main_Window(self)
-    
-        # apply_stylesheet(fix8, 'my_theme.xml')
-        #self.fix8.exec_()
 
         # fields relating to the stimulus
         self.image_file_path = None
@@ -106,7 +100,6 @@ class Fix8():
         self.fixation_points = None
         self.saccade_lines = None
         self.current_fixation = -1
-        print('here')
 
         # filed for tool undo/redo using memento pattern and state class
         self.state = State()
@@ -128,11 +121,7 @@ class Fix8():
 
         # fields relating to the drag and drop system
         self.selected_fixation = None
-        self.xy = None
-        self.ui.canvas.mpl_connect("button_press_event", self.button_press_callback)
-        self.ui.canvas.mpl_connect("button_release_event", self.button_release_callback)
-        self.ui.canvas.mpl_connect("motion_notify_event", self.motion_notify_callback)
-        
+        self.xy = None      
 
         # fields relating to aoi margin
         self.aoi_width = 7
@@ -562,9 +551,7 @@ class Fix8():
                 self.current_fixation = len(self.fixations) - 1
 
             self.progress_bar_updated(self.current_fixation, draw=True)
-            
-            # draw fixations up to current_fixation
-            #self.draw_canvas(self.fixations, draw_all=False)
+
 
     def save_state(self):
         self.state.set_state(self.fixations)
@@ -783,7 +770,6 @@ class Fix8():
 
 
     def manual_correction(self):
-
         self.algorithm_function = None
         self.algorithm = "manual"
 
@@ -1407,6 +1393,38 @@ class Fix8():
         self.ui.canvas.draw()
 
 
+    def quick_draw_canvas(self, all_fixations=False):
+
+        self.ui.canvas.restore_region(self.ui.canvas.background)
+
+        if all_fixations:
+            x = self.fixations[:, 0]
+            y = self.fixations[:, 1]
+            duration = self.fixations[:, 2]
+        else:
+            x = self.fixations[0 : self.current_fixation + 1, 0]
+            y = self.fixations[0 : self.current_fixation + 1, 1]
+            duration = self.fixations[0 : self.current_fixation + 1, 2]
+
+        list_colors = [self.fixation_color] * (len(x) - 1)
+        colors = np.array(list_colors + [self.current_fixation_color])
+
+        self.fixation_points = self.ui.canvas.ax.scatter(
+            x,
+            y,
+            s=30 * (duration / 50) ** 1.8,
+            alpha=self.fixation_opacity,
+            c=colors,
+        )
+        self.saccade_lines = self.ui.canvas.ax.plot(
+            x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
+        )
+        #self.ui.canvas.ax.lines = self.saccade_lines
+        self.ui.canvas.ax.draw_artist(self.fixation_points)
+        self.ui.canvas.ax.draw_artist(self.saccade_lines[0])
+        self.ui.canvas.blit(self.ui.canvas.ax.bbox)
+
+
     def correct_all_fixations(self):
         """if the user presses the correct all fixations button,
         make the corrected fixations the suggested ones from the correction algorithm"""
@@ -1553,7 +1571,16 @@ class Fix8():
             self.ui.progress_bar.setValue(self.current_fixation)
 
         if draw:
-            self.draw_canvas(self.fixations)
+
+            #self.xy = np.asarray(self.scatter.get_offsets())
+            #self.xy[self.selected_fixation] = np.array([x, y])
+            #self.scatter.set_offsets(self.xy)
+            # self.ui.canvas.draw_idle()
+            if self.ui.canvas.background is None:
+                self.draw_canvas(self.fixations)
+                return
+
+            self.quick_draw_canvas(all_fixations=False)
 
     def aoi_height_changed(self, value):
         self.aoi_height = value
@@ -1574,7 +1601,7 @@ class Fix8():
         else:
             self.fixation_color = "red"
 
-        self.draw_canvas(self.fixations)
+        self.quick_draw_canvas(all_fixations=False)
 
     def select_current_fixation_color(self):
         color = QColorDialog.getColor(initial=Qt.red)
@@ -1583,7 +1610,7 @@ class Fix8():
         else:
             self.current_fixation_color = "yellow"
 
-        self.draw_canvas(self.fixations)
+        self.quick_draw_canvas(all_fixations=False)
 
     def select_suggested_fixation_color(self):
         color = QColorDialog.getColor(initial=Qt.red)
@@ -1592,7 +1619,7 @@ class Fix8():
         else:
             self.suggested_fixation_color = "blue"
 
-        self.draw_canvas(self.fixations)
+        self.quick_draw_canvas(all_fixations=False)
 
     def select_saccade_color(self):
         color = QColorDialog.getColor(initial=Qt.blue)
@@ -1601,7 +1628,7 @@ class Fix8():
         else:
             self.saccade_color = "blue"
 
-        self.draw_canvas(self.fixations)
+        self.quick_draw_canvas(all_fixations=False)
 
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
@@ -1611,26 +1638,25 @@ class Fix8():
             self.saccade_color = "#3D00CC"
             self.aoi_color = "#28AAFF"
             self.colorblind_assist_status = True
-            self.draw_canvas(self.fixations)
+            self.quick_draw_canvas(all_fixations=False)
         else:
             self.fixation_color = "red"
             self.saccade_color = "blue"
             self.aoi_color = "yellow"
             self.colorblind_assist_status = False
-            self.draw_canvas(self.fixations)
+            self.quick_draw_canvas(all_fixations=False)
 
     def saccade_opacity_changed(self, value):
         self.saccade_opacity = float(value / 10)
-        self.draw_canvas(self.fixations)
+        self.quick_draw_canvas(all_fixations=False)
 
     def fixation_opacity_changed(self, value):
         self.fixation_opacity = float(value / 10)
-        self.draw_canvas(self.fixations)
+        self.quick_draw_canvas(all_fixations=False)
 
     def fixation_size_changed(self, value):
         self.fixation_size = value*6
         self.draw_canvas(self.fixations)
-
     
 
 if __name__ == "__main__":
