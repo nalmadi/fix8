@@ -98,7 +98,8 @@ class QtCanvas(FigureCanvasQTAgg):
         self.initialize()
 
     def initialize(self):
-        img = mpimg.imread("./.images/fix8_landing.png")
+        #img = mpimg.imread("./.images/fix8_landing.png")
+        img = mpimg.imread("./.images/fix8-landing-logo.png")
         self.ax.imshow(img)
         self.draw()
 
@@ -1480,8 +1481,13 @@ class Fix8(QMainWindow, QtStyleTools):
 
 
     def next_fixation(self):
-        """when the next fixation button is clicked, call this function and find the suggested correction for this fixation"""
-        # if self.suggested_corrections is not None:
+        if self.current_fixation == -1 and self.original_fixations == None:
+            # Tour
+            self.set_canvas_image('./.images/fix8-tour-1.png')
+            self.canvas.draw()
+            self.button_next_fixation.setEnabled(False)
+            return
+        
         if self.current_fixation != len(self.fixations) - 1:
             self.current_fixation += 1
 
@@ -1730,7 +1736,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.progress_tools.addWidget(self.button_previous_fixation)
 
         self.button_next_fixation = QPushButton("Next", self)
-        self.button_next_fixation.setEnabled(False)
+        self.button_next_fixation.setEnabled(True)
         self.button_next_fixation.clicked.connect(self.next_fixation)
         self.progress_tools.addWidget(self.button_next_fixation)
 
@@ -1918,7 +1924,7 @@ class Fix8(QMainWindow, QtStyleTools):
         self.checkbox_show_fixations.setCheckable(False)
 
 
-        self.button_next_fixation.setEnabled(False)
+        #self.button_next_fixation.setEnabled(False)
         self.checkbox_show_suggestion.setChecked(False)
         self.checkbox_show_suggestion.setCheckable(False)
 
