@@ -519,8 +519,8 @@ class Fix8():
 
 
     def outlier_duration_filter(self):
-        minimum_value = 1
-        maximum_value = 4
+        minimum_value = 0.1
+        maximum_value = 5
         default_value = 2.5
         title = "Duration Filter"
         message = "Remove fixations with durations X standard deviations away from the mean"
@@ -616,7 +616,7 @@ class Fix8():
 
     def lowpass_duration_filter(self):
         minimum_value = 1
-        maximum_value = 99
+        maximum_value = 101
         default_value = 80
         title = "Duration Filter"
         message = "Remove fixations with durations less than"
