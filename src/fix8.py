@@ -460,7 +460,7 @@ class Fix8():
         )
 
         # get line_Y from aoi
-        line_Y = self.find_lines_y(self.aoi)
+        line_Y = mini_emtk.find_lines_y(self.aoi)
 
         self.fixations = np.array(mini_emtk.error_shift(threshold, line_Y, self.fixations))
 
@@ -750,9 +750,9 @@ class Fix8():
         fixation_XY = copy.deepcopy(self.fixations)
         fixation_XY = fixation_XY[:, 0:2]
         fixation_XY = np.array(fixation_XY)
-        line_Y = self.find_lines_y(self.aoi)
+        line_Y = mini_emtk.find_lines_y(self.aoi)
         line_Y = np.array(line_Y)
-        word_XY = self.find_word_centers(self.aoi)
+        word_XY = mini_emtk.find_word_centers(self.aoi)
         word_XY = np.array(word_XY)
         self.suggested_corrections = copy.deepcopy(self.fixations)
 
@@ -1255,30 +1255,6 @@ class Fix8():
         self.original_fixations = np.array(self.original_fixations)
         self.ui.relevant_buttons("trial_clicked")
 
-
-    def find_lines_y(self, aoi):
-        results = []
-        for index, row in aoi.iterrows():
-            y, height = row["y"], row["height"]
-
-            if y + height / 2 not in results:
-                results.append(y + height / 2)
-
-        return results
-
-    def find_word_centers(self, aois):
-        """returns a list of word centers"""
-        results = []
-
-        for index, row in aois.iterrows():
-            x, y, height, width = row["x"], row["y"], row["height"], row["width"]
-
-            center = [int(x + width // 2), int(y + height // 2)]
-
-            if center not in results:
-                results.append(center)
-
-        return results
 
     
 

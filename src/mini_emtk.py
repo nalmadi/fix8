@@ -397,6 +397,32 @@ def read_EyeLink1000_experiment(filename, destination_path):
     asc_file.close()
 
 
+def find_lines_y( aoi):
+    results = []
+    for index, row in aoi.iterrows():
+        y, height = row["y"], row["height"]
+
+        if y + height / 2 not in results:
+            results.append(y + height / 2)
+
+    return results
+
+
+def find_word_centers(aois):
+    """returns a list of word centers"""
+    results = []
+
+    for index, row in aois.iterrows():
+        x, y, height, width = row["x"], row["y"], row["height"], row["width"]
+
+        center = [int(x + width // 2), int(y + height // 2)]
+
+        if center not in results:
+            results.append(center)
+
+    return results
+
+
 ######################## end from EMTK #################################
 
 def distance(fix1, fix2):
