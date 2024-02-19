@@ -68,7 +68,7 @@ from pathlib import Path
 
 import mini_emtk
 from merge_fixations_dialog import InputDialog
-from state import State
+from state import Fix8State, History
 import canvas_resources
 import ui_main_window
 
@@ -100,10 +100,11 @@ class Fix8():
         self.blinks = None                  # TODO: replace with eye events:  timestamp duration
         self.fixation_points = None
         self.saccade_lines = None
-        self.current_fixation = -1
+        self.current_fixation = -1          # progress bar
+        self.suggested_corrections = None
 
         # filed for tool undo/redo using memento pattern and state class
-        self.state = State()
+        self.state_history = History()
 
         # fields relating to AOIs
         self.aoi, self.background_color = None, None
@@ -121,7 +122,7 @@ class Fix8():
         self.fixation_opacity = 0.4
 
         # fields relating to the drag and drop system
-        self.selected_fixation = None
+        self.selected_fixation = None           # clicked fixation
         self.xy = None      
 
         # fields relating to aoi margin
@@ -154,7 +155,7 @@ class Fix8():
             return
 
         # clear history for undo
-        self.state = State()
+        self.state_history = History()
 
         # get aoi from the image
         self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
@@ -206,7 +207,7 @@ class Fix8():
             return
 
         # clear history for undo
-        self.state = State()
+        self.state_history = History()
 
         # get aoi from the image
         self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
@@ -258,7 +259,7 @@ class Fix8():
             return
 
         # clear history for undo
-        self.state = State()
+        self.state_history = History()
 
         # get aoi from the image
         self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
@@ -311,7 +312,7 @@ class Fix8():
             return
 
         # clear history for undo
-        self.state = State()
+        self.state_history = History()
 
         # get aoi from the image
         self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
@@ -559,15 +560,15 @@ class Fix8():
 
     def undo(self):
         ''' implement undo using memento pattern and state class ''' 
-        if not self.state.is_empty():
+        if not self.state_history.is_empty():
             
             at_max = False
             # check if progressbar is at end of progressbar range
             if self.ui.progress_bar.value() == self.ui.progress_bar.maximum():
                 at_max = True
              
-        
-            self.fixations = self.state.get_state()
+            fix8_state = self.state_history.get_state()
+            self.fixations, self.saccades, self.blinks, self.suggested_corrections, self.current_fixation, self.selected_fixation = fix8_state.get_state()
 
             # update progress bar
             self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
@@ -579,7 +580,16 @@ class Fix8():
 
 
     def save_state(self):
-        self.state.set_state(self.fixations)
+
+        current_state = Fix8State(
+            self.fixations,
+            self.saccades,
+            self.blinks,
+            self.suggested_corrections,
+            self.current_fixation,
+            self.selected_fixation,
+        )
+        self.state_history.set_state(current_state)
 
 
     def outside_screen_filter(self):
@@ -976,34 +986,24 @@ class Fix8():
         # backspace
         if e.key() == 16777219:
             self.metadata += "key,remove fixation," + str(time.time()) + "\n"
-            if self.fixations is not None and self.selected_fixation is not None:
+            self.remove_fixation()
+
+
+    def remove_fixation(self):
+        if self.fixations is not None and self.selected_fixation is not None:
                 if self.selected_fixation < len(self.fixations):
                     self.save_state()
 
                     self.fixations = np.delete(self.fixations, self.selected_fixation, 0)  # delete the row of selected fixation
-                    if self.current_fixation == 0:
-                        self.current_fixation = len(self.fixations)
-                        self.current_fixation -= 1
-                        temp = self.current_fixation
-                    else:
-                        self.current_fixation -= 1
-                        temp = self.current_fixation
+                    self.current_fixation -= 1
 
                     self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
-                    self.progress_bar_updated(temp, draw=False)
+                    self.progress_bar_updated(self.current_fixation, draw=False)
 
                     if self.suggested_corrections is not None:
-                        self.suggested_corrections = np.delete(
-                            self.suggested_corrections, self.selected_fixation, 0
-                        )  # delete the row of selected fixation
+                        self.suggested_corrections = np.delete(self.suggested_corrections, self.selected_fixation, 0)  # delete the row of selected fixation
 
                     self.selected_fixation = None
-
-                    if self.algorithm != "manual":
-                        if self.current_fixation == len(self.fixations):
-                            # off by one error
-                            self.current_fixation -= 1
-                        # self.update_suggestion()
 
                     self.draw_canvas(self.fixations)
                     self.progress_bar_updated(self.current_fixation, draw=False)
@@ -1117,7 +1117,7 @@ class Fix8():
             self.read_csv_fixations(self.trial_path)
 
         # clear history for undo
-        self.state = State()
+        self.state_history = History()
 
         self.suggested_corrections = None
         self.current_fixation = (len(self.original_fixations)-1)  
@@ -1389,17 +1389,18 @@ class Fix8():
 
         # draw suggested fixation in blue
         if self.ui.checkbox_show_suggestion.isChecked():
-            x = self.suggested_corrections[self.current_fixation][0]
-            y = self.suggested_corrections[self.current_fixation][1]
-            duration = self.fixations[self.current_fixation][2]
+            if self.current_fixation < len(self.suggested_corrections):
+                x = self.suggested_corrections[self.current_fixation][0]
+                y = self.suggested_corrections[self.current_fixation][1]
+                duration = self.fixations[self.current_fixation][2]
 
-            self.suggested_fixation = self.ui.canvas.ax.scatter(
-                x,
-                y,
-                s=30 * (duration / 50) ** 1.8,
-                alpha=self.fixation_opacity,
-                c=self.suggested_fixation_color,
-            )
+                self.suggested_fixation = self.ui.canvas.ax.scatter(
+                    x,
+                    y,
+                    s=30 * (duration / 50) ** 1.8,
+                    alpha=self.fixation_opacity,
+                    c=self.suggested_fixation_color,
+                )
 
         self.ui.canvas.draw()
 
@@ -1437,18 +1438,19 @@ class Fix8():
 
         # draw suggested fixation in blue (or selected color)
         if self.ui.checkbox_show_suggestion.isChecked():
-            x = self.suggested_corrections[self.current_fixation][0]
-            y = self.suggested_corrections[self.current_fixation][1]
-            duration = self.fixations[self.current_fixation][2]
+            if self.current_fixation < len(self.suggested_corrections):
+                x = self.suggested_corrections[self.current_fixation][0]
+                y = self.suggested_corrections[self.current_fixation][1]
+                duration = self.fixations[self.current_fixation][2]
 
-            self.suggested_fixation = self.ui.canvas.ax.scatter(
-                x,
-                y,
-                s=30 * (duration / 50) ** 1.8,
-                alpha=self.fixation_opacity,
-                c=self.suggested_fixation_color,
-            )
-            self.ui.canvas.ax.draw_artist(self.suggested_fixation)
+                self.suggested_fixation = self.ui.canvas.ax.scatter(
+                    x,
+                    y,
+                    s=30 * (duration / 50) ** 1.8,
+                    alpha=self.fixation_opacity,
+                    c=self.suggested_fixation_color,
+                )
+                self.ui.canvas.ax.draw_artist(self.suggested_fixation)
 
         self.ui.canvas.ax.draw_artist(self.fixation_points)
         self.ui.canvas.ax.draw_artist(self.saccade_lines[0])
@@ -1499,12 +1501,6 @@ class Fix8():
         #self.ui.canvas.ax.lines
         #self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
-
-
-
-    def back_to_beginning(self):
-        self.current_fixation = 1
-        self.update_suggestion()
 
 
     def confirm_suggestion(self):

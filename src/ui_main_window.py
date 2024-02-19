@@ -472,6 +472,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.next_fixation_action.triggered.connect(self.fix8.next_fixation)
         self.previous_fixation_action.triggered.connect(self.fix8.previous_fixation)
         self.accept_and_next_action.triggered.connect(self.fix8.confirm_suggestion)
+        self.delete_fixation_action.triggered.connect(self.fix8.remove_fixation)
         self.undo_correction_action.triggered.connect(self.fix8.undo)
 
         self.trial_list_action.triggered.connect(self.show_hide_trial_list)
