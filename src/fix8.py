@@ -886,7 +886,7 @@ class Fix8():
 
 
     def button_release_callback(self, event):
-        """when released the fixation, update the corrected fixations"""
+        """when released the fixation after a move, update the fixations"""
 
         if self.selected_fixation is not None:
             
@@ -919,18 +919,17 @@ class Fix8():
 
             if self.ui.checkbox_show_saccades.isChecked():
                 self.clear_saccades()
-                self.show_saccades(Qt.Checked)
-            else:
-                self.show_saccades(Qt.Unchecked)
-        
+
         if event.button != 1:
             return
         # self.selected_fixation = None
-
-        self.draw_canvas(self.fixations)
+        self.quick_draw_canvas()
+        #self.draw_canvas(self.fixations)
         # self.ui.canvas.update()
 
     def motion_notify_callback(self, event):
+        ''' called when fixation is being dragged '''
+        
         if self.selected_fixation is None:
             return
         if event.inaxes is None:
@@ -1156,45 +1155,48 @@ class Fix8():
             )
 
 
-    def draw_aoi(self):
-        """draw the found aois to the canvas"""
-        color = self.aoi_color if self.background_color == "black" else "black"
+    # def draw_aoi(self):
+    #     """draw the found aois to the canvas"""
+    #     # color = self.aoi_color if self.background_color == "black" else "black"
 
-        for row in self.aoi.iterrows():
+    #     # for row in self.aoi.iterrows():
 
-            xcord = row[1]["x"]
-            ycord = row[1]["y"]
-            height = row[1]["height"]
-            width = row[1]["width"]
+    #     #     xcord = row[1]["x"]
+    #     #     ycord = row[1]["y"]
+    #     #     height = row[1]["height"]
+    #     #     width = row[1]["width"]
             
-            self.ui.canvas.ax.add_patch(
-                Rectangle(
-                    (xcord, ycord),
-                    width - 1,
-                    height - 1,
-                    linewidth=0.8,
-                    edgecolor=color,
-                    facecolor="none",
-                    alpha=0.65,
-                )
-            )
+    #     #     self.ui.canvas.ax.add_patch(
+    #     #         Rectangle(
+    #     #             (xcord, ycord),
+    #     #             width - 1,
+    #     #             height - 1,
+    #     #             linewidth=0.8,
+    #     #             edgecolor=color,
+    #     #             facecolor="none",
+    #     #             alpha=0.65,
+    #     #         )
+    #     #     )
         
-        self.ui.canvas.draw()
+    #     # self.ui.canvas.draw()
+    #     self.quick_draw_canvas()
 
 
-    def clear_aoi(self):
-        """clear the aois from the canvas"""
-        self.ui.canvas.ax.patches.clear()
-        self.ui.canvas.draw()
+    # def clear_aoi(self):
+    #     """clear the aois from the canvas"""
+    #     #self.ui.canvas.ax.patches.clear()
+    #     #self.ui.canvas.draw()
+    #     self.quick_draw_canvas()
 
 
-    def show_aoi(self, state):
-        """when the show aoi button is pressed, show or hide aois based on checkbox"""
-        if self.ui.checkbox_show_aoi.isCheckable():
-            if state == Qt.Checked:
-                self.draw_aoi()
-            elif state == Qt.Unchecked:
-                self.clear_aoi()
+    # def show_aoi(self, state):
+    #     """when the show aoi button is pressed, show or hide aois based on checkbox"""
+    #     # if self.ui.checkbox_show_aoi.isCheckable():
+    #     #     if state == Qt.Checked:
+    #     #         self.draw_aoi()
+    #     #     elif state == Qt.Unchecked:
+    #     #         self.clear_aoi()
+    #     self.quick_draw_canvas()
 
     
     def read_json_fixations(self, trial_path):
@@ -1258,65 +1260,67 @@ class Fix8():
 
     
 
-    def draw_fixations(self, fixations=0):
-        """draw the fixations to the canvas
-        parameters:
-        fixations - 0 is default since the corrected fixations are the main thing to be shown,
-        1 the original fixations is manually chosen (not currently needed as this isn't in option in algorithms)"""
+    # def draw_fixations(self, fixations=0):
+    #     """draw the fixations to the canvas
+    #     parameters:
+    #     fixations - 0 is default since the corrected fixations are the main thing to be shown,
+    #     1 the original fixations is manually chosen (not currently needed as this isn't in option in algorithms)"""
 
-        if fixations == 0:  # default fixations to use
-            fixations = self.fixations
-        elif fixations == 1:
-            fixations = self.original_fixations
+    #     if fixations == 0:  # default fixations to use
+    #         fixations = self.fixations
+    #     elif fixations == 1:
+    #         fixations = self.original_fixations
 
-        x = fixations[0 : self.current_fixation + 1, 0]
-        y = fixations[0 : self.current_fixation + 1, 1]
-        duration = fixations[0 : self.current_fixation + 1, 2]
-        self.fixation_points = self.ui.canvas.ax.scatter(
-            x,
-            y,
-            s=30 * (duration / 50) ** 1.8,
-            alpha=self.fixation_opacity,
-            c=self.fixation_color,
-        )
-        self.ui.canvas.draw()
-
-    
-
-    def show_fixations(self, state):
-        """if the user clicks the show fixations checkbox, show or hide the fixations
-        parameters:
-        state - the checkbox being checked or unchecked"""
-        if self.folder_path != "":
-            if self.ui.checkbox_show_fixations.isCheckable():
-                if state == Qt.Checked:
-                    self.draw_fixations()
-                elif state == Qt.Unchecked:
-                    self.clear_fixations()
+    #     x = fixations[0 : self.current_fixation + 1, 0]
+    #     y = fixations[0 : self.current_fixation + 1, 1]
+    #     duration = fixations[0 : self.current_fixation + 1, 2]
+    #     self.fixation_points = self.ui.canvas.ax.scatter(
+    #         x,
+    #         y,
+    #         s=30 * (duration / 50) ** 1.8,
+    #         alpha=self.fixation_opacity,
+    #         c=self.fixation_color,
+    #     )
+    #     self.ui.canvas.draw()
 
     
 
-    def show_saccades(self, state):
-        """if the user clicks saccades, show or hide them"""
-        if self.folder_path != "":
-            if self.ui.checkbox_show_saccades.isCheckable():
-                if state == Qt.Checked:
-                    self.draw_saccades()
-                elif state == Qt.Unchecked:
-                    self.clear_saccades()
+    # def show_fixations(self, state):
+    #     """if the user clicks the show fixations checkbox, show or hide the fixations
+    #     parameters:
+    #     state - the checkbox being checked or unchecked"""
+    #     # if self.folder_path != "":
+    #     #     if self.ui.checkbox_show_fixations.isCheckable():
+    #     #         if state == Qt.Checked:
+    #     #             self.draw_fixations()
+    #     #         elif state == Qt.Unchecked:
+    #     #             self.clear_fixations()
+
+    #     self.quick_draw_canvas()
 
     
 
-    def draw_saccades(self):
-        """draw the scatter plot to the canvas"""
-        fixations = self.fixations
-        x = fixations[0 : self.current_fixation + 1, 0]
-        y = fixations[0 : self.current_fixation + 1, 1]
-        duration = fixations[0 : self.current_fixation + 1, 2]
-        self.saccade_lines = self.ui.canvas.ax.plot(
-            x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
-        )
-        self.ui.canvas.draw()
+    # def show_saccades(self, state):
+    #     """if the user clicks saccades, show or hide them"""
+    #     # if self.folder_path != "":
+    #     #     if self.ui.checkbox_show_saccades.isCheckable():
+    #     #         if state == Qt.Checked:
+    #     #             self.draw_saccades()
+    #     #         elif state == Qt.Unchecked:
+    #     #             self.clear_saccades()
+    #     self.quick_draw_canvas()
+    
+
+    # def draw_saccades(self):
+    #     """draw the scatter plot to the canvas"""
+        # fixations = self.fixations
+        # x = fixations[0 : self.current_fixation + 1, 0]
+        # y = fixations[0 : self.current_fixation + 1, 1]
+        # duration = fixations[0 : self.current_fixation + 1, 2]
+        # self.saccade_lines = self.ui.canvas.ax.plot(
+        #     x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
+        # )
+        # self.ui.canvas.draw()
 
     
 
@@ -1407,8 +1411,15 @@ class Fix8():
 
     def quick_draw_canvas(self, all_fixations=False):
 
+        if self.fixations is None:
+            return
+
+        if self.ui.canvas.background is None:
+            self.ui.canvas.background = self.ui.canvas.copy_from_bbox(self.ui.canvas.ax.bbox)
+            
         self.ui.canvas.restore_region(self.ui.canvas.background)
 
+        # figure out which fixations to draw
         if all_fixations:
             x = self.fixations[:, 0]
             y = self.fixations[:, 1]
@@ -1418,23 +1429,29 @@ class Fix8():
             y = self.fixations[0 : self.current_fixation + 1, 1]
             duration = self.fixations[0 : self.current_fixation + 1, 2]
 
-        # generate colors for fixations
-        list_colors = [self.fixation_color] * (len(x) - 1)
-        colors = np.array(list_colors + [self.current_fixation_color])
 
         # draw fixations
-        self.fixation_points = self.ui.canvas.ax.scatter(
-            x,
-            y,
-            s=30 * (duration / 50) ** 1.8,
-            alpha=self.fixation_opacity,
-            c=colors,
-        )
+        if self.ui.checkbox_show_fixations.isChecked():
+            # generate colors for fixations
+            list_colors = [self.fixation_color] * (len(x) - 1)
+            colors = np.array(list_colors + [self.current_fixation_color])
+
+            # draw fixations
+            self.fixation_points = self.ui.canvas.ax.scatter(
+                x,
+                y,
+                s=30 * (duration / 50) ** 1.8,
+                alpha=self.fixation_opacity,
+                c=colors,
+            )
+            self.ui.canvas.ax.draw_artist(self.fixation_points)
 
         # draw saccades
-        self.saccade_lines = self.ui.canvas.ax.plot(
-            x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
-        )
+        if self.ui.checkbox_show_saccades.isChecked():
+            self.saccade_lines = self.ui.canvas.ax.plot(
+                x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
+            )
+            self.ui.canvas.ax.draw_artist(self.saccade_lines[0])
 
         # draw suggested fixation in blue (or selected color)
         if self.ui.checkbox_show_suggestion.isChecked():
@@ -1452,9 +1469,30 @@ class Fix8():
                 )
                 self.ui.canvas.ax.draw_artist(self.suggested_fixation)
 
-        self.ui.canvas.ax.draw_artist(self.fixation_points)
-        self.ui.canvas.ax.draw_artist(self.saccade_lines[0])
-        
+        # draw aois
+        if self.ui.checkbox_show_aoi.isChecked():
+            color = self.aoi_color if self.background_color == "black" else "black"
+
+            for row in self.aoi.iterrows():
+
+                xcord = row[1]["x"]
+                ycord = row[1]["y"]
+                height = row[1]["height"]
+                width = row[1]["width"]
+                
+                aoi_box = self.ui.canvas.ax.add_patch(
+                    Rectangle(
+                        (xcord, ycord),
+                        width - 1,
+                        height - 1,
+                        linewidth=0.8,
+                        edgecolor=color,
+                        facecolor="none",
+                        alpha=0.65,
+                    )
+                )
+                self.ui.canvas.ax.draw_artist(aoi_box)
+
         self.ui.canvas.blit(self.ui.canvas.ax.bbox)
 
 
@@ -1464,7 +1502,8 @@ class Fix8():
         if self.suggested_corrections is not None:
             self.save_state()
             self.fixations = copy.deepcopy(self.suggested_corrections)
-            self.draw_canvas(self.fixations)
+            #self.draw_canvas(self.fixations)
+            self.quick_draw_canvas(all_fixations=True)
 
         self.metadata += (
             "correct_all, all fixations corrected automatically"
@@ -1657,14 +1696,16 @@ class Fix8():
     def aoi_height_changed(self, value):
         self.aoi_height = value
         self.find_aoi()
-        self.clear_aoi()
-        self.draw_aoi()
+        #self.clear_aoi()
+        #self.draw_aoi()
+        self.quick_draw_canvas()
 
     def aoi_width_changed(self, value):
         self.aoi_width = value
         self.find_aoi()
-        self.clear_aoi()
-        self.draw_aoi()
+        #self.clear_aoi()
+        #self.draw_aoi()
+        self.quick_draw_canvas()
 
     def select_fixation_color(self):
         color = QColorDialog.getColor(initial=Qt.red)
