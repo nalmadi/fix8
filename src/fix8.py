@@ -1323,15 +1323,23 @@ class Fix8():
     def clear_saccades(self):
         """remove the saccades from the canvas (this does not erase the data, just visuals)"""
         if self.saccade_lines != None:
-            self.ui.canvas.ax.lines.clear()  # <-- if this line crashes the tool
-
-            # for line in self.ui.canvas.ax.lines:  #<-- use this instead
-            #    line.remove()
+            self.clear_attribute(self.ui.canvas.ax.lines)
 
             self.saccade_lines = None
             self.ui.canvas.draw()
 
-    
+
+
+    def clear_attribute(self, attribute):
+        try:
+            attribute.clear()  # <-- If this line crashes the tool
+        except AttributeError:
+            for each_attribute in attribute: #<-- use this instead
+               each_attribute.remove()
+        except Exception as e:
+            raise e
+        
+
 
     def clear_fixations(self):
         """clear the fixations from the canvas"""
@@ -1339,11 +1347,12 @@ class Fix8():
             # self.scatter.remove()
             self.fixation_points = None
             # clear scatter data from canvas but not the background image
-            self.ui.canvas.ax.collections.clear()  # <-- If this line crashes the tool
+            self.clear_attribute(self.ui.canvas.ax.collections)
 
             # for collection in self.ui.canvas.ax.collections: #<-- use this instead
             #    collection.remove()
             self.ui.canvas.draw()
+
 
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
