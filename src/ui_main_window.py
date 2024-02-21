@@ -302,7 +302,9 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # add actions
         self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Trial Folder", self)
         self.open_image_action = QAction("Open Image", self)
-        self.save_correction_json_action = QAction("Save json", self)
+        self.open_trial_action = QAction("Open Trial", self)
+        self.open_aoi_action = QAction("Open AOI", self)
+        self.save_correction_json_action = QAction("Save Json", self)
         self.save_correction_CSV_action = QAction("Save CSV", self)
         self.save_aoi_csv_action = QAction("Save AOI file", self)
 
@@ -369,7 +371,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # enable/disable
         self.save_correction_json_action.setEnabled(False)
         self.save_correction_CSV_action.setEnabled(False)
+        self.open_trial_action.setEnabled(False)
+        self.open_aoi_action.setEnabled(False)
         self.save_aoi_csv_action.setEnabled(False)
+        
         self.edit_menu.setEnabled(False)
         self.generate_menu.setEnabled(False)
         self.filters_menu.setEnabled(False)
@@ -379,6 +384,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # add actions to menu
         self.file_menu.addAction(self.new_file_action)
         self.file_menu.addAction(self.open_image_action)
+        self.file_menu.addAction(self.open_trial_action)
+        self.file_menu.addAction(self.open_aoi_action)
         self.file_menu.addAction(self.save_correction_json_action)
         self.file_menu.addAction(self.save_correction_CSV_action)
         self.file_menu.addAction(self.save_aoi_csv_action)
@@ -479,6 +486,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # connect functions
         self.new_file_action.triggered.connect(self.fix8.open_trial_folder)
         self.open_image_action.triggered.connect(self.fix8.open_image)
+        self.open_trial_action.triggered.connect(self.fix8.open_trial)
+        self.open_aoi_action.triggered.connect(self.fix8.open_aoi)
         self.save_correction_json_action.triggered.connect(self.fix8.save_corrections_json)
         self.save_correction_CSV_action.triggered.connect(self.fix8.save_corrections_csv)
         self.save_aoi_csv_action.triggered.connect(self.fix8.save_aoi_csv)
@@ -584,6 +593,9 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.save_correction_json_action.setEnabled(True)
             self.save_correction_CSV_action.setEnabled(True)
             self.save_aoi_csv_action.setEnabled(True)
+            self.open_trial_action.setEnabled(True)
+            self.open_aoi_action.setEnabled(True)
+
             self.edit_menu.setEnabled(True)
             self.filters_menu.setEnabled(True)
             self.generate_menu.setEnabled(True)
@@ -657,3 +669,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
     def show_hide_visualization_panel(self):
         self.visualization_frame.setHidden(not self.visualization_frame.isHidden())
+    
+    def resizeEvent(self, event):
+        # This method is called when the window is resized
+        if self.fix8.image_file_path is not None:
+            self.fix8.draw_canvas()

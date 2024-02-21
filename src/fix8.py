@@ -81,9 +81,6 @@ import platform
 
 class Fix8():
     def __init__(self):
-        self.fix8 = QApplication([])
-        self.ui = ui_main_window.Ui_Main_Window(self)
-
         # fields relating to the stimulus
         self.image_file_path = None
 
@@ -139,6 +136,11 @@ class Fix8():
         
         # fields relating to fixation size
         self.fixation_size = 30
+
+        # create the main window
+        self.fix8 = QApplication([])
+        self.ui = ui_main_window.Ui_Main_Window(self)
+
         # hide/show side panel until a folder is opened
         self.ui.hide_side_panel()
 
@@ -689,7 +691,7 @@ class Fix8():
         self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation)
 
-        self.draw_canvas(self.fixations, draw_all=True)
+        self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
 
@@ -725,7 +727,7 @@ class Fix8():
         self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation)
 
-        self.draw_canvas(self.fixations, draw_all=True)
+        self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
 
@@ -762,7 +764,7 @@ class Fix8():
         self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation)
 
-        self.draw_canvas(self.fixations, draw_all=True)
+        self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
 
@@ -820,7 +822,7 @@ class Fix8():
         self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation)
 
-        self.draw_canvas(self.fixations, draw_all=True)
+        self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
 
@@ -922,28 +924,28 @@ class Fix8():
             self.save_state()
             self.fixations[self.selected_fixation][0] -= 2
 
-        self.draw_canvas(self.fixations)
+        self.draw_canvas()
 
     def move_right_selected_fixation(self):
         if self.selected_fixation != None:
             self.save_state()
             self.fixations[self.selected_fixation][0] += 2
 
-        self.draw_canvas(self.fixations)
+        self.draw_canvas()
 
     def move_down_selected_fixation(self):
         if self.selected_fixation != None:
             self.save_state()
             self.fixations[self.selected_fixation][1] += 2
 
-        self.draw_canvas(self.fixations)
+        self.draw_canvas()
 
     def move_up_selected_fixation(self):
         if self.selected_fixation != None:
             self.save_state()
             self.fixations[self.selected_fixation][1] -= 2
 
-        self.draw_canvas(self.fixations)
+        self.draw_canvas()
 
     def button_press_callback(self, event):
         if event.inaxes is None:
@@ -993,7 +995,7 @@ class Fix8():
             return
         # self.selected_fixation = None
         self.quick_draw_canvas()
-        #self.draw_canvas(self.fixations)
+        #self.draw_canvas()
         # self.ui.canvas.update()
 
     def motion_notify_callback(self, event):
@@ -1073,7 +1075,7 @@ class Fix8():
 
                     self.selected_fixation = None
 
-                    self.draw_canvas(self.fixations)
+                    self.draw_canvas()
                     self.progress_bar_updated(self.current_fixation, draw=False)
 
 
@@ -1156,9 +1158,74 @@ class Fix8():
             self.ui.canvas.draw_idle()
             
             self.ui.generate_menu.setEnabled(True)
+            self.ui.open_trial_action.setEnabled(True)
+            self.ui.open_aoi_action.setEnabled(True)
         else:
             self.show_error_message("Image Error", "No Image Selected")
 
+    def open_trial(self):
+        qfd = QFileDialog()
+        self.trial_path = qfd.getOpenFileName(self.ui, "Select Trial file", "", "CSV or Json (*.csv *.json)")[0]
+
+        if self.trial_path == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        if self.image_file_path == "":
+            self.show_error_message("Image Error", "No Image Selected")
+        
+        # reset times saved if a DIFFERENT trial was selected
+        self.trial_name = self.trial_path.split("/")[-1]
+        
+        if self.trial_path.endswith(".json"):
+            self.read_json_fixations(self.trial_path)
+        elif self.trial_path.endswith(".csv"):
+            self.read_csv_fixations(self.trial_path)
+
+        # clear history for undo
+        self.state_history = History()
+
+        self.suggested_corrections = None
+        self.current_fixation = (len(self.original_fixations)-1)  
+
+        # set the progress bar to the amount of fixations found
+        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.timer_start = time.time()
+        self.metadata = "started, open trial," + str(time.time()) + "\n"
+
+        if self.current_fixation is not None:
+            if self.current_fixation == -1:
+                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
+            else:
+                self.ui.label_progress.setText(
+                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                )
+
+        self.fixations = copy.deepcopy(self.original_fixations)
+        self.save_state()
+        self.ui.checkbox_show_fixations.setChecked(True)
+        self.ui.checkbox_show_saccades.setChecked(True)
+        self.progress_bar_updated(self.current_fixation, draw=False)
+        self.draw_canvas(draw_all=True)
+
+        self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
+        self.ui.statusBar.showMessage(self.status_text)
+
+
+    def open_aoi(self):
+        return
+        qfd = QFileDialog()
+        self.image_file_path = qfd.getOpenFileName(self.ui, "Select Image", "", "Image Files (*.png *.jpg *.jpeg)")[0]
+
+        if self.image_file_path != "":
+            self.set_canvas_image(self.image_file_path)
+            self.find_aoi()
+            self.ui.relevant_buttons("opened_stimulus")
+            self.ui.canvas.draw_idle()
+            
+            self.ui.generate_menu.setEnabled(True)
+        else:
+            self.show_error_message("Image Error", "No Image Selected")
 
     def set_canvas_image(self, image_file):
         self.ui.canvas.clear()
@@ -1208,7 +1275,7 @@ class Fix8():
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
-        self.draw_canvas(self.fixations, draw_all=True)
+        self.draw_canvas(draw_all=True)
 
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
         self.ui.statusBar.showMessage(self.status_text)
@@ -1296,7 +1363,6 @@ class Fix8():
             self.saccade_lines = None
             self.ui.canvas.draw()
 
-    
 
     def clear_fixations(self):
         """clear the fixations from the canvas"""
@@ -1310,25 +1376,37 @@ class Fix8():
             #    collection.remove()
             self.ui.canvas.draw()
 
+    
+    def clear_aois(self):
+        """clear the areas of interest from the canvas"""
+        if self.ui.canvas.ax.patches != None:
+            self.ui.canvas.ax.patches.clear()
+
+            for patch in self.ui.canvas.ax.patches:
+                patch.remove()
+            self.ui.canvas.draw()
+
+
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
-    def draw_canvas(self, fixations, draw_all=False):
+    def draw_canvas(self, draw_all=False):
 
-        if fixations is None:
+        if self.fixations is None:
             return
 
         if draw_all:
-            x = fixations[:, 0]
-            y = fixations[:, 1]
-            duration = fixations[:, 2]
+            x = self.fixations[:, 0]
+            y = self.fixations[:, 1]
+            duration = self.fixations[:, 2]
         else:
-            x = fixations[0 : self.current_fixation + 1, 0]
-            y = fixations[0 : self.current_fixation + 1, 1]
-            duration = fixations[0 : self.current_fixation + 1, 2]
+            x = self.fixations[0 : self.current_fixation + 1, 0]
+            y = self.fixations[0 : self.current_fixation + 1, 1]
+            duration = self.fixations[0 : self.current_fixation + 1, 2]
 
         # get rid of the data before updating it
         self.clear_fixations()
         self.clear_saccades()
+        self.clear_aois()
 
         # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
         # do the same for saccades
@@ -1462,7 +1540,7 @@ class Fix8():
         if self.suggested_corrections is not None:
             self.save_state()
             self.fixations = copy.deepcopy(self.suggested_corrections)
-            #self.draw_canvas(self.fixations)
+            #self.draw_canvas()
             self.quick_draw_canvas(all_fixations=True)
 
         self.metadata += (
@@ -1543,6 +1621,10 @@ class Fix8():
         default_file_name = self.trial_path.replace('.json', '') + '_CORRECTED.json'
         new_correction_file_name, _ = qfd.getSaveFileName(self.ui, "Save correction", default_file_name)
 
+        if new_correction_file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
         if '.json' not in new_correction_file_name:
             new_correction_file_name += '.json'
 
@@ -1586,6 +1668,10 @@ class Fix8():
         default_file_name = self.trial_path.replace('.csv', '') + '_CORRECTED.csv'
         new_correction_file_name, _ = qfd.getSaveFileName(self.ui, "Save correction", default_file_name)
 
+        if new_correction_file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
         if '.csv' not in new_correction_file_name:
             new_correction_file_name += '.csv'
 
@@ -1622,6 +1708,10 @@ class Fix8():
         qfd = QFileDialog()
         default_file_name = self.trial_path.replace('.csv', '').replace('.json', '') + '_AOI.csv'
         new_aoi_file_name, _ = qfd.getSaveFileName(self.ui, "Save AOI", default_file_name)
+        
+        if new_aoi_file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
 
         if '.csv' not in new_aoi_file_name:
             new_aoi_file_name += '.csv'
@@ -1649,7 +1739,7 @@ class Fix8():
         if draw:
 
             if self.ui.canvas.background is None:
-                self.draw_canvas(self.fixations)
+                self.draw_canvas()
                 return
 
             self.quick_draw_canvas(all_fixations=False)
@@ -1726,7 +1816,7 @@ class Fix8():
 
     def fixation_size_changed(self, value):
         self.fixation_size = value*6
-        self.draw_canvas(self.fixations)
+        self.draw_canvas()
     
 
 if __name__ == "__main__":
