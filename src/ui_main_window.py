@@ -302,8 +302,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # add actions
         self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
         self.open_image_action = QAction("Open Image", self)
-        self.save_correction_json_action = QAction("Save Correction (json)", self)
-        self.save_correction_CSV_action = QAction("Save Correction (CSV)", self)
+        self.save_correction_json_action = QAction("Save json", self)
+        self.save_correction_CSV_action = QAction("Save CSV", self)
 
         self.undo_correction_action = QAction("Undo", self)
         self.next_fixation_action = QAction("Next Fixation", self)
