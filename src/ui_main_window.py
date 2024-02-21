@@ -353,6 +353,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.segment_semi_action = QAction("Segment", self)
         self.stretch_semi_action = QAction("Stretch", self)
 
+        self.hit_test_action = QAction("Fixation Hit Test", self)
+
         self.ascii_to_csv_converter_action = QAction("ASCII to CSV (one trial)", self)
         self.json_to_csv_converter_action = QAction("JSON to CSV (one trial)", self)
         self.csv_to_json_converter_action = QAction("CSV to JSON (one trial)", self)
@@ -435,6 +437,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.regress_semi_action)
         self.semi_auto_correction_menu.addAction(self.segment_semi_action)
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
+
+        self.analyses_menu.addAction(self.hit_test_action)
 
         self.converters_menu.addAction(self.ascii_to_csv_converter_action)
         self.converters_menu.addAction(self.json_to_csv_converter_action)
@@ -536,6 +540,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.segment_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('segment', drift.segment, 'semi'))
         self.stretch_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('stretch', drift.stretch, 'semi'))
         self.manual_correction_action.triggered.connect(self.fix8.manual_correction)
+
+        self.hit_test_action.triggered.connect(self.fix8.calculate_hit_test)
 
         self.ascii_to_csv_converter_action.triggered.connect(self.fix8.ascii_to_csv_converter)
         self.json_to_csv_converter_action.triggered.connect(self.fix8.json_to_csv_converter)

@@ -423,6 +423,127 @@ def find_word_centers(aois):
     return results
 
 
+def overlap(fix, AOI, radius=25):
+    """Checks if fixation is within radius distance or over an AOI. Returns True/False.
+
+    Parameters
+    ----------
+    fix : Fixation
+        A single fixation in a trial being considered for overlapping with the AOI
+
+    AOI : pandas.DataFrame
+        contains AOI #kind	name	x	y	width	height	local_id	image	token
+
+    radius : int, optional
+        radius around AOI to consider fixations in it within the AOI.
+        default is 25 pixel since the fixation filter groups samples within 25 pixels.
+
+    Returns
+    -------
+    bool
+        whether it overlaps
+    """
+
+    box_x = AOI.x - (radius / 2)
+    box_y = AOI.y - (radius / 2)
+    box_w = AOI.width + (radius / 2)
+    box_h = AOI.height + (radius / 2)
+
+    return box_x <= fix[0] and fix[0] <= box_x + box_w and box_y <= fix[1] and fix[1] <= box_y + box_h
+
+
+def hit_test(fixations, participant_id, trial_id, file_name, aois_tokens, radius=25):
+    """Checks if fixations are within AOI with a fixation radius of 25 px
+        (since each fix is a sum of samples within 25px)
+
+    Parameters
+    ----------
+    fixations : list
+        contains fixations and other metadata (trial#, participant, code_file, code_language)
+            - fixation includes timestamp, duration, x_cord, y_cord
+
+    aois_tokens : pandas.Dataframe
+        contains each AOI location and dimension and token text
+
+    radius : int, optional
+        radius of circle using in hit test
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with a record representing each fixation, each record contains:
+        trial, participant, code_file, code_language, timestamp, duration, x_cord, y_cord, token, length
+    """
+
+    # open the fixations json file
+    # raw_data = json.load(open(fixations_file))
+    
+    # fixations = []
+    # for key in raw_data.keys():
+    #     fixations.append(raw_data[key])
+
+    # participant_id = fixations_file.split('\\')[-1].split('_')[0]
+    # trial_id = '_'.join(fixations_file.split('\\')[-1].split('_')[1:6])
+    # file_name = fixations_file
+
+    # from parameters
+    # fixations list
+    # participant_id
+    # trial_id
+    # file_name
+    # aois
+    # radius
+
+    header = ["trial",
+              "participant",
+              "file_name",
+              "fix_x",
+              "fix_y",
+              "duration",
+              "aoi_x",
+              "aoi_y",
+              "aoi_width",
+              "aoi_height",
+              "token",
+              "level",
+              "pos",
+              "line",
+              "part"]
+
+    result = pd.DataFrame(columns=header)
+    
+
+    for fix in fixations:
+        fix_x = fix[0]
+        fix_y = fix[1]
+        fix_duration = fix[2]
+
+        for row in aois_tokens.itertuples(index=True, name='Pandas'):
+            # kind,name,x,y,width,height,image,token,level,POS,line,part
+
+            if overlap(fix, row, radius):
+                df = pd.DataFrame([[trial_id,
+                                    participant_id,
+                                    file_name,
+                                    fix_x,
+                                    fix_y,
+                                    fix_duration,
+                                    row.x,
+                                    row.y,
+                                    row.width,
+                                    row.height,
+                                    row.token,
+                                    row.level,
+                                    row.POS,
+                                    row.line,
+                                    row.part], ], columns=header)
+
+                result = result.append(df, ignore_index=True)
+                break
+
+    return result
+
+
 ######################## end from EMTK #################################
 
 def distance(fix1, fix2):
