@@ -38,6 +38,7 @@ class Toolbar(NavigationToolBar):
     def __init__(self, canvas, parent):
         super().__init__(canvas, parent)
 
+        self.parent = parent
         # Remove unwanted default actions
         self.removeUnwantedActions()
 
@@ -49,6 +50,21 @@ class Toolbar(NavigationToolBar):
         for action in self.actions():
             if action.text() not in wanted_actions:
                 self.removeAction(action)
+
+    #override zoom function
+    def release_zoom(self, event):
+        super().release_zoom(event)
+        self.parent.fix8.draw_canvas()
+
+    #override pan function
+    def release_pan(self, event):
+        super().release_pan(event)
+        self.parent.fix8.draw_canvas()
+
+    # override home function
+    def home(self, *args):
+        super().home(*args)
+        self.parent.fix8.draw_canvas()
 
     def set_message(self, s):
         pass
