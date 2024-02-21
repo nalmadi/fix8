@@ -212,7 +212,7 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
 
 
 # modified from EMTK
-def read_EyeLink1000_experiment(filename, destination_path):
+def read_EyeLink1000_experiment(filename, destination_path, runtime_folder=None):
     """Read asc file from Eye Link 1000 eye tracker
 
     Parameters
@@ -259,8 +259,15 @@ def read_EyeLink1000_experiment(filename, destination_path):
             # Read image location
             index = str(int(trial_id) + 1)
             experiment = participant_id
-            runtime_folder_path = '/'.join(filename.split('/')[:-1])
-            location = runtime_folder_path + '/runtime/dataviewer/' + experiment + '/graphics/VC_' + index + '.vcl'
+
+            # Trying not to break existing code
+            if not runtime_folder:
+                runtime_folder_path = '/'.join(filename.split('/')[:-1])
+                location = runtime_folder_path + '/runtime/dataviewer/' + experiment + '/graphics/VC_' + index + '.vcl'
+            else:
+                runtime_folder_path = runtime_folder
+                location = runtime_folder_path + '/dataviewer/' + experiment + '/graphics/VC_' + index + '.vcl'
+                
             with open(location, 'r') as file:
                 target_line = file.readlines()[1]
                 tokens = target_line.split()
