@@ -494,6 +494,75 @@ class Fix8():
         # convert and save csv file
         mini_emtk.read_EyeLink1000(ascii_file, new_correction_file_name)
 
+    def json_to_csv_converter(self):
+        # open json file through file dialog limit to .asc files
+        qfd = QFileDialog()
+        json_file = qfd.getOpenFileName(self.ui, "Select Json file", "", "Json Files (*.json)")[0]
+
+        if json_file == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        # ask user for file name to save csv through file dialog
+        qfd = QFileDialog()
+        default_file_name = json_file.replace('.json', '') + '.csv'
+        new_correction_file_name, _ = qfd.getSaveFileName(self.ui, "Save converted CSV file", default_file_name)
+        
+        if new_correction_file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        if '.csv' not in new_correction_file_name:
+            new_correction_file_name += '.csv'
+
+        self.show_error_message("Warning", "Conversion may take a while")
+
+        # convert and save csv file
+        dataframe = self.json_to_df(json_file)
+        dataframe.to_csv(new_correction_file_name, index=False)
+
+    def csv_to_json_converter(self):
+        # open csv file through file dialog limit to .asc files
+        qfd = QFileDialog()
+        csv_file = qfd.getOpenFileName(self.ui, "Select CSV file", "", "CSV Files (*.csv)")[0]
+
+        if csv_file == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        # ask user for file name to save csv through file dialog
+        qfd = QFileDialog()
+        default_file_name = csv_file.replace('.csv', '') + '.json'
+        new_correction_file_name, _ = qfd.getSaveFileName(self.ui, "Save converted json file", default_file_name)
+        
+        if new_correction_file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        if '.json' not in new_correction_file_name:
+            new_correction_file_name += '.json'
+
+        self.show_error_message("Warning", "Conversion may take a while")
+
+        # convert and save csv file
+        dataframe = pd.read_csv(csv_file)
+
+        # get the fixations from the csv file
+        fixation_data = dataframe[dataframe["eye_event"] == "fixation"]
+        fixations = []
+
+        # get the x, y, and duration of the fixations
+        for index, row in fixation_data.iterrows():
+            fixations.append([row["x_cord"], row["y_cord"], row["duration"]])
+
+        corrected_fixations = {}
+        for i in range(len(fixations)):
+            corrected_fixations[i + 1] = fixations[i]
+
+        with open(f"{new_correction_file_name}", "w") as f:
+            json.dump(corrected_fixations, f)
+        
+
 
     def eyelink_experiment_to_csv_converter(self):
         ''' convert eyelink experiment to csv files from ASCII and runtime folder '''
@@ -1153,12 +1222,8 @@ class Fix8():
                 margin_height=self.aoi_height,
                 margin_width=self.aoi_width,
             )
-    
-    def read_json_fixations(self, trial_path):
-        """find all the fixations of the trial that was double clicked
-        parameters:
-        trial_path - the trial file path of the trial clicked on"""
-        self.original_fixations = []
+
+    def json_to_df(self, trial_path):
         x_cord = []
         y_cord = []
         duration = []
@@ -1175,13 +1240,20 @@ class Fix8():
                 self.show_error_message("Trial File Error", "JSON File Empty")
 
         # create an empty dataframe
-        self.eye_events = pd.DataFrame(columns=["x_cord", "y_cord", "duration"])
-        self.eye_events["x_cord"] = x_cord
-        self.eye_events["y_cord"] = y_cord
-        self.eye_events["duration"] = duration
-        self.eye_events["eye_event"] = "fixation"
+        eye_events = pd.DataFrame(columns=["x_cord", "y_cord", "duration"])
+        eye_events["x_cord"] = x_cord
+        eye_events["y_cord"] = y_cord
+        eye_events["duration"] = duration
+        eye_events["eye_event"] = "fixation"
 
-        self.original_fixations = self.eye_events[self.eye_events["eye_event"] == "fixation"]
+        return eye_events
+    
+    def read_json_fixations(self, trial_path):
+        """find all the fixations of the trial that was double clicked
+        parameters:
+        trial_path - the trial file path of the trial clicked on"""
+
+        self.original_fixations = self.json_to_df(trial_path)
         self.original_fixations.drop(columns=["eye_event"], inplace=True)
 
         self.original_fixations = np.array(self.original_fixations)

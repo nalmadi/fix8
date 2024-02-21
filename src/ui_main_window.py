@@ -300,7 +300,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.converters_menu = self.menuBar().addMenu("Converters")
 
         # add actions
-        self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Folder", self)
+        self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Trial Folder", self)
         self.open_image_action = QAction("Open Image", self)
         self.save_correction_json_action = QAction("Save json", self)
         self.save_correction_CSV_action = QAction("Save CSV", self)
@@ -351,6 +351,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.stretch_semi_action = QAction("Stretch", self)
 
         self.ascii_to_csv_converter_action = QAction("ASCII to CSV (one trial)", self)
+        self.json_to_csv_converter_action = QAction("JSON to CSV (one trial)", self)
+        self.csv_to_json_converter_action = QAction("CSV to JSON (one trial)", self)
         self.eyelink_experiment_to_csv_converter_action = QAction("Eyelink Experiment to CSV", self)
 
         # add shortcuts
@@ -425,6 +427,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
 
         self.converters_menu.addAction(self.ascii_to_csv_converter_action)
+        self.converters_menu.addAction(self.json_to_csv_converter_action)
+        self.converters_menu.addAction(self.csv_to_json_converter_action)
         self.converters_menu.addAction(self.eyelink_experiment_to_csv_converter_action)
 
         # add menue item called "Style" to the menu bar
@@ -521,6 +525,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.manual_correction_action.triggered.connect(self.fix8.manual_correction)
 
         self.ascii_to_csv_converter_action.triggered.connect(self.fix8.ascii_to_csv_converter)
+        self.json_to_csv_converter_action.triggered.connect(self.fix8.json_to_csv_converter)
+        self.csv_to_json_converter_action.triggered.connect(self.fix8.csv_to_json_converter)
         self.eyelink_experiment_to_csv_converter_action.triggered.connect(self.fix8.eyelink_experiment_to_csv_converter)
 
     def relevant_buttons(self, feature):
