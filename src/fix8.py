@@ -470,6 +470,20 @@ class Fix8():
         self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
 
+
+    def calculate_hit_test(self):
+        pass
+        # open hit test dialog to get participant id, trial id, and radius
+        
+        #hit_test_data = mini_emtk.hit_test(fixations, participant_id, trial_id, file_name, aois_tokens, radius=25)
+    
+        # write hit test data to file
+    
+    def calculate_eye_metrics(self):
+        pass
+        
+    
+
     def ascii_to_csv_converter(self):
         # open ascii file through file dialog limit to .asc files
         qfd = QFileDialog()
@@ -1110,7 +1124,7 @@ class Fix8():
             if len(files) > 0:
                 self.file_list = []
                 for file in files:
-                    if file.endswith(".json") or file.endswith(".csv"):
+                    if file.endswith(".json") or file.endswith(".csv") and file.endswith("_AOI.csv") == False:
                         self.file_list.append(self.folder_path + "/" + file)
 
                     elif (file.endswith(".png")
@@ -1451,6 +1465,27 @@ class Fix8():
                     s=30 * (duration / 50) ** 1.8,
                     alpha=self.fixation_opacity,
                     c=self.suggested_fixation_color,
+                )
+
+        # draw aois
+        if self.ui.checkbox_show_aoi.isChecked():
+            color = self.aoi_color if self.background_color == "black" else "black"
+
+            for row in self.aoi.iterrows():
+                xcord = row[1]["x"]
+                ycord = row[1]["y"]
+                height = row[1]["height"]
+                width = row[1]["width"]
+                aoi_box = self.ui.canvas.ax.add_patch(
+                    Rectangle(
+                        (xcord, ycord),
+                        width - 1,
+                        height - 1,
+                        linewidth=0.8,
+                        edgecolor=color,
+                        facecolor="none",
+                        alpha=0.65,
+                    )
                 )
 
         self.ui.canvas.draw()
@@ -1824,7 +1859,7 @@ class Fix8():
         self.quick_draw_canvas(all_fixations=False)
 
     def fixation_size_changed(self, value):
-        self.fixation_size = value*6
+        self.fixation_size = value * 6
         self.draw_canvas()
     
 
