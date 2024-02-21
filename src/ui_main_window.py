@@ -653,6 +653,9 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         else:
             self.show_side_panel()
 
+        if self.fix8.image_file_path is not None:
+            self.fix8.draw_canvas()
+
     def hide_side_panel(self):
         self.trial_list.setHidden(True)
         self.visualization_frame.setHidden(True)
@@ -663,12 +666,16 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
     def show_hide_trial_list(self):
         self.trial_list.setHidden(not self.trial_list.isHidden())
+        if self.fix8.image_file_path is not None:
+            self.fix8.draw_canvas()
 
     def show_hide_trial_summary(self):
         pass
 
     def show_hide_visualization_panel(self):
         self.visualization_frame.setHidden(not self.visualization_frame.isHidden())
+        if self.fix8.image_file_path is not None:
+            self.fix8.draw_canvas()
     
     def resizeEvent(self, event):
         # This method is called when the window is resized
