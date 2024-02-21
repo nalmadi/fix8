@@ -1000,7 +1000,7 @@ class Fix8():
                     self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
                     self.progress_bar_updated(self.current_fixation, draw=False)
 
-                    if self.suggested_corrections is not None:
+                    if self.suggested_corrections is not None and len(self.suggested_corrections) > 0:
                         self.suggested_corrections = np.delete(self.suggested_corrections, self.selected_fixation, 0)  # delete the row of selected fixation
 
                     self.selected_fixation = None
@@ -1542,7 +1542,7 @@ class Fix8():
                 self.metadata = ""
 
 
-    def save_corrections(self):
+    def save_corrections_json(self):
         """ save correction to a json file and metadata to csv file """
 
         qfd = QFileDialog()
@@ -1561,6 +1561,50 @@ class Fix8():
 
             with open(f"{new_correction_file_name}", "w") as f:
                 json.dump(corrected_fixations, f)
+                
+            duration = (time.time() - self.timer_start)
+            today = date.today()
+
+            self.metadata += (
+                "Saved,Date "
+                + str(today)
+                + " Trial Name"
+                + str(self.trial_name)
+                + " File Path "
+                + str(new_correction_file_name)
+                + " Duration "
+                + str(duration)
+                + ","
+                + str(time.time())
+                + "\n"
+            )
+
+            self.save_metadata_file(new_correction_file_name)
+
+            self.status_text = "Corrections Saved to" + " " + new_correction_file_name
+            self.ui.statusBar.showMessage(self.status_text)
+
+        else:
+            self.show_error_message("Save Error", "No Corrections Made")
+
+    def save_corrections_csv(self):
+        qfd = QFileDialog()
+        default_file_name = self.trial_path.replace('.csv', '') + '_CORRECTED.csv'
+        new_correction_file_name, _ = qfd.getSaveFileName(self.ui, "Save correction", default_file_name)
+
+        if '.csv' not in new_correction_file_name:
+            new_correction_file_name += '.csv'
+
+        if len(self.fixations) > 0:
+            #list = self.fixations.tolist()
+            # corrected_fixations = {}
+            # for i in range(len(self.fixations)):
+            #     corrected_fixations[i + 1] = list[i]
+
+            # with open(f"{new_correction_file_name}", "w") as f:
+            #     json.dump(corrected_fixations, f)
+
+            self.eye_events.to_csv(new_correction_file_name, index=False)
                 
             duration = (time.time() - self.timer_start)
             today = date.today()

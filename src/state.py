@@ -45,4 +45,3 @@ class Fix8State:
 
     def get_state(self):
         return self.fixations, self.saccades, self.blinks, self.suggested_corrections, self.current_fixation, self.selected_fixation
-
