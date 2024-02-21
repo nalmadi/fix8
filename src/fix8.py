@@ -1618,6 +1618,23 @@ class Fix8():
         else:
             self.show_error_message("Save Error", "No Corrections Made")
 
+    def save_aoi_csv(self):
+        qfd = QFileDialog()
+        default_file_name = self.trial_path.replace('.csv', '').replace('.json', '') + '_AOI.csv'
+        new_aoi_file_name, _ = qfd.getSaveFileName(self.ui, "Save AOI", default_file_name)
+
+        if '.csv' not in new_aoi_file_name:
+            new_aoi_file_name += '.csv'
+
+        if len(self.fixations) > 0:
+
+            self.aoi.to_csv(new_aoi_file_name, index=False)
+            self.status_text = "AOI Saved to" + " " + new_aoi_file_name
+            self.ui.statusBar.showMessage(self.status_text)
+
+        else:
+            self.show_error_message("Save Error", "No AOI Found")
+
     def progress_bar_updated(self, value, draw=True):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
