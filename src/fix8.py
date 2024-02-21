@@ -1153,51 +1153,6 @@ class Fix8():
                 margin_height=self.aoi_height,
                 margin_width=self.aoi_width,
             )
-
-
-    # def draw_aoi(self):
-    #     """draw the found aois to the canvas"""
-    #     # color = self.aoi_color if self.background_color == "black" else "black"
-
-    #     # for row in self.aoi.iterrows():
-
-    #     #     xcord = row[1]["x"]
-    #     #     ycord = row[1]["y"]
-    #     #     height = row[1]["height"]
-    #     #     width = row[1]["width"]
-            
-    #     #     self.ui.canvas.ax.add_patch(
-    #     #         Rectangle(
-    #     #             (xcord, ycord),
-    #     #             width - 1,
-    #     #             height - 1,
-    #     #             linewidth=0.8,
-    #     #             edgecolor=color,
-    #     #             facecolor="none",
-    #     #             alpha=0.65,
-    #     #         )
-    #     #     )
-        
-    #     # self.ui.canvas.draw()
-    #     self.quick_draw_canvas()
-
-
-    # def clear_aoi(self):
-    #     """clear the aois from the canvas"""
-    #     #self.ui.canvas.ax.patches.clear()
-    #     #self.ui.canvas.draw()
-    #     self.quick_draw_canvas()
-
-
-    # def show_aoi(self, state):
-    #     """when the show aoi button is pressed, show or hide aois based on checkbox"""
-    #     # if self.ui.checkbox_show_aoi.isCheckable():
-    #     #     if state == Qt.Checked:
-    #     #         self.draw_aoi()
-    #     #     elif state == Qt.Unchecked:
-    #     #         self.clear_aoi()
-    #     self.quick_draw_canvas()
-
     
     def read_json_fixations(self, trial_path):
         """find all the fixations of the trial that was double clicked
@@ -1256,72 +1211,6 @@ class Fix8():
 
         self.original_fixations = np.array(self.original_fixations)
         self.ui.relevant_buttons("trial_clicked")
-
-
-    
-
-    # def draw_fixations(self, fixations=0):
-    #     """draw the fixations to the canvas
-    #     parameters:
-    #     fixations - 0 is default since the corrected fixations are the main thing to be shown,
-    #     1 the original fixations is manually chosen (not currently needed as this isn't in option in algorithms)"""
-
-    #     if fixations == 0:  # default fixations to use
-    #         fixations = self.fixations
-    #     elif fixations == 1:
-    #         fixations = self.original_fixations
-
-    #     x = fixations[0 : self.current_fixation + 1, 0]
-    #     y = fixations[0 : self.current_fixation + 1, 1]
-    #     duration = fixations[0 : self.current_fixation + 1, 2]
-    #     self.fixation_points = self.ui.canvas.ax.scatter(
-    #         x,
-    #         y,
-    #         s=30 * (duration / 50) ** 1.8,
-    #         alpha=self.fixation_opacity,
-    #         c=self.fixation_color,
-    #     )
-    #     self.ui.canvas.draw()
-
-    
-
-    # def show_fixations(self, state):
-    #     """if the user clicks the show fixations checkbox, show or hide the fixations
-    #     parameters:
-    #     state - the checkbox being checked or unchecked"""
-    #     # if self.folder_path != "":
-    #     #     if self.ui.checkbox_show_fixations.isCheckable():
-    #     #         if state == Qt.Checked:
-    #     #             self.draw_fixations()
-    #     #         elif state == Qt.Unchecked:
-    #     #             self.clear_fixations()
-
-    #     self.quick_draw_canvas()
-
-    
-
-    # def show_saccades(self, state):
-    #     """if the user clicks saccades, show or hide them"""
-    #     # if self.folder_path != "":
-    #     #     if self.ui.checkbox_show_saccades.isCheckable():
-    #     #         if state == Qt.Checked:
-    #     #             self.draw_saccades()
-    #     #         elif state == Qt.Unchecked:
-    #     #             self.clear_saccades()
-    #     self.quick_draw_canvas()
-    
-
-    # def draw_saccades(self):
-    #     """draw the scatter plot to the canvas"""
-        # fixations = self.fixations
-        # x = fixations[0 : self.current_fixation + 1, 0]
-        # y = fixations[0 : self.current_fixation + 1, 1]
-        # duration = fixations[0 : self.current_fixation + 1, 2]
-        # self.saccade_lines = self.ui.canvas.ax.plot(
-        #     x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
-        # )
-        # self.ui.canvas.draw()
-
     
 
     def clear_saccades(self):
@@ -1383,7 +1272,6 @@ class Fix8():
                     c=colors,
                 )
                 self.ui.canvas.background = self.ui.canvas.copy_from_bbox(self.ui.canvas.ax.bbox)
-                # self.scatter = self.ui.canvas.ax.scatter(x[-1], y[-1], s=30 * (duration[-1]/50)**1.8, alpha = self.fixation_opacity, c = "yellow")
 
         if self.ui.checkbox_show_saccades.isCheckable():
             if self.ui.checkbox_show_saccades.isChecked():
@@ -1519,11 +1407,8 @@ class Fix8():
         if self.current_fixation != 0:
             self.current_fixation -= 1
 
-        #self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
-        # if self.dropdown_select_algorithm.currentText() != "Select Correction Algorithm":
-        #    self.update_suggestion()
 
 
     def next_fixation(self):
@@ -1537,8 +1422,6 @@ class Fix8():
         if self.current_fixation != len(self.fixations) - 1:
             self.current_fixation += 1
 
-        #self.ui.canvas.ax.lines
-        #self.draw_canvas(self.fixations)
         self.progress_bar_updated(self.current_fixation, draw=False)
 
 
@@ -1635,13 +1518,6 @@ class Fix8():
             new_correction_file_name += '.csv'
 
         if len(self.fixations) > 0:
-            #list = self.fixations.tolist()
-            # corrected_fixations = {}
-            # for i in range(len(self.fixations)):
-            #     corrected_fixations[i + 1] = list[i]
-
-            # with open(f"{new_correction_file_name}", "w") as f:
-            #     json.dump(corrected_fixations, f)
 
             self.eye_events.to_csv(new_correction_file_name, index=False)
                 
@@ -1683,10 +1559,6 @@ class Fix8():
 
         if draw:
 
-            #self.xy = np.asarray(self.scatter.get_offsets())
-            #self.xy[self.selected_fixation] = np.array([x, y])
-            #self.scatter.set_offsets(self.xy)
-            # self.ui.canvas.draw_idle()
             if self.ui.canvas.background is None:
                 self.draw_canvas(self.fixations)
                 return
@@ -1696,15 +1568,11 @@ class Fix8():
     def aoi_height_changed(self, value):
         self.aoi_height = value
         self.find_aoi()
-        #self.clear_aoi()
-        #self.draw_aoi()
         self.quick_draw_canvas()
 
     def aoi_width_changed(self, value):
         self.aoi_width = value
         self.find_aoi()
-        #self.clear_aoi()
-        #self.draw_aoi()
         self.quick_draw_canvas()
 
     def select_fixation_color(self):
