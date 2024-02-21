@@ -1213,19 +1213,28 @@ class Fix8():
 
 
     def open_aoi(self):
-        return
         qfd = QFileDialog()
-        self.image_file_path = qfd.getOpenFileName(self.ui, "Select Image", "", "Image Files (*.png *.jpg *.jpeg)")[0]
+        aoi_file = qfd.getOpenFileName(self.ui, "Select AOI", "", "AOI Files (*.csv)")[0]
 
-        if self.image_file_path != "":
-            self.set_canvas_image(self.image_file_path)
-            self.find_aoi()
-            self.ui.relevant_buttons("opened_stimulus")
-            self.ui.canvas.draw_idle()
-            
-            self.ui.generate_menu.setEnabled(True)
-        else:
+        
+        if aoi_file == "":
+            self.show_error_message("Error", "No aoi file selected")
+            return
+
+        if self.image_file_path == "":
             self.show_error_message("Image Error", "No Image Selected")
+
+        # open aoi file
+        self.aoi = pd.read_csv(aoi_file)
+        self.save_state()
+
+        # draw canvas
+        self.draw_canvas()
+
+        self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
+        self.ui.statusBar.showMessage(self.status_text)
+
+
 
     def set_canvas_image(self, image_file):
         self.ui.canvas.clear()
