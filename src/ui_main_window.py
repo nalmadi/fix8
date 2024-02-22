@@ -389,8 +389,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.file_menu.addAction(self.open_trial_action)
         self.file_menu.addAction(self.open_aoi_action)
         self.file_menu.addAction(self.save_correction_json_action)
-        self.file_menu.addAction(self.save_correction_CSV_action)
         self.file_menu.addAction(self.save_aoi_csv_action)
+        self.file_menu.addAction(self.save_correction_CSV_action)
 
         self.edit_menu.addAction(self.next_fixation_action)
         self.edit_menu.addAction(self.previous_fixation_action)
