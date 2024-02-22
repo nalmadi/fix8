@@ -512,10 +512,10 @@ class Fix8():
         # run hit test
         hit_test_data = mini_emtk.hit_test(self.fixations, self.trial_path, self.aoi, radius=0)
 
-        sfd = []
-        ffd = []
-        gd = []
-        tt = []
+        single_fixation_duration = []
+        first_fixation_duration = []
+        gaze_duration = []
+        total_time = []
 
         eye_metrics_data = self.aoi.copy()
 
@@ -529,15 +529,15 @@ class Fix8():
             hit_test_data['line'] = hit_test_data['line'].astype(int)
             hit_test_data['part'] = hit_test_data['part'].astype(int)
 
-            sfd.append(mini_emtk.get_single_fixation_duration(hit_test_data, line, part))
-            ffd.append(mini_emtk.get_first_fixation_duration(hit_test_data, line, part))
-            gd.append(mini_emtk.get_gaze_duration(hit_test_data, line, part))
-            tt.append(mini_emtk.get_total_time(hit_test_data, line, part))
+            single_fixation_duration.append(mini_emtk.get_single_fixation_duration(hit_test_data, line, part))
+            first_fixation_duration.append(mini_emtk.get_first_fixation_duration(hit_test_data, line, part))
+            gaze_duration.append(mini_emtk.get_gaze_duration(hit_test_data, line, part))
+            total_time.append(mini_emtk.get_total_time(hit_test_data, line, part))
 
-        eye_metrics_data['single_fixation_duration'] = sfd
-        eye_metrics_data['first_fixation_duration'] = ffd
-        eye_metrics_data['gaze_duration'] = gd
-        eye_metrics_data['total_time'] = tt
+        eye_metrics_data['single_fixation_duration'] = single_fixation_duration
+        eye_metrics_data['first_fixation_duration'] = first_fixation_duration
+        eye_metrics_data['gaze_duration'] = gaze_duration
+        eye_metrics_data['total_time'] = total_time
     
         # write eye metrics data to file
         eye_metrics_data.to_csv(file_name, index=False)
