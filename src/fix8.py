@@ -28,25 +28,12 @@ from PyQt5.QtCore import Qt
 
 # from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import (
-    QFrame,
     QApplication,
-    QCheckBox,
     QFileDialog,
     QColorDialog,
-    QHBoxLayout,
-    QLabel,
-    QSlider,
-    QMainWindow,
     QMessageBox,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
     QInputDialog,
-    QListWidget,
     QListWidgetItem,
-    QSpinBox,
-    QStatusBar,
-    QAction,
 )
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
@@ -69,13 +56,11 @@ from pathlib import Path
 import mini_emtk
 from merge_fixations_dialog import InputDialog
 from state import Fix8State, History
-import canvas_resources
 import ui_main_window
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
 import pandas as pd
-from qt_material import QtStyleTools, list_themes
 import platform
 
 
@@ -1906,8 +1891,7 @@ class Fix8():
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
             self.fixation_color = "#FF9E0A"
-            # TODO: Agnes, please figure out what color is best for current fixations
-            # self.current_fixation_color = "yellow"
+            self.current_fixation_color = "yellow"
             self.saccade_color = "#3D00CC"
             self.aoi_color = "#28AAFF"
             self.colorblind_assist_status = True

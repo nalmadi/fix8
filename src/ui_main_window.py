@@ -1,28 +1,19 @@
 
 
 from qt_material import QtStyleTools, list_themes
-# from PyQt5.QtCore import *
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
-
-# from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import (
     QFrame,
-    QApplication,
     QCheckBox,
-    QFileDialog,
-    QColorDialog,
     QHBoxLayout,
     QLabel,
     QSlider,
     QMainWindow,
-    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
-    QInputDialog,
     QListWidget,
-    QListWidgetItem,
     QSpinBox,
     QStatusBar,
     QAction,
