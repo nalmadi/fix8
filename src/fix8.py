@@ -473,11 +473,30 @@ class Fix8():
 
     def calculate_hit_test(self):
         pass
-        # open hit test dialog to get participant id, trial id, and radius
+        # open hit test dialog to get radius
+        default_radius = 25
+        minimum_value = 1
+        maximum_value = 100
+        qfd = QFileDialog()
+        radius, ok = QInputDialog.getInt(self.ui, "Radius", "Enter inclusion radius for hit test", default_radius, minimum_value, maximum_value)
+
+        if not ok:
+            self.show_error_message("Error", "No radius selected")
+            return
         
-        #hit_test_data = mini_emtk.hit_test(fixations, participant_id, trial_id, file_name, aois_tokens, radius=25)
+        # get save file name
+        qfd = QFileDialog()
+        default_file_name = self.trial_path.replace('.json', '') + '_hit_test.csv'
+        file_name, _ = qfd.getSaveFileName(self.ui, "Save hit test data", default_file_name)
+
+        if file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+        
+        hit_test_data = mini_emtk.hit_test(self.fixations, self.trial_path, self.aoi, radius=radius)
     
         # write hit test data to file
+        hit_test_data.to_csv(file_name, index=False)
     
     def calculate_eye_metrics(self):
         pass
@@ -1124,7 +1143,7 @@ class Fix8():
             if len(files) > 0:
                 self.file_list = []
                 for file in files:
-                    if file.endswith(".json") or file.endswith(".csv") and file.endswith("_AOI.csv") == False:
+                    if file.endswith(".json") or file.endswith(".csv") and file.endswith("_AOI.csv") == False and file.endswith("_hit_test.csv") == False:
                         self.file_list.append(self.folder_path + "/" + file)
 
                     elif (file.endswith(".png")

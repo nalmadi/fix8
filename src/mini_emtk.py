@@ -452,7 +452,7 @@ def overlap(fix, AOI, radius=25):
     return box_x <= fix[0] and fix[0] <= box_x + box_w and box_y <= fix[1] and fix[1] <= box_y + box_h
 
 
-def hit_test(fixations, participant_id, trial_id, file_name, aois_tokens, radius=25):
+def hit_test(fixations, file_name, aois_tokens, radius=25):
     """Checks if fixations are within AOI with a fixation radius of 25 px
         (since each fix is a sum of samples within 25px)
 
@@ -494,9 +494,7 @@ def hit_test(fixations, participant_id, trial_id, file_name, aois_tokens, radius
     # aois
     # radius
 
-    header = ["trial",
-              "participant",
-              "file_name",
+    header = ["file_name",
               "fix_x",
               "fix_y",
               "duration",
@@ -504,11 +502,9 @@ def hit_test(fixations, participant_id, trial_id, file_name, aois_tokens, radius
               "aoi_y",
               "aoi_width",
               "aoi_height",
-              "token",
-              "level",
-              "pos",
               "line",
-              "part"]
+              "part",
+              "image"]
 
     result = pd.DataFrame(columns=header)
     
@@ -519,12 +515,12 @@ def hit_test(fixations, participant_id, trial_id, file_name, aois_tokens, radius
         fix_duration = fix[2]
 
         for row in aois_tokens.itertuples(index=True, name='Pandas'):
-            # kind,name,x,y,width,height,image,token,level,POS,line,part
 
             if overlap(fix, row, radius):
-                df = pd.DataFrame([[trial_id,
-                                    participant_id,
-                                    file_name,
+                line = row.name.split(' ')[1]
+                part = row.name.split(' ')[3]
+
+                df = pd.DataFrame([[file_name,
                                     fix_x,
                                     fix_y,
                                     fix_duration,
@@ -532,14 +528,12 @@ def hit_test(fixations, participant_id, trial_id, file_name, aois_tokens, radius
                                     row.y,
                                     row.width,
                                     row.height,
-                                    row.token,
-                                    row.level,
-                                    row.POS,
-                                    row.line,
-                                    row.part], ], columns=header)
+                                    line,
+                                    part,
+                                    row.image], ], columns=header)
 
                 result = result.append(df, ignore_index=True)
-                break
+                break # only one AOI can be hit by a fixation
 
     return result
 
