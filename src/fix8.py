@@ -498,7 +498,16 @@ class Fix8():
         hit_test_data.to_csv(file_name, index=False)
     
     def calculate_eye_metrics(self):
-        # TODO: add dialog for radius
+        # open hit test dialog to get radius
+        default_radius = 10
+        minimum_value = 0
+        maximum_value = 100
+        qfd = QFileDialog()
+        radius, ok = QInputDialog.getInt(self.ui, "Radius", "Enter inclusion radius for hit test", default_radius, minimum_value, maximum_value)
+
+        if not ok:
+            self.show_error_message("Error", "No radius selected")
+            return
         
         # get save file name
         qfd = QFileDialog()
@@ -510,7 +519,7 @@ class Fix8():
             return
         
         # run hit test
-        hit_test_data = mini_emtk.hit_test(self.fixations, self.trial_path, self.aoi, radius=0)
+        hit_test_data = mini_emtk.hit_test(self.fixations, self.trial_path, self.aoi, radius=radius)
 
         single_fixation_duration = []
         first_fixation_duration = []
