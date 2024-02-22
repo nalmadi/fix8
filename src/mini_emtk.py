@@ -537,7 +537,6 @@ def hit_test(fixations, file_name, aois_tokens, radius=25):
 
     return result
 
-
 ######################## end from EMTK #################################
 
 def distance(fix1, fix2):
@@ -1000,3 +999,66 @@ def error_droop(droop_factor, fixations):
         results.append([x, y + ((x - first_x) / 100 * droop_factor), fix[2]])
 
     return results
+
+
+def get_single_fixation_duration(hit_test_output, line, part):
+    """
+    function to get the duration of the first fixation on an aoi if only one 
+    fixation was made on the aoi, nan otherwise
+    """
+
+    fixations_on_same_part_and_line = hit_test_output[(hit_test_output["part"] == part) & (hit_test_output["line"] == line)]
+
+    # if only one fixation was made on the aoi, return its duration
+    if len(fixations_on_same_part_and_line) == 1:
+        return fixations_on_same_part_and_line.iloc[0]["duration"]
+    else:
+        return np.nan
+
+
+def get_first_fixation_duration(hit_test_output, line, part):
+    """
+    function to get the duration of the first fixation on an aoi
+    nan if no fixation was made on the aoi
+    """
+
+    fixations_on_same_part_and_line = hit_test_output[(hit_test_output["part"] == part) & (hit_test_output["line"] == line)]
+
+    # if there are fixations on the aoi, return the duration of the first fixation
+    if len(fixations_on_same_part_and_line) > 0:
+        return fixations_on_same_part_and_line.iloc[0]["duration"]
+    else:
+        return np.nan
+    
+
+def get_gaze_duration(hit_test_output, line, part):
+    """
+    function to get the total duration of fixations on an aoi before moving to the next word
+    nan if no fixation was made on the aoi
+    """
+
+    gaze_duration = 0
+    active = False
+
+    for index, row in hit_test_output.iterrows():
+        if (row["part"] != part or row["line"] != line) and active:
+            return gaze_duration
+
+        if row["part"] == part and row["line"] == line:
+            gaze_duration += row["duration"]
+            active = True
+                
+
+def get_total_time(hit_test_output, line, part):
+    """
+    function to get the total duration of fixations on an aoi
+    nan if no fixation was made on the aoi
+    """
+
+    fixations_on_same_part_and_line = hit_test_output[(hit_test_output["part"] == part) & (hit_test_output["line"] == line)]
+
+    # if there are fixations on the aoi, return the total duration of fixations on the aoi
+    if len(fixations_on_same_part_and_line) > 0:
+        return fixations_on_same_part_and_line["duration"].sum()
+    else:
+        return np.nan

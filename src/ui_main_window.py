@@ -354,6 +354,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.stretch_semi_action = QAction("Stretch", self)
 
         self.hit_test_action = QAction("Fixation Hit Test", self)
+        self.eye_metrics_action = QAction("Calculate Eye Movement Metrics", self)
 
         self.ascii_to_csv_converter_action = QAction("ASCII to CSV (one trial)", self)
         self.json_to_csv_converter_action = QAction("JSON to CSV (one trial)", self)
@@ -439,6 +440,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
 
         self.analyses_menu.addAction(self.hit_test_action)
+        self.analyses_menu.addAction(self.eye_metrics_action)
 
         self.converters_menu.addAction(self.ascii_to_csv_converter_action)
         self.converters_menu.addAction(self.json_to_csv_converter_action)
@@ -542,6 +544,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.manual_correction_action.triggered.connect(self.fix8.manual_correction)
 
         self.hit_test_action.triggered.connect(self.fix8.calculate_hit_test)
+        self.eye_metrics_action.triggered.connect(self.fix8.calculate_eye_metrics)
 
         self.ascii_to_csv_converter_action.triggered.connect(self.fix8.ascii_to_csv_converter)
         self.json_to_csv_converter_action.triggered.connect(self.fix8.json_to_csv_converter)
