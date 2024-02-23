@@ -34,6 +34,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QInputDialog,
     QListWidgetItem,
+    QTableWidgetItem,
 )
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
@@ -181,6 +182,7 @@ class Fix8():
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
+        self.update_trial_statistics()
 
     def generate_fixations_skip(self):
         minimum_value = 1
@@ -233,6 +235,7 @@ class Fix8():
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
+        self.update_trial_statistics()
 
     def generate_within_line_regression(self):
         minimum_value = 0
@@ -286,6 +289,7 @@ class Fix8():
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
+        self.update_trial_statistics()
 
     def generate_between_line_regression(self):
         minimum_value = 0
@@ -339,6 +343,7 @@ class Fix8():
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
+        self.update_trial_statistics()
 
     def generate_noise(self):
         minimum_value = 1
@@ -368,6 +373,7 @@ class Fix8():
 
         self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
+        
 
     def generate_slope(self):
         minimum_value = 1
@@ -695,6 +701,7 @@ class Fix8():
 
         self.ui.progress_bar.setMaximum(len(self.fixations) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
+        self.update_trial_statistics()
 
 
     def undo(self):
@@ -716,6 +723,7 @@ class Fix8():
                 self.current_fixation = len(self.fixations) - 1
 
             self.progress_bar_updated(self.current_fixation, draw=True)
+            self.update_trial_statistics()
 
 
     def save_state(self):
@@ -761,6 +769,7 @@ class Fix8():
 
         self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
+        self.update_trial_statistics()
 
 
     def lowpass_duration_filter(self):
@@ -797,6 +806,7 @@ class Fix8():
 
         self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
+        self.update_trial_statistics()
 
 
     def highpass_duration_filter(self):
@@ -834,6 +844,7 @@ class Fix8():
 
         self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
+        self.update_trial_statistics()
 
 
     def merge_fixations(self):
@@ -892,6 +903,7 @@ class Fix8():
 
         self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
+        self.update_trial_statistics()
 
 
     def run_correction(self):
@@ -1212,7 +1224,8 @@ class Fix8():
                 self.find_aoi()
                 self.ui.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
-                self.ui.show_side_panel()
+                self.ui.show_hide_trial_list()
+                self.ui.show_hide_visualization_panel()
 
 
     def open_image(self):
@@ -1278,6 +1291,33 @@ class Fix8():
 
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
         self.ui.statusBar.showMessage(self.status_text)
+        self.update_trial_statistics()
+
+
+    def update_trial_statistics(self):
+
+        # eye events has a timestamp column, find the duration of the trial by subtracting the first and last timestamp
+        if self.eye_events is not None and 'time_stamp' in self.eye_events.columns:
+            duration = self.eye_events.iloc[-1]["time_stamp"] - self.eye_events.iloc[0]["time_stamp"]
+            self.ui.statistics_table.setItem(0, 1, QTableWidgetItem(str(duration//1000) + " sec"))
+
+        # get maximum fixation duration
+        if self.fixations is not None:
+            self.ui.statistics_table.setItem(1, 1, QTableWidgetItem(str(np.max(self.fixations[:, 2]))))
+
+        # get minimum fixation duration
+        if self.fixations is not None:
+            self.ui.statistics_table.setItem(2, 1, QTableWidgetItem(str(np.min(self.fixations[:, 2]))))
+
+        # get the number of aois
+        if self.aoi is not None:
+            self.ui.statistics_table.setItem(3, 1, QTableWidgetItem(str(len(self.aoi))))
+
+        # if self.current_fixation is not None:
+        #     self.ui.statistics_table.setItem(5, 1, QTableWidgetItem(str(self.fixations[self.current_fixation])))
+
+        self.ui.statistics_table.setHidden(False)
+
 
 
     def open_aoi(self):
@@ -1301,6 +1341,7 @@ class Fix8():
 
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
         self.ui.statusBar.showMessage(self.status_text)
+        self.update_trial_statistics()
 
 
 
@@ -1356,6 +1397,7 @@ class Fix8():
 
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
         self.ui.statusBar.showMessage(self.status_text)
+        self.update_trial_statistics()
 
 
     def find_aoi(self):
