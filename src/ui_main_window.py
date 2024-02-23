@@ -132,9 +132,6 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.left_side.addLayout(self.trial_statistics)
         
 
-
-
-
         # --- section for visualization panel
         self.visualization_panel = QHBoxLayout()
         self.filters = QVBoxLayout()
@@ -142,16 +139,177 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.label_filters = QLabel("Visualization")
         self.label_filters.setAlignment(Qt.AlignCenter)
         self.filters.addWidget(self.label_filters)
+        
+        # ---------------------------------------------------------------------
 
-        # laers for aoi margin width and height
-        self.aoi_layer_width = QHBoxLayout()
-        self.aoi_layer_height = QHBoxLayout()
+        # Fixations
+        self.fixation_layer_top = QHBoxLayout()
+        self.checkbox_show_fixations = QCheckBox("Show Fixations")
+        self.checkbox_show_fixations.setEnabled(False)
+        self.fixation_layer_top.addWidget(self.checkbox_show_fixations)
+
+        self.fixation_opacity_layer = QHBoxLayout()
+        self.toggle_fixation_opacity = QSpinBox()
+        self.toggle_fixation_opacity.setMaximum(10)
+        self.toggle_fixation_opacity.setValue(4)
+        self.toggle_fixation_opacity.setMinimum(1)
+        self.fixation_opacity_text = QLabel("Opacity")
+        self.toggle_fixation_opacity.setEnabled(False)
+
+        self.fixation_opacity_layer.addWidget(self.toggle_fixation_opacity)
+        self.fixation_opacity_layer.addWidget(self.fixation_opacity_text)
+
+        self.fixation_layer_top.addLayout(self.fixation_opacity_layer)
+        # self.fixation_layer.addWidget(self.fixation_opacity_text)
+
+        self.filters.addLayout(self.fixation_layer_top)
+
+        # layer for fixation size customization 
+        self.fixation_layer_middle = QHBoxLayout()
+        self.checkbox_show_order = QCheckBox("Fixation order")
+        self.checkbox_show_order.setEnabled(False)
+        self.fixation_layer_middle.addWidget(self.checkbox_show_order)
+
+        self.fixation_size_layer = QHBoxLayout()
+        self.fixation_size_box = QSpinBox()
+        self.fixation_size_box.setMinimum(1)
+        self.fixation_size_box.setMaximum(30)
+        self.fixation_size_box.setValue(5)
+        self.fixation_size_box.setEnabled(False)
+        self.fixation_size_text = QLabel("Size")
+        self.fixation_size_layer.addWidget(self.fixation_size_box)
+        self.fixation_size_layer.addWidget(self.fixation_size_text)
+        self.fixation_layer_middle.addLayout(self.fixation_size_layer)
+
+        self.filters.addLayout(self.fixation_layer_middle)
+
+        self.fixation_layer_bottom = QHBoxLayout()
+        self.button_fixation_color = QPushButton("Fixation Color")
+        self.button_current_fixation_color = QPushButton("Current Fix. Color")
+        self.button_fixation_color.setEnabled(False)
+        self.button_current_fixation_color.setEnabled(False)
+        
+        self.fixation_layer_bottom.addWidget(self.button_fixation_color)
+        self.fixation_layer_bottom.addWidget(self.button_current_fixation_color)
+
+        self.filters.addLayout(self.fixation_layer_bottom)
+
+        fixation_line_separator = QFrame(self)
+        fixation_line_separator.setFrameShape(QFrame.HLine)
+        fixation_line_separator.setFrameShadow(QFrame.Sunken)
+        self.filters.addWidget(fixation_line_separator)
+
+        
+        # ---------------------------------------------------------------------
+        # Suggestion
+        self.suggestion_layer_top = QHBoxLayout()
+        self.checkbox_show_suggestion = QCheckBox("Show Suggestion")
+        self.checkbox_show_suggestion.setEnabled(False)
+        # self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
+        self.suggestion_layer_top.addWidget(self.checkbox_show_suggestion)
+
+        
+        self.button_suggested_fixation_color = QPushButton("Suggestion Color")
+        self.button_suggested_fixation_color.setEnabled(False)
+        self.suggestion_layer_top.addWidget(self.button_suggested_fixation_color)
+        self.filters.addLayout(self.suggestion_layer_top)
+
+        suggestion_line_separator = QFrame(self)
+        suggestion_line_separator.setFrameShape(QFrame.HLine)
+        suggestion_line_separator.setFrameShadow(QFrame.Sunken)
+        self.filters.addWidget(suggestion_line_separator)
+
+        # ---------------------------------------------------------------------
+        # Saccades
+        self.saccade_layer_top = QHBoxLayout()
+        self.checkbox_show_saccades = QCheckBox("Show Saccades")
+        self.checkbox_show_saccades.setEnabled(False)
+        self.saccade_layer_top.addWidget(self.checkbox_show_saccades)
+        
+        self.saccade_opacity_layer = QHBoxLayout()
+        self.toggle_saccade_opacity = QSpinBox()
+        self.toggle_saccade_opacity.setMaximum(10)
+        self.toggle_saccade_opacity.setValue(4)
+        self.toggle_saccade_opacity.setMinimum(1)
+        self.toggle_saccade_opacity.setEnabled(False)
+        self.saccade_opacity_text = QLabel("Opacity")
+        self.saccade_opacity_layer.addWidget(self.toggle_saccade_opacity)
+        self.saccade_opacity_layer.addWidget(self.saccade_opacity_text)
+        self.saccade_layer_top.addLayout(self.saccade_opacity_layer)
+
+        self.filters.addLayout(self.saccade_layer_top)
+
+        
+        self.saccade_layer_middle = QHBoxLayout()
+        self.button_saccade_color = QPushButton("Saccade Color")
+        self.button_saccade_color.setEnabled(False)
+        self.saccade_layer_middle.addWidget(self.button_saccade_color)
+        
+        self.saccade_size_layer = QHBoxLayout()
+        self.saccade_size_box = QSpinBox()
+        self.saccade_size_box.setMinimum(1)
+        self.saccade_size_box.setMaximum(30)
+        self.saccade_size_box.setValue(5)
+        self.saccade_size_box.setEnabled(False)
+        self.saccade_size_text = QLabel("Size")
+        self.saccade_size_layer.addWidget(self.saccade_size_box)
+        self.saccade_size_layer.addWidget(self.saccade_size_text)
+        self.saccade_layer_middle.addLayout(self.saccade_size_layer)
+
+        self.filters.addLayout(self.saccade_layer_middle)
+        
+        
+
+
+
+
+
+
+
+        # ---
+
+        self.visualization_frame = QFrame()
+        self.visualization_frame.setLayout(self.filters)
+        self.visualization_panel.addWidget(self.visualization_frame)
+
+        # --
+
+
+
+
+        saccade_line_separator = QFrame(self)
+        saccade_line_separator.setFrameShape(QFrame.HLine)
+        saccade_line_separator.setFrameShadow(QFrame.Sunken)
+        self.filters.addWidget(saccade_line_separator)
+        
+        self.button_coloblind_assist = QPushButton("Colorblind Assist")
+        
+        
+        
+        self.button_coloblind_assist.setEnabled(False)
+
+        self.layer_fixation_color = QHBoxLayout()
+        #self.layer_fixation_color.addWidget(self.button_fixation_color)
+        
+
+        #self.second_layer_fixation_color = QHBoxLayout()
+        #self.second_layer_fixation_color.addWidget(self.button_current_fixation_color)
+        #self.second_layer_fixation_color.addWidget(self.button_suggested_fixation_color)
+
+        self.colorblind_button_layer = QHBoxLayout()
+        
+        self.colorblind_button_layer.addWidget(self.button_coloblind_assist)
+
+        self.filters.addLayout(self.layer_fixation_color)
+        #self.filters.addLayout(self.second_layer_fixation_color)
+
+        # ---------------------------------------------------------------------
+        # AOI 
+        self.aoi_layer_top = QHBoxLayout()
+        self.aoi_layer_bottom = QHBoxLayout()
         self.checkbox_show_aoi = QCheckBox("Show AOIs")
         self.checkbox_show_aoi.setEnabled(False)
-        self.checkbox_show_aoi_fillSpace = QCheckBox("Show AOIs")
-        self.checkbox_show_aoi_fillSpace.setEnabled(False)
-        self.checkbox_show_aoi_fillSpace.hide()
-        
+
         self.toggle_aoi_width = QSpinBox()
         self.toggle_aoi_width.setMaximum(50)
         self.toggle_aoi_width.setMinimum(1)
@@ -163,113 +321,21 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         
         self.aoi_width_text = QLabel("Width")
         self.aoi_height_text = QLabel("Height")
-        self.aoi_layer_width.addWidget(self.checkbox_show_aoi)
-        self.aoi_layer_width.addWidget(self.toggle_aoi_width)
-        self.aoi_layer_width.addWidget(self.aoi_width_text)
-        self.aoi_layer_height.addWidget(self.checkbox_show_aoi)
-        self.aoi_layer_height.addWidget(self.toggle_aoi_height)
-        self.aoi_layer_height.addWidget(self.aoi_height_text)
+        self.aoi_layer_top.addWidget(self.checkbox_show_aoi)
+        self.aoi_layer_bottom.addWidget(self.toggle_aoi_width)
+        self.aoi_layer_bottom.addWidget(self.aoi_width_text)
+        self.aoi_layer_bottom.addWidget(self.checkbox_show_aoi)
+        self.aoi_layer_bottom.addWidget(self.toggle_aoi_height)
+        self.aoi_layer_bottom.addWidget(self.aoi_height_text)
 
-        self.filters.addLayout(self.aoi_layer_width)
-        self.filters.addLayout(self.aoi_layer_height)
+        self.filters.addLayout(self.aoi_layer_top)
+        self.filters.addLayout(self.aoi_layer_bottom)
 
         self.toggle_aoi_width.setEnabled(False)
         self.toggle_aoi_height.setEnabled(False)
-        # ---
 
-        # layers for fixation and saccade visuals
-        self.fixation_layer = QHBoxLayout()
-        self.checkbox_show_fixations = QCheckBox("Show Fixations")
-        self.checkbox_show_fixations.setEnabled(False)
-        
-        self.toggle_fixation_opacity = QSpinBox()
-        self.toggle_fixation_opacity.setMaximum(10)
-        self.toggle_fixation_opacity.setValue(4)
-        self.toggle_fixation_opacity.setMinimum(1)
-        
-        self.fixation_opacity_text = QLabel("Fixation Opacity")
-        self.fixation_layer.addWidget(self.checkbox_show_fixations)
-        self.fixation_layer.addWidget(self.toggle_fixation_opacity)
-        self.fixation_layer.addWidget(self.fixation_opacity_text)
 
-        self.filters.addLayout(self.fixation_layer)
-
-        self.saccade_layer = QHBoxLayout()
-        self.checkbox_show_saccades = QCheckBox("Show Saccades")
-        self.checkbox_show_saccades.setEnabled(False)
-        
-        self.toggle_saccade_opacity = QSpinBox()
-        self.toggle_saccade_opacity.setMaximum(10)
-        self.toggle_saccade_opacity.setValue(4)
-        self.toggle_saccade_opacity.setMinimum(1)
-        
-        self.saccade_opacity_text = QLabel("Saccade Opacity")
-        self.saccade_layer.addWidget(self.checkbox_show_saccades)
-        self.saccade_layer.addWidget(self.toggle_saccade_opacity)
-        self.saccade_layer.addWidget(self.saccade_opacity_text)
-
-        self.filters.addLayout(self.saccade_layer)
-
-        self.toggle_fixation_opacity.setEnabled(False)
-        self.toggle_saccade_opacity.setEnabled(False)
-        # ---
-
-        self.checkbox_show_suggestion = QCheckBox("Show Suggested Correction")
-        self.checkbox_show_suggestion.setEnabled(False)
-        # self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)
-        self.filters.addWidget(self.checkbox_show_suggestion)
-
-        # layer for fixation size customization 
-        self.fixation_size_layer = QHBoxLayout()
-
-        self.fixation_size_bar = QSlider(Qt.Horizontal)
-        self.fixation_size_bar.setMinimum(1)
-        self.fixation_size_bar.setMaximum(30)
-        self.fixation_size_bar.setValue(5)
-        self.fixation_size_bar.setEnabled(False)
-        
-
-        
-        self.fixation_size_text = QLabel("Fixation Size")
-        self.fixation_size_layer.addWidget(self.fixation_size_bar)
-        self.fixation_size_layer.addWidget(self.fixation_size_text)
-
-        self.filters.addLayout(self.fixation_size_layer)
-        # ---
-
-        self.visualization_frame = QFrame()
-
-        self.visualization_frame.setLayout(self.filters)
-        self.visualization_panel.addWidget(self.visualization_frame)
-
-        # --
-        self.button_fixation_color = QPushButton("Fixation Color")
-        self.button_saccade_color = QPushButton("Saccade Color")
-        self.button_current_fixation_color = QPushButton("Current Fix. Color")
-        self.button_suggested_fixation_color = QPushButton("Suggestion Color")
-        self.button_coloblind_assist = QPushButton("Colorblind Assist")
-        
-        self.button_fixation_color.setEnabled(False)
-        self.button_saccade_color.setEnabled(False)
-        self.button_current_fixation_color.setEnabled(False)
-        self.button_suggested_fixation_color.setEnabled(False)
-        self.button_coloblind_assist.setEnabled(False)
-
-        self.layer_fixation_color = QHBoxLayout()
-        self.layer_fixation_color.addWidget(self.button_fixation_color)
-        self.layer_fixation_color.addWidget(self.button_saccade_color)
-
-        self.second_layer_fixation_color = QHBoxLayout()
-        self.second_layer_fixation_color.addWidget(self.button_current_fixation_color)
-        self.second_layer_fixation_color.addWidget(self.button_suggested_fixation_color)
-
-        self.third_layer_fixation_color = QHBoxLayout()
-        
-        self.third_layer_fixation_color.addWidget(self.button_coloblind_assist)
-
-        self.filters.addLayout(self.layer_fixation_color)
-        self.filters.addLayout(self.second_layer_fixation_color)
-        self.filters.addLayout(self.third_layer_fixation_color)
+        self.filters.addLayout(self.colorblind_button_layer)
 
         self.left_side.addLayout(self.visualization_panel)
 
@@ -501,7 +567,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.toggle_fixation_opacity.valueChanged.connect(self.fix8.fixation_opacity_changed)
         self.checkbox_show_saccades.stateChanged.connect(self.fix8.quick_draw_canvas)
         self.toggle_saccade_opacity.valueChanged.connect(self.fix8.saccade_opacity_changed)
-        self.fixation_size_bar.valueChanged.connect(self.fix8.fixation_size_changed)
+        self.fixation_size_box.valueChanged.connect(self.fix8.fixation_size_changed)
         self.button_fixation_color.clicked.connect(self.fix8.select_fixation_color)
         self.button_saccade_color.clicked.connect(self.fix8.select_saccade_color)
         self.button_current_fixation_color.clicked.connect(self.fix8.select_current_fixation_color)
@@ -614,7 +680,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.button_coloblind_assist.setEnabled(False)
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
-            self.fixation_size_bar.setEnabled(False)
+            self.fixation_size_box.setEnabled(False)
 
         elif feature == "trial_clicked":
             self.save_correction_json_action.setEnabled(True)
@@ -648,7 +714,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.button_current_fixation_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
-            self.fixation_size_bar.setEnabled(True)
+            self.fixation_size_box.setEnabled(True)
             self.button_coloblind_assist.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal
