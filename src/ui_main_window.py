@@ -107,7 +107,6 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.statistics_table.verticalHeader().setVisible(False)
         self.statistics_table.horizontalHeader().setVisible(False)
 
-
         self.statistics_table.setItem(0, 0, QTableWidgetItem("Trial duration"))
         self.statistics_table.setItem(1, 0, QTableWidgetItem("Max fixation duration"))
         self.statistics_table.setItem(2, 0, QTableWidgetItem("Min fixation duration"))
@@ -129,7 +128,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # add the table to the layout
         self.trial_statistics.addWidget(self.statistics_table)
 
-        #self.statistics_table.setHidden(True)
+        self.statistics_table.setHidden(True)
         self.left_side.addLayout(self.trial_statistics)
         
 
@@ -567,6 +566,11 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             else:
                 self.light_menue_style.addAction(action)
 
+        
+        self.color_blind_action = QAction('Colorblind Assist', self)
+        self.menu_style.addAction(self.color_blind_action)
+        self.color_blind_action.triggered.connect(self.fix8.colorblind_assist)
+
         self.canvas.mpl_connect("button_press_event", self.fix8.button_press_callback)
         self.canvas.mpl_connect("button_release_event", self.fix8.button_release_callback)
         self.canvas.mpl_connect("motion_notify_event", self.fix8.motion_notify_callback)
@@ -767,12 +771,12 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
     def hide_side_panel(self):
         self.trial_list.setHidden(True)
         self.visualization_frame.setHidden(True)
-        self.statistics_table.setHidden(True)
+        #self.statistics_table.setHidden(True)
 
     def show_side_panel(self):
         self.trial_list.setHidden(False)
         self.visualization_frame.setHidden(False)
-        self.statistics_table.setHidden(False)
+        #self.statistics_table.setHidden(False)
 
     def show_hide_trial_list(self):
         self.trial_list.setHidden(not self.trial_list.isHidden())
