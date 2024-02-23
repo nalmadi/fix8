@@ -1249,9 +1249,18 @@ class Fix8():
         self.trial_name = self.trial_path.split("/")[-1]
         
         if self.trial_path.endswith(".json"):
-            self.read_json_fixations(self.trial_path)
+            ok = self.read_json_fixations(self.trial_path)
+            if not ok:
+                self.trial_name = None
+                self.trial_path = None
+                return
+
         elif self.trial_path.endswith(".csv"):
-            self.read_csv_fixations(self.trial_path)
+            ok = self.read_csv_fixations(self.trial_path)
+            if not ok:
+                self.trial_name = None
+                self.trial_path = None
+                return
 
         # clear history for undo
         self.state_history = History()
@@ -1363,9 +1372,18 @@ class Fix8():
         self.trial_path = self.trials[item.text()]
 
         if self.trial_path.endswith(".json"):
-            self.read_json_fixations(self.trial_path)
+            ok = self.read_json_fixations(self.trial_path)
+            if not ok:
+                self.trial_name = None
+                self.trial_path = None
+                return
+
         elif self.trial_path.endswith(".csv"):
-            self.read_csv_fixations(self.trial_path)
+            ok = self.read_csv_fixations(self.trial_path)
+            if not ok:
+                self.trial_name = None
+                self.trial_path = None
+                return
 
         # clear history for undo
         self.state_history = History()
@@ -1413,15 +1431,12 @@ class Fix8():
         duration = []
 
         with open(trial_path, "r") as trial:
-            try:
-                trial_data = json.load(trial)
-                for key in trial_data:
-                    x_cord.append(trial_data[key][0])
-                    y_cord.append(trial_data[key][1])
-                    duration.append(trial_data[key][2])
 
-            except json.decoder.JSONDecodeError:
-                self.show_error_message("Trial File Error", "JSON File Empty")
+            trial_data = json.load(trial)
+            for key in trial_data:
+                x_cord.append(trial_data[key][0])
+                y_cord.append(trial_data[key][1])
+                duration.append(trial_data[key][2])
 
         # create an empty dataframe
         eye_events = pd.DataFrame(columns=["x_cord", "y_cord", "duration"])
@@ -1437,11 +1452,16 @@ class Fix8():
         parameters:
         trial_path - the trial file path of the trial clicked on"""
 
-        self.eye_events = self.json_to_df(trial_path)
-        self.original_fixations = self.eye_events.drop(columns=["eye_event"])
-
-        self.original_fixations = np.array(self.original_fixations)
+        try:
+            self.eye_events = self.json_to_df(trial_path)
+            self.original_fixations = self.eye_events.drop(columns=["eye_event"])
+            self.original_fixations = np.array(self.original_fixations)
+        except:
+            self.show_error_message("Trial File Error", "Problem reading CSV File")     
+            return False
+        
         self.ui.relevant_buttons("trial_clicked")
+        return True
 
 
     def read_csv_fixations(self, trial_path):
@@ -1453,13 +1473,13 @@ class Fix8():
         try:
             # open the csv file with pandas
             self.eye_events = pd.read_csv(trial_path)
+            
+            # get the fixations from the csv file
+            fixations = self.eye_events[self.eye_events["eye_event"] == "fixation"]
 
         except:
             self.show_error_message("Trial File Error", "Problem reading CSV File")     
-            return
-
-        # get the fixations from the csv file
-        fixations = self.eye_events[self.eye_events["eye_event"] == "fixation"]
+            return False
 
         # get the x, y, and duration of the fixations
         for index, row in fixations.iterrows():
@@ -1467,6 +1487,7 @@ class Fix8():
 
         self.original_fixations = np.array(self.original_fixations)
         self.ui.relevant_buttons("trial_clicked")
+        return True
     
 
     def clear_saccades(self):
