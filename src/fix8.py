@@ -68,7 +68,7 @@ from pathlib import Path
 
 import mini_emtk
 from merge_fixations_dialog import InputDialog
-from eyelink_toCSV_dialog import EyelinkDialog
+from eyelink_csv_dialog import EyelinkDialog
 from state import Fix8State, History
 import canvas_resources
 import ui_main_window
@@ -500,16 +500,15 @@ class Fix8():
         ''' convert eyelink experiment to csv files from ASCII and runtime folder '''
         dialog = EyelinkDialog(self.ui)
 
-        if dialog.exec_():
-            # get user inputs
-            ascii_file, runtime_folder, save_folder = dialog.getInputs()
+        # get user inputs
+        ascii_file, runtime_folder, save_folder = dialog.getInputs()
 
-            if not ascii_file or not runtime_folder or not save_folder:
-                self.show_error_message("Error", "Required fields are missing")
-                return
+        if not ascii_file or not runtime_folder or not save_folder:
+            self.show_error_message("Error", "Required fields are missing")
+            return
 
-            self.show_error_message("Warning", "Conversion may take a while")
-            mini_emtk.read_EyeLink1000_experiment(ascii_file, save_folder, runtime_folder=runtime_folder)
+        self.show_error_message("Warning", "Conversion may take a while")
+        mini_emtk.read_EyeLink1000_experiment(ascii_file, save_folder, runtime_folder=runtime_folder)
 
     def outlier_duration_filter(self):
         minimum_value = 0.1
