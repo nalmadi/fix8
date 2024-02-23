@@ -34,6 +34,7 @@ class EyelinkDialog(QDialog):
 
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
+        self.exec_()
 
     def select_ascii_file(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Select ASCII file", "", "ASCII Files (*.asc)")
