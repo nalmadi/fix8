@@ -17,6 +17,8 @@ from PyQt5.QtWidgets import (
     QSpinBox,
     QStatusBar,
     QAction,
+    QTableWidget, 
+    QTableWidgetItem
 )
 
 import canvas_resources
@@ -90,9 +92,51 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.right_side.addLayout(self.progress_tools)
 
-        self.below_canvas = QHBoxLayout()
 
-        # --- section for filters
+
+        # section for trial statistics panel
+        self.trial_statistics = QVBoxLayout()
+
+        # add a qtablewidget for trial statistics
+        self.statistics_table = QTableWidget(self)
+
+        self.statistics_table.setColumnCount(2)
+        self.statistics_table.setRowCount(5)
+        # remove horizontal and vertical headers
+        self.statistics_table.verticalHeader().setVisible(False)
+        self.statistics_table.horizontalHeader().setVisible(False)
+
+
+        self.statistics_table.setItem(0, 0, QTableWidgetItem("Trial duration"))
+        self.statistics_table.setItem(1, 0, QTableWidgetItem("Max fixation duration"))
+        self.statistics_table.setItem(2, 0, QTableWidgetItem("Min fixation duration"))
+        self.statistics_table.setItem(3, 0, QTableWidgetItem("Number of AOIs"))
+        self.statistics_table.setItem(4, 0, QTableWidgetItem("Number of regressions"))
+        #self.statistics_table.setItem(5, 0, QTableWidgetItem("Current x, y, duration"))
+
+        self.statistics_table.setItem(0, 1, QTableWidgetItem("0"))
+        self.statistics_table.setItem(1, 1, QTableWidgetItem("0"))
+        self.statistics_table.setItem(2, 1, QTableWidgetItem("0"))
+        self.statistics_table.setItem(3, 1, QTableWidgetItem("0"))
+        self.statistics_table.setItem(4, 1, QTableWidgetItem("-"))
+        #self.statistics_table.setItem(5, 1, QTableWidgetItem("0"))
+
+        # expand the first column horizontally to show the text
+        self.statistics_table.horizontalHeader().setSectionResizeMode(0, 1)
+        self.statistics_table.horizontalHeader().setSectionResizeMode(1, 1)
+
+        # add the table to the layout
+        self.trial_statistics.addWidget(self.statistics_table)
+
+        #self.statistics_table.setHidden(True)
+        self.left_side.addLayout(self.trial_statistics)
+        
+
+
+
+
+        # --- section for visualization panel
+        self.visualization_panel = QHBoxLayout()
         self.filters = QVBoxLayout()
 
         self.label_filters = QLabel("Visualization")
@@ -194,29 +238,17 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # ---
 
         self.visualization_frame = QFrame()
-        # self.frame3.setStyleSheet(
-        #     " QFrame {border: 2px solid black; margin: 0px; padding: 0px;}"
-        # )
-        # self.label_filters.setStyleSheet("QLabel { border: 0px }")
+
         self.visualization_frame.setLayout(self.filters)
-        self.below_canvas.addWidget(self.visualization_frame)
-        #self.frame3.setHidden(True)
+        self.visualization_panel.addWidget(self.visualization_frame)
+
         # --
         self.button_fixation_color = QPushButton("Fixation Color")
-        
-        
         self.button_saccade_color = QPushButton("Saccade Color")
-        
-
         self.button_current_fixation_color = QPushButton("Current Fix. Color")
-        
-
         self.button_suggested_fixation_color = QPushButton("Suggestion Color")
-        
-
         self.button_coloblind_assist = QPushButton("Colorblind Assist")
         
-
         self.button_fixation_color.setEnabled(False)
         self.button_saccade_color.setEnabled(False)
         self.button_current_fixation_color.setEnabled(False)
@@ -227,14 +259,11 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.layer_fixation_color.addWidget(self.button_fixation_color)
         self.layer_fixation_color.addWidget(self.button_saccade_color)
 
-        
-
         self.second_layer_fixation_color = QHBoxLayout()
         self.second_layer_fixation_color.addWidget(self.button_current_fixation_color)
         self.second_layer_fixation_color.addWidget(self.button_suggested_fixation_color)
 
         self.third_layer_fixation_color = QHBoxLayout()
-
         
         self.third_layer_fixation_color.addWidget(self.button_coloblind_assist)
 
@@ -242,10 +271,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.filters.addLayout(self.second_layer_fixation_color)
         self.filters.addLayout(self.third_layer_fixation_color)
 
-        self.left_side.addLayout(self.below_canvas)
-        # --
+        self.left_side.addLayout(self.visualization_panel)
 
-        #self.right_side.addLayout(self.below_canvas)
 
         # add both sides to overall wrapper layout
         self.wrapper_layout.addLayout(self.left_side)
@@ -308,7 +335,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.trial_list_action = QAction("Show/Hide Trial List", self)
         self.trial_summary_action = QAction("Show/Hide Trial Summary", self)
         self.visualization_panel_action = QAction("Show/Hide Visualization Panel", self)
-        self.hude_side_panel_action = QAction("Show/Hide Side Panel", self)
+        self.hide_side_panel_action = QAction("Show/Hide Side Panel", self)
 
         self.generate_fixations_action = QAction("Generate Fixations", self)
         self.generate_fixations_skip_action = QAction("Generate Fixations (Skip)", self)
@@ -393,7 +420,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.view_menu.addAction(self.trial_list_action)
         self.view_menu.addAction(self.trial_summary_action)
         self.view_menu.addAction(self.visualization_panel_action)
-        self.view_menu.addAction(self.hude_side_panel_action)
+        self.view_menu.addAction(self.hide_side_panel_action)
 
         # Generate
         self.synthetic_data_menu.addAction(self.generate_fixations_action)
@@ -498,7 +525,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.trial_list_action.triggered.connect(self.show_hide_trial_list)
         self.trial_summary_action.triggered.connect(self.show_hide_trial_summary)
         self.visualization_panel_action.triggered.connect(self.show_hide_visualization_panel)
-        self.hude_side_panel_action.triggered.connect(self.show_hide_side_panel)
+        self.hide_side_panel_action.triggered.connect(self.show_hide_side_panel)
 
         self.generate_fixations_action.triggered.connect(self.fix8.generate_fixations)
         self.generate_fixations_skip_action.triggered.connect(self.fix8.generate_fixations_skip)
@@ -659,10 +686,12 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
     def hide_side_panel(self):
         self.trial_list.setHidden(True)
         self.visualization_frame.setHidden(True)
+        self.statistics_table.setHidden(True)
 
     def show_side_panel(self):
         self.trial_list.setHidden(False)
         self.visualization_frame.setHidden(False)
+        self.statistics_table.setHidden(False)
 
     def show_hide_trial_list(self):
         self.trial_list.setHidden(not self.trial_list.isHidden())
@@ -670,7 +699,9 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.fix8.draw_canvas()
 
     def show_hide_trial_summary(self):
-        pass
+        self.statistics_table.setHidden(not self.statistics_table.isHidden())
+        if self.fix8.image_file_path is not None:
+            self.fix8.draw_canvas()
 
     def show_hide_visualization_panel(self):
         self.visualization_frame.setHidden(not self.visualization_frame.isHidden())
