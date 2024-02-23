@@ -25,6 +25,7 @@ correction methods for eye tracking data in reading tasks.
 
 import time
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
 
 # from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import (
@@ -1914,7 +1915,7 @@ class Fix8():
         self.quick_draw_canvas()
 
     def select_fixation_color(self):
-        color = QColorDialog.getColor(initial=Qt.red)
+        color = QColorDialog.getColor(initial=QColor(self.fixation_color))
         if color.isValid():
             self.fixation_color = str(color.name())
         else:
@@ -1923,7 +1924,7 @@ class Fix8():
         self.quick_draw_canvas(all_fixations=False)
 
     def select_current_fixation_color(self):
-        color = QColorDialog.getColor(initial=Qt.red)
+        color = QColorDialog.getColor(initial=QColor(self.current_fixation_color))
         if color.isValid():
             self.current_fixation_color = str(color.name())
         else:
@@ -1932,7 +1933,7 @@ class Fix8():
         self.quick_draw_canvas(all_fixations=False)
 
     def select_suggested_fixation_color(self):
-        color = QColorDialog.getColor(initial=Qt.red)
+        color = QColorDialog.getColor(initial=QColor(self.suggested_fixation_color))
         if color.isValid():
             self.suggested_fixation_color = str(color.name())
         else:
@@ -1941,7 +1942,7 @@ class Fix8():
         self.quick_draw_canvas(all_fixations=False)
 
     def select_saccade_color(self):
-        color = QColorDialog.getColor(initial=Qt.blue)
+        color = QColorDialog.getColor(initial=QColor(self.saccade_color))
         if color.isValid():
             self.saccade_color = str(color.name())
         else:
