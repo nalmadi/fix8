@@ -18,7 +18,8 @@ from PyQt5.QtWidgets import (
     QStatusBar,
     QAction,
     QTableWidget, 
-    QTableWidgetItem
+    QTableWidgetItem,
+    QSpacerItem
 )
 
 import canvas_resources
@@ -139,6 +140,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.label_filters = QLabel("Visualization")
         self.label_filters.setAlignment(Qt.AlignCenter)
         self.filters.addWidget(self.label_filters)
+        self.filters.addSpacerItem(QSpacerItem(20, 10))
         
         # ---------------------------------------------------------------------
 
@@ -194,11 +196,12 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.filters.addLayout(self.fixation_layer_bottom)
 
+        self.filters.addSpacerItem(QSpacerItem(20, 10))
         fixation_line_separator = QFrame(self)
         fixation_line_separator.setFrameShape(QFrame.HLine)
         fixation_line_separator.setFrameShadow(QFrame.Sunken)
         self.filters.addWidget(fixation_line_separator)
-
+        self.filters.addSpacerItem(QSpacerItem(20, 10))
         
         # ---------------------------------------------------------------------
         # Suggestion
@@ -214,10 +217,12 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.suggestion_layer_top.addWidget(self.button_suggested_fixation_color)
         self.filters.addLayout(self.suggestion_layer_top)
 
+        self.filters.addSpacerItem(QSpacerItem(20, 10))
         suggestion_line_separator = QFrame(self)
         suggestion_line_separator.setFrameShape(QFrame.HLine)
         suggestion_line_separator.setFrameShadow(QFrame.Sunken)
         self.filters.addWidget(suggestion_line_separator)
+        self.filters.addSpacerItem(QSpacerItem(20, 10))
 
         # ---------------------------------------------------------------------
         # Saccades
@@ -277,18 +282,18 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
 
 
+        self.filters.addSpacerItem(QSpacerItem(20, 10))
         saccade_line_separator = QFrame(self)
         saccade_line_separator.setFrameShape(QFrame.HLine)
         saccade_line_separator.setFrameShadow(QFrame.Sunken)
         self.filters.addWidget(saccade_line_separator)
+        self.filters.addSpacerItem(QSpacerItem(20, 10))
         
-        self.button_coloblind_assist = QPushButton("Colorblind Assist")
-        
-        
-        
-        self.button_coloblind_assist.setEnabled(False)
+        # self.colorblind_button_layer.addWidget(self.button_coloblind_assist)
+        # self.button_coloblind_assist = QPushButton("Colorblind Assist")
+        # self.button_coloblind_assist.setEnabled(False)
 
-        self.layer_fixation_color = QHBoxLayout()
+        #self.layer_fixation_color = QHBoxLayout()
         #self.layer_fixation_color.addWidget(self.button_fixation_color)
         
 
@@ -296,46 +301,56 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         #self.second_layer_fixation_color.addWidget(self.button_current_fixation_color)
         #self.second_layer_fixation_color.addWidget(self.button_suggested_fixation_color)
 
-        self.colorblind_button_layer = QHBoxLayout()
+        #self.colorblind_button_layer = QHBoxLayout()
         
-        self.colorblind_button_layer.addWidget(self.button_coloblind_assist)
-
-        self.filters.addLayout(self.layer_fixation_color)
+        
+        #self.filters.addLayout(self.layer_fixation_color)
         #self.filters.addLayout(self.second_layer_fixation_color)
 
         # ---------------------------------------------------------------------
         # AOI 
         self.aoi_layer_top = QHBoxLayout()
-        self.aoi_layer_bottom = QHBoxLayout()
+
+        
         self.checkbox_show_aoi = QCheckBox("Show AOIs")
         self.checkbox_show_aoi.setEnabled(False)
 
+        self.aoi_width_layer = QHBoxLayout()
         self.toggle_aoi_width = QSpinBox()
         self.toggle_aoi_width.setMaximum(50)
         self.toggle_aoi_width.setMinimum(1)
         self.toggle_aoi_width.setValue(7)
+        self.aoi_width_text = QLabel("Width")
+        self.aoi_width_layer.addWidget(self.toggle_aoi_width)
+        self.aoi_width_layer.addWidget(self.aoi_width_text)
+        self.toggle_aoi_width.setEnabled(False)
+
+        self.aoi_layer_top.addWidget(self.checkbox_show_aoi)
+        self.aoi_layer_top.addLayout(self.aoi_width_layer)
+
+        self.aoi_layer_bottom = QHBoxLayout()
+        self.button_aoi_color = QPushButton("AOIs Color")
+        self.button_aoi_color.setEnabled(False)
+        self.aoi_layer_bottom.addWidget(self.button_aoi_color)
+        
+        self.aoi_height_layer = QHBoxLayout()
         self.toggle_aoi_height = QSpinBox()
         self.toggle_aoi_height.setMaximum(100)
         self.toggle_aoi_height.setMinimum(1)
         self.toggle_aoi_height.setValue(4)
-        
-        self.aoi_width_text = QLabel("Width")
         self.aoi_height_text = QLabel("Height")
-        self.aoi_layer_top.addWidget(self.checkbox_show_aoi)
-        self.aoi_layer_bottom.addWidget(self.toggle_aoi_width)
-        self.aoi_layer_bottom.addWidget(self.aoi_width_text)
-        self.aoi_layer_bottom.addWidget(self.checkbox_show_aoi)
-        self.aoi_layer_bottom.addWidget(self.toggle_aoi_height)
-        self.aoi_layer_bottom.addWidget(self.aoi_height_text)
+        self.toggle_aoi_height.setEnabled(False)
+        self.aoi_height_layer.addWidget(self.toggle_aoi_height)
+        self.aoi_height_layer.addWidget(self.aoi_height_text)
+
+        self.aoi_layer_bottom.addLayout(self.aoi_height_layer)
 
         self.filters.addLayout(self.aoi_layer_top)
         self.filters.addLayout(self.aoi_layer_bottom)
 
-        self.toggle_aoi_width.setEnabled(False)
-        self.toggle_aoi_height.setEnabled(False)
 
 
-        self.filters.addLayout(self.colorblind_button_layer)
+        #self.filters.addLayout(self.colorblind_button_layer)
 
         self.left_side.addLayout(self.visualization_panel)
 
@@ -572,7 +587,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.button_saccade_color.clicked.connect(self.fix8.select_saccade_color)
         self.button_current_fixation_color.clicked.connect(self.fix8.select_current_fixation_color)
         self.button_suggested_fixation_color.clicked.connect(self.fix8.select_suggested_fixation_color)
-        self.button_coloblind_assist.clicked.connect(self.fix8.colorblind_assist)
+        #self.button_coloblind_assist.clicked.connect(self.fix8.colorblind_assist)
         # connect functions
         self.new_file_action.triggered.connect(self.fix8.open_trial_folder)
         self.open_image_action.triggered.connect(self.fix8.open_image)
@@ -677,7 +692,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.button_current_fixation_color.setEnabled(False)
             self.toggle_aoi_width.setEnabled(False)
             self.toggle_aoi_height.setEnabled(False)
-            self.button_coloblind_assist.setEnabled(False)
+            #self.button_coloblind_assist.setEnabled(False)
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
             self.fixation_size_box.setEnabled(False)
@@ -715,7 +730,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
             self.fixation_size_box.setEnabled(True)
-            self.button_coloblind_assist.setEnabled(True)
+            #self.button_coloblind_assist.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal
             # happens in the checkbox connected method,
