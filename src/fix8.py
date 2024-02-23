@@ -1215,8 +1215,7 @@ class Fix8():
                 self.find_aoi()
                 self.ui.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
-                self.ui.show_hide_trial_list()
-                self.ui.show_hide_visualization_panel()
+                self.ui.show_side_panel()
 
 
     def open_image(self):
