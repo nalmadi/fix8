@@ -1300,18 +1300,26 @@ class Fix8():
         if self.eye_events is not None and 'time_stamp' in self.eye_events.columns:
             duration = self.eye_events.iloc[-1]["time_stamp"] - self.eye_events.iloc[0]["time_stamp"]
             self.ui.statistics_table.setItem(0, 1, QTableWidgetItem(str(duration//1000) + " sec"))
+        else:
+            self.ui.statistics_table.setItem(0, 1, QTableWidgetItem("-"))
 
         # get maximum fixation duration
         if self.fixations is not None:
             self.ui.statistics_table.setItem(1, 1, QTableWidgetItem(str(np.max(self.fixations[:, 2]))))
+        else:
+            self.ui.statistics_table.setItem(1, 1, QTableWidgetItem("-"))
 
         # get minimum fixation duration
         if self.fixations is not None:
             self.ui.statistics_table.setItem(2, 1, QTableWidgetItem(str(np.min(self.fixations[:, 2]))))
+        else:
+            self.ui.statistics_table.setItem(2, 1, QTableWidgetItem("-"))
 
         # get the number of aois
         if self.aoi is not None:
             self.ui.statistics_table.setItem(3, 1, QTableWidgetItem(str(len(self.aoi))))
+        else:
+            self.ui.statistics_table.setItem(3, 1, QTableWidgetItem("-"))
 
         # if self.current_fixation is not None:
         #     self.ui.statistics_table.setItem(5, 1, QTableWidgetItem(str(self.fixations[self.current_fixation])))
@@ -1439,8 +1447,8 @@ class Fix8():
         parameters:
         trial_path - the trial file path of the trial clicked on"""
 
-        self.original_fixations = self.json_to_df(trial_path)
-        self.original_fixations.drop(columns=["eye_event"], inplace=True)
+        self.eye_events = self.json_to_df(trial_path)
+        self.original_fixations = self.eye_events.drop(columns=["eye_event"])
 
         self.original_fixations = np.array(self.original_fixations)
         self.ui.relevant_buttons("trial_clicked")
