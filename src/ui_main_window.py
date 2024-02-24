@@ -771,7 +771,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
     def hide_side_panel(self):
         self.trial_list.setHidden(True)
         self.visualization_frame.setHidden(True)
-        #self.statistics_table.setHidden(True)
+        self.statistics_table.setHidden(True)
 
     def show_side_panel(self):
         self.trial_list.setHidden(False)
