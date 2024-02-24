@@ -85,6 +85,8 @@ class Fix8():
         self.blinks = None                  # TODO: replace with eye events:  timestamp duration
         self.fixation_points = None
         self.saccade_lines = None
+        self.fixation_number = None
+
         self.current_fixation = -1          # progress bar
         self.suggested_corrections = None
 
@@ -119,6 +121,7 @@ class Fix8():
         self.current_fixation_color = "magenta"
         self.suggested_fixation_color = "blue"
         self.saccade_color = "blue"
+        self.fixation_number_color = "red"
         self.aoi_color = "yellow"
         self.colorblind_assist_status = False
         
@@ -181,6 +184,8 @@ class Fix8():
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixation_number.setChecked(True)
+
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
@@ -234,6 +239,7 @@ class Fix8():
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixation_number.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
@@ -288,6 +294,7 @@ class Fix8():
         
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixation_number.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
@@ -342,6 +349,7 @@ class Fix8():
         
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixation_number.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
@@ -1063,6 +1071,9 @@ class Fix8():
             if self.ui.checkbox_show_saccades.isChecked():
                 self.clear_saccades()
 
+            if self.ui.checkbox_show_fixation_number.isChecked():
+                self.clear_text_elements()
+
         if event.button != 1:
             return
         # self.selected_fixation = None
@@ -1169,6 +1180,7 @@ class Fix8():
             self.ui.trial_list.clear()
             self.clear_fixations()
             self.clear_saccades()
+            self.clear_text_elements()
 
             # when open a new folder, block off all the relevant buttons that shouldn't be accesible until a trial is clicked
             self.ui.relevant_buttons("opened_folder")
@@ -1286,6 +1298,7 @@ class Fix8():
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixation_number.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.draw_canvas(draw_all=True)
 
@@ -1409,6 +1422,7 @@ class Fix8():
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
+        self.ui.checkbox_show_fixation_number.setChecked(True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.draw_canvas(draw_all=True)
 
@@ -1526,6 +1540,12 @@ class Fix8():
             self.ui.canvas.draw()
 
 
+    def clear_text_elements(self):
+        """Clear all text elements from the canvas."""
+        if self.ui.canvas.ax.texts != None:
+            for text in self.ui.canvas.ax.texts:
+                text.remove()
+            self.ui.canvas.draw()
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
     def draw_canvas(self, draw_all=False):
@@ -1547,6 +1567,8 @@ class Fix8():
         self.clear_saccades()
         self.clear_aois()
 
+        self.clear_text_elements()
+        
         # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
         # do the same for saccades
         if self.ui.checkbox_show_fixations.isCheckable():
@@ -1567,6 +1589,15 @@ class Fix8():
                 self.saccade_lines = self.ui.canvas.ax.plot(
                     x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
                 )
+        
+        if self.ui.checkbox_show_fixation_number.isCheckable():
+            if self.ui.checkbox_show_fixation_number.isChecked():
+                for i, (x_pos, y_pos, dur) in enumerate(zip(x, y, duration)):
+                    self.ui.canvas.ax.text(
+                        x_pos, y_pos, str(i + 1),
+                        color=self.fixation_number_color,
+                        fontsize=8
+                    )
 
         # draw suggested fixation in blue
         if self.ui.checkbox_show_suggestion.isChecked():
@@ -1650,6 +1681,17 @@ class Fix8():
                 x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
             )
             self.ui.canvas.ax.draw_artist(self.saccade_lines[0])
+        
+        # draw fixation numbers
+        if self.ui.checkbox_show_fixation_number.isChecked():
+            for i, (x_pos, y_pos, dur) in enumerate(zip(x, y, duration)):
+                # Create a text element for each fixation point and add it to the list
+                text_element = self.ui.canvas.ax.text(
+                    x_pos, y_pos, str(i + 1),
+                    color=self.fixation_number_color,
+                    fontsize=8
+                )
+                self.ui.canvas.ax.draw_artist(text_element)
 
         # draw suggested fixation in blue (or selected color)
         if self.ui.checkbox_show_suggestion.isChecked():
@@ -1947,6 +1989,15 @@ class Fix8():
             self.saccade_color = str(color.name())
         else:
             self.saccade_color = "blue"
+
+        self.quick_draw_canvas(all_fixations=False)
+    
+    def select_fixation_number_color(self):
+        color = QColorDialog.getColor(initial=QColor(self.fixation_number_color))
+        if color.isValid():
+            self.fixation_number_color = str(color.name())
+        else:
+            self.fixation_number_color = "red"
 
         self.quick_draw_canvas(all_fixations=False)
 

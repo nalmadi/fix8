@@ -184,6 +184,19 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.filters.addLayout(self.fixation_layer_middle)
 
+        # ---------------------------------------------------------------------
+        # Fixation Number
+        self.fixation_number_layer_top = QHBoxLayout()
+        self.checkbox_show_fixation_number = QCheckBox("Show Fixation Number")
+        self.checkbox_show_fixation_number.setEnabled(False)  # Enable the checkbox
+        self.fixation_number_layer_top.addWidget(self.checkbox_show_fixation_number)
+        self.filters.addLayout(self.fixation_number_layer_top)
+
+        self.button_fixation_number_color = QPushButton("Fixation Number Color")
+        self.button_fixation_number_color.setEnabled(False)
+        self.fixation_number_layer_top.addWidget(self.button_fixation_number_color)
+        # ---------------------------------------------------------------------
+
         self.fixation_layer_bottom = QHBoxLayout()
         self.button_fixation_color = QPushButton("Fixation Color")
         self.button_current_fixation_color = QPushButton("Current Fix. Color")
@@ -583,12 +596,14 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.toggle_aoi_width.valueChanged.connect(self.fix8.aoi_width_changed)
         self.toggle_aoi_height.valueChanged.connect(self.fix8.aoi_height_changed)
         self.checkbox_show_fixations.stateChanged.connect(self.fix8.quick_draw_canvas)
+        self.checkbox_show_fixation_number.stateChanged.connect(self.fix8.quick_draw_canvas)
         self.toggle_fixation_opacity.valueChanged.connect(self.fix8.fixation_opacity_changed)
         self.checkbox_show_saccades.stateChanged.connect(self.fix8.quick_draw_canvas)
         self.toggle_saccade_opacity.valueChanged.connect(self.fix8.saccade_opacity_changed)
         self.fixation_size_box.valueChanged.connect(self.fix8.fixation_size_changed)
         self.button_fixation_color.clicked.connect(self.fix8.select_fixation_color)
         self.button_saccade_color.clicked.connect(self.fix8.select_saccade_color)
+        self.button_fixation_number_color.clicked.connect(self.fix8.select_fixation_number_color)
         self.button_current_fixation_color.clicked.connect(self.fix8.select_current_fixation_color)
         self.button_suggested_fixation_color.clicked.connect(self.fix8.select_suggested_fixation_color)
         #self.button_coloblind_assist.clicked.connect(self.fix8.colorblind_assist)
@@ -692,6 +707,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.button_fixation_color.setEnabled(False)
             self.button_saccade_color.setEnabled(False)
+            self.checkbox_show_fixation_number.setEnabled(False)
+            self.button_fixation_number_color.setEnabled(False)
             self.button_suggested_fixation_color.setEnabled(False)
             self.button_current_fixation_color.setEnabled(False)
             self.toggle_aoi_width.setEnabled(False)
@@ -719,6 +736,9 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.checkbox_show_aoi.setCheckable(True)
             self.checkbox_show_aoi.setEnabled(True)
 
+            self.checkbox_show_fixation_number.setCheckable(True)
+            self.checkbox_show_fixation_number.setEnabled(True)
+
             self.checkbox_show_fixations.setCheckable(True)
             self.checkbox_show_fixations.setEnabled(True)
 
@@ -729,6 +749,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.toggle_aoi_height.setEnabled(True)
             self.button_fixation_color.setEnabled(True)
             self.button_saccade_color.setEnabled(True)
+            self.button_fixation_number_color.setEnabled(True)
+
             self.button_suggested_fixation_color.setEnabled(False)
             self.button_current_fixation_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
