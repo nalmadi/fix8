@@ -1673,8 +1673,6 @@ class Fix8():
 
         # draw aois
         if self.ui.checkbox_show_aoi.isChecked():
-            color = self.aoi_color
-
             for row in self.aoi.iterrows():
 
                 xcord = row[1]["x"]
@@ -1688,7 +1686,7 @@ class Fix8():
                         width - 1,
                         height - 1,
                         linewidth=0.8,
-                        edgecolor=color,
+                        edgecolor=self.aoi_color,
                         facecolor="none",
                         alpha=0.65,
                     )
@@ -1955,7 +1953,7 @@ class Fix8():
         self.quick_draw_canvas(all_fixations=False)
 
     def select_aoi_color(self):
-        color = QColorDialog.getColor(initial=self.aoi_color)
+        color = QColorDialog.getColor(initial=QColor(self.aoi_color))
         if color.isValid():
             self.aoi_color = str(color.name())
         else:
