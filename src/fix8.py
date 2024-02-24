@@ -1324,7 +1324,7 @@ class Fix8():
         # if self.current_fixation is not None:
         #     self.ui.statistics_table.setItem(5, 1, QTableWidgetItem(str(self.fixations[self.current_fixation])))
 
-        self.ui.statistics_table.setHidden(False)
+        #self.ui.statistics_table.setHidden(False)
 
 
 
