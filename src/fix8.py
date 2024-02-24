@@ -1955,7 +1955,7 @@ class Fix8():
         self.quick_draw_canvas(all_fixations=False)
 
     def select_aoi_color(self):
-        color = QColorDialog.getColor(initial=Qt.yellow)
+        color = QColorDialog.getColor(initial=self.aoi_color)
         if color.isValid():
             self.aoi_color = str(color.name())
         else:
