@@ -125,6 +125,9 @@ class Fix8():
         # fields relating to fixation size
         self.fixation_size = 30
 
+        # fields relating to saccade line width
+        self.saccade_line_size = 1
+
         # create the main window
         self.fix8 = QApplication([])
         self.ui = ui_main_window.Ui_Main_Window(self)
@@ -1565,7 +1568,7 @@ class Fix8():
         if self.ui.checkbox_show_saccades.isCheckable():
             if self.ui.checkbox_show_saccades.isChecked():
                 self.saccade_lines = self.ui.canvas.ax.plot(
-                    x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
+                    x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=self.saccade_line_size
                 )
 
         # draw suggested fixation in blue
@@ -1585,7 +1588,8 @@ class Fix8():
 
         # draw aois
         if self.ui.checkbox_show_aoi.isChecked():
-            color = self.aoi_color #if self.background_color == "black" else "black"
+            color = self.aoi_color 
+
 
             for row in self.aoi.iterrows():
                 xcord = row[1]["x"]
@@ -1669,7 +1673,7 @@ class Fix8():
 
         # draw aois
         if self.ui.checkbox_show_aoi.isChecked():
-            color = self.aoi_color #if self.background_color == "black" else "black"
+            color = self.aoi_color
 
             for row in self.aoi.iterrows():
 
@@ -1957,7 +1961,7 @@ class Fix8():
         else:
             self.aoi_color = "black"
 
-        self.quick_draw_canvas(all_fixations=False)    
+        self.quick_draw_canvas(all_fixations=False)
 
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
@@ -1977,6 +1981,10 @@ class Fix8():
     def saccade_opacity_changed(self, value):
         self.saccade_opacity = float(value / 10)
         self.quick_draw_canvas(all_fixations=False)
+
+    def saccade_width_changed(self, value):
+        self.saccade_line_size = value
+        self.draw_canvas()
 
     def fixation_opacity_changed(self, value):
         self.fixation_opacity = float(value / 10)
