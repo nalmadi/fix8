@@ -129,7 +129,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # add the table to the layout
         self.trial_statistics.addWidget(self.statistics_table)
 
-        #self.statistics_table.setHidden(True)
+        self.statistics_table.setHidden(True)
         self.left_side.addLayout(self.trial_statistics)
         
 
@@ -567,6 +567,11 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             else:
                 self.light_menue_style.addAction(action)
 
+        
+        self.color_blind_action = QAction('Colorblind Assist', self)
+        self.menu_style.addAction(self.color_blind_action)
+        self.color_blind_action.triggered.connect(self.fix8.colorblind_assist)
+
         self.canvas.mpl_connect("button_press_event", self.fix8.button_press_callback)
         self.canvas.mpl_connect("button_release_event", self.fix8.button_release_callback)
         self.canvas.mpl_connect("motion_notify_event", self.fix8.motion_notify_callback)
@@ -585,6 +590,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.fixation_size_box.valueChanged.connect(self.fix8.fixation_size_changed)
         self.button_fixation_color.clicked.connect(self.fix8.select_fixation_color)
         self.button_saccade_color.clicked.connect(self.fix8.select_saccade_color)
+        self.button_aoi_color.clicked.connect(self.fix8.select_aoi_color)
         self.button_current_fixation_color.clicked.connect(self.fix8.select_current_fixation_color)
         self.button_suggested_fixation_color.clicked.connect(self.fix8.select_suggested_fixation_color)
         #self.button_coloblind_assist.clicked.connect(self.fix8.colorblind_assist)
@@ -688,6 +694,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.button_fixation_color.setEnabled(False)
             self.button_saccade_color.setEnabled(False)
+            self.button_aoi_color.setEnabled(False)
             self.button_suggested_fixation_color.setEnabled(False)
             self.button_current_fixation_color.setEnabled(False)
             self.toggle_aoi_width.setEnabled(False)
@@ -725,6 +732,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.toggle_aoi_height.setEnabled(True)
             self.button_fixation_color.setEnabled(True)
             self.button_saccade_color.setEnabled(True)
+            self.button_aoi_color.setEnabled(True)
             self.button_suggested_fixation_color.setEnabled(False)
             self.button_current_fixation_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
@@ -767,12 +775,12 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
     def hide_side_panel(self):
         self.trial_list.setHidden(True)
         self.visualization_frame.setHidden(True)
-        self.statistics_table.setHidden(True)
+        #self.statistics_table.setHidden(True)
 
     def show_side_panel(self):
         self.trial_list.setHidden(False)
         self.visualization_frame.setHidden(False)
-        self.statistics_table.setHidden(False)
+        #self.statistics_table.setHidden(False)
 
     def show_hide_trial_list(self):
         self.trial_list.setHidden(not self.trial_list.isHidden())

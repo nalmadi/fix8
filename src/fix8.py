@@ -118,7 +118,7 @@ class Fix8():
         self.current_fixation_color = "magenta"
         self.suggested_fixation_color = "blue"
         self.saccade_color = "blue"
-        self.aoi_color = "yellow"
+        self.aoi_color = "black"
         self.colorblind_assist_status = False
         
         # fields relating to fixation size
@@ -1563,7 +1563,7 @@ class Fix8():
 
         # draw aois
         if self.ui.checkbox_show_aoi.isChecked():
-            color = self.aoi_color if self.background_color == "black" else "black"
+            color = self.aoi_color #if self.background_color == "black" else "black"
 
             for row in self.aoi.iterrows():
                 xcord = row[1]["x"]
@@ -1647,7 +1647,7 @@ class Fix8():
 
         # draw aois
         if self.ui.checkbox_show_aoi.isChecked():
-            color = self.aoi_color if self.background_color == "black" else "black"
+            color = self.aoi_color #if self.background_color == "black" else "black"
 
             for row in self.aoi.iterrows():
 
@@ -1928,6 +1928,15 @@ class Fix8():
 
         self.quick_draw_canvas(all_fixations=False)
 
+    def select_aoi_color(self):
+        color = QColorDialog.getColor(initial=Qt.yellow)
+        if color.isValid():
+            self.aoi_color = str(color.name())
+        else:
+            self.aoi_color = "black"
+
+        self.quick_draw_canvas(all_fixations=False)    
+
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
             self.fixation_color = "#FF9E0A"
@@ -1939,7 +1948,7 @@ class Fix8():
         else:
             self.fixation_color = "red"
             self.saccade_color = "blue"
-            self.aoi_color = "yellow"
+            self.aoi_color = "black"
             self.colorblind_assist_status = False
             self.quick_draw_canvas(all_fixations=False)
 
