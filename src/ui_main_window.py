@@ -253,7 +253,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.saccade_size_box = QSpinBox()
         self.saccade_size_box.setMinimum(1)
         self.saccade_size_box.setMaximum(30)
-        self.saccade_size_box.setValue(5)
+        self.saccade_size_box.setValue(1)
         self.saccade_size_box.setEnabled(False)
         self.saccade_size_text = QLabel("Size")
         self.saccade_size_layer.addWidget(self.saccade_size_box)
@@ -587,6 +587,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.checkbox_show_saccades.stateChanged.connect(self.fix8.quick_draw_canvas)
         self.toggle_saccade_opacity.valueChanged.connect(self.fix8.saccade_opacity_changed)
         self.fixation_size_box.valueChanged.connect(self.fix8.fixation_size_changed)
+        self.saccade_size_box.valueChanged.connect(self.fix8.saccade_width_changed)
         self.button_fixation_color.clicked.connect(self.fix8.select_fixation_color)
         self.button_saccade_color.clicked.connect(self.fix8.select_saccade_color)
         self.button_aoi_color.clicked.connect(self.fix8.select_aoi_color)
@@ -702,6 +703,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
             self.fixation_size_box.setEnabled(False)
+            self.saccade_size_box.setEnabled(False)
 
         elif feature == "trial_clicked":
             self.save_correction_json_action.setEnabled(True)
@@ -737,6 +739,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
             self.fixation_size_box.setEnabled(True)
+            self.saccade_size_box.setEnabled(True)
             #self.button_coloblind_assist.setEnabled(True)
 
             # IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal
