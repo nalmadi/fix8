@@ -571,6 +571,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.menu_style.addAction(self.color_blind_action)
         self.color_blind_action.triggered.connect(self.fix8.colorblind_assist)
 
+        self.lock_x_axis_action = QAction('Lock X Axis', self)
+        self.correction_menu.addAction(self.lock_x_axis_action)
+        self.lock_x_axis_action.triggered.connect(self.fix8.lock_x_axis)
+
         self.canvas.mpl_connect("button_press_event", self.fix8.button_press_callback)
         self.canvas.mpl_connect("button_release_event", self.fix8.button_release_callback)
         self.canvas.mpl_connect("motion_notify_event", self.fix8.motion_notify_callback)
