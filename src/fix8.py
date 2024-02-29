@@ -976,22 +976,25 @@ class Fix8():
             xyt = self.ui.canvas.ax.transData.transform(self.xy)
             xt, yt = xyt[:, 0], xyt[:, 1]
             d = np.sqrt((xt - event.x) ** 2 + (yt - event.y) ** 2)
-            self.selected_fixation = d.argmin()
+            #self.selected_fixation = d.argmin()
 
-            duration = self.fixations[self.selected_fixation][2]
-            #epsilon = 11  # diameter range
-            area = 30 * (duration / 50) ** 2
+            for fixation_index in range(len(d)): 
 
-            # divide are a by pi and take the square root to get the radius
-            epsilon = (area / np.pi) ** 0.5
+                duration = self.fixations[fixation_index][2]
+                #epsilon = 11  # diameter range
+                area = self.fixation_size * (duration / 50) ** 2
 
-            if epsilon < 5:
-                epsilon = 5
+                # divide are a by pi and take the square root to get the radius
+                epsilon = (area / np.pi) ** 0.5
 
-            if d[self.selected_fixation] >= epsilon:
-                self.selected_fixation = None
+                if epsilon < 5:
+                    epsilon = 5
 
-            return self.selected_fixation
+                if d[fixation_index] < epsilon * 0.91:
+                    self.selected_fixation = fixation_index
+                    return self.selected_fixation
+            
+            return None
 
 
     def move_left_selected_fixation(self):
@@ -1555,6 +1558,7 @@ class Fix8():
         self.clear_fixations()
         self.clear_saccades()
         self.clear_aois()
+        
 
         # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
         # do the same for saccades
