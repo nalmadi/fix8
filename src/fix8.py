@@ -1214,8 +1214,14 @@ class Fix8():
                 self.show_error_message("Trial Folder Error", "No Compatible Image")
 
             else:
+                # clear self.ui.canvas
+                #self.ui.canvas.clear()
+                
                 self.set_canvas_image(image_file)
+                #self.ui.canvas.background = self.ui.canvas.copy_from_bbox(self.ui.canvas.ax.bbox)
                 self.ui.canvas.draw()
+                #self.draw_canvas()
+                #self.ui.canvas.draw_idle()
                 self.find_aoi()
                 self.ui.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
@@ -1581,7 +1587,7 @@ class Fix8():
                 self.suggested_fixation = self.ui.canvas.ax.scatter(
                     x,
                     y,
-                    s=30 * (duration / 50) ** 1.8,
+                    s=self.fixation_size * (duration / 50) ** 1.8,
                     alpha=self.fixation_opacity,
                     c=self.suggested_fixation_color,
                 )
@@ -1642,7 +1648,7 @@ class Fix8():
             self.fixation_points = self.ui.canvas.ax.scatter(
                 x,
                 y,
-                s=30 * (duration / 50) ** 1.8,
+                s=self.fixation_size * (duration / 50) ** 1.8,
                 alpha=self.fixation_opacity,
                 c=colors,
             )
