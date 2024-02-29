@@ -108,7 +108,8 @@ class Fix8():
 
         # fields relating to the drag and drop system
         self.selected_fixation = None           # clicked fixation
-        self.xy = None      
+        self.xy = None
+        self.locked_x = False    
 
         # fields relating to aoi margin
         self.aoi_width = 7
@@ -1089,7 +1090,10 @@ class Fix8():
         x, y = event.xdata, event.ydata
 
         #self.xy = np.asarray(self.scatter.get_offsets())
-        self.xy[self.selected_fixation] = np.array([x, y])
+        if self.locked_x:
+            self.xy[self.selected_fixation] = np.array([self.fixations[self.selected_fixation][0], y])
+        else:
+            self.xy[self.selected_fixation] = np.array([x, y])
         #self.scatter.set_offsets(self.xy)
         # self.ui.canvas.draw_idle()
 
@@ -1097,6 +1101,17 @@ class Fix8():
         self.ui.canvas.ax.draw_artist(self.fixation_points)
         #self.ui.canvas.ax.draw_artist(self.saccades)
         self.ui.canvas.blit(self.ui.canvas.ax.bbox)
+
+    def lock_x_axis(self):
+        
+        if self.locked_x:
+            self.locked_x = False
+            self.ui.lock_x_axis_action.setText("Lock X Axis")
+        else:
+            self.locked_x = True
+            self.ui.lock_x_axis_action.setText("Unlock X Axis")
+
+        pass
 
 
     def keyPressEvent(self, e):
