@@ -1676,7 +1676,7 @@ class Fix8():
         # draw saccades
         if self.ui.checkbox_show_saccades.isChecked():
             self.saccade_lines = self.ui.canvas.ax.plot(
-                x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=1
+                x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=self.saccade_line_size
             )
             self.ui.canvas.ax.draw_artist(self.saccade_lines[0])
 
