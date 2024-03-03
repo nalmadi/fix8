@@ -255,7 +255,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.saccade_size_box.setMaximum(30)
         self.saccade_size_box.setValue(1)
         self.saccade_size_box.setEnabled(False)
-        self.saccade_size_text = QLabel("Size")
+        self.saccade_size_text = QLabel("Width")
         self.saccade_size_layer.addWidget(self.saccade_size_box)
         self.saccade_size_layer.addWidget(self.saccade_size_text)
         self.saccade_layer_middle.addLayout(self.saccade_size_layer)
