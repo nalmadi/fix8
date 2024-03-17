@@ -1672,7 +1672,7 @@ class Fix8():
                 c=colors,
             )
             self.ui.canvas.ax.draw_artist(self.fixation_points)
-
+        
         # draw saccades
         if self.ui.checkbox_show_saccades.isChecked():
             self.saccade_lines = self.ui.canvas.ax.plot(
