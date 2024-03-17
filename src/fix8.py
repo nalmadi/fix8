@@ -97,6 +97,7 @@ class Fix8():
         # fields relating to the correction algorithm
         self.algorithm = "manual"
         self.algorithm_function = None
+        self.secondery_algorithm_function = None
         self.suggested_corrections, self.suggested_fixation = None, None
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
@@ -914,9 +915,15 @@ class Fix8():
         self.suggested_corrections = copy.deepcopy(self.fixations)
 
         # run algorithm, warp uses word_xy, others use line_Y
-        if self.algorithm != "warp":
+        if "warp" not in self.algorithm:
             self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, line_Y)
+        
+        elif "+" in self.algorithm:
+            # hybrid
+            self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, line_Y, word_XY, self.secondery_algorithm_function)
+
         else:
+            # warp
             self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, word_XY)
 
         self.status_text = self.algorithm + " Algorithm Selected"
@@ -924,10 +931,11 @@ class Fix8():
         self.ui.relevant_buttons("algorithm_selected")
 
 
-    def run_algorithm(self, algorithm_name, algorithm_function, mode):
+    def run_algorithm(self, algorithm_name, algorithm_function, mode, secondery_algorithm_function=None):
 
         self.algorithm = algorithm_name
         self.algorithm_function = algorithm_function
+        self.secondery_algorithm_function = secondery_algorithm_function
         self.run_correction()
 
         # write metadata
@@ -953,6 +961,7 @@ class Fix8():
 
     def manual_correction(self):
         self.algorithm_function = None
+        self.secondery_algorithm_function = None
         self.algorithm = "manual"
 
         # write metadata
@@ -1672,7 +1681,7 @@ class Fix8():
                 c=colors,
             )
             self.ui.canvas.ax.draw_artist(self.fixation_points)
-        
+
         # draw saccades
         if self.ui.checkbox_show_saccades.isChecked():
             self.saccade_lines = self.ui.canvas.ax.plot(
