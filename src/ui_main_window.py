@@ -24,6 +24,7 @@ from PyQt5.QtWidgets import (
 
 import canvas_resources
 import driftAlgorithms as drift
+import correction
 
 
 class Ui_Main_Window(QMainWindow, QtStyleTools):
@@ -441,6 +442,11 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.regress_auto_action = QAction("Regress", self)
         self.segment_auto_action = QAction("Segment", self)
         self.stretch_auto_action = QAction("Stretch", self)
+        
+        self.warp_attach_auto_action = QAction("Warp+Attach", self)
+        self.warp_chain_auto_action = QAction("Warp+Chain", self)
+        self.war_regress_auto_action = QAction("Warp+Regress", self)
+        self.warp_stretch_auto_action = QAction("Warp+Stretch", self)
 
         self.warp_semi_action = QAction("Warp", self)
         self.attach_semi_action = QAction("Attach", self)
@@ -450,6 +456,11 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.regress_semi_action = QAction("Regress", self)
         self.segment_semi_action = QAction("Segment", self)
         self.stretch_semi_action = QAction("Stretch", self)
+
+        self.warp_attach_semi_action = QAction("Warp+Attach", self)
+        self.warp_chain_semi_action = QAction("Warp+Chain", self)
+        self.war_regress_semi_action = QAction("Warp+Regress", self)
+        self.warp_stretch_semi_action = QAction("Warp+Stretch", self)
 
         self.hit_test_action = QAction("Fixation Hit Test", self)
         self.eye_metrics_action = QAction("Calculate Eye Movement Metrics", self)
@@ -527,6 +538,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.automated_correction_menu.addAction(self.regress_auto_action)
         self.automated_correction_menu.addAction(self.segment_auto_action)
         self.automated_correction_menu.addAction(self.stretch_auto_action)
+        self.automated_correction_menu.addAction(self.warp_attach_auto_action)
+        self.automated_correction_menu.addAction(self.warp_chain_auto_action)
+        self.automated_correction_menu.addAction(self.war_regress_auto_action)
+        self.automated_correction_menu.addAction(self.warp_stretch_auto_action)
 
         self.semi_auto_correction_menu.addAction(self.warp_semi_action)
         self.semi_auto_correction_menu.addAction(self.attach_semi_action)
@@ -536,6 +551,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.regress_semi_action)
         self.semi_auto_correction_menu.addAction(self.segment_semi_action)
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
+        self.semi_auto_correction_menu.addAction(self.warp_attach_semi_action)
+        self.semi_auto_correction_menu.addAction(self.warp_chain_semi_action)
+        self.semi_auto_correction_menu.addAction(self.war_regress_semi_action)
+        self.semi_auto_correction_menu.addAction(self.warp_stretch_semi_action)
 
         self.analyses_menu.addAction(self.hit_test_action)
         self.analyses_menu.addAction(self.eye_metrics_action)
@@ -641,6 +660,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.regress_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('regress', drift.regress, 'auto'))
         self.segment_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('segment', drift.segment, 'auto'))
         self.stretch_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('stretch', drift.stretch, 'auto'))
+        self.warp_attach_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+attach', correction.warp_regs, 'auto', drift.attach))
+        self.warp_chain_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+chain', correction.warp_regs, 'auto', drift.chain))
+        self.war_regress_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+regress', correction.warp_regs, 'auto', drift.regress))
+        self.warp_stretch_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+stretch', correction.warp_regs, 'auto', drift.stretch))
 
         self.warp_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('warp', drift.warp, 'semi'))
         self.attach_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('attach', drift.attach, 'semi'))
@@ -650,6 +673,11 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.regress_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('regress', drift.regress, 'semi'))
         self.segment_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('segment', drift.segment, 'semi'))
         self.stretch_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('stretch', drift.stretch, 'semi'))
+        self.warp_attach_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+attach', correction.warp_regs, 'semi', drift.attach))
+        self.warp_chain_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+chain', correction.warp_regs, 'semi', drift.chain))
+        self.war_regress_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+regress', correction.warp_regs, 'semi', drift.regress))
+        self.warp_stretch_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+stretch', correction.warp_regs, 'semi', drift.stretch))
+
         self.manual_correction_action.triggered.connect(self.fix8.manual_correction)
 
         self.hit_test_action.triggered.connect(self.fix8.calculate_hit_test)
