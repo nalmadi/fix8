@@ -1998,7 +1998,7 @@ class Fix8():
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
             self.fixation_color = "#FF9E0A"
-            self.current_fixation_color = "yellow"
+            self.current_fixation_color = "cyan"
             self.saccade_color = "#3D00CC"
             self.aoi_color = "#28AAFF"
             self.colorblind_assist_status = True
