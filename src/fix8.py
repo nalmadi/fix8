@@ -1997,10 +1997,10 @@ class Fix8():
 
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
-            self.fixation_color = "#FF9E0A"
-            self.current_fixation_color = "cyan"
-            self.saccade_color = "#3D00CC"
-            self.aoi_color = "#28AAFF"
+            self.fixation_color = "#00ff00"
+            self.current_fixation_color = "#ff00ff"
+            self.saccade_color = "#0000ff"
+            self.aoi_color = "black"
             self.colorblind_assist_status = True
             self.quick_draw_canvas(all_fixations=False)
         else:
