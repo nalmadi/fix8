@@ -925,7 +925,7 @@ class Fix8():
         else:
             # warp
             self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, word_XY)
-
+        
         self.status_text = self.algorithm + " Algorithm Selected"
         self.ui.statusBar.showMessage(self.status_text)
         self.ui.relevant_buttons("algorithm_selected")
