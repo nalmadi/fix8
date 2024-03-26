@@ -88,13 +88,21 @@ To use run Fix8 from the Python code, follow these steps:
 
 ### Keyboard Shortcuts ⌨️​
 a: 		next fixation
+
 z: 		previous fixation
+
 alt: 		accept suggestion
+
 backspace: 	delete current fixation
+
 j:      move the selected fixation to the left
+
 l:      move the selected fixation to the right
+
 i:      move the selected fixation upward
+
 k:      move the selected fixation downward
+
 
 * * *
 
