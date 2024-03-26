@@ -1,6 +1,6 @@
 # Fix8
+[![Watch the video](./src/.images/step2.jpg)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
 
-![Welcome](./src/.images/fix8-tour-1.png)
 
 # Software Summary 💻
 
