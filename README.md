@@ -91,7 +91,7 @@ a: 		next fixation
 
 z: 		previous fixation
 
-alt: 		accept suggestion
+space: 		accept suggestion
 
 backspace: 	delete current fixation
 
