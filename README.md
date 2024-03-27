@@ -18,6 +18,11 @@ Fix8 (Fixate) is an Open-Source GUI Tool for Working with Eye Tracking Data in R
 
 # Executables  💻
 - Windows: 
+
+    Compressed executable (slow to load, single file): <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/main/executables/Fix8_v1.1_onefile.zip">[Download]</a> 
+
+    UNcompressed executable (faster load, many files): <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/main/executables/Fix8_v1.1.zip">[Download]</a> 
+
 - Mac: coming soon!
 - Linux: coming soon!
 
