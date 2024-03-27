@@ -32,16 +32,10 @@ To use run Fix8 from the Python code, follow these steps:
 
 2. **Create a Virtual Environment:**
 
-    It's recommended to use a virtual environment to manage dependencies and isolate your project's environment. If you don't have `virtualenv` installed, you can install it using pip:
+    It's recommended to use a virtual environment to manage dependencies and isolate your project's environment:
 
     ```bash
-    pip install virtualenv
-    ```
-
-    Then, create a virtual environment:
-
-    ```bash
-    virtualenv venv
+    python -m venv myvenv
     ```
 
     Activate the virtual environment:
@@ -49,13 +43,13 @@ To use run Fix8 from the Python code, follow these steps:
     **On Windows:**
     
     ```bash
-    venv\Scripts\activate
+    myvenv\Scripts\activate
     ```
 
     **On macOS and Linux:**
     
     ```bash
-    source venv/bin/activate
+    source myvenv/bin/activate
     ```
 
 3. **Install Requirements:**
