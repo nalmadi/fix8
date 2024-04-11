@@ -27,7 +27,7 @@ Fix8 (Fixate) is an Open-Source GUI Tool for Working with Eye Tracking Data in R
     > to download and run Fix8 do the following:
     >- Click on one of the download link above.
     >- In the top right, right-click the **Raw** button.
-    >- Save as...
+    >- Click on "Save as..."
     >- Unzip the file.
     >- Locate Fix8.exe and run it, first run might take a minute.
     >- Enjoy!
