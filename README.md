@@ -94,7 +94,7 @@ To use run Fix8 from the Python code, follow these steps:
 
 
 
-### Keyboard Shortcuts ⌨️​
+# Keyboard Shortcuts ⌨️​
 a: 		next fixation
 
 z: 		previous fixation
