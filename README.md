@@ -117,7 +117,7 @@ k:      move the selected fixation downward
 
 # Citation 📝
 
-Please cite our paper if you user this tool, the citation is bellow:
+Please cite our paper if you user this tool:
 
 TBD
 
