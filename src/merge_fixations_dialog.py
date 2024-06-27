@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QLineEdit, QDialogButtonBox, QFormLayout, QDialog
 
 
-class InputDialog(QDialog):
+class MergeFixationsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     import sys
     app = QApplication(sys.argv)
-    dialog = InputDialog()
+    dialog = MergeFixationsDialog()
     if dialog.exec():
         print(dialog.getInputs())
     exit(0)

@@ -56,7 +56,8 @@ from datetime import date
 from pathlib import Path
 
 import mini_emtk
-from merge_fixations_dialog import InputDialog
+from merge_fixations_dialog import MergeFixationsDialog
+from generate_fixations_skip_dialog import GenerateFixationsSkipDialog
 from eyelink_csv_dialog import EyelinkDialog
 from state import Fix8State, History
 import ui_main_window
@@ -192,14 +193,18 @@ class Fix8():
         self.update_trial_statistics()
 
     def generate_fixations_skip(self):
-        minimum_value = 1
-        maximum_value = 100
-        default_value = 20
-        title = "Skip"
-        message = "Enter skip probability (1-100)"
-        skip_probability, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
+        # minimum_value = 1
+        # maximum_value = 100
+        # default_value = 20
+        # title = "Skip"
+        # message = "Enter skip probability (1-100)"
+        # skip_probability, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
-        if not ok:
+        dialog = GenerateFixationsSkipDialog(self.ui)
+        dialog.exec()
+        approximate_letter_width, lam, k_value = dialog.getInputs()
+
+        if not approximate_letter_width or not lam or not k_value:
             return
 
         # clear history for undo
@@ -211,9 +216,9 @@ class Fix8():
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
         )
-
+        
         # generate fixations
-        self.original_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, skip_probability/100))
+        self.original_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, approximate_letter_width, lam, k_value))
         self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
@@ -845,7 +850,7 @@ class Fix8():
 
 
     def merge_fixations(self):
-        dialog = InputDialog(self.ui)
+        dialog = MergeFixationsDialog(self.ui)
         dialog.exec()
         
         duration_threshold, dispersion_threshold = dialog.getInputs()
