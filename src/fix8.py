@@ -1921,6 +1921,31 @@ class Fix8():
         else:
             self.show_error_message("Save Error", "No AOI Found")
 
+    
+    def save_image(self):
+        # save image with png, jpg, or jpeg, default to png 
+        # dpi is set to 300 for high quality
+        qfd = QFileDialog()
+        default_file_name = self.trial_path.replace('.csv', '').replace('.json', '') + '_FIX8.png'
+        new_image_file_name, _ = qfd.getSaveFileName(self.ui, "Save Image", default_file_name)
+
+        if new_image_file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+        
+        if ('.png' not in new_image_file_name 
+            and '.jpg' not in new_image_file_name 
+            and '.jpeg' not in new_image_file_name
+            and '.svg' not in new_image_file_name
+            ):
+            new_image_file_name += '.png'
+
+        # if name includes svg, save as svg
+        if '.svg' in new_image_file_name:
+            self.ui.canvas.ax.figure.savefig(new_image_file_name, dpi=300, format='svg', transparent=True, bbox_inches='tight')
+        else:
+            self.ui.canvas.ax.figure.savefig(new_image_file_name, dpi=300, transparent=True, bbox_inches='tight')
+
     def progress_bar_updated(self, value, draw=True):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
