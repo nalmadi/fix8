@@ -101,7 +101,7 @@ z: 		previous fixation
 
 space: 		accept suggestion
 
-backspace: 	delete current fixation
+backspace: 	delete fixation (click on fixation to select)
 
 j:      move the selected fixation to the left
 
