@@ -1851,7 +1851,7 @@ class Fix8():
                 + "\n"
             )
 
-            self.save_metadata_file(new_correction_file_name)
+            #self.save_metadata_file(new_correction_file_name)
 
             self.status_text = "Corrections Saved to" + " " + new_correction_file_name
             self.ui.statusBar.showMessage(self.status_text)
@@ -1892,7 +1892,7 @@ class Fix8():
                 + "\n"
             )
 
-            self.save_metadata_file(new_correction_file_name)
+            #self.save_metadata_file(new_correction_file_name)
 
             self.status_text = "Corrections Saved to" + " " + new_correction_file_name
             self.ui.statusBar.showMessage(self.status_text)
