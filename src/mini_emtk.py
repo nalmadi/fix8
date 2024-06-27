@@ -710,7 +710,32 @@ def generate_fixations_left(aois_with_tokens, dispersion):
     return fixations
 
 
-def generate_fixations_left_skip(aois_with_tokens, skip_probability):
+
+def exp_func(x, k, lam):
+    """
+    function to model the exponential distribution
+
+    Parameters
+    ----------
+    x : float
+        x value
+
+    k : float
+        constant value
+
+    lam : float
+        lambda value
+
+    Returns
+    ----------
+    float
+        the value of the exponential function
+
+    """
+    return k * np.exp(-lam * x)
+
+
+def generate_fixations_left_skip(aois_with_tokens, approximate_letter_width, lam_value, k_value):
     """
     function to generate fixations at the optimal viewing poisiton slightly to
     the left of the center of each word, also skips short words with a probability
@@ -721,8 +746,14 @@ def generate_fixations_left_skip(aois_with_tokens, skip_probability):
     aois_with_tokens : pandas.DataFrame
         a dataframe containing the AOIs and tokens
 
-    skip_probability : float
-        probability of skipping a word
+    approximate_letter_width : int
+        approximate width of a letter in pixels
+
+    lam_value : float
+        lambda value for the exponential distribution
+
+    k_value : float
+        constant value for the exponential distribution
 
     Returns
     ----------
@@ -740,13 +771,16 @@ def generate_fixations_left_skip(aois_with_tokens, skip_probability):
             row["y"],
             row["width"],
             row["height"]
-
         )
 
         word_count += 1
 
         fixation_x = x + width / 3 + random.randint(-10, 10)
         fixation_y = y + height / 2 + random.randint(-10, 10)
+
+        # skip probability based on an exponential distribution
+        letters = width / approximate_letter_width
+        skip_probability = exp_func(letters, k_value, lam_value)
 
         if random.random() < skip_probability:
             skip_count += 1 
