@@ -66,5 +66,12 @@ class Toolbar(NavigationToolBar):
         super().home(*args)
         self.parent.fix8.draw_canvas()
 
+    # override save function to save the image as a png with dpi=300
+    def save_figure(self, *args):
+        #super().save_figure(*args)
+        self.parent.fix8.save_image()
+
+
+
     def set_message(self, s):
         pass
