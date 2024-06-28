@@ -39,17 +39,32 @@ def chain(fixation_XY, line_Y, x_thresh=192, y_thresh=32):
 # 
 # https://github.com/sascha2schroeder/popEye/
 ######################################################################
+# added implementation of KMeans instead of using sklearn
+def KMeans(n_clusters, n_init=10, max_iter=300):
+	def fit_predict(X):
+		n = len(X)
+		centers = X[np.random.choice(n, n_clusters, replace=False)]
+		for _ in range(n_init):
+			for _ in range(max_iter):
+				cluster_assignments = np.argmin(np.linalg.norm(X[:, None] - centers, axis=2), axis=1)
+				new_centers = np.array([X[cluster_assignments == i].mean(axis=0) for i in range(n_clusters)])
+				if np.all(centers == new_centers):
+					break
+				centers = new_centers
+		return cluster_assignments
+	return fit_predict
 
-# def cluster(fixation_XY, line_Y):
-# 	m = len(line_Y)
-# 	fixation_Y = fixation_XY[:, 1].reshape(-1, 1)
-# 	clusters = KMeans(m, n_init=100, max_iter=300).fit_predict(fixation_Y)
-# 	centers = [fixation_Y[clusters == i].mean() for i in range(m)]
-# 	ordered_cluster_indices = np.argsort(centers)
-# 	for fixation_i, cluster_i in enumerate(clusters):
-# 		line_i = np.where(ordered_cluster_indices == cluster_i)[0][0]
-# 		fixation_XY[fixation_i, 1] = line_Y[line_i]
-# 	return fixation_XY
+def cluster(fixation_XY, line_Y):
+	m = len(line_Y)
+	fixation_Y = fixation_XY[:, 1].reshape(-1, 1)
+	# clusters = KMeans(m, n_init=100, max_iter=300).fit_predict(fixation_Y)
+	clusters = KMeans(m, n_init=100, max_iter=300)(fixation_Y)
+	centers = [fixation_Y[clusters == i].mean() for i in range(m)]
+	ordered_cluster_indices = np.argsort(centers)
+	for fixation_i, cluster_i in enumerate(clusters):
+		line_i = np.where(ordered_cluster_indices == cluster_i)[0][0]
+		fixation_XY[fixation_i, 1] = line_Y[line_i]
+	return fixation_XY
 
 ######################################################################
 # COMPARE
