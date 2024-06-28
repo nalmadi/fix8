@@ -192,13 +192,8 @@ class Fix8():
         self.ui.statusBar.showMessage(self.status_text)
         self.update_trial_statistics()
 
+
     def generate_fixations_skip(self):
-        # minimum_value = 1
-        # maximum_value = 100
-        # default_value = 20
-        # title = "Skip"
-        # message = "Enter skip probability (1-100)"
-        # skip_probability, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         dialog = GenerateFixationsSkipDialog(self.ui)
         dialog.exec()
@@ -248,6 +243,7 @@ class Fix8():
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
         self.update_trial_statistics()
+
 
     def generate_within_line_regression(self):
         minimum_value = 0
@@ -1958,7 +1954,7 @@ class Fix8():
         # update current suggestion to the progress bar
         if self.current_fixation is not None:
             self.ui.label_progress.setText(
-                f"{self.current_fixation}/{len(self.fixations)}"
+                f"{self.current_fixation}/{len(self.fixations)-1}"
             )
             self.ui.progress_bar.setValue(self.current_fixation)
 
