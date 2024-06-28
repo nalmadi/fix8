@@ -442,6 +442,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.regress_auto_action = QAction("Regress", self)
         self.segment_auto_action = QAction("Segment", self)
         self.stretch_auto_action = QAction("Stretch", self)
+        self.slice_auto_action = QAction("Slice", self)
         
         self.warp_attach_auto_action = QAction("Warp+Attach", self)
         self.warp_chain_auto_action = QAction("Warp+Chain", self)
@@ -456,6 +457,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.regress_semi_action = QAction("Regress", self)
         self.segment_semi_action = QAction("Segment", self)
         self.stretch_semi_action = QAction("Stretch", self)
+        self.slice_semi_action = QAction("Slice", self)
 
         self.warp_attach_semi_action = QAction("Warp+Attach", self)
         self.warp_chain_semi_action = QAction("Warp+Chain", self)
@@ -538,6 +540,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.automated_correction_menu.addAction(self.regress_auto_action)
         self.automated_correction_menu.addAction(self.segment_auto_action)
         self.automated_correction_menu.addAction(self.stretch_auto_action)
+        self.automated_correction_menu.addAction(self.slice_auto_action)
         self.automated_correction_menu.addAction(self.warp_attach_auto_action)
         self.automated_correction_menu.addAction(self.warp_chain_auto_action)
         self.automated_correction_menu.addAction(self.war_regress_auto_action)
@@ -551,6 +554,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.regress_semi_action)
         self.semi_auto_correction_menu.addAction(self.segment_semi_action)
         self.semi_auto_correction_menu.addAction(self.stretch_semi_action)
+        self.semi_auto_correction_menu.addAction(self.slice_semi_action)
         self.semi_auto_correction_menu.addAction(self.warp_attach_semi_action)
         self.semi_auto_correction_menu.addAction(self.warp_chain_semi_action)
         self.semi_auto_correction_menu.addAction(self.war_regress_semi_action)
@@ -564,14 +568,14 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.converters_menu.addAction(self.csv_to_json_converter_action)
         self.converters_menu.addAction(self.eyelink_experiment_to_csv_converter_action)
 
-        # add menue item called "Style" to the menu bar
+        # add menu item called "Style" to the menu bar
         self.menu_style = self.menuBar().addMenu("Appearance")
 
         action = QAction('Default', self)
         action.triggered.connect(lambda _, theme='Default': self.apply_stylesheet(self, 'my_theme.xml'))
         self.menu_style.addAction(action)
 
-        # add sub menue to the menue item "Style" for Dark
+        # add sub menu to the menu item "Style" for Dark
         self.dark_menue_style = self.menu_style.addMenu("Dark")
         self.light_menue_style = self.menu_style.addMenu("Light")
 
@@ -660,6 +664,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.regress_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('regress', drift.regress, 'auto'))
         self.segment_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('segment', drift.segment, 'auto'))
         self.stretch_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('stretch', drift.stretch, 'auto'))
+        self.slice_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('slice', drift.slice, 'auto'))
         self.warp_attach_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+attach', correction.warp_regs, 'auto', drift.attach))
         self.warp_chain_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+chain', correction.warp_regs, 'auto', drift.chain))
         self.war_regress_auto_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+regress', correction.warp_regs, 'auto', drift.regress))
@@ -673,6 +678,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.regress_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('regress', drift.regress, 'semi'))
         self.segment_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('segment', drift.segment, 'semi'))
         self.stretch_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('stretch', drift.stretch, 'semi'))
+        self.slice_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('slice', drift.slice, 'semi'))
         self.warp_attach_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+attach', correction.warp_regs, 'semi', drift.attach))
         self.warp_chain_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+chain', correction.warp_regs, 'semi', drift.chain))
         self.war_regress_semi_action.triggered.connect(lambda: self.fix8.run_algorithm('warp+regress', correction.warp_regs, 'semi', drift.regress))
