@@ -639,9 +639,9 @@ class Fix8():
         for index, row in fixation_data.iterrows():
             fixations.append([row["x_cord"], row["y_cord"], row["duration"]])
 
-        corrected_fixations = {}
-        for i in range(len(fixations)):
-            corrected_fixations[i + 1] = fixations[i]
+        corrected_fixations = {'fixations': fixations}
+        # for i in range(len(fixations)):
+        #     corrected_fixations[i + 1] = fixations[i]
 
         with open(f"{new_correction_file_name}", "w") as f:
             json.dump(corrected_fixations, f)
@@ -1837,9 +1837,9 @@ class Fix8():
         if len(self.fixations) > 0:
             list = self.fixations.tolist()
 
-            corrected_fixations = {}
+            corrected_fixations = {'fixations': []}
             for i in range(len(self.fixations)):
-                corrected_fixations[i + 1] = list[i]
+                corrected_fixations['fixations'].append(list[i])
 
             with open(f"{new_correction_file_name}", "w") as f:
                 json.dump(corrected_fixations, f)
