@@ -1103,3 +1103,14 @@ def get_total_time(hit_test_output, line, part):
         return fixations_on_same_part_and_line["duration"].sum()
     else:
         return np.nan
+    
+
+def get_fixation_count(hit_test_output, line, part):
+    """
+    function to get the number of fixations on an aoi
+    0 if no fixation was made on the aoi
+    """
+
+    fixations_on_same_part_and_line = hit_test_output[(hit_test_output["part"] == part) & (hit_test_output["line"] == line)]
+
+    return len(fixations_on_same_part_and_line)

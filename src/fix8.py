@@ -476,7 +476,7 @@ class Fix8():
         minimum_value = 1
         maximum_value = 100
         qfd = QFileDialog()
-        radius, ok = QInputDialog.getInt(self.ui, "Radius", "Enter inclusion radius for hit test", default_radius, minimum_value, maximum_value)
+        radius, ok = QInputDialog.getInt(self.ui, "Radius", "Enter inclusion radius for hit test (pixels)", default_radius, minimum_value, maximum_value)
 
         if not ok:
             self.show_error_message("Error", "No radius selected")
@@ -502,7 +502,7 @@ class Fix8():
         minimum_value = 0
         maximum_value = 100
         qfd = QFileDialog()
-        radius, ok = QInputDialog.getInt(self.ui, "Radius", "Enter inclusion radius for hit test", default_radius, minimum_value, maximum_value)
+        radius, ok = QInputDialog.getInt(self.ui, "Radius", "Enter inclusion radius for hit test (pixels)", default_radius, minimum_value, maximum_value)
 
         if not ok:
             self.show_error_message("Error", "No radius selected")
@@ -524,6 +524,7 @@ class Fix8():
         first_fixation_duration = []
         gaze_duration = []
         total_time = []
+        fixation_count = []
 
         eye_metrics_data = self.aoi.copy()
 
@@ -541,11 +542,13 @@ class Fix8():
             first_fixation_duration.append(mini_emtk.get_first_fixation_duration(hit_test_data, line, part))
             gaze_duration.append(mini_emtk.get_gaze_duration(hit_test_data, line, part))
             total_time.append(mini_emtk.get_total_time(hit_test_data, line, part))
+            fixation_count.append(mini_emtk.get_fixation_count(hit_test_data, line, part))
 
         eye_metrics_data['single_fixation_duration'] = single_fixation_duration
         eye_metrics_data['first_fixation_duration'] = first_fixation_duration
         eye_metrics_data['gaze_duration'] = gaze_duration
         eye_metrics_data['total_time'] = total_time
+        eye_metrics_data['fixation_count'] = fixation_count
     
         # write eye metrics data to file
         eye_metrics_data.to_csv(file_name, index=False)
