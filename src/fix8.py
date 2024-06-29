@@ -1471,10 +1471,19 @@ class Fix8():
         with open(trial_path, "r") as trial:
 
             trial_data = json.load(trial)
-            for key in trial_data:
-                x_cord.append(trial_data[key][0])
-                y_cord.append(trial_data[key][1])
-                duration.append(trial_data[key][2])
+
+            if 'fixations' not in trial_data.keys():
+                # old JSON format
+                for key in trial_data:
+                    x_cord.append(trial_data[key][0])
+                    y_cord.append(trial_data[key][1])
+                    duration.append(trial_data[key][2])
+            else:
+                # new JSON format
+                for fixation in trial_data["fixations"]:
+                    x_cord.append(fixation[0])
+                    y_cord.append(fixation[1])
+                    duration.append(fixation[2])
 
         # create an empty dataframe
         eye_events = pd.DataFrame(columns=["x_cord", "y_cord", "duration"])
