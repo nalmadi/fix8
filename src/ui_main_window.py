@@ -464,8 +464,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.war_regress_semi_action = QAction("Warp+Regress", self)
         self.warp_stretch_semi_action = QAction("Warp+Stretch", self)
 
-        self.hit_test_action = QAction("Fixation Hit Test", self)
-        self.eye_metrics_action = QAction("Calculate Eye Movement Metrics", self)
+        self.fixation_report_action = QAction("Fixation Report", self)
+        self.saccade_report_action = QAction("Saccade Report", self)
+        self.aoi_report_action = QAction("AOI Report", self)
+        self.aoi_metrics_report_action = QAction("AOI Metrics Report", self)
 
         self.ascii_to_csv_converter_action = QAction("ASCII to CSV (one trial)", self)
         self.json_to_csv_converter_action = QAction("JSON to CSV (one trial)", self)
@@ -560,8 +562,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.semi_auto_correction_menu.addAction(self.war_regress_semi_action)
         self.semi_auto_correction_menu.addAction(self.warp_stretch_semi_action)
 
-        self.analyses_menu.addAction(self.hit_test_action)
-        self.analyses_menu.addAction(self.eye_metrics_action)
+        self.analyses_menu.addAction(self.fixation_report_action)
+        self.analyses_menu.addAction(self.saccade_report_action)
+        self.analyses_menu.addAction(self.aoi_report_action)
+        self.analyses_menu.addAction(self.aoi_metrics_report_action)
 
         self.converters_menu.addAction(self.ascii_to_csv_converter_action)
         self.converters_menu.addAction(self.json_to_csv_converter_action)
@@ -686,8 +690,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.manual_correction_action.triggered.connect(self.fix8.manual_correction)
 
-        self.hit_test_action.triggered.connect(self.fix8.calculate_hit_test)
-        self.eye_metrics_action.triggered.connect(self.fix8.calculate_eye_metrics)
+        self.fixation_report_action.triggered.connect(self.fix8.calculate_fixation_report)
+        self.saccade_report_action.triggered.connect(self.fix8.calculate_saccade_report)
+        self.aoi_report_action.triggered.connect(self.fix8.calculate_aoi_report)
+        self.aoi_metrics_report_action.triggered.connect(self.fix8.calculate_aoi_metrics)
 
         self.ascii_to_csv_converter_action.triggered.connect(self.fix8.ascii_to_csv_converter)
         self.json_to_csv_converter_action.triggered.connect(self.fix8.json_to_csv_converter)

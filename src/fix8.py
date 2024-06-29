@@ -470,9 +470,41 @@ class Fix8():
         self.progress_bar_updated(self.current_fixation, draw=True)
 
 
-    def calculate_hit_test(self):
+    def calculate_fixation_report(self):
+        # get save file name
+        qfd = QFileDialog()
+        default_file_name = self.trial_path.replace('.json', '') + '_fixation_report.csv'
+        file_name, _ = qfd.getSaveFileName(self.ui, "Save Fixations Report", default_file_name)
+
+        if file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        # get fixations from self.eye_events dataframe, filter by eye_event == "fixation"
+        fixation_data = self.eye_events[self.eye_events["eye_event"] == "fixation"]
+
+        fixation_data.to_csv(file_name, index=False)
+
+
+    def calculate_saccade_report(self):
+        # get save file name
+        qfd = QFileDialog()
+        default_file_name = self.trial_path.replace('.json', '') + '_saccade_report.csv'
+        file_name, _ = qfd.getSaveFileName(self.ui, "Save Saccades Report", default_file_name)
+
+        if file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        # get saccades from self.eye_events dataframe, filter by eye_event == "saccade"
+        saccade_data = self.eye_events[self.eye_events["eye_event"] == "saccade"]
+
+        saccade_data.to_csv(file_name, index=False)
+
+
+    def calculate_aoi_report(self):
         # open hit test dialog to get radius
-        default_radius = 25
+        default_radius = 10
         minimum_value = 1
         maximum_value = 100
         qfd = QFileDialog()
@@ -484,8 +516,8 @@ class Fix8():
         
         # get save file name
         qfd = QFileDialog()
-        default_file_name = self.trial_path.replace('.json', '') + '_hit_test.csv'
-        file_name, _ = qfd.getSaveFileName(self.ui, "Save hit test data", default_file_name)
+        default_file_name = self.trial_path.replace('.json', '') + '_AOI_report.csv'
+        file_name, _ = qfd.getSaveFileName(self.ui, "Save AOI Report", default_file_name)
 
         if file_name == "":
             self.show_error_message("Error", "No file selected")
@@ -496,7 +528,7 @@ class Fix8():
         # write hit test data to file
         hit_test_data.to_csv(file_name, index=False)
     
-    def calculate_eye_metrics(self):
+    def calculate_aoi_metrics(self):
         # open hit test dialog to get radius
         default_radius = 10
         minimum_value = 0
@@ -510,8 +542,8 @@ class Fix8():
         
         # get save file name
         qfd = QFileDialog()
-        default_file_name = self.trial_path.replace('.json', '') + '_eye_metrics.csv'
-        file_name, _ = qfd.getSaveFileName(self.ui, "Save eye metrics data", default_file_name)
+        default_file_name = self.trial_path.replace('.json', '') + '_AOI_metrics.csv'
+        file_name, _ = qfd.getSaveFileName(self.ui, "Save AOI Metrics Report", default_file_name)
 
         if file_name == "":
             self.show_error_message("Error", "No file selected")

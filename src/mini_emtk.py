@@ -522,6 +522,7 @@ def hit_test(fixations, file_name, aois_tokens, radius=25):
         fix_duration = fix[2]
 
         for row in aois_tokens.itertuples(index=True, name='Pandas'):
+            print(row)
 
             if overlap(fix, row, radius):
                 line = row.name.split(' ')[1]
