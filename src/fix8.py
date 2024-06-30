@@ -45,7 +45,6 @@ import numpy as np
 from matplotlib.patches import Rectangle
 import json
 from os import listdir
-import driftAlgorithms as da
 import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
@@ -55,12 +54,12 @@ import copy
 from datetime import date
 from pathlib import Path
 
-import mini_emtk
-from merge_fixations_dialog import MergeFixationsDialog
-from generate_fixations_skip_dialog import GenerateFixationsSkipDialog
-from eyelink_csv_dialog import EyelinkDialog
-from state import Fix8State, History
-import ui_main_window
+from . import mini_emtk
+from .merge_fixations_dialog import MergeFixationsDialog
+from .generate_fixations_skip_dialog import GenerateFixationsSkipDialog
+from .eyelink_csv_dialog import EyelinkDialog
+from .state import Fix8State, History
+from . import ui_main_window
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
@@ -1805,7 +1804,7 @@ class Fix8():
     def next_fixation(self):
         if self.current_fixation == -1 and self.original_fixations == None:
             # Tour
-            self.set_canvas_image('./.images/fix8-tour-1.png')
+            self.set_canvas_image('src/.images/fix8-tour-1.png')
             self.ui.canvas.draw()
             self.ui.button_next_fixation.setEnabled(False)
             return
@@ -2096,9 +2095,7 @@ class Fix8():
         self.fixation_size = value * 6
         self.draw_canvas()
     
-
-if __name__ == "__main__":
-
+def main():
     if platform.system() == "Windows":
         import ctypes
         myappid = 'ThisCanBeAnything' # arbitrary string
@@ -2109,3 +2106,6 @@ if __name__ == "__main__":
 
     window = Fix8()
     window.fix8.exec_()
+
+if __name__ == "__main__":
+    main()
