@@ -22,19 +22,18 @@ from PyQt5.QtWidgets import (
     QSpacerItem
 )
 
-import canvas_resources
-import driftAlgorithms as drift
-import correction
-
+from . import canvas_resources
+from . import driftAlgorithms as drift
+from . import correction
 
 class Ui_Main_Window(QMainWindow, QtStyleTools):
     def __init__(self, fix8):
         super().__init__()
         self.fix8 = fix8
         self.setWindowTitle("Fix8")
-        self.setWindowIcon(QIcon("./.images/icon.ico"))
+        self.setWindowIcon(QIcon("src/.images/icon.ico"))
         self.init_UI()
-        self.apply_stylesheet(self, 'my_theme.xml')
+        self.apply_stylesheet(self, 'src/my_theme.xml')
 
 
     def init_UI(self):
@@ -411,7 +410,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.converters_menu = self.menuBar().addMenu("Converters")
 
         # add actions
-        self.new_file_action = QAction(QIcon("./.images/open.png"), "Open Trial Folder", self)
+        self.new_file_action = QAction(QIcon("src/.images/open.png"), "Open Trial Folder", self)
         self.open_image_action = QAction("Open Image", self)
         self.open_trial_action = QAction("Open Trial", self)
         self.open_aoi_action = QAction("Open AOI", self)
@@ -589,7 +588,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.menu_style = self.menuBar().addMenu("Appearance")
 
         action = QAction('Default', self)
-        action.triggered.connect(lambda _, theme='Default': self.apply_stylesheet(self, 'my_theme.xml'))
+        action.triggered.connect(lambda _, theme='Default': self.apply_stylesheet(self, 'src/my_theme.xml'))
         self.menu_style.addAction(action)
 
         # add sub menu to the menu item "Style" for Dark

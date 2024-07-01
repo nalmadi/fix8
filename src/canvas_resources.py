@@ -25,7 +25,7 @@ class QtCanvas(FigureCanvasQTAgg):
 
     def initialize(self):
         #img = mpimg.imread("./.images/fix8_landing.png")
-        img = mpimg.imread("./.images/fix8-landing-logo.png")
+        img = mpimg.imread("src/.images/fix8-landing-logo.png")
         self.ax.imshow(img, interpolation="hanning")
         self.draw()
 

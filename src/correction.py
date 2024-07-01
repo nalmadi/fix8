@@ -12,7 +12,7 @@ email: nsalmadi@colby.edu or nsalmadi@seas.harvard.edu
 # https://github.com/nalmadi/EMIP-Toolkit
 
 import random
-import driftAlgorithms as algo
+from . import driftAlgorithms as algo
 from PIL import ImageFont, ImageDraw, Image
 from matplotlib import pyplot as plt
 import numpy as np

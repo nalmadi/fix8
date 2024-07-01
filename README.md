@@ -68,19 +68,18 @@ To use run Fix8 from the Python code, follow these steps:
 
 3. **Install Requirements:**
 
-    Once the virtual environment is activated, install the project dependencies from the `requirements.txt` file:
+    Once the virtual environment is activated, install the package via pip:
 
     ```bash
-    pip install -r requirements.txt
+    pip install .
     ```
 
 4. **Run the Tool:**
 
-    Navigate to the `src` folder and run the tool:
+    Once done, run the tool simply by entering the command "fix8" in the terminal:
 
     ```bash
-    cd src
-    python fix8.py
+    fix8
     ```
 
 
