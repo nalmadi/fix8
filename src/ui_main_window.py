@@ -196,6 +196,17 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.filters.addLayout(self.fixation_layer_bottom)
 
+        # -- 4th layer
+        self.suggestion_4th_layer = QHBoxLayout()
+        self.checkbox_show_all_fixations = QCheckBox("Show Remaining Fix.")
+        self.checkbox_show_all_fixations.setEnabled(False)
+        self.suggestion_4th_layer.addWidget(self.checkbox_show_all_fixations)
+
+        self.button_remaining_fixation_color = QPushButton("Next Fix. Color")
+        self.button_remaining_fixation_color.setEnabled(False)
+        self.suggestion_4th_layer.addWidget(self.button_remaining_fixation_color)
+        self.filters.addLayout(self.suggestion_4th_layer)
+
         self.filters.addSpacerItem(QSpacerItem(20, 10))
         fixation_line_separator = QFrame(self)
         fixation_line_separator.setFrameShape(QFrame.HLine)
@@ -216,6 +227,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.button_suggested_fixation_color.setEnabled(False)
         self.suggestion_layer_top.addWidget(self.button_suggested_fixation_color)
         self.filters.addLayout(self.suggestion_layer_top)
+        
 
         self.filters.addSpacerItem(QSpacerItem(20, 10))
         suggestion_line_separator = QFrame(self)
@@ -615,6 +627,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.toggle_aoi_width.valueChanged.connect(self.fix8.aoi_width_changed)
         self.toggle_aoi_height.valueChanged.connect(self.fix8.aoi_height_changed)
         self.checkbox_show_fixations.stateChanged.connect(self.fix8.quick_draw_canvas)
+        self.checkbox_show_all_fixations.stateChanged.connect(self.fix8.quick_draw_canvas)
         self.toggle_fixation_opacity.valueChanged.connect(self.fix8.fixation_opacity_changed)
         self.checkbox_show_saccades.stateChanged.connect(self.fix8.quick_draw_canvas)
         self.toggle_saccade_opacity.valueChanged.connect(self.fix8.saccade_opacity_changed)
@@ -625,6 +638,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.button_aoi_color.clicked.connect(self.fix8.select_aoi_color)
         self.button_current_fixation_color.clicked.connect(self.fix8.select_current_fixation_color)
         self.button_suggested_fixation_color.clicked.connect(self.fix8.select_suggested_fixation_color)
+        self.button_remaining_fixation_color.clicked.connect(self.fix8.select_remaining_fixation_color)
         #self.button_coloblind_assist.clicked.connect(self.fix8.colorblind_assist)
         # connect functions
         self.new_file_action.triggered.connect(self.fix8.open_trial_folder)
@@ -731,6 +745,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.checkbox_show_suggestion.setChecked(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setEnabled(False)
+            self.checkbox_show_all_fixations.setChecked(False)
 
             self.checkbox_show_saccades.setCheckable(False)
             self.checkbox_show_saccades.setChecked(False)
@@ -742,6 +757,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.button_aoi_color.setEnabled(False)
             self.button_suggested_fixation_color.setEnabled(False)
             self.button_current_fixation_color.setEnabled(False)
+            self.button_remaining_fixation_color.setEnabled(False)
+            
             self.toggle_aoi_width.setEnabled(False)
             self.toggle_aoi_height.setEnabled(False)
             #self.button_coloblind_assist.setEnabled(False)
@@ -774,6 +791,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.checkbox_show_saccades.setCheckable(True)
             self.checkbox_show_saccades.setEnabled(True)
 
+            self.checkbox_show_all_fixations.setEnabled(True)
+
             self.toggle_aoi_width.setEnabled(True)
             self.toggle_aoi_height.setEnabled(True)
             self.button_fixation_color.setEnabled(True)
@@ -781,6 +800,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.button_aoi_color.setEnabled(True)
             self.button_suggested_fixation_color.setEnabled(False)
             self.button_current_fixation_color.setEnabled(True)
+            self.button_remaining_fixation_color.setEnabled(True)
             self.toggle_fixation_opacity.setEnabled(True)
             self.toggle_saccade_opacity.setEnabled(True)
             self.fixation_size_box.setEnabled(True)
@@ -794,20 +814,21 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.checkbox_show_suggestion.setChecked(False)
             self.checkbox_show_suggestion.setCheckable(False)
             self.checkbox_show_suggestion.setEnabled(False)
+            self.checkbox_show_all_fixations.setChecked(False)
 
             self.progress_bar.setValue(self.progress_bar.minimum())
             self.progress_bar.setEnabled(True)
         elif feature == "no_selected_algorithm":
             self.checkbox_show_suggestion.setCheckable(False)
-            self.checkbox_show_suggestion.setChecked(
-                False
-            )  # the no algorithm selection updates the suggestions
+            self.checkbox_show_suggestion.setChecked(False)  # the no algorithm selection updates the suggestions
             # which clears them in the function itself
             self.checkbox_show_suggestion.setEnabled(False)
+            self.checkbox_show_all_fixations.setChecked(False)
         elif feature == "algorithm_selected":
             self.button_previous_fixation.setEnabled(True)
             self.button_next_fixation.setEnabled(True)
             self.button_suggested_fixation_color.setEnabled(True)
+            self.button_remaining_fixation_color.setEnabled(True)
 
     
     def show_hide_side_panel(self):
