@@ -121,6 +121,7 @@ class Fix8():
         self.fixation_color = "red"
         self.current_fixation_color = "magenta"
         self.suggested_fixation_color = "blue"
+        self.remaining_fixation_color = "grey"
         self.saccade_color = "blue"
         self.aoi_color = "black"
         self.colorblind_assist_status = False
@@ -1669,6 +1670,21 @@ class Fix8():
                     c=self.suggested_fixation_color,
                 )
 
+        # draw remaining fixations in grey
+        if self.ui.checkbox_show_all_fixations.isChecked():
+            if self.current_fixation < len(self.fixations):
+                x = self.fixations[self.current_fixation + 1:, 0]
+                y = self.fixations[self.current_fixation + 1:, 1]
+                duration = self.fixations[self.current_fixation + 1:, 2]
+
+                self.remaining_fixations = self.ui.canvas.ax.scatter(
+                    x,
+                    y,
+                    s=self.fixation_size * (duration / 50) ** 1.8,
+                    alpha=self.fixation_opacity,
+                    c=self.remaining_fixation_color,
+                )
+
         # draw aois
         if self.ui.checkbox_show_aoi.isChecked():
             color = self.aoi_color 
@@ -1695,6 +1711,10 @@ class Fix8():
 
 
     def quick_draw_canvas(self, all_fixations=False):
+
+        # TODO: temporary fix for the all_fixations bug, this should be fixed
+        if all_fixations == 2:
+            all_fixations = False
 
         if self.fixations is None:
             return
@@ -1753,6 +1773,31 @@ class Fix8():
                     c=self.suggested_fixation_color,
                 )
                 self.ui.canvas.ax.draw_artist(self.suggested_fixation)
+
+        # draw remaining fixations and saccades in grey
+        if self.ui.checkbox_show_all_fixations.isChecked():
+            if self.current_fixation < len(self.fixations):
+                x = self.fixations[self.current_fixation + 1:, 0]
+                y = self.fixations[self.current_fixation + 1:, 1]
+                duration = self.fixations[self.current_fixation + 1:, 2]
+
+                self.remaining_fixations = self.ui.canvas.ax.scatter(
+                    x,
+                    y,
+                    s=self.fixation_size * (duration / 50) ** 1.8,
+                    alpha=self.fixation_opacity,
+                    c=self.remaining_fixation_color,
+                )
+                self.ui.canvas.ax.draw_artist(self.remaining_fixations)
+
+
+                # draw remaining saccades
+                # x = self.fixations[self.current_fixation:, 0]
+                # y = self.fixations[self.current_fixation:, 1] 
+                saccade_lines = self.ui.canvas.ax.plot(
+                x, y, alpha=self.saccade_opacity, c=self.remaining_fixation_color, linewidth=self.saccade_line_size
+                )
+                self.ui.canvas.ax.draw_artist(saccade_lines[0])
 
         # draw aois
         if self.ui.checkbox_show_aoi.isChecked():
@@ -2097,6 +2142,15 @@ class Fix8():
             self.suggested_fixation_color = str(color.name())
         else:
             self.suggested_fixation_color = "blue"
+
+        self.quick_draw_canvas(all_fixations=False)
+
+    def select_remaining_fixation_color(self):
+        color = QColorDialog.getColor(initial=QColor(self.remaining_fixation_color))
+        if color.isValid():
+            self.remaining_fixation_color = str(color.name())
+        else:
+            self.remaining_fixation_color = "grey"
 
         self.quick_draw_canvas(all_fixations=False)
 
