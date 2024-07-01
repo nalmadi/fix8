@@ -57,4 +57,4 @@ package-dir = {"fix8" = "src"}
 "fix8" = ["*.py", ".images/*", "*.xml"]
 
 [project.scripts]
-fix8-gui = "fix8.fix8:main"
+fix8 = "fix8.fix8:main"
