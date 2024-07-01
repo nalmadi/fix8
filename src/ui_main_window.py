@@ -480,6 +480,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.next_fixation_action.setShortcut("a")
         self.previous_fixation_action.setShortcut("z")
+        
         self.undo_correction_action.setShortcut("Ctrl+Z")
         self.accept_and_next_action.setShortcut("space")
         self.delete_fixation_action.setShortcut("backspace")
@@ -634,8 +635,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.save_correction_CSV_action.triggered.connect(self.fix8.save_corrections_csv)
         self.save_aoi_csv_action.triggered.connect(self.fix8.save_aoi_csv)
 
-        self.next_fixation_action.triggered.connect(self.fix8.next_fixation)
-        self.previous_fixation_action.triggered.connect(self.fix8.previous_fixation)
+        self.next_fixation_action.triggered.connect(self.fix8.assign_fixation_above)
+        self.previous_fixation_action.triggered.connect(self.fix8.assign_fixation_below)
         self.accept_and_next_action.triggered.connect(self.fix8.confirm_suggestion)
         self.delete_fixation_action.triggered.connect(self.fix8.remove_fixation)
         self.undo_correction_action.triggered.connect(self.fix8.undo)

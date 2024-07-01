@@ -1160,6 +1160,7 @@ class Fix8():
 
 
     def keyPressEvent(self, e):
+        print(e.key(), 'pressed')
         # j: move to the left is 74
         if e.key() == 74:
             self.move_left_selected_fixation()
@@ -1179,12 +1180,15 @@ class Fix8():
         # a: next is 65
         if e.key() == 65 and self.ui.button_next_fixation.isEnabled():
             self.metadata += "key,next," + str(time.time()) + "\n"
-            self.next_fixation()
+            #self.next_fixation()
+            print('a pressed')
+            self.assign_fixation_above()
 
         # z: back is 90
         if e.key() == 90 and self.ui.button_previous_fixation.isEnabled():
             self.metadata += "key,previous," + str(time.time()) + "\n"
-            self.previous_fixation()
+            #self.previous_fixation()
+            self.assign_fixation_below()
 
         # spacebar: accept and next is 32
         if e.key() == 32 and self.algorithm_function != None:
@@ -1814,6 +1818,55 @@ class Fix8():
             self.current_fixation += 1
 
         self.progress_bar_updated(self.current_fixation, draw=False)
+
+
+    def assign_fixation_above(self):
+        """assign the fixation to the closest line above the current fixation"""
+
+        # find the closest line above the current fixation
+        if self.aoi is not None:
+            
+            line_Y = mini_emtk.find_lines_y(self.aoi)
+
+            distances = []
+            for line in line_Y:
+                distances.append(self.fixations[self.current_fixation][1] - line)
+
+            closest_line = line_Y[0]
+
+            smallest_distance = 9999999
+            for index, distance in enumerate(distances):
+                if distance < smallest_distance and line_Y[index] < self.fixations[self.current_fixation][1]:
+                    smallest_distance = distance
+                    closest_line = line_Y[index]
+
+            self.fixations[self.current_fixation][1] = closest_line
+            self.quick_draw_canvas(all_fixations=False)
+            self.next_fixation()
+        
+
+    def assign_fixation_below(self):
+        """assign the fixation to the closest line below the current fixation"""
+
+        # find the closest line below the current fixation
+        if self.aoi is not None:
+            line_Y = mini_emtk.find_lines_y(self.aoi)
+
+            distances = []
+            for line in line_Y:
+                distances.append(abs(self.fixations[self.current_fixation][1] - line))
+
+            closest_line = line_Y[-1]
+
+            smallest_distance = 9999999
+            for index, distance in enumerate(distances):
+                if distance < smallest_distance and line_Y[index] > self.fixations[self.current_fixation][1]:
+                    smallest_distance = distance
+                    closest_line = line_Y[index]
+
+            self.fixations[self.current_fixation][1] = closest_line
+            self.quick_draw_canvas(all_fixations=False)
+            self.next_fixation()
 
 
     def confirm_suggestion(self):
