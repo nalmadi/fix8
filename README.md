@@ -36,7 +36,7 @@ Fix8 (Fixate) is an Open-Source GUI Tool for Working with Eye Tracking Data in R
 - Mac/Linux: coming soon!
 
 # Run Fix8 from code 🚀
-To use run Fix8 from the Python code, follow these steps:
+To run Fix8 from the Python code, follow these steps:
 
 1. **Clone the Repository:**
     ```bash
