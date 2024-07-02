@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fix8"
+version = "0.1.0"
+description = "Fix8 (Fixate) is an Open-Source GUI Tool for Working with Eye Tracking Data in Reading Tasks."
+authors = [
+    { name="Naser Al Madi", email="nsalmadi@colby.edu" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+dependencies = [
+    "bokeh==3.0.1",
+    "certifi==2022.9.24",
+    "charset-normalizer==2.1.1",
+    "contourpy==1.0.6",
+    "cycler==0.11.0",
+    "fonttools==4.38.0",
+    "idna==3.4",
+    "Jinja2==3.1.2",
+    "joblib==1.2.0",
+    "kiwisolver==1.4.4",
+    "MarkupSafe==2.1.1",
+    "matplotlib==3.6.2",
+    "numpy==1.23.4",
+    "packaging==21.3",
+    "pandas==1.5.1",
+    "Pillow==9.3.0",
+    "pyparsing==3.0.9",
+    "PyQt5==5.15.10",
+    "python-dateutil==2.8.2",
+    "pytz==2022.6",
+    "PyYAML==6.0",
+    "requests==2.28.1",
+    "scikit-learn==1.1.3",
+    "scipy==1.9.3",
+    "six==1.16.0",
+    "threadpoolctl==3.1.0",
+    "tornado==6.2",
+    "urllib3==1.26.12",
+    "xyzservices==2022.9.0",
+    "qt_material"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools]
+packages = ["fix8"]
+package-dir = {"fix8" = "src"}
+
+[tool.setuptools.package-data]
+"fix8" = ["*.py", ".images/*", "*.xml"]
+
+[project.scripts]
+fix8 = "fix8.fix8:main"
