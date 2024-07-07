@@ -34,6 +34,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.setWindowIcon(QIcon("src/.images/icon.ico"))
         self.init_UI()
         self.apply_stylesheet(self, 'src/my_theme.xml')
+    
 
 
     def init_UI(self):
@@ -57,6 +58,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.canvas = canvas_resources.QtCanvas(self, width=12, height=8, dpi=200)
         self.right_side.addWidget(self.canvas)
+        self.canvas.setFocusPolicy(Qt.StrongFocus)
+        
 
         self.progress_tools = QHBoxLayout()
 
@@ -156,6 +159,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.toggle_fixation_opacity.setMinimum(1)
         self.fixation_opacity_text = QLabel("Opacity")
         self.toggle_fixation_opacity.setEnabled(False)
+        self.toggle_fixation_opacity.setKeyboardTracking(False)
 
         self.fixation_opacity_layer.addWidget(self.toggle_fixation_opacity)
         self.fixation_opacity_layer.addWidget(self.fixation_opacity_text)
@@ -623,15 +627,27 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.button_next_fixation.clicked.connect(self.fix8.next_fixation)
         self.progress_bar.valueChanged.connect(self.fix8.progress_bar_updated)
         self.checkbox_show_aoi.stateChanged.connect(self.fix8.quick_draw_canvas)
+        self.checkbox_show_aoi.stateChanged.connect(self.set_canvas_focus)
         self.toggle_aoi_width.valueChanged.connect(self.fix8.aoi_width_changed)
+        self.toggle_aoi_width.valueChanged.connect(self.set_canvas_focus)
         self.toggle_aoi_height.valueChanged.connect(self.fix8.aoi_height_changed)
+        self.toggle_aoi_height.valueChanged.connect(self.set_canvas_focus)
         self.checkbox_show_fixations.stateChanged.connect(self.fix8.quick_draw_canvas)
+        self.checkbox_show_fixations.stateChanged.connect(self.set_canvas_focus)
         self.checkbox_show_all_fixations.stateChanged.connect(self.fix8.quick_draw_canvas)
+        self.checkbox_show_all_fixations.stateChanged.connect(self.set_canvas_focus)
         self.toggle_fixation_opacity.valueChanged.connect(self.fix8.fixation_opacity_changed)
+        self.toggle_fixation_opacity.valueChanged.connect(self.set_canvas_focus)
+
+
         self.checkbox_show_saccades.stateChanged.connect(self.fix8.quick_draw_canvas)
+        self.checkbox_show_saccades.stateChanged.connect(self.set_canvas_focus)
         self.toggle_saccade_opacity.valueChanged.connect(self.fix8.saccade_opacity_changed)
+        self.toggle_saccade_opacity.valueChanged.connect(self.set_canvas_focus)
         self.fixation_size_box.valueChanged.connect(self.fix8.fixation_size_changed)
+        self.fixation_size_box.valueChanged.connect(self.set_canvas_focus)
         self.saccade_size_box.valueChanged.connect(self.fix8.saccade_width_changed)
+        self.saccade_size_box.valueChanged.connect(self.set_canvas_focus)
         self.button_fixation_color.clicked.connect(self.fix8.select_fixation_color)
         self.button_saccade_color.clicked.connect(self.fix8.select_saccade_color)
         self.button_aoi_color.clicked.connect(self.fix8.select_aoi_color)
@@ -713,6 +729,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.json_to_csv_converter_action.triggered.connect(self.fix8.json_to_csv_converter)
         self.csv_to_json_converter_action.triggered.connect(self.fix8.csv_to_json_converter)
         self.eyelink_experiment_to_csv_converter_action.triggered.connect(self.fix8.eyelink_experiment_to_csv_converter)
+
 
     def relevant_buttons(self, feature):
         if feature == "opened_stimulus":
@@ -868,3 +885,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         # This method is called when the window is resized
         if self.fix8.image_file_path is not None:
             self.fix8.draw_canvas()
+
+    def set_canvas_focus(self):
+        self.canvas.setFocus()
+    

@@ -2111,7 +2111,7 @@ class Fix8():
         self.aoi_height = value
         self.find_aoi()
         self.quick_draw_canvas()
-
+        
     def aoi_width_changed(self, value):
         self.aoi_width = value
         self.find_aoi()
@@ -2197,7 +2197,7 @@ class Fix8():
     def fixation_opacity_changed(self, value):
         self.fixation_opacity = float(value / 10)
         self.quick_draw_canvas(all_fixations=False)
-
+        
     def fixation_size_changed(self, value):
         self.fixation_size = value * 6
         self.draw_canvas()
