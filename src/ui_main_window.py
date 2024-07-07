@@ -60,7 +60,6 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.right_side.addWidget(self.canvas)
         self.canvas.setFocusPolicy(Qt.StrongFocus)
         
-
         self.progress_tools = QHBoxLayout()
 
         # initialize status bar
@@ -159,7 +158,6 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.toggle_fixation_opacity.setMinimum(1)
         self.fixation_opacity_text = QLabel("Opacity")
         self.toggle_fixation_opacity.setEnabled(False)
-        self.toggle_fixation_opacity.setKeyboardTracking(False)
 
         self.fixation_opacity_layer.addWidget(self.toggle_fixation_opacity)
         self.fixation_opacity_layer.addWidget(self.fixation_opacity_text)
@@ -627,21 +625,17 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.button_next_fixation.clicked.connect(self.fix8.next_fixation)
         self.progress_bar.valueChanged.connect(self.fix8.progress_bar_updated)
         self.checkbox_show_aoi.stateChanged.connect(self.fix8.quick_draw_canvas)
-        self.checkbox_show_aoi.stateChanged.connect(self.set_canvas_focus)
         self.toggle_aoi_width.valueChanged.connect(self.fix8.aoi_width_changed)
         self.toggle_aoi_width.valueChanged.connect(self.set_canvas_focus)
         self.toggle_aoi_height.valueChanged.connect(self.fix8.aoi_height_changed)
         self.toggle_aoi_height.valueChanged.connect(self.set_canvas_focus)
         self.checkbox_show_fixations.stateChanged.connect(self.fix8.quick_draw_canvas)
-        self.checkbox_show_fixations.stateChanged.connect(self.set_canvas_focus)
         self.checkbox_show_all_fixations.stateChanged.connect(self.fix8.quick_draw_canvas)
-        self.checkbox_show_all_fixations.stateChanged.connect(self.set_canvas_focus)
         self.toggle_fixation_opacity.valueChanged.connect(self.fix8.fixation_opacity_changed)
         self.toggle_fixation_opacity.valueChanged.connect(self.set_canvas_focus)
 
 
         self.checkbox_show_saccades.stateChanged.connect(self.fix8.quick_draw_canvas)
-        self.checkbox_show_saccades.stateChanged.connect(self.set_canvas_focus)
         self.toggle_saccade_opacity.valueChanged.connect(self.fix8.saccade_opacity_changed)
         self.toggle_saccade_opacity.valueChanged.connect(self.set_canvas_focus)
         self.fixation_size_box.valueChanged.connect(self.fix8.fixation_size_changed)
