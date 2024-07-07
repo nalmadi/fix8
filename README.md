@@ -74,7 +74,13 @@ To run Fix8 from the Python code, follow these steps:
     pip install .
     ```
 
-4. **Run the Tool:**
+    If you plan to make changes to the code and rerun the package with the new changes, use this command instead:
+
+   ```bash
+   pip install -e .
+   ```
+
+5. **Run the Tool:**
 
     Once done, run the tool simply by entering the command "fix8" in the terminal:
 
@@ -83,7 +89,7 @@ To run Fix8 from the Python code, follow these steps:
     ```
 
 
-5. **Deactivate the Virtual Environment:**
+6. **Deactivate the Virtual Environment:**
 
     When you're done using the tool, deactivate the virtual environment:
 
