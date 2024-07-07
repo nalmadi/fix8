@@ -1915,6 +1915,10 @@ class Fix8():
 
     def confirm_suggestion(self):
         """ when the confirm button is clicked, the suggested correction replaces the current fixation"""
+
+        if self.suggested_corrections is None:
+            return
+
         self.metadata += (
             "auto_moving, fixation "
             + str(self.current_fixation)
