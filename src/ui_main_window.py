@@ -22,9 +22,9 @@ from PyQt5.QtWidgets import (
     QSpacerItem
 )
 
-from . import canvas_resources
-from . import driftAlgorithms as drift
-from . import correction
+import canvas_resources
+import driftAlgorithms as drift
+import correction
 
 class Ui_Main_Window(QMainWindow, QtStyleTools):
     def __init__(self, fix8):
