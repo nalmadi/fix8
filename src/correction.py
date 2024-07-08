@@ -4,7 +4,7 @@ paper: Advancing Dynamic-Time Warp Techniques for Correcting Eye Tracking Data
 
 Author: Naser Al Madi
 email: nsalmadi@colby.edu or nsalmadi@seas.harvard.edu
-"""
+    """
 # This file contains functions to generate synthetic eye tracking data and
 # new algorithms for correcting real and synthetic eye tracking data.
 #
@@ -12,7 +12,7 @@ email: nsalmadi@colby.edu or nsalmadi@seas.harvard.edu
 # https://github.com/nalmadi/EMIP-Toolkit
 
 import random
-from . import driftAlgorithms as algo
+import driftAlgorithms as algo
 from PIL import ImageFont, ImageDraw, Image
 from matplotlib import pyplot as plt
 import numpy as np
@@ -21,7 +21,7 @@ import numpy as np
 def generate_fixations_center(aois_with_tokens):
     """
     function to generate fixations at the center of each word
-
+    
     Parameters
     ----------
     aois_with_tokens : pandas.DataFrame

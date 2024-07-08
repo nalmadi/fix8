@@ -54,12 +54,12 @@ import copy
 from datetime import date
 from pathlib import Path
 
-from . import mini_emtk
-from .merge_fixations_dialog import MergeFixationsDialog
-from .generate_fixations_skip_dialog import GenerateFixationsSkipDialog
-from .eyelink_csv_dialog import EyelinkDialog
-from .state import Fix8State, History
-from . import ui_main_window
+import mini_emtk
+import merge_fixations_dialog as mfd
+import generate_fixations_skip_dialog as gfsd
+import eyelink_csv_dialog as ecd
+import state
+import ui_main_window
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
@@ -89,7 +89,7 @@ class Fix8():
         self.suggested_corrections = None
 
         # filed for tool undo/redo using memento pattern and state class
-        self.state_history = History()
+        self.state_history = state.History()
 
         # fields relating to AOIs
         self.aoi, self.background_color = None, None
@@ -151,7 +151,7 @@ class Fix8():
             return
 
         # clear history for undo
-        self.state_history = History()
+        self.state_history = state.History()
 
         # get aoi from the image
         self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
@@ -195,7 +195,7 @@ class Fix8():
 
     def generate_fixations_skip(self):
 
-        dialog = GenerateFixationsSkipDialog(self.ui)
+        dialog = gfsd.GenerateFixationsSkipDialog(self.ui)
         dialog.exec()
         approximate_letter_width, lam, k_value = dialog.getInputs()
 
@@ -203,7 +203,7 @@ class Fix8():
             return
 
         # clear history for undo
-        self.state_history = History()
+        self.state_history = state.History()
 
         # get aoi from the image
         self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
@@ -257,7 +257,7 @@ class Fix8():
             return
 
         # clear history for undo
-        self.state_history = History()
+        self.state_history = state.History()
 
         # get aoi from the image
         self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
@@ -311,7 +311,7 @@ class Fix8():
             return
 
         # clear history for undo
-        self.state_history = History()
+        self.state_history = state.History()
 
         # get aoi from the image
         self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
@@ -685,7 +685,7 @@ class Fix8():
 
     def eyelink_experiment_to_csv_converter(self):
         ''' convert eyelink experiment to csv files from ASCII and runtime folder '''
-        dialog = EyelinkDialog(self.ui)
+        dialog = ecd.EyelinkDialog(self.ui)
 
         # get user inputs
         ascii_file, runtime_folder, save_folder = dialog.getInputs()
@@ -761,7 +761,7 @@ class Fix8():
 
     def save_state(self):
 
-        current_state = Fix8State(
+        current_state = state.Fix8State(
             self.fixations,
             self.saccades,
             self.blinks,
@@ -881,7 +881,7 @@ class Fix8():
 
 
     def merge_fixations(self):
-        dialog = MergeFixationsDialog(self.ui)
+        dialog = mfd.MergeFixationsDialog(self.ui)
         dialog.exec()
         
         duration_threshold, dispersion_threshold = dialog.getInputs()
@@ -1340,7 +1340,7 @@ class Fix8():
                 return
 
         # clear history for undo
-        self.state_history = History()
+        self.state_history = state.History()
 
         self.suggested_corrections = None
         self.current_fixation = (len(self.original_fixations)-1)  
@@ -1463,7 +1463,7 @@ class Fix8():
                 return
 
         # clear history for undo
-        self.state_history = History()
+        self.state_history = state.History()
 
         self.suggested_corrections = None
         self.current_fixation = (len(self.original_fixations)-1)  
