@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ui_main_window &#8212; fix8 2024 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=6fefd858"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for ui_main_window</h1><div class="highlight"><pre>
+<span></span>
+
+<span class="kn">from</span> <span class="nn">qt_material</span> <span class="kn">import</span> <span class="n">QtStyleTools</span><span class="p">,</span> <span class="n">list_themes</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="n">QIcon</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">QFrame</span><span class="p">,</span>
+    <span class="n">QCheckBox</span><span class="p">,</span>
+    <span class="n">QHBoxLayout</span><span class="p">,</span>
+    <span class="n">QLabel</span><span class="p">,</span>
+    <span class="n">QSlider</span><span class="p">,</span>
+    <span class="n">QMainWindow</span><span class="p">,</span>
+    <span class="n">QPushButton</span><span class="p">,</span>
+    <span class="n">QVBoxLayout</span><span class="p">,</span>
+    <span class="n">QWidget</span><span class="p">,</span>
+    <span class="n">QListWidget</span><span class="p">,</span>
+    <span class="n">QSpinBox</span><span class="p">,</span>
+    <span class="n">QStatusBar</span><span class="p">,</span>
+    <span class="n">QAction</span><span class="p">,</span>
+    <span class="n">QTableWidget</span><span class="p">,</span> 
+    <span class="n">QTableWidgetItem</span><span class="p">,</span>
+    <span class="n">QSpacerItem</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">canvas_resources</span>
+<span class="kn">import</span> <span class="nn">driftAlgorithms</span> <span class="k">as</span> <span class="nn">drift</span>
+<span class="kn">import</span> <span class="nn">correction</span>
+
+<div class="viewcode-block" id="Ui_Main_Window">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window">[docs]</a>
+<span class="k">class</span> <span class="nc">Ui_Main_Window</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QtStyleTools</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fix8</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span> <span class="o">=</span> <span class="n">fix8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Fix8&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;src/.images/icon.ico&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_UI</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;src/my_theme.xml&#39;</span><span class="p">)</span>
+    
+
+
+<div class="viewcode-block" id="Ui_Main_Window.init_UI">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.init_UI">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_UI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;initalize the tool window&quot;&quot;&quot;</span>
+        <span class="c1"># wrapper layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+
+        <span class="c1"># --- left side</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_side</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_list</span> <span class="o">=</span> <span class="n">QListWidget</span><span class="p">()</span>
+        
+        <span class="c1">#self.trial_list.setHidden(True)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_side</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trial_list</span><span class="p">)</span>
+        
+        <span class="c1"># ---</span>
+
+        <span class="c1"># --- canvas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_side</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">canvas_resources</span><span class="o">.</span><span class="n">QtCanvas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_side</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">StrongFocus</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_tools</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+
+        <span class="c1"># initialize status bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span> <span class="o">=</span> <span class="s2">&quot;Beginning...&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span> <span class="o">=</span> <span class="n">QStatusBar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setStatusBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas_toolbar</span> <span class="o">=</span> <span class="n">canvas_resources</span><span class="o">.</span><span class="n">Toolbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="c1">#self.toolbar.setStyleSheet(&quot;QToolBar { border: 0px }&quot;)</span>
+        <span class="c1">#self.toolbar.setEnabled(False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_tools</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">canvas_toolbar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_previous_fixation</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Back&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_previous_fixation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_tools</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_previous_fixation</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_next_fixation</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Next&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_next_fixation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_tools</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_next_fixation</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span> <span class="o">=</span> <span class="n">QSlider</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_tools</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_progress</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;0/0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_tools</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_progress</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_side</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_tools</span><span class="p">)</span>
+
+
+
+        <span class="c1"># section for trial statistics panel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_statistics</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="c1"># add a qtablewidget for trial statistics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span> <span class="o">=</span> <span class="n">QTableWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setColumnCount</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="c1"># remove horizontal and vertical headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;Trial duration&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;Max fixation duration&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;Min fixation duration&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;Number of AOIs&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;Number of regressions&quot;</span><span class="p">))</span>
+        <span class="c1">#self.statistics_table.setItem(5, 0, QTableWidgetItem(&quot;Current x, y, duration&quot;))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">))</span>
+        <span class="c1">#self.statistics_table.setItem(5, 1, QTableWidgetItem(&quot;0&quot;))</span>
+
+        <span class="c1"># expand the first column horizontally to show the text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># add the table to the layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_statistics</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_side</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trial_statistics</span><span class="p">)</span>
+        
+
+        <span class="c1"># --- section for visualization panel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_panel</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_filters</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Visualization&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_filters</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_filters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addSpacerItem</span><span class="p">(</span><span class="n">QSpacerItem</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        
+        <span class="c1"># ---------------------------------------------------------------------</span>
+
+        <span class="c1"># Fixations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_top</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Show Fixations&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_opacity_layer</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span> <span class="o">=</span> <span class="n">QSpinBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_opacity_text</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Opacity&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_opacity_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_opacity_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_opacity_text</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_top</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_opacity_layer</span><span class="p">)</span>
+        <span class="c1"># self.fixation_layer.addWidget(self.fixation_opacity_text)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_top</span><span class="p">)</span>
+
+        <span class="c1"># layer for fixation size customization </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_middle</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_order</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Fixation order&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_order</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_middle</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_order</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_layer</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span> <span class="o">=</span> <span class="n">QSpinBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_text</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Size&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_middle</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_layer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_middle</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_bottom</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_fixation_color</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Fixation Color&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_current_fixation_color</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Current Fix. Color&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_current_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_bottom</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_fixation_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_bottom</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_current_fixation_color</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_layer_bottom</span><span class="p">)</span>
+
+        <span class="c1"># -- 4th layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">suggestion_4th_layer</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_all_fixations</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Show Remaining Fix.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_all_fixations</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">suggestion_4th_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_all_fixations</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_remaining_fixation_color</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Next Fix. Color&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_remaining_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">suggestion_4th_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_remaining_fixation_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">suggestion_4th_layer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addSpacerItem</span><span class="p">(</span><span class="n">QSpacerItem</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="n">fixation_line_separator</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">fixation_line_separator</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">HLine</span><span class="p">)</span>
+        <span class="n">fixation_line_separator</span><span class="o">.</span><span class="n">setFrameShadow</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Sunken</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">fixation_line_separator</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addSpacerItem</span><span class="p">(</span><span class="n">QSpacerItem</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        
+        <span class="c1"># ---------------------------------------------------------------------</span>
+        <span class="c1"># Suggestion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">suggestion_layer_top</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Show Suggestion&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># self.checkbox_show_suggestion.stateChanged.connect(self.show_suggestion)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">suggestion_layer_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="p">)</span>
+
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_suggested_fixation_color</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Suggestion Color&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_suggested_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">suggestion_layer_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_suggested_fixation_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">suggestion_layer_top</span><span class="p">)</span>
+        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addSpacerItem</span><span class="p">(</span><span class="n">QSpacerItem</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="n">suggestion_line_separator</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">suggestion_line_separator</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">HLine</span><span class="p">)</span>
+        <span class="n">suggestion_line_separator</span><span class="o">.</span><span class="n">setFrameShadow</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Sunken</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">suggestion_line_separator</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addSpacerItem</span><span class="p">(</span><span class="n">QSpacerItem</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+        <span class="c1"># ---------------------------------------------------------------------</span>
+        <span class="c1"># Saccades</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_layer_top</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Show Saccades&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_layer_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_opacity_layer</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span> <span class="o">=</span> <span class="n">QSpinBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_opacity_text</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Opacity&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_opacity_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_opacity_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saccade_opacity_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_layer_top</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saccade_opacity_layer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saccade_layer_top</span><span class="p">)</span>
+
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_layer_middle</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_saccade_color</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Saccade Color&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_saccade_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_layer_middle</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_saccade_color</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_layer</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span> <span class="o">=</span> <span class="n">QSpinBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_text</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Width&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_layer_middle</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_layer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saccade_layer_middle</span><span class="p">)</span>
+        
+        
+
+
+
+
+
+
+
+        <span class="c1"># ---</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_frame</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_frame</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_panel</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visualization_frame</span><span class="p">)</span>
+
+        <span class="c1"># --</span>
+
+
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addSpacerItem</span><span class="p">(</span><span class="n">QSpacerItem</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="n">saccade_line_separator</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">saccade_line_separator</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">HLine</span><span class="p">)</span>
+        <span class="n">saccade_line_separator</span><span class="o">.</span><span class="n">setFrameShadow</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Sunken</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">saccade_line_separator</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addSpacerItem</span><span class="p">(</span><span class="n">QSpacerItem</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        
+        <span class="c1"># self.colorblind_button_layer.addWidget(self.button_coloblind_assist)</span>
+        <span class="c1"># self.button_coloblind_assist = QPushButton(&quot;Colorblind Assist&quot;)</span>
+        <span class="c1"># self.button_coloblind_assist.setEnabled(False)</span>
+
+        <span class="c1">#self.layer_fixation_color = QHBoxLayout()</span>
+        <span class="c1">#self.layer_fixation_color.addWidget(self.button_fixation_color)</span>
+        
+
+        <span class="c1">#self.second_layer_fixation_color = QHBoxLayout()</span>
+        <span class="c1">#self.second_layer_fixation_color.addWidget(self.button_current_fixation_color)</span>
+        <span class="c1">#self.second_layer_fixation_color.addWidget(self.button_suggested_fixation_color)</span>
+
+        <span class="c1">#self.colorblind_button_layer = QHBoxLayout()</span>
+        
+        
+        <span class="c1">#self.filters.addLayout(self.layer_fixation_color)</span>
+        <span class="c1">#self.filters.addLayout(self.second_layer_fixation_color)</span>
+
+        <span class="c1"># ---------------------------------------------------------------------</span>
+        <span class="c1"># AOI </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_layer_top</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Show AOIs&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_width_layer</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span> <span class="o">=</span> <span class="n">QSpinBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_width_text</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Width&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_width_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_width_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aoi_width_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_layer_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_layer_top</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aoi_width_layer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_layer_bottom</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_aoi_color</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;AOIs Color&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_aoi_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_layer_bottom</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_aoi_color</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_height_layer</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span> <span class="o">=</span> <span class="n">QSpinBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_height_text</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Height&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_height_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_height_layer</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aoi_height_text</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_layer_bottom</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aoi_height_layer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aoi_layer_top</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aoi_layer_bottom</span><span class="p">)</span>
+
+
+
+        <span class="c1">#self.filters.addLayout(self.colorblind_button_layer)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_side</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visualization_panel</span><span class="p">)</span>
+
+
+        <span class="c1"># add both sides to overall wrapper layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left_side</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right_side</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper_layout</span><span class="o">.</span><span class="n">setStretch</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper_layout</span><span class="o">.</span><span class="n">setStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># initial button states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas_toolbar</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+
+        <span class="c1">#self.button_next_fixation.setEnabled(False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapper_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showMaximized</span><span class="p">()</span>
+
+        <span class="c1"># styling menu bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;QMenuBar {font-size: 14px; color: black; padding: 2px; margin: 0px; border-radius: 4px;}&quot;</span><span class="p">)</span>
+        <span class="c1"># add menues</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;File&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Edit&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;View&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Generate&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synthetic_data_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_menu</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Synthetic Data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distortions_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_menu</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Distortions&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Filters&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">correction_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Correction&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">correction_menu</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Automatic&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">correction_menu</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Assisted&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyses_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Analyses&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converters_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Converters&quot;</span><span class="p">)</span>
+
+        <span class="c1"># add actions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_file_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;src/.images/open.png&quot;</span><span class="p">),</span> <span class="s2">&quot;Open Trial Folder&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_image_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Open Image&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_trial_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Open Trial&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_aoi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Open AOI&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_json_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Save Json&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_CSV_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Save CSV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_aoi_csv_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Save AOI file&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">undo_correction_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Undo&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_fixation_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Next Fixation&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_fixation_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Previous Fixation&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept_and_next_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Accept suggestion&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete_fixation_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Delete Fixation&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_list_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Show/Hide Trial List&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_summary_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Show/Hide Trial Summary&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_panel_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Show/Hide Visualization Panel&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hide_side_panel_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Show/Hide Side Panel&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_fixations_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Generate Fixations&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_fixations_skip_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Generate Fixations (Skip)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generat_within_line_regression_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Generate Within Line Regression&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_between_line_regression_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Generate Between Line Regression&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_noise_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Generate Noise&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_slope_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Generate Slope&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_offset_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Generate Offset&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_shift_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Generate Shift&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lowpass_duration_filter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Filters less than&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">highpass_duration_filter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Filters greater than&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outlier_duration_filter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Outlier Filter&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merge_fixations_filter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Merge Fixations&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outside_screen_filter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Outside Screen&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">manual_correction_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Manual&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attach_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Attach&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Chain&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Cluster&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merge_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Merge&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regress_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Regress&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Segment&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stretch_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Stretch&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slice_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Slice&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_attach_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp+Attach&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_chain_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp+Chain&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">war_regress_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp+Regress&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_stretch_auto_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp+Stretch&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attach_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Attach&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Chain&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Cluster&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merge_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Merge&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regress_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Regress&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Segment&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stretch_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Stretch&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slice_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Slice&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_attach_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp+Attach&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_chain_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp+Chain&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">war_regress_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp+Regress&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_stretch_semi_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Warp+Stretch&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_report_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Fixation Report&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_report_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Saccade Report&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_report_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;AOI Report&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_metrics_report_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;AOI Metrics Report&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ascii_to_csv_converter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;ASCII to CSV (one trial)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">json_to_csv_converter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;JSON to CSV (one trial)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">csv_to_json_converter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;CSV to JSON (one trial)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eyelink_experiment_to_csv_converter_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Eyelink Experiment to CSV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># add shortcuts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_file_action</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;Ctrl+O&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_CSV_action</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;Ctrl+S&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_fixation_action</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_fixation_action</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">undo_correction_action</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;Ctrl+Z&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept_and_next_action</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;space&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete_fixation_action</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;backspace&quot;</span><span class="p">)</span>
+
+        <span class="c1"># enable/disable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_json_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_CSV_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_trial_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_aoi_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_aoi_csv_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correction_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyses_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># add actions to menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_file_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_image_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_trial_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_aoi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_correction_json_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_aoi_csv_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_correction_CSV_action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_fixation_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_fixation_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accept_and_next_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">undo_correction_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delete_fixation_action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trial_list_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trial_summary_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visualization_panel_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hide_side_panel_action</span><span class="p">)</span>
+
+        <span class="c1"># Generate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synthetic_data_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_fixations_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synthetic_data_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_fixations_skip_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synthetic_data_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generat_within_line_regression_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synthetic_data_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_between_line_regression_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distortions_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_noise_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distortions_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_slope_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distortions_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_offset_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distortions_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_shift_action</span><span class="p">)</span>        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lowpass_duration_filter_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">highpass_duration_filter_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outlier_duration_filter_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">merge_fixations_filter_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outside_screen_filter_action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manual_correction_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warp_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attach_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chain_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">merge_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regress_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segment_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stretch_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warp_attach_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warp_chain_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">war_regress_auto_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automated_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warp_stretch_auto_action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warp_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attach_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chain_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">merge_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regress_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segment_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stretch_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warp_attach_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warp_chain_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">war_regress_semi_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_auto_correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warp_stretch_semi_action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyses_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixation_report_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyses_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saccade_report_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyses_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aoi_report_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyses_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aoi_metrics_report_action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">converters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ascii_to_csv_converter_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">json_to_csv_converter_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_to_json_converter_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converters_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eyelink_experiment_to_csv_converter_action</span><span class="p">)</span>
+
+        <span class="c1"># add menu item called &quot;Style&quot; to the menu bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menu_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Appearance&quot;</span><span class="p">)</span>
+
+        <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s1">&#39;Default&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="s1">&#39;Default&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;src/my_theme.xml&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menu_style</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="c1"># add sub menu to the menu item &quot;Style&quot; for Dark</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dark_menue_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menu_style</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Dark&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">light_menue_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menu_style</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Light&quot;</span><span class="p">)</span>
+
+        <span class="c1"># add actions to the menu item &quot;Style&quot;</span>
+        <span class="k">for</span> <span class="n">theme</span> <span class="ow">in</span> <span class="n">list_themes</span><span class="p">():</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="n">theme</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="n">theme</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theme</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="s1">&#39;dark&#39;</span> <span class="ow">in</span> <span class="n">theme</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dark_menue_style</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">light_menue_style</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">color_blind_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s1">&#39;Colorblind Assist&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menu_style</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color_blind_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color_blind_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">colorblind_assist</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock_x_axis_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s1">&#39;Lock X Axis&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correction_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lock_x_axis_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock_x_axis_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">lock_x_axis</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;button_press_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">button_press_callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;button_release_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">button_release_callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;motion_notify_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">motion_notify_callback</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_list</span><span class="o">.</span><span class="n">itemDoubleClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">trial_double_clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_previous_fixation</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">previous_fixation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_next_fixation</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">next_fixation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">progress_bar_updated</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">quick_draw_canvas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">aoi_width_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_canvas_focus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">aoi_height_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_canvas_focus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">quick_draw_canvas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_all_fixations</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">quick_draw_canvas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">fixation_opacity_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_canvas_focus</span><span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">quick_draw_canvas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">saccade_opacity_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_canvas_focus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">fixation_size_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_canvas_focus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">saccade_width_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_canvas_focus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_fixation_color</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">select_fixation_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_saccade_color</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">select_saccade_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_aoi_color</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">select_aoi_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_current_fixation_color</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">select_current_fixation_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_suggested_fixation_color</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">select_suggested_fixation_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_remaining_fixation_color</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">select_remaining_fixation_color</span><span class="p">)</span>
+        <span class="c1">#self.button_coloblind_assist.clicked.connect(self.fix8.colorblind_assist)</span>
+        <span class="c1"># connect functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_file_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">open_trial_folder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_image_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">open_image</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_trial_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">open_trial</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_aoi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">open_aoi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_json_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">save_corrections_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_CSV_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">save_corrections_csv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_aoi_csv_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">save_aoi_csv</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_fixation_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">assign_fixation_above</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_fixation_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">assign_fixation_below</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept_and_next_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">confirm_suggestion</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete_fixation_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">remove_fixation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undo_correction_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">undo</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_list_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_hide_trial_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_summary_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_hide_trial_summary</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_panel_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_hide_visualization_panel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hide_side_panel_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_hide_side_panel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_fixations_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">generate_fixations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_fixations_skip_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">generate_fixations_skip</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generat_within_line_regression_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">generate_within_line_regression</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_between_line_regression_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">generate_between_line_regression</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_noise_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">generate_noise</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_slope_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">generate_slope</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_offset_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">generate_offset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_shift_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">generate_shift</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lowpass_duration_filter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">lowpass_duration_filter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">highpass_duration_filter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">highpass_duration_filter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outlier_duration_filter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">outlier_duration_filter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merge_fixations_filter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">merge_fixations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outside_screen_filter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">outside_screen_filter</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">warp</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attach_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;attach&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">attach</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;cluster&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">cluster</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merge_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;merge&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">merge</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regress_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;regress&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">regress</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;segment&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">segment</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stretch_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;stretch&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">stretch</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slice_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;slice&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">slice</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_attach_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp+attach&#39;</span><span class="p">,</span> <span class="n">correction</span><span class="o">.</span><span class="n">warp_regs</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">attach</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_chain_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp+chain&#39;</span><span class="p">,</span> <span class="n">correction</span><span class="o">.</span><span class="n">warp_regs</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">chain</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">war_regress_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp+regress&#39;</span><span class="p">,</span> <span class="n">correction</span><span class="o">.</span><span class="n">warp_regs</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">regress</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_stretch_auto_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp+stretch&#39;</span><span class="p">,</span> <span class="n">correction</span><span class="o">.</span><span class="n">warp_regs</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">stretch</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">warp</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attach_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;attach&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">attach</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;cluster&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">cluster</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merge_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;merge&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">merge</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regress_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;regress&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">regress</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;segment&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">segment</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stretch_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;stretch&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">stretch</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slice_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;slice&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">slice</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_attach_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp+attach&#39;</span><span class="p">,</span> <span class="n">correction</span><span class="o">.</span><span class="n">warp_regs</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">attach</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_chain_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp+chain&#39;</span><span class="p">,</span> <span class="n">correction</span><span class="o">.</span><span class="n">warp_regs</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">chain</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">war_regress_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp+regress&#39;</span><span class="p">,</span> <span class="n">correction</span><span class="o">.</span><span class="n">warp_regs</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">regress</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warp_stretch_semi_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">run_algorithm</span><span class="p">(</span><span class="s1">&#39;warp+stretch&#39;</span><span class="p">,</span> <span class="n">correction</span><span class="o">.</span><span class="n">warp_regs</span><span class="p">,</span> <span class="s1">&#39;semi&#39;</span><span class="p">,</span> <span class="n">drift</span><span class="o">.</span><span class="n">stretch</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">manual_correction_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">manual_correction</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixation_report_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">calculate_fixation_report</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saccade_report_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">calculate_saccade_report</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_report_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">calculate_aoi_report</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aoi_metrics_report_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">calculate_aoi_metrics</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ascii_to_csv_converter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">ascii_to_csv_converter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">json_to_csv_converter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">json_to_csv_converter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">csv_to_json_converter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">csv_to_json_converter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eyelink_experiment_to_csv_converter_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">eyelink_experiment_to_csv_converter</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Ui_Main_Window.relevant_buttons">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.relevant_buttons">[docs]</a>
+    <span class="k">def</span> <span class="nf">relevant_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">feature</span> <span class="o">==</span> <span class="s2">&quot;opened_stimulus&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canvas_toolbar</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">feature</span> <span class="o">==</span> <span class="s2">&quot;opened_folder&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_previous_fixation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_next_fixation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1"># IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal</span>
+            <span class="c1"># happens in the checkbox connected method,</span>
+            <span class="c1"># then make in uncheckable so it won&#39;t activate by accident anymore; there is no helper function</span>
+            <span class="c1"># for removing suggestions, so clearing suggestions isn&#39;t called anywhere in the code</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_all_fixations</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">minimum</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_saccade_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_aoi_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_suggested_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_current_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_remaining_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1">#self.button_coloblind_assist.setEnabled(False)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">feature</span> <span class="o">==</span> <span class="s2">&quot;trial_clicked&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_json_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_correction_CSV_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_aoi_csv_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open_trial_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open_aoi_action</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">edit_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filters_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">correction_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">analyses_menu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_previous_fixation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_next_fixation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_aoi</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_fixations</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_saccades</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_all_fixations</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_width</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_aoi_height</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_saccade_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_aoi_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_suggested_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_current_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_remaining_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_fixation_opacity</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_saccade_opacity</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fixation_size_box</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">saccade_size_box</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1">#self.button_coloblind_assist.setEnabled(True)</span>
+
+            <span class="c1"># IMPORTANT: here, set checked to false first so it activates suggestion removal since the removal</span>
+            <span class="c1"># happens in the checkbox connected method,</span>
+            <span class="c1"># then make in uncheckable so it won&#39;t activate by accident anymore; there is no helper</span>
+            <span class="c1"># function for removing suggestions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_all_fixations</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">minimum</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">feature</span> <span class="o">==</span> <span class="s2">&quot;no_selected_algorithm&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># the no algorithm selection updates the suggestions</span>
+            <span class="c1"># which clears them in the function itself</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_suggestion</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_show_all_fixations</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">feature</span> <span class="o">==</span> <span class="s2">&quot;algorithm_selected&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_previous_fixation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_next_fixation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_suggested_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_remaining_fixation_color</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+    
+<div class="viewcode-block" id="Ui_Main_Window.show_hide_side_panel">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.show_hide_side_panel">[docs]</a>
+    <span class="k">def</span> <span class="nf">show_hide_side_panel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial_list</span><span class="o">.</span><span class="n">isHidden</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">visualization_frame</span><span class="o">.</span><span class="n">isHidden</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hide_side_panel</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_side_panel</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">image_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">draw_canvas</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Ui_Main_Window.hide_side_panel">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.hide_side_panel">[docs]</a>
+    <span class="k">def</span> <span class="nf">hide_side_panel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_list</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_frame</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ui_Main_Window.show_side_panel">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.show_side_panel">[docs]</a>
+    <span class="k">def</span> <span class="nf">show_side_panel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_list</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_frame</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+        <span class="c1">#self.statistics_table.setHidden(False)</span>
+
+<div class="viewcode-block" id="Ui_Main_Window.show_hide_trial_list">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.show_hide_trial_list">[docs]</a>
+    <span class="k">def</span> <span class="nf">show_hide_trial_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial_list</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial_list</span><span class="o">.</span><span class="n">isHidden</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">image_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">draw_canvas</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Ui_Main_Window.show_hide_trial_summary">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.show_hide_trial_summary">[docs]</a>
+    <span class="k">def</span> <span class="nf">show_hide_trial_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics_table</span><span class="o">.</span><span class="n">isHidden</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">image_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">draw_canvas</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Ui_Main_Window.show_hide_visualization_panel">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.show_hide_visualization_panel">[docs]</a>
+    <span class="k">def</span> <span class="nf">show_hide_visualization_panel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visualization_frame</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">visualization_frame</span><span class="o">.</span><span class="n">isHidden</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">image_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">draw_canvas</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="Ui_Main_Window.resizeEvent">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.resizeEvent">[docs]</a>
+    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="c1"># This method is called when the window is resized</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">image_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fix8</span><span class="o">.</span><span class="n">draw_canvas</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Ui_Main_Window.set_canvas_focus">
+<a class="viewcode-back" href="../source/ui_main_window.html#ui_main_window.Ui_Main_Window.set_canvas_focus">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_canvas_focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span></div>
+</div>
+
+    
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">fix8</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Naser Al Madi, Brett Torra, Agnes Li, Najam Tariq, Ricky Peng.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

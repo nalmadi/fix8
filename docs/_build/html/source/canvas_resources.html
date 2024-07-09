@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>canvas_resources module &#8212; fix8 2024 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=6fefd858"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-canvas_resources">
+<span id="canvas-resources-module"></span><h1>canvas_resources module<a class="headerlink" href="#module-canvas_resources" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="canvas_resources.QtCanvas">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">canvas_resources.</span></span><span class="sig-name descname"><span class="pre">QtCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#QtCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.QtCanvas" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FigureCanvasQTAgg</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="canvas_resources.QtCanvas.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#QtCanvas.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.QtCanvas.clear" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="canvas_resources.QtCanvas.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#QtCanvas.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.QtCanvas.initialize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="canvas_resources.Toolbar">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">canvas_resources.</span></span><span class="sig-name descname"><span class="pre">Toolbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">canvas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#Toolbar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.Toolbar" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NavigationToolbar2QT</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="canvas_resources.Toolbar.home">
+<span class="sig-name descname"><span class="pre">home</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#Toolbar.home"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.Toolbar.home" title="Link to this definition">¶</a></dt>
+<dd><p>Restore the original view.</p>
+<p>For convenience of being directly connected as a GUI callback, which
+often get passed additional parameters, this method accepts arbitrary
+parameters, but does not use them.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="canvas_resources.Toolbar.release_pan">
+<span class="sig-name descname"><span class="pre">release_pan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#Toolbar.release_pan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.Toolbar.release_pan" title="Link to this definition">¶</a></dt>
+<dd><p>Callback for mouse button release in pan/zoom mode.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="canvas_resources.Toolbar.release_zoom">
+<span class="sig-name descname"><span class="pre">release_zoom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#Toolbar.release_zoom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.Toolbar.release_zoom" title="Link to this definition">¶</a></dt>
+<dd><p>Callback for mouse button release in zoom to rect mode.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="canvas_resources.Toolbar.removeUnwantedActions">
+<span class="sig-name descname"><span class="pre">removeUnwantedActions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#Toolbar.removeUnwantedActions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.Toolbar.removeUnwantedActions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="canvas_resources.Toolbar.save_figure">
+<span class="sig-name descname"><span class="pre">save_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#Toolbar.save_figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.Toolbar.save_figure" title="Link to this definition">¶</a></dt>
+<dd><p>Save the current figure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="canvas_resources.Toolbar.set_message">
+<span class="sig-name descname"><span class="pre">set_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/canvas_resources.html#Toolbar.set_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#canvas_resources.Toolbar.set_message" title="Link to this definition">¶</a></dt>
+<dd><p>Display a message on toolbar or in status bar.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">fix8</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Naser Al Madi, Brett Torra, Agnes Li, Najam Tariq, Ricky Peng.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/source/canvas_resources.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
