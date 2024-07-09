@@ -443,6 +443,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.lowpass_duration_filter_action = QAction("Filters less than", self)
         self.highpass_duration_filter_action = QAction("Filters greater than", self)
         self.outlier_duration_filter_action = QAction("Outlier Filter", self)
+        self.outlier_metrics_filter_action = QAction("Outlier Metrics Filter", self)
         self.merge_fixations_filter_action = QAction("Merge Fixations", self)
         self.outside_screen_filter_action = QAction("Outside Screen", self)
 
@@ -544,6 +545,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.filters_menu.addAction(self.lowpass_duration_filter_action)
         self.filters_menu.addAction(self.highpass_duration_filter_action)
         self.filters_menu.addAction(self.outlier_duration_filter_action)
+        self.filters_menu.addAction(self.outlier_metrics_filter_action)
         self.filters_menu.addAction(self.merge_fixations_filter_action)
         self.filters_menu.addAction(self.outside_screen_filter_action)
 
@@ -681,6 +683,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.lowpass_duration_filter_action.triggered.connect(self.fix8.lowpass_duration_filter)
         self.highpass_duration_filter_action.triggered.connect(self.fix8.highpass_duration_filter)
         self.outlier_duration_filter_action.triggered.connect(self.fix8.outlier_duration_filter)
+        self.outlier_metrics_filter_action.triggered.connect(self.fix8.outlier_metrics_filter)
         self.merge_fixations_filter_action.triggered.connect(self.fix8.merge_fixations)
         self.outside_screen_filter_action.triggered.connect(self.fix8.outside_screen_filter)
 
