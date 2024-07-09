@@ -57,6 +57,7 @@ from pathlib import Path
 from . import mini_emtk
 from .merge_fixations_dialog import MergeFixationsDialog
 from .generate_fixations_skip_dialog import GenerateFixationsSkipDialog
+from .outlier_metrics_dialog import OutlierMetricsDialog
 from .eyelink_csv_dialog import EyelinkDialog
 from .state import Fix8State, History
 from . import ui_main_window
@@ -569,18 +570,18 @@ class Fix8():
             # convert line and part columns in hit_test_data to int
             hit_test_data['line'] = hit_test_data['line'].astype(int)
             hit_test_data['part'] = hit_test_data['part'].astype(int)
-
+            
             single_fixation_duration.append(mini_emtk.get_single_fixation_duration(hit_test_data, line, part))
             first_fixation_duration.append(mini_emtk.get_first_fixation_duration(hit_test_data, line, part))
             gaze_duration.append(mini_emtk.get_gaze_duration(hit_test_data, line, part))
             total_time.append(mini_emtk.get_total_time(hit_test_data, line, part))
             fixation_count.append(mini_emtk.get_fixation_count(hit_test_data, line, part))
 
-        eye_metrics_data['single_fixation_duration'] = single_fixation_duration
-        eye_metrics_data['first_fixation_duration'] = first_fixation_duration
-        eye_metrics_data['gaze_duration'] = gaze_duration
-        eye_metrics_data['total_time'] = total_time
-        eye_metrics_data['fixation_count'] = fixation_count
+        eye_metrics_data['Single Fixation Duration'] = single_fixation_duration
+        eye_metrics_data['First Fixation Duration'] = first_fixation_duration
+        eye_metrics_data['Gaze Duration'] = gaze_duration
+        eye_metrics_data['Total Time'] = total_time
+        eye_metrics_data['Fixation Count'] = fixation_count
     
         # write eye metrics data to file
         eye_metrics_data.to_csv(file_name, index=False)
@@ -726,6 +727,7 @@ class Fix8():
 
         self.current_fixation = 0
 
+        # update suggested corrections 
         if self.algorithm != "manual" and self.suggested_corrections is not None:
             if self.current_fixation == len(self.fixations):
                 self.current_fixation = len(self.fixations) - 1
@@ -937,6 +939,45 @@ class Fix8():
         self.draw_canvas(draw_all=True)
         self.progress_bar_updated(self.current_fixation, draw=False)
         self.update_trial_statistics()
+
+
+    def outlier_metrics_filter(self):
+
+        # select metrics csv file
+        metrics_file = QFileDialog.getOpenFileName(self.ui, "Select metrics csv file", "", "CSV Files (*.csv)")
+
+        if metrics_file[0] == '':
+            return
+        
+        # open OutlierMetricsDialog
+        dialog = OutlierMetricsDialog(self.ui)
+        dialog.exec()
+
+        # get user inputs
+        metric, threshold = dialog.getInputs()
+
+        if not metric or not threshold:
+            return
+        
+        # open csv with pandas
+        metrics_data = pd.read_csv(metrics_file[0])
+
+        threshold = float(threshold)
+
+        # find column with metric
+        metric_column = metrics_data[metric]
+
+        # remove outliers that are threshold standard deviations away from the mean
+        mean = np.mean(metric_column)
+        std = np.std(metric_column)
+        
+        new_metrics_data = metrics_data[(metric_column - mean) / std < threshold]
+
+        # save new metrics data
+        abbreviated_metric = metric.split(' ')[0][0] + metric.split(' ')[1][0]
+
+        new_metrics_file = metrics_file[0].replace('.csv', + '_' + abbreviated_metric + '_filtered.csv')
+        new_metrics_data.to_csv(new_metrics_file, index=False)
 
 
     def run_correction(self):
