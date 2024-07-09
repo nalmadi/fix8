@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mini_emtk module &#8212; fix8 2024 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=6fefd858"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-mini_emtk">
+<span id="mini-emtk-module"></span><h1>mini_emtk module<a class="headerlink" href="#module-mini_emtk" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.EMTK_find_aoi">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">EMTK_find_aoi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sub-line'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#EMTK_find_aoi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.EMTK_find_aoi" title="Link to this definition">¶</a></dt>
+<dd><p>Find Area of Interest in the given image and store the aoi attributes in a Pandas Dataframe
+:param image: filename for the image, e.g. “vehicle_java.jpg”
+:type image: str
+:param image_path: path for all images, e.g. “emip_dataset/stimuli/”
+:type image_path: str
+:param img: PIL.Image object if user chooses to input an PIL image object
+:type img: PIL.Image, optional
+:param level: level of detection in AOIs, “line” for each line as an AOI or “sub-line” for each token as an AOI
+:type level: str, optional
+:param margin_height: marginal height when finding AOIs, use smaller number for tight text layout
+:type margin_height: int, optional
+:param margin_width: marginal width when finding AOIs, use smaller number for tight text layout
+:type margin_width: int, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a pandas DataFrame of area of interest detected by the method</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.between_line_regression">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">between_line_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aois_with_tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regression_probability</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#between_line_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.between_line_regression" title="Link to this definition">¶</a></dt>
+<dd><p>function to generate fixations at the optimal viewing poisiton slightly to
+the left of the center of each word, also simulates BETWEEN-line regressions
+with a probability defined by the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aois_with_tokens</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the AOIs and tokens</p></li>
+<li><p><strong>regression_probability</strong> (<em>float</em>) – probability of regression</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fixations</strong> – a list of generated fixations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.distance">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fix1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.distance" title="Link to this definition">¶</a></dt>
+<dd><p>returns distance between two fixations</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.error_droop">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">error_droop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">droop_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#error_droop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.error_droop" title="Link to this definition">¶</a></dt>
+<dd><p>Introduces a slope/droop distortion to the fixations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>droop_factor</strong> (<em>float</em>) – droop factor</p></li>
+<li><p><strong>fixations</strong> (<em>list</em>) – a list of fixations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fixations</strong> – a list of distorted fixations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.error_offset">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">error_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#error_offset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.error_offset" title="Link to this definition">¶</a></dt>
+<dd><p>Introduces an offset distortion to the fixations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_offset</strong> (<em>int</em>) – offset in the x direction</p></li>
+<li><p><strong>y_offset</strong> (<em>int</em>) – offset in the y direction</p></li>
+<li><p><strong>fixations</strong> (<em>list</em>) – a list of fixations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fixations</strong> – a list of distorted fixations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.error_shift">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">error_shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_shift_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#error_shift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.error_shift" title="Link to this definition">¶</a></dt>
+<dd><p>Introduces a shift distortion to the fixations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_shift_factor</strong> (<em>float</em>) – shift factor</p></li>
+<li><p><strong>line_ys</strong> (<em>list</em>) – a list of line Ys</p></li>
+<li><p><strong>fixations</strong> (<em>list</em>) – a list of fixations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fixations</strong> – a list of distorted fixations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.exp_func">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">exp_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#exp_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.exp_func" title="Link to this definition">¶</a></dt>
+<dd><p>function to model the exponential distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – x value</p></li>
+<li><p><strong>k</strong> (<em>float</em>) – constant value</p></li>
+<li><p><strong>lam</strong> (<em>float</em>) – lambda value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the value of the exponential function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.find_background_color">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">find_background_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#find_background_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.find_background_color" title="Link to this definition">¶</a></dt>
+<dd><p>Private function that identifies the background color of the image
+:param img: a PIL (pillow fork) Image object
+:type img: PIL.Image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the color of the background of the image</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.find_lines_y">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">find_lines_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aoi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#find_lines_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.find_lines_y" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.find_word_centers">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">find_word_centers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aois</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#find_word_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.find_word_centers" title="Link to this definition">¶</a></dt>
+<dd><p>returns a list of word centers</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.generate_fixations_left">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">generate_fixations_left</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aois_with_tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#generate_fixations_left"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.generate_fixations_left" title="Link to this definition">¶</a></dt>
+<dd><p>function to generate fixations at the optimal viewing poisiton slightly to
+the left of the center of each word</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>aois_with_tokens</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the AOIs and tokens</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fixations</strong> – a list of generated fixations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.generate_fixations_left_skip">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">generate_fixations_left_skip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aois_with_tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approximate_letter_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#generate_fixations_left_skip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.generate_fixations_left_skip" title="Link to this definition">¶</a></dt>
+<dd><p>function to generate fixations at the optimal viewing poisiton slightly to
+the left of the center of each word, also skips short words with a probability
+defined by the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aois_with_tokens</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the AOIs and tokens</p></li>
+<li><p><strong>approximate_letter_width</strong> (<em>int</em>) – approximate width of a letter in pixels</p></li>
+<li><p><strong>lam_value</strong> (<em>float</em>) – lambda value for the exponential distribution</p></li>
+<li><p><strong>k_value</strong> (<em>float</em>) – constant value for the exponential distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fixations</strong> – a list of generated fixations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.get_first_fixation_duration">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">get_first_fixation_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hit_test_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#get_first_fixation_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.get_first_fixation_duration" title="Link to this definition">¶</a></dt>
+<dd><p>function to get the duration of the first fixation on an aoi
+nan if no fixation was made on the aoi</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.get_fixation_count">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">get_fixation_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hit_test_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#get_fixation_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.get_fixation_count" title="Link to this definition">¶</a></dt>
+<dd><p>function to get the number of fixations on an aoi
+0 if no fixation was made on the aoi</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.get_gaze_duration">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">get_gaze_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hit_test_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#get_gaze_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.get_gaze_duration" title="Link to this definition">¶</a></dt>
+<dd><p>function to get the total duration of fixations on an aoi before moving to the next word
+nan if no fixation was made on the aoi</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.get_single_fixation_duration">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">get_single_fixation_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hit_test_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#get_single_fixation_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.get_single_fixation_duration" title="Link to this definition">¶</a></dt>
+<dd><p>function to get the duration of the first fixation on an aoi if only one
+fixation was made on the aoi, nan otherwise</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.get_total_time">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">get_total_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hit_test_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#get_total_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.get_total_time" title="Link to this definition">¶</a></dt>
+<dd><p>function to get the total duration of fixations on an aoi
+nan if no fixation was made on the aoi</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.hit_test">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">hit_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fixations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aois_tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#hit_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.hit_test" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Checks if fixations are within AOI with a fixation radius of 25 px</dt><dd><p>(since each fix is a sum of samples within 25px)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fixations</strong> (<em>list</em>) – <dl class="simple">
+<dt>contains fixations and other metadata (trial#, participant, code_file, code_language)</dt><dd><ul>
+<li><p>fixation includes timestamp, duration, x_cord, y_cord</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>aois_tokens</strong> (<em>pandas.Dataframe</em>) – contains each AOI location and dimension and token text</p></li>
+<li><p><strong>radius</strong> (<em>int</em><em>, </em><em>optional</em>) – radius of circle using in hit test</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with a record representing each fixation, each record contains:
+trial, participant, code_file, code_language, timestamp, duration, x_cord, y_cord, token, length</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.overlap">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">overlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AOI</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.overlap" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if fixation is within radius distance or over an AOI. Returns True/False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fix</strong> (<em>Fixation</em>) – A single fixation in a trial being considered for overlapping with the AOI</p></li>
+<li><p><strong>AOI</strong> (<em>pandas.DataFrame</em>) – contains AOI #kind      name    x       y       width   height  local_id        image   token</p></li>
+<li><p><strong>radius</strong> (<em>int</em><em>, </em><em>optional</em>) – radius around AOI to consider fixations in it within the AOI.
+default is 25 pixel since the fixation filter groups samples within 25 pixels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>whether it overlaps</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.read_EyeLink1000">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">read_EyeLink1000</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#read_EyeLink1000"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.read_EyeLink1000" title="Link to this definition">¶</a></dt>
+<dd><p>Read asc file from Eye Link 1000 eye tracker and write a result in a csv file.
+:param filename: name of the asc file
+:type filename: str
+:param filepath: filepath to write the csv file
+:type filepath: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with the data from the asc file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.read_EyeLink1000_experiment">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">read_EyeLink1000_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runtime_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#read_EyeLink1000_experiment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.read_EyeLink1000_experiment" title="Link to this definition">¶</a></dt>
+<dd><p>Read asc file from Eye Link 1000 eye tracker</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – name of the asc file</p></li>
+<li><p><strong>filetype</strong> (<em>str</em>) – filetype of the file, e.g. “tsv”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mini_emtk.within_line_regression">
+<span class="sig-prename descclassname"><span class="pre">mini_emtk.</span></span><span class="sig-name descname"><span class="pre">within_line_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aois_with_tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regression_probability</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mini_emtk.html#within_line_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mini_emtk.within_line_regression" title="Link to this definition">¶</a></dt>
+<dd><p>function to generate fixations at the optimal viewing poisiton slightly to
+the left of the center of each word, also simulates WITHIN-line regressions
+with a probability defined by the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aois_with_tokens</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the AOIs and tokens</p></li>
+<li><p><strong>regression_probability</strong> (<em>float</em>) – probability of regression</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fixations</strong> – a list of generated fixations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">fix8</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Naser Al Madi, Brett Torra, Agnes Li, Najam Tariq, Ricky Peng.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/source/mini_emtk.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
