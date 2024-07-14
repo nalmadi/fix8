@@ -1,0 +1,324 @@
+<!doctype ht ml>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fix8 Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="scribbler-global.css">
+    <link rel="stylesheet" href="scribbler-doc.css">
+    <link rel="author" href="humans.txt">
+  </head>
+  <body>
+    <div class="doc__bg"></div>
+    <nav class="header">
+      <h1 class="logo">Fix8 <span class="logo__thin">Documentation</span></h1>
+      <ul class="menu">
+        <div class="menu__item toggle"><span></span></div>
+        <li class="menu__item"><a href="https://github.com/nalmadi/fix8/" class="link link--dark"><i class="fa fa-github"></i> Github</a></li>
+      </ul>
+    </nav>
+    <div class="wrapper">
+      <aside class="doc__nav">
+        <ul>
+          <li class="js-btn selected">Anchor 1</li>
+          <li class="js-btn">Anchor 2</li>
+          <li class="js-btn">Anchor 3</li>
+          <li class="js-btn">Anchor 4</li>
+          <li class="js-btn">Mini EMTK</li>
+        </ul>
+      </aside>
+      <article class="doc__content">
+        <section class="js- section">
+          <h3 class="section__title">Get Started</h3>
+          <p>How to use fix8.</p>
+          <h3 class="section__title">Installation</h3>
+          <div class="code__block code__block--notabs">
+            <pre class="code code--block">
+              <code>
+                code here
+              </code>
+            </pre>
+          </div>
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Section</h3>
+          <p>Section content here.</p>
+          <hr />
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Section</h3>
+          <p>Section content here.</p>
+          <hr />
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Section</h3>
+          <p>Section content here.</p>
+          <hr />
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Section!</h3>
+          <p>Section content here!</p>
+          <hr />
+        </section>
+        <section class="js-section">
+          <h3 class="section__title">Section!</h3>
+          <p>Section content here!</p>
+          <div class="function-list">
+            <ul>
+                <li><a href="#emtk_find_aoi">EMTK_find_aoi()</a></li>
+                <li><a href="#between_line_regression">between_line_regression()</a></li>
+                <li><a href="#distance">distance()</a></li>
+                <li><a href="#error_droop">error_droop()</a></li>
+                <li><a href="#error_offset">error_offset()</a></li>
+                <li><a href="#error_shift">error_shift()</a></li>
+                <li><a href="#exp_func">exp_func()</a></li>
+                <li><a href="#find_lines_y">find_lines_y()</a></li>
+                <li><a href="#find_word_centers">find_word_centers()</a></li>
+                <li><a href="#generate_fixations_left">generate_fixations_left()</a></li>
+                <li><a href="#generate_fixations_left_skip">generate_fixations_left_skip()</a></li>
+                <li><a href="#get_first_fixation_duration">get_first_fixation_duration()</a></li>
+                <li><a href="#get_fixation_count">get_fixation_count()</a></li>
+                <li><a href="#get_gaze_duration">get_gaze_duration()</a></li>
+                <li><a href="#get_single_fixation_duration">get_single_fixation_duration()</a></li>
+                <li><a href="#get_total_time">get_total_time()</a></li>
+                <li><a href="#hit_test">hit_test()</a></li>
+                <li><a href="#overlap">overlap()</a></li>
+                <li><a href="#read_EyeLink1000">read_EyeLink1000()</a></li>
+                <li><a href="#read_EyeLink1000_experiment">read_EyeLink1000_experiment()</a></li>
+                <li><a href="#within_line_regression">error_offset()</a></li>
+            </ul>
+          </div>
+          <div class="function-doc", id="emtk_find_aoi">
+            <h1 class="function-name">EMTK_find_aoi</h1>
+            <p class="function-params">mini_emtk.EMTK_find_aoi(<em>image_file_name=None, img=None, level='sub-line', margin_height=4, margin_width=7)</em></p>
+            <p class="function-info">Find Area of Interest in the given image and store the aoi attributes in a Pandas Dataframe</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>image</strong>   (<em>str</em>) – filename for the image, e.g. "vehicle_java.jpg"</p></li>
+                <li class="function-doc"><p><strong>image_path</strong>   (<em>str</em>) – path for all images, e.g. "emip_dataset/stimuli/"</p></li>
+                <li class="function-doc"><p><strong>img</strong>   (<em>PIL.Image</em>) <em>optional</em> – PIL.Image object if user chooses to input an PIL image object</p></li>
+                <li class="function-doc"><p><strong>level</strong>   (<em>str</em>) <em>optional</em> – level of detection in AOIs, "line" for each line as an AOI or "sub-line" for each token as an AOI</p></li>
+                <li class="function-doc"><p><strong>margin_height</strong>   (<em>int</em>) <em>optional</em> – marginal height when finding AOIs, use smaller number for tight text layout</p></li>
+                <li class="function-doc"><p><strong>margin_width</strong>   (<em>int</em>) <em>optional</em> – marginal width when finding AOIs, use smaller number for tight text layout</p></li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> a pandas DataFrame of area of interest detected by the method.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>pandas.DataFrame</em></p>
+          </div>
+          <div class="function-doc", id="between_line_regression">
+            <h1 class="function-name">between_line_regression</h1>
+            <p class="function-params">mini_emtk.between_line_regression(<em>aois_with_tokens, regression_probability</em>)</p>
+            <p class="function-info">Function to generate fixations at the optimal viewing poisiton slightly to
+              the left of the center of each word, also simulates BETWEEN-line regressions
+              with a probability defined by the user</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>aois_with_tokens</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the AOIs and tokens</p></li>
+                <li class="function-doc"><p><strong>regression_probability</strong> (<em>float</em>) – probability of regression</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> fixations – a list of generated fixations.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>list</em></p>
+          </div>
+          <div class="function-doc", id="distance">
+            <h1 class="function-name">distance</h1>
+            <p class="function-params">mini_emtk.distance(<em>fix1, fix2</em>)</p>
+            <p class="function-info">Returns distance between two fixations</p>
+          </div>
+          <div class="function-doc", id="error_droop">
+            <h1 class="function-name">error_droop</h1>
+            <p class="function-params">mini_emtk.error_droop(<em>droop_factor, fixations</em>)</p>
+            <p class="function-info">Introduces a slope/droop distortion to the fixations</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>droop_factor</strong> (<em>float</em>) – droop factor</p></li>
+                <li class="function-doc"><p><strong>regression_probability</strong> (<em>float</em>) – a list of fixations</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> fixations – a list of distorted fixations.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>list</em></p>
+          </div>
+          <div class="function-doc", id="error_offset">
+            <h1 class="function-name">error_offset</h1>
+            <p class="function-params">mini_emtk.error_offset(<em>y_offset, fixations</em>)</p>
+            <p class="function-info">Introduces an offset distortion to the fixations</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>x_offset</strong> (<em>int</em>) – offset in the x direction</p></li>
+                <li class="function-doc"><p><strong>y_offset</strong> (<em>int</em>) – offset in the y direction</p></li>
+                <li class="function-doc"><p><strong>fixations</strong> (<em>list</em>) – a list of fixations</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> fixations – a list of distorted fixations.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>list</em></p>
+          </div>
+          <div class="function-doc", id="error_shift">
+            <h1 class="function-name">error_shift</h1>
+            <p class="function-params">mini_emtk.error_shift(<em>y_shift_factor, line_ys, fixations</em>)</p>
+            <p class="function-info">Introduces a shift distortion to the fixations</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>y_shift_factor</strong> (<em>int</em>) – shift factor</p></li>
+                <li class="function-doc"><p><strong>y_offset</strong> (<em>int</em>) – a list of line Ys</p></li>
+                <li class="function-doc"><p><strong>fixations</strong> (<em>list</em>) – a list of fixations</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> fixations – a list of distorted fixations.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>list</em></p>
+          </div>
+          <div class="function-doc", id="exp_func">
+            <h1 class="function-name">exp_func</h1>
+            <p class="function-params">mini_emtk.exp_func(<em>x, k, lam</em>)</p>
+            <p class="function-info">Function to model the exponential distribution</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>x</strong> (<em>float</em>) – x value</p></li>
+                <li class="function-doc"><p><strong>k</strong> (<em>int</em>) – y value</p></li>
+                <li class="function-doc"><p><strong>lam</strong> (<em>list</em>) – lambda value</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> the value of the exponential function.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>float</em></p>
+          </div>
+          <div class="function-doc", id="find_lines_y">
+            <h1 class="function-name">find_lines_y</h1>
+            <p class="function-params">mini_emtk.find_lines_y(<em>aoi</em>)</p>
+          </div>
+          <div class="function-doc", id="find_word_centers">
+            <h1 class="function-name">find_word_centers</h1>
+            <p class="function-params">mini_emtk.find_word_centers(<em>aois</em>)</p>
+          </div>
+          <div class="function-doc", id="generate_fixations_left">
+            <h1 class="function-name">generate_fixations_left</h1>
+            <p class="function-params">mini_emtk.generate_fixations_left(<em>x, k, lam</em>)</p>
+            <p class="function-info">Function to generate fixations at the optimal viewing poisiton slightly to the left of the center of each word</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>aois_with_tokens</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the AOIs and tokens</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> fixations – a list of generated fixations.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>list</em></p>
+          </div>
+          <div class="function-doc", id="generate_fixations_left_skip">
+            <h1 class="function-name">generate_fixations_left_skip</h1>
+            <p class="function-params">mini_emtk.generate_fixations_left_skip(<em>aois_with_tokens, approximate_letter_width, lam_value, k_value</em>)</p>
+            <p class="function-info">Function to generate fixations at the optimal viewing poisiton slightly to the left of the center of each word, also skips short words with a probability defined by the user</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>aois_with_tokens</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the AOIs and tokens</p></li>
+                <li class="function-doc"><p><strong>approximate_letter_width </strong> (<em>int</em>) – approximate width of a letter in pixels</p></li>
+                <li class="function-doc"><p><strong>lam_value</strong> (<em>float</em>) – lambda value for the exponential distribution</p></li>
+                <li class="function-doc"><p><strong>k_value</strong> (<em>float</em>) – constant value for the exponential distribution</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> fixations – a list of generated fixations.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>list</em></p>
+          </div>
+          <div class="function-doc", id="get_first_fixation_duration">
+            <h1 class="function-name">get_first_fixation_duration</h1>
+            <p class="function-params">mini_emtk.get_first_fixation_duration(<em>hit_test_output, line, part</em>)</p>
+            <p class="function-info">Function to get the duration of the first fixation on an aoi nan if no fixation was made on the aoi</p>
+          </div>
+          <div class="function-doc", id="get_fixation_count">
+            <h1 class="function-name">get_fixation_count</h1>
+            <p class="function-params">mini_emtk.get_fixation_count(<em>hit_test_output, line, part</em>)</p>
+            <p class="function-info">Function to get the number of fixations on an aoi 0 if no fixation was made on the aoi</p>
+          </div>
+          <div class="function-doc", id="get_gaze_duration">
+            <h1 class="function-name">get_gaze_duration</h1>
+            <p class="function-params">mini_emtk.get_gaze_duration(<em>hit_test_output, line, part</em>)</p>
+            <p class="function-info">Function to get the total duration of fixations on an aoi before moving to the next word nan if no fixation was made on the aoi</p>
+          </div>
+          <div class="function-doc", id="get_single_fixation_duration">
+            <h1 class="function-name">get_single_fixation_duration</h1>
+            <p class="function-params">mini_emtk.get_single_fixation_duration(<em>hit_test_output, line, part</em>)</p>
+            <p class="function-info">Function to get the duration of the first fixation on an aoi if only one fixation was made on the aoi, nan otherwise</p>
+          </div>
+          <div class="function-doc", id="get_total_time">
+            <h1 class="function-name">get_total_time</h1>
+            <p class="function-params">mini_emtk.get_total_time(<em>hit_test_output, line, part</em>)</p>
+            <p class="function-info">Function to get the total duration of fixations on an aoi nan if no fixation was made on the aoi</p>
+          </div>
+          <div class="function-doc", id="hit_test">
+            <h1 class="function-name">hit_test</h1>
+            <p class="function-params">mini_emtk.hit_test(<em>fixations, file_name, aois_tokens, radius=25</em>)</p>
+            <p class="function-info">Checks if fixations are within AOI with a fixation radius of 25 px (since each fix is a sum of samples within 25px)</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>fixations</strong> (<em>list</em>) – contains fixations and other metadata (trial#, participant, code_file, code_language)</p></li>
+                <ul>
+                  <li class="function-doc"><p>fixation includes timestamp, duration, x_cord, y_cord
+                  </p></li>
+                </ul>
+                <li class="function-doc"><p><strong>aois_tokens</strong> (<em>pandas.Dataframe</em>) – contains each AOI location and dimension and token text</p></li>
+                <li class="function-doc"><p><strong>radius </strong> (<em>int, optional</em>) – radius of circle using in hit test</p></li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> DataFrame with a record representing each fixation, each record contains: trial, participant, code_file, code_language, timestamp, duration, x_cord, y_cord, token, length.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>pandas.DataFrame</em></p>
+          </div>
+          <div class="function-doc", id="overlap">
+            <h1 class="function-name">overlap</h1>
+            <p class="function-params">mini_emtk.overlap(<em>fix, AOI, radius=25</em>)</p>
+            <p class="function-info">Checks if fixation is within radius distance or over an AOI. Returns True/False.</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>fix</strong> (<em>Fixation</em>) – A single fixation in a trial being considered for overlapping with the AOI</p></li>
+                <li class="function-doc"><p><strong>AOI</strong> (<em>pandas.DataFrame</em>) – contains AOI #kind name x y width height local_id image token</p></li>
+                <li class="function-doc"><p><strong>radius</strong> (<em>int, optional</em>) – radius around AOI to consider fixations in it within the AOI. default is 25 pixel since the fixation filter groups samples within 25 pixels.</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> fixations – whether it overlaps.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>bool</em></p>
+          </div>
+          <div class="function-doc", id="read_EyeLink1000">
+            <h1 class="function-name">read_EyeLink1000</h1>
+            <p class="function-params">mini_emtk.read_EyeLink1000(<em>filename, filepath</em>)</p>
+            <p class="function-info">Read asc file from Eye Link 1000 eye tracker and write a result in a csv file.</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>filename</strong> (<em>str</em>) – name of the asc file</p></li>
+                <li class="function-doc"><p><strong>filepath</strong> (<em>str</em>) – filepath to write the csv file</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> DataFrame with the data from the asc file.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>pandas.Dataframe</em></p>
+          </div>
+          <div class="function-doc", id="read_EyeLink1000_experiment">
+            <h1 class="function-name">read_EyeLink1000_experiment</h1>
+            <p class="function-params">mini_emtk.read_EyeLink1000_experiment(<em>filename, destination_path, runtime_folder=None</em>)</p>
+            <p class="function-info">Read asc file from Eye Link 1000 eye tracker.</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>filename</strong> (<em>str</em>) – name of the asc file</p></li>
+                <li class="function-doc"><p><strong>filetype</strong> (<em>str</em>) – filetype of the file, e.g. “tsv”</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> DataFrame with the data from the asc file.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>pandas.Dataframe</em></p>
+          </div>
+          <div class="function-doc", id="within_line_regression">
+            <h1 class="function-name">within_line_regression</h1>
+            <p class="function-params">mini_emtk.within_line_regression(<em>aois_with_tokens, regression_probability</em>)</p>
+            <p class="function-info">Function to generate fixations at the optimal viewing poisiton slightly to the left of the center of each word, also simulates WITHIN-line regressions with a probability defined by the user.</p>
+            <p class="function-params"><strong>Parameters:</strong>
+              <ul class="function-doc">
+                <li class="function-doc"><p><strong>aois_with_tokens</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the AOIs and tokens</p></li>
+                <li class="function-doc"><p><strong>regression_probability</strong> (<em>float</em>) – probability of regression</p></li>
+                </li>
+              </ul>
+            <p class="function-return"><strong>Returns:</strong> fixations – a list of generated fixations.</p>
+            <p class="function-return"><strong>Return type:</strong> <em>list</em></p>
+          </div>
+        </section>
+      </article>  
+    </div>
+
+    <!-- <footer class="footer">Scribbler is a free HTML template created exclusively for <a href="https://tympanus.net/codrops/" target="_blank" class="link link--light">Codrops</a>.</footer> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="scribbler.js"></script>
+  </body>
+</html>
