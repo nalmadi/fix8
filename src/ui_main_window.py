@@ -421,8 +421,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.save_aoi_csv_action = QAction("Save AOI file", self)
 
         self.undo_correction_action = QAction("Undo", self)
-        self.next_fixation_action = QAction("Next Fixation", self)
-        self.previous_fixation_action = QAction("Previous Fixation", self)
+        self.next_fixation_action = QAction("Assign Above", self)
+        self.previous_fixation_action = QAction("Assign Below", self)
         self.accept_and_next_action = QAction("Accept suggestion", self)
         self.delete_fixation_action = QAction("Delete Fixation", self)
 
