@@ -100,9 +100,9 @@ To run Fix8 from the Python code, follow these steps:
 
 
 # Keyboard Shortcuts ⌨️​
-a: 		next fixation
+a: 		assign current fixation to line above
 
-z: 		previous fixation
+z: 		assign current fixation to line below
 
 space: 		accept suggestion
 
