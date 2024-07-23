@@ -1,5 +1,10 @@
 
-
+#
+# This file contains several functions from Eye Movement In 
+# Programming Toolkit (EMTK)
+#
+# repo: https://github.com/nalmadi/EMIP-Toolkit
+#
 ######################## from EMTK #################################
 
 

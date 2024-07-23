@@ -1928,6 +1928,7 @@ class Fix8():
             self.fixations[self.current_fixation][1] = closest_line
             self.quick_draw_canvas(all_fixations=False)
             self.next_fixation()
+            self.save_state()
         
 
     def assign_fixation_below(self):
@@ -1952,6 +1953,7 @@ class Fix8():
             self.fixations[self.current_fixation][1] = closest_line
             self.quick_draw_canvas(all_fixations=False)
             self.next_fixation()
+            self.save_state()
 
 
     def confirm_suggestion(self):
