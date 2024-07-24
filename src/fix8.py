@@ -1153,15 +1153,14 @@ class Fix8():
             if self.algorithm != "manual" and self.algorithm is not None:
                 self.run_correction()
 
-            if self.ui.checkbox_show_saccades.isChecked():
-                self.clear_saccades()
+            #if self.ui.checkbox_show_saccades.isChecked():
+            #    self.clear_saccades()
 
         if event.button != 1:
             return
         # self.selected_fixation = None
         self.quick_draw_canvas()
-        #self.draw_canvas()
-        # self.ui.canvas.update()
+
 
     def motion_notify_callback(self, event):
         ''' called when fixation is being dragged '''
@@ -1830,7 +1829,6 @@ class Fix8():
                 )
                 self.ui.canvas.ax.draw_artist(self.remaining_fixations)
 
-
                 # draw remaining saccades
                 x = self.fixations[self.current_fixation:, 0]
                 y = self.fixations[self.current_fixation:, 1] 
@@ -1862,6 +1860,7 @@ class Fix8():
                 self.ui.canvas.ax.draw_artist(aoi_box)
 
         self.ui.canvas.blit(self.ui.canvas.ax.bbox)
+
 
 
     def correct_all_fixations(self):
