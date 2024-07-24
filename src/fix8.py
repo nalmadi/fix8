@@ -1832,8 +1832,8 @@ class Fix8():
 
 
                 # draw remaining saccades
-                # x = self.fixations[self.current_fixation:, 0]
-                # y = self.fixations[self.current_fixation:, 1] 
+                x = self.fixations[self.current_fixation:, 0]
+                y = self.fixations[self.current_fixation:, 1] 
                 saccade_lines = self.ui.canvas.ax.plot(
                 x, y, alpha=self.saccade_opacity, c=self.remaining_fixation_color, linewidth=self.saccade_line_size
                 )
