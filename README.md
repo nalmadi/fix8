@@ -129,8 +129,16 @@ k:      move the selected fixation downward
 
 # Citation 📝
 
-Please cite our paper if you user this tool:
-
-TBD
-
+Naser Al Madi, Brett Torra, Yixin Li, Najam Tariq. (2024). Combining Automation and Expertise: A Semi-automated Approach to Correcting Eye Tracking Data in Reading Tasks.
+```bash
+@article{Al2024combining,
+author = {Naser Al Madi, Brett Torra, Yixin Li, Najam Tariq},
+title = {Combining Automation and Expertise: A Semi-automated Approach to Correcting Eye Tracking Data in Reading Tasks},
+journal = {},
+year = {},
+volume = {},
+pages = {},
+doi = {}
+}
+```
           
