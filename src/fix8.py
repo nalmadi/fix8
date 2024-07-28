@@ -389,7 +389,7 @@ class Fix8():
         maximum_value = 10
         default_value = 5
         title = "Slope Distortion"
-        message = "Magnitude of skope distortion (1-10)"
+        message = "Magnitude of slope distortion (1-10)"
         threshold, ok = QInputDialog.getInt(self.ui, title, message, default_value, minimum_value, maximum_value)
 
         if not ok:
