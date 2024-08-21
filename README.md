@@ -136,7 +136,6 @@ k:      move the selected fixation downward
 - **MET_Dataset**: Raymond, O., Moldagali, Y., & Al Madi, N. (2023, May). A dataset of underrepresented languages in eye tracking research. In Proceedings of the 2023 Symposium on Eye Tracking Research and Applications (pp. 1-2).
 
 
-* * *
 
 
 # Citation 📝
