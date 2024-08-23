@@ -1219,14 +1219,14 @@ class Fix8():
 
         # a: next is 65
         if e.key() == 65 and self.ui.button_next_fixation.isEnabled():
-            self.metadata += "key,next," + str(time.time()) + "\n"
+            self.metadata += "key,assign_fixation_above," + str(time.time()) + "\n"
             #self.next_fixation()
             print('a pressed')
             self.assign_fixation_above()
 
         # z: back is 90
         if e.key() == 90 and self.ui.button_previous_fixation.isEnabled():
-            self.metadata += "key,previous," + str(time.time()) + "\n"
+            self.metadata += "key,assign_fixation_below," + str(time.time()) + "\n"
             #self.previous_fixation()
             self.assign_fixation_below()
 
