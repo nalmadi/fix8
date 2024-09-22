@@ -2128,6 +2128,9 @@ class Fix8():
             ):
             new_image_file_name += '.png'
 
+        # Using standard draw_canvas() instead of quick_draw_canvas() to bypass blit temporarily
+        self.draw_canvas(draw_all=True)
+
         # if name includes svg, save as svg
         if '.svg' in new_image_file_name:
             self.ui.canvas.ax.figure.savefig(new_image_file_name, dpi=300, format='svg', transparent=True, bbox_inches='tight')
