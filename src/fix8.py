@@ -1045,9 +1045,9 @@ class Fix8():
         self.metadata += ("selected, " + str(self.algorithm) + "," + str(time.time()) + "\n")
 
         self.suggested_corrections = copy.deepcopy(self.fixations)
-        self.ui.checkbox_show_suggestion.setEnabled(False)
-
+        
         # hide suggestion
+        self.ui.checkbox_show_suggestion.setEnabled(False)
         self.ui.checkbox_show_suggestion.setChecked(False)
 
     
@@ -1957,6 +1957,9 @@ class Fix8():
 
     def confirm_suggestion(self):
         """ when the confirm button is clicked, the suggested correction replaces the current fixation"""
+
+        if self.algorithm_function is None:
+            return
 
         if self.suggested_corrections is None:
             return
