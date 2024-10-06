@@ -1893,7 +1893,7 @@ class Fix8():
     def next_fixation(self):
         if self.current_fixation == -1 and self.original_fixations == None:
             # Tour
-            self.set_canvas_image('src/.images/fix8-tour-1.png')
+            self.set_canvas_image('src/.images/fix8-keyboard.png')
             self.ui.canvas.draw()
             self.ui.button_next_fixation.setEnabled(False)
             return
