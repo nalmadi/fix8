@@ -419,10 +419,11 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.save_correction_json_action = QAction("Save Json", self)
         self.save_correction_CSV_action = QAction("Save CSV", self)
         self.save_aoi_csv_action = QAction("Save AOI file", self)
-
         self.undo_correction_action = QAction("Undo", self)
-        self.next_fixation_action = QAction("Assign Above", self)
-        self.previous_fixation_action = QAction("Assign Below", self)
+        self.next_fixation_action = QAction("Next", self)
+        self.previous_fixation_action = QAction("Previous", self)
+        self.assign_above_action = QAction("Assign Above", self)
+        self.assign_below_action = QAction("Assign Below", self)
         self.accept_and_next_action = QAction("Accept suggestion", self)
         self.delete_fixation_action = QAction("Delete Fixation", self)
 
@@ -492,8 +493,11 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.new_file_action.setShortcut("Ctrl+O")
         self.save_correction_CSV_action.setShortcut("Ctrl+S")
 
-        self.next_fixation_action.setShortcut("a")
-        self.previous_fixation_action.setShortcut("z")
+        self.next_fixation_action.setShortcut("right")
+        self.previous_fixation_action.setShortcut("left")
+
+        self.assign_above_action.setShortcut("a")
+        self.assign_below_action.setShortcut("z")
         
         self.undo_correction_action.setShortcut("Ctrl+Z")
         self.accept_and_next_action.setShortcut("space")
@@ -523,6 +527,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.edit_menu.addAction(self.next_fixation_action)
         self.edit_menu.addAction(self.previous_fixation_action)
+
+        self.edit_menu.addAction(self.assign_above_action)
+        self.edit_menu.addAction(self.assign_below_action)
+
         self.edit_menu.addAction(self.accept_and_next_action)
         self.edit_menu.addAction(self.undo_correction_action)
         self.edit_menu.addAction(self.delete_fixation_action)
@@ -660,8 +668,12 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.save_correction_CSV_action.triggered.connect(self.fix8.save_corrections_csv)
         self.save_aoi_csv_action.triggered.connect(self.fix8.save_aoi_csv)
 
-        self.next_fixation_action.triggered.connect(self.fix8.assign_fixation_above)
-        self.previous_fixation_action.triggered.connect(self.fix8.assign_fixation_below)
+        self.next_fixation_action.triggered.connect(self.fix8.next_fixation)
+        self.previous_fixation_action.triggered.connect(self.fix8.previous_fixation)
+
+        self.assign_above_action.triggered.connect(self.fix8.assign_fixation_above)
+        self.assign_below_action.triggered.connect(self.fix8.assign_fixation_below)
+
         self.accept_and_next_action.triggered.connect(self.fix8.confirm_suggestion)
         self.delete_fixation_action.triggered.connect(self.fix8.remove_fixation)
         self.undo_correction_action.triggered.connect(self.fix8.undo)
