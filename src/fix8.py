@@ -1583,7 +1583,12 @@ class Fix8():
             self.original_fixations = self.eye_events.drop(columns=["eye_event"])
             self.original_fixations = np.array(self.original_fixations)
         except:
-            self.show_error_message("Trial File Error", "Problem reading CSV File")     
+            self.show_error_message("Trial File Error", "Problem reading json File")     
+            return False
+        
+        # if the fixations are empty, show an error message
+        if len(self.original_fixations) == 0:
+            self.show_error_message("Trial File Error", "No Fixations Found")
             return False
         
         self.ui.relevant_buttons("trial_clicked")
@@ -1605,6 +1610,11 @@ class Fix8():
 
         except:
             self.show_error_message("Trial File Error", "Problem reading CSV File")     
+            return False
+        
+        # if the fixations are empty, show an error message
+        if len(fixations) == 0:
+            self.show_error_message("Trial File Error", "No Fixations Found")
             return False
 
         # get the x, y, and duration of the fixations
