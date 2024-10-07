@@ -22,6 +22,8 @@ correction methods for eye tracking data in reading tasks.
 
 (If you use Fix8 in academic research, please cite our paper)
 """
+import sys
+import os.path
 
 import time
 from PyQt5.QtCore import Qt
@@ -54,13 +56,13 @@ import copy
 from datetime import date
 from pathlib import Path
 
-from . import mini_emtk
-from .merge_fixations_dialog import MergeFixationsDialog
-from .generate_fixations_skip_dialog import GenerateFixationsSkipDialog
-from .outlier_metrics_dialog import OutlierMetricsDialog
-from .eyelink_csv_dialog import EyelinkDialog
-from .state import Fix8State, History
-from . import ui_main_window
+import mini_emtk
+from merge_fixations_dialog import MergeFixationsDialog
+from generate_fixations_skip_dialog import GenerateFixationsSkipDialog
+from outlier_metrics_dialog import OutlierMetricsDialog
+from eyelink_csv_dialog import EyelinkDialog
+from state import Fix8State, History
+import ui_main_window
 
 # from PySide2 import QtWidgets
 # from PyQt5 import QtWidgets
@@ -1903,7 +1905,7 @@ class Fix8():
     def next_fixation(self):
         if self.current_fixation == -1 and self.original_fixations == None:
             # Tour
-            self.set_canvas_image('src/.images/fix8-keyboard.png')
+            self.set_canvas_image(self.resourcePath(Fix8, '.images/fix8-keyboard.png'))
             self.ui.canvas.draw()
             self.ui.button_next_fixation.setEnabled(False)
             return
@@ -2263,6 +2265,17 @@ class Fix8():
     def fixation_size_changed(self, value):
         self.fixation_size = value * 6
         self.draw_canvas()
+
+    def resourcePath(relativePath):
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            basePath = sys._MEIPASS
+        except Exception:
+            basePath = os.path.abspath(".")
+
+        return os.path.join(basePath, relativePath)    
+
+
     
 def main():
     if platform.system() == "Windows":
@@ -2278,3 +2291,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
