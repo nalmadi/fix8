@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QSizePolicy
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from fix8 import Fix8
 
 
 class QtCanvas(FigureCanvasQTAgg):
@@ -25,7 +26,7 @@ class QtCanvas(FigureCanvasQTAgg):
 
     def initialize(self):
         #img = mpimg.imread("./.images/fix8_landing.png")
-        img = mpimg.imread("src/.images/fix8-landing-logo.png")
+        img = mpimg.imread(Fix8.resourcePath(Fix8, ".images/fix8-landing-logo.png"))
         self.ax.imshow(img, interpolation="hanning")
         self.draw()
 
