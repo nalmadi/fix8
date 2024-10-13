@@ -6,6 +6,8 @@ Fix8 (Fixate) is an open-source GUI Tool for working with eye tracking data in r
 [![Watch the video](./src/.images/step2.jpg)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
 
 
+
+
 # Main Features ⭐
 
 - Drift correction including manual, assisted (semi-automated), and automated correction.
@@ -107,16 +109,18 @@ To run Fix8 from the Python code, follow these steps:
 
 
 # Keyboard Shortcuts ⌨️​
+[![Watch the video](./src/.images/fix8-keyboard.png)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
+
+
 | Key         | Functionality                               |
 | ----------- | ------------------------------------------- |
 | a           | assign current fixation to line above       |
 | z           | assign current fixation to line below       |
 | space       | accept suggestion                           |
 | backspace   | delete fixation (click on fixation to select)|
-| j           | move the selected fixation to the left      |
-| l           | move the selected fixation to the right     |
-| i           | move the selected fixation upward           |
-| k           | move the selected fixation downward         |
+| right       | next fixation                               |
+| left        | previous fixation                           |
+| 1-9         | assign fixation to the line number          |
 
 
 
