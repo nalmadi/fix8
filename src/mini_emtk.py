@@ -785,6 +785,7 @@ def generate_fixations_left_skip(aois_with_tokens, approximate_letter_width, lam
         fixation_y = y + height / 2 + random.randint(-10, 10)
 
         # skip probability based on an exponential distribution
+        # based on brysbaert1998word
         letters = width / approximate_letter_width
         skip_probability = exp_func(letters, k_value, lam_value)
 
