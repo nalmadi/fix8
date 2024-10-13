@@ -18,7 +18,13 @@ Fix8 (Fixate) is an open-source GUI Tool for working with eye tracking data in r
 - Data Converters: EyeLink data, ASCII, CSV, and JSON are supported.
 - Request a feature by making an issue on this page!
 
-# Executables  💻
+
+# Manual 📖
+A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Manual_v1.2](https://docs.google.com/document/d/14g-kQfCTfn-jabcN50_mCkjD39DFVtT_sLlosPTREzQ/edit?usp=sharing)
+
+
+
+# Executables 💻
 
 - Windows: 
 
