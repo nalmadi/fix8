@@ -1240,6 +1240,29 @@ class Fix8():
             self.metadata += "key,remove fixation," + str(time.time()) + "\n"
             self.remove_fixation()
 
+        # if a number is pressed, call assign_fixation_to_line
+        if e.key() in range(48, 58):
+            self.metadata += "key" + e.key() + ",assign fixation to line," + str(time.time()) + "\n"
+            self.assign_fixation_to_line(e.key() - 48)
+
+
+    def assign_fixation_to_line(self, line_number):
+
+        # find the closest line above the current fixation
+        if self.aoi is not None:
+            
+            line_Y = mini_emtk.find_lines_y(self.aoi)
+
+            if line_number-1 >= len(line_Y):
+                return
+            
+            assigned_line_y = line_Y[line_number-1]
+
+            self.fixations[self.current_fixation][1] = assigned_line_y
+            self.quick_draw_canvas(all_fixations=False)
+            self.next_fixation()
+            self.save_state()
+
 
     def remove_fixation(self):
         if self.fixations is not None and self.selected_fixation is not None:
