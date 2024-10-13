@@ -489,19 +489,37 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.csv_to_json_converter_action = QAction("CSV to JSON (one trial)", self)
         self.eyelink_experiment_to_csv_converter_action = QAction("Eyelink Experiment to CSV", self)
 
+        self.assign_line_1_action = QAction("Assign to Line 1", self)
+        self.assign_line_2_action = QAction("Assign to Line 2", self)
+        self.assign_line_3_action = QAction("Assign to Line 3", self)
+        self.assign_line_4_action = QAction("Assign to Line 4", self)
+        self.assign_line_5_action = QAction("Assign to Line 5", self)
+        self.assign_line_6_action = QAction("Assign to Line 6", self)
+        self.assign_line_7_action = QAction("Assign to Line 7", self)
+        self.assign_line_8_action = QAction("Assign to Line 8", self)
+        self.assign_line_9_action = QAction("Assign to Line 9", self)
+
         # add shortcuts
         self.new_file_action.setShortcut("Ctrl+O")
         self.save_correction_CSV_action.setShortcut("Ctrl+S")
-
         self.next_fixation_action.setShortcut("right")
         self.previous_fixation_action.setShortcut("left")
-
         self.assign_above_action.setShortcut("a")
         self.assign_below_action.setShortcut("z")
-        
         self.undo_correction_action.setShortcut("Ctrl+Z")
         self.accept_and_next_action.setShortcut("space")
         self.delete_fixation_action.setShortcut("backspace")
+
+        # add shortcuts for numbers from 1 to 9
+        self.assign_line_1_action.setShortcut("1")
+        self.assign_line_2_action.setShortcut("2")
+        self.assign_line_3_action.setShortcut("3")
+        self.assign_line_4_action.setShortcut("4")
+        self.assign_line_5_action.setShortcut("5")
+        self.assign_line_6_action.setShortcut("6")
+        self.assign_line_7_action.setShortcut("7")
+        self.assign_line_8_action.setShortcut("8")
+        self.assign_line_9_action.setShortcut("9")        
 
         # enable/disable
         self.save_correction_json_action.setEnabled(False)
@@ -527,13 +545,20 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
         self.edit_menu.addAction(self.next_fixation_action)
         self.edit_menu.addAction(self.previous_fixation_action)
-
         self.edit_menu.addAction(self.assign_above_action)
         self.edit_menu.addAction(self.assign_below_action)
-
         self.edit_menu.addAction(self.accept_and_next_action)
         self.edit_menu.addAction(self.undo_correction_action)
         self.edit_menu.addAction(self.delete_fixation_action)
+        self.edit_menu.addAction(self.assign_line_1_action)
+        self.edit_menu.addAction(self.assign_line_2_action)
+        self.edit_menu.addAction(self.assign_line_3_action)
+        self.edit_menu.addAction(self.assign_line_4_action)
+        self.edit_menu.addAction(self.assign_line_5_action)
+        self.edit_menu.addAction(self.assign_line_6_action)
+        self.edit_menu.addAction(self.assign_line_7_action)
+        self.edit_menu.addAction(self.assign_line_8_action)
+        self.edit_menu.addAction(self.assign_line_9_action)
 
         self.view_menu.addAction(self.trial_list_action)
         self.view_menu.addAction(self.trial_summary_action)
@@ -667,13 +692,10 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.save_correction_json_action.triggered.connect(self.fix8.save_corrections_json)
         self.save_correction_CSV_action.triggered.connect(self.fix8.save_corrections_csv)
         self.save_aoi_csv_action.triggered.connect(self.fix8.save_aoi_csv)
-
         self.next_fixation_action.triggered.connect(self.fix8.next_fixation)
         self.previous_fixation_action.triggered.connect(self.fix8.previous_fixation)
-
         self.assign_above_action.triggered.connect(self.fix8.assign_fixation_above)
         self.assign_below_action.triggered.connect(self.fix8.assign_fixation_below)
-
         self.accept_and_next_action.triggered.connect(self.fix8.confirm_suggestion)
         self.delete_fixation_action.triggered.connect(self.fix8.remove_fixation)
         self.undo_correction_action.triggered.connect(self.fix8.undo)
@@ -739,6 +761,16 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.csv_to_json_converter_action.triggered.connect(self.fix8.csv_to_json_converter)
         self.eyelink_experiment_to_csv_converter_action.triggered.connect(self.fix8.eyelink_experiment_to_csv_converter)
 
+        self.assign_line_1_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(1))
+        self.assign_line_2_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(2))
+        self.assign_line_3_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(3))
+        self.assign_line_4_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(4))
+        self.assign_line_5_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(5))
+        self.assign_line_6_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(6))
+        self.assign_line_7_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(7))
+        self.assign_line_8_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(8))
+        self.assign_line_9_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(9))
+        
 
     def relevant_buttons(self, feature):
         if feature == "opened_stimulus":
