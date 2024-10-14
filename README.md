@@ -145,6 +145,8 @@ Complete or partial data from the following datasets is included in Fix8:
 - **MET_Dataset**: Raymond, O., Moldagali, Y., & Al Madi, N. (2023, May). A dataset of underrepresented languages in eye tracking research. In Proceedings of the 2023 Symposium on Eye Tracking Research and Applications (pp. 1-2).
 
 
+# API and Documentation for Developers ⚙️
+Developers can find the Fix8 Core API documentation [HERE](https://fix8-eye-tracking.github.io/)
 
 
 # Citation 📝
