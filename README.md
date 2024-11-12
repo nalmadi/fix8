@@ -14,9 +14,9 @@ Fix8 (Fixate) is an open-source GUI Tool for working with eye tracking data in r
 - Fully customizable and interactive visualization.
 - Synthetic data and distortion generation including full control of word skipping, within-line and between-line regressions.
 - Filters: high-pass, low-pass, outlier, merge, and outside screen filters.
-- Analyses including hit-test and eye movement metrics like First-Fixation Duration, Single-Fixation Duration, and Total Time.
+- Analyses and reports including hit-test and eye movement metrics like Fixation count, First-Fixation Duration, Single-Fixation Duration, and Total Time.
 - Data Converters: EyeLink data, ASCII, CSV, and JSON are supported.
-- Request a feature by making an issue on this page!
+- Request a feature by making an issue in this repository!
 
 
 # Manual 📖
