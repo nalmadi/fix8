@@ -2097,6 +2097,18 @@ class Fix8():
 
         if len(self.fixations) > 0:
 
+            # add start/end time columns if data has time_stamp
+            if 'time_stamp' in self.eye_events.columns:
+                start_times = []
+                end_times = []
+
+                for index, row in self.eye_events.iterrows():
+                    start_times.append(row["time_stamp"])
+                    end_times.append(row["time_stamp"] + row["duration"])
+
+                self.eye_events["start_time"] = start_times
+                self.eye_events["end_time"] = end_times
+
             self.eye_events.to_csv(new_correction_file_name, index=False)
                 
             duration = (time.time() - self.timer_start)
