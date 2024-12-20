@@ -115,7 +115,8 @@ To run Fix8 from the Python code, follow these steps:
 
 
 # Keyboard Shortcuts ⌨️​
-[![Watch the video](./src/.images/fix8-keyboard.png)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
+[![Keyboard shortcuts](./src/.images/fix8-keyboard.png)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
+
 
 
 | Key         | Functionality                               |
