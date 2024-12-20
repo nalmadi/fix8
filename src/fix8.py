@@ -1594,6 +1594,9 @@ class Fix8():
         eye_events["duration"] = duration
         eye_events["eye_event"] = "fixation"
 
+        if 'time_stamps' in trial_data.keys():
+            eye_events["time_stamps"] = trial_data["time_stamps"]
+
         return eye_events
     
     def read_json_fixations(self, trial_path):
@@ -2049,11 +2052,11 @@ class Fix8():
             new_correction_file_name += '.json'
 
         if len(self.fixations) > 0:
-            list = self.fixations.tolist()
+            fixation_list = self.fixations.tolist()
 
             corrected_fixations = {'fixations': []}
             for i in range(len(self.fixations)):
-                corrected_fixations['fixations'].append(list[i])
+                corrected_fixations['fixations'].append(fixation_list[i])
 
             with open(f"{new_correction_file_name}", "w") as f:
                 json.dump(corrected_fixations, f)
