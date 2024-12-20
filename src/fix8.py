@@ -1595,7 +1595,7 @@ class Fix8():
         eye_events["eye_event"] = "fixation"
 
         if 'time_stamps' in trial_data.keys():
-            eye_events["time_stamps"] = trial_data["time_stamps"]
+            eye_events["time_stamp"] = trial_data["time_stamps"]
 
         return eye_events
     
