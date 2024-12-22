@@ -211,7 +211,8 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
         value = [kind, name, x, y, width, height, image]
         dic = dict(zip(columns, value))
 
-        aoi = aoi.append(dic, ignore_index=True)
+        #aoi = aoi.append(dic, ignore_index=True)
+        aoi = pd.concat([aoi, pd.DataFrame(dic, index=[0])], ignore_index=True)
 
     return aoi, bg_color
 

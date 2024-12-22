@@ -1660,10 +1660,10 @@ class Fix8():
     def clear_saccades(self):
         """remove the saccades from the canvas (this does not erase the data, just visuals)"""
         if self.saccade_lines != None:
-            self.ui.canvas.ax.lines.clear()  # <-- if this line crashes the tool
+            #self.ui.canvas.ax.lines.clear()  # <-- if this line crashes the tool
 
-            # for line in self.ui.canvas.ax.lines:  #<-- use this instead
-            #    line.remove()
+            for line in self.ui.canvas.ax.lines:  #<-- use this instead
+               line.remove()
 
             self.saccade_lines = None
             self.ui.canvas.draw()
@@ -1675,17 +1675,17 @@ class Fix8():
             # self.scatter.remove()
             self.fixation_points = None
             # clear scatter data from canvas but not the background image
-            self.ui.canvas.ax.collections.clear()  # <-- If this line crashes the tool
+            #self.ui.canvas.ax.collections.clear()  # <-- If this line crashes the tool
 
-            # for collection in self.ui.canvas.ax.collections: #<-- use this instead
-            #    collection.remove()
+            for collection in self.ui.canvas.ax.collections: #<-- use this instead
+               collection.remove()
             self.ui.canvas.draw()
 
     
     def clear_aois(self):
         """clear the areas of interest from the canvas"""
         if self.ui.canvas.ax.patches != None:
-            self.ui.canvas.ax.patches.clear()
+            #self.ui.canvas.ax.patches.clear()
 
             for patch in self.ui.canvas.ax.patches:
                 patch.remove()
@@ -1796,7 +1796,7 @@ class Fix8():
         if all_fixations == 2:
             all_fixations = False
 
-        if self.fixations is None:
+        if self.fixations is None or len(self.fixations) == 0:
             return
 
         if self.ui.canvas.background is None:

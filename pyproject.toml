@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=75", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "fix8"
-version = "0.1.0"
+version = "0.3.0"
 description = "Fix8 (Fixate) is an Open-Source GUI Tool for Working with Eye Tracking Data in Reading Tasks."
 authors = [
     { name="Naser Al Madi", email="nsalmadi@colby.edu" }
@@ -12,13 +12,13 @@ authors = [
 readme = "README.md"
 license = { file = "LICENSE" }
 dependencies = [
-    "matplotlib==3.6.2",
-    "numpy==1.23.4",
-    "pandas==1.5.1",
-    "Pillow==10.3.0",
-    "PyQt5==5.15.10",
-    "scipy==1.9.3",
-    "qt-material==2.14"
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "Pillow",
+    "PyQt5",
+    "scipy",
+    "qt-material"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
