@@ -84,8 +84,11 @@ class Fix8():
         self.fixations = None               # TODO: replace with eye events:  timestamp, x, y, duration, pupil
         self.saccades = None                # TODO: replace with eye events:  timestamp, x, y, duration, x1, y1, amplitude, peak velocity 
         self.blinks = None                  # TODO: replace with eye events:  timestamp duration
+        
+        # for drawing fixations and saccades
         self.fixation_points = None
         self.saccade_lines = None
+
         self.current_fixation = -1          # progress bar
         self.suggested_corrections = None
 
@@ -300,6 +303,7 @@ class Fix8():
         self.ui.statusBar.showMessage(self.status_text)
         self.update_trial_statistics()
 
+
     def generate_between_line_regression(self):
         minimum_value = 0
         maximum_value = 100
@@ -353,6 +357,7 @@ class Fix8():
         self.status_text =" Generated synthetic data"
         self.ui.statusBar.showMessage(self.status_text)
         self.update_trial_statistics()
+
 
     def generate_noise(self):
         minimum_value = 1
@@ -1401,7 +1406,7 @@ class Fix8():
                 self.trial_name = None
                 self.trial_path = None
                 return
-
+        
         # clear history for undo
         self.state_history = History()
 
@@ -1650,7 +1655,7 @@ class Fix8():
         self.original_fixations = np.array(self.original_fixations)
         self.ui.relevant_buttons("trial_clicked")
         return True
-    
+
 
     def clear_saccades(self):
         """remove the saccades from the canvas (this does not erase the data, just visuals)"""
@@ -2052,11 +2057,24 @@ class Fix8():
             new_correction_file_name += '.json'
 
         if len(self.fixations) > 0:
-            fixation_list = self.fixations.tolist()
+            
+            x_cord = []
+            y_cord = []
+            duration = []
+            time_stamps = []
 
-            corrected_fixations = {'fixations': []}
-            for i in range(len(self.fixations)):
-                corrected_fixations['fixations'].append(fixation_list[i])
+            for index, row in self.eye_events.iterrows():
+                x_cord.append(row["x_cord"])
+                y_cord.append(row["y_cord"])
+                duration.append(row["duration"])
+                time_stamps.append(row["time_stamp"])
+
+            corrected_fixations = {'time_stamps': time_stamps,
+                                   'fixations': []
+                                   }
+            
+            for i in range(len(duration)):
+                corrected_fixations['fixations'].append([x_cord[i], y_cord[i], duration[i]])
 
             with open(f"{new_correction_file_name}", "w") as f:
                 json.dump(corrected_fixations, f)
@@ -2085,6 +2103,7 @@ class Fix8():
 
         else:
             self.show_error_message("Save Error", "No Corrections Made")
+
 
     def save_corrections_csv(self):
         qfd = QFileDialog()
@@ -2139,6 +2158,7 @@ class Fix8():
         else:
             self.show_error_message("Save Error", "No Corrections Made")
 
+
     def save_aoi_csv(self):
         qfd = QFileDialog()
         default_file_name = self.trial_path.replace('.csv', '').replace('.json', '') + '_AOI.csv'
@@ -2160,7 +2180,7 @@ class Fix8():
         else:
             self.show_error_message("Save Error", "No AOI Found")
 
-    
+
     def save_image(self):
         # save image with png, jpg, or jpeg, default to png 
         # dpi is set to 300 for high quality
