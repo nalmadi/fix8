@@ -19,21 +19,12 @@ class History:
         
 
 class Fix8State:
-    def __init__(self, fixations, saccades, blinks, suggested_corrections, current_fixation, selected_fixation):
-        if fixations is None:
-            self.fixations = []
+    def __init__(self, eye_events, suggested_corrections, current_fixation, selected_fixation):
+        
+        if eye_events is None:
+            self.eye_events = None
         else:
-            self.fixations = fixations.copy()
-
-        if saccades is None:
-            self.saccades = []
-        else:
-            self.saccades = saccades.copy()
-
-        if blinks is None:
-            self.blinks = []
-        else:
-            self.blinks = blinks.copy()
+            self.eye_events = eye_events.copy()
 
         if suggested_corrections is None:
             self.suggested_corrections = []
@@ -44,4 +35,4 @@ class Fix8State:
         self.selected_fixation = selected_fixation
 
     def get_state(self):
-        return self.fixations, self.saccades, self.blinks, self.suggested_corrections, self.current_fixation, self.selected_fixation
+        return self.eye_events, self.suggested_corrections, self.current_fixation, self.selected_fixation
