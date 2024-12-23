@@ -49,10 +49,13 @@ A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Ma
 
     Coming soon!
 
+# Python Compatibility 🐍
+Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is currently experimental and may have some limitations.
 
 # Run Fix8 from code 🚀
 To run Fix8 from the Python code, follow these steps:
 
+## Option 1: Using Python venv
 1. **Clone the Repository:**
     ```bash
     git clone https://github.com/nalmadi/fix8.git
@@ -112,6 +115,51 @@ To run Fix8 from the Python code, follow these steps:
     deactivate
     ```
 
+## Option 2: Using conda Environment
+1. **Clone the Repository:**
+    ```bash
+    git clone https://github.com/nalmadi/fix8.git
+    cd fix8
+    ```
+
+2. **Create and Activate conda Environment:**
+
+    It's recommended to use a conda environment to manage dependencies and ensure compatibility:
+
+    ```bash
+    conda create -n fix8env python=3.11
+    conda activate fix8env
+    ```
+
+3. **Install Requirements:**
+
+    Once the conda environment is activated, install the package via pip:
+
+    ```bash
+    pip install .
+    ```
+
+    If you plan to make changes to the code and rerun the package with the new changes, use this command instead:
+
+    ```bash
+    pip install -e .
+    ```
+
+4. **Run the Tool:**
+
+    Once done, run the tool simply by entering the command "fix8" in the terminal:
+
+    ```bash
+    fix8
+    ```
+
+5. **Deactivate the Environment:**
+
+    When you're done using the tool, deactivate the conda environment:
+
+    ```bash
+    conda deactivate
+    ```
 
 
 # Keyboard Shortcuts ⌨️​
