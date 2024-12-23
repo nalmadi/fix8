@@ -80,7 +80,7 @@ class Fix8():
 
         # fields relating to fixations
         self.eye_events = None              # dataframe of eye events
-        self.original_fixations = None      # TODO: make this original_eye_events
+        #self.original_fixations = None      # TODO: make this original_eye_events
         self.fixations = None               # TODO: replace with eye events:  timestamp, x, y, duration, pupil
         self.saccades = None                # TODO: replace with eye events:  timestamp, x, y, duration, x1, y1, amplitude, peak velocity 
         self.blinks = None                  # TODO: replace with eye events:  timestamp duration
@@ -90,7 +90,7 @@ class Fix8():
         self.saccade_lines = None
 
         self.current_fixation = -1          # progress bar
-        self.suggested_corrections = None
+        self.suggested_corrections = None   # corrected fixations
 
         # filed for tool undo/redo using memento pattern and state class
         self.state_history = History()
@@ -101,7 +101,7 @@ class Fix8():
         # fields relating to the correction algorithm
         self.algorithm = "manual"
         self.algorithm_function = None
-        self.secondery_algorithm_function = None
+        self.secondary_algorithm_function = None
         self.suggested_corrections, self.suggested_fixation = None, None
 
         # keeps track of how many times file was saved so duplicates can be saved instead of overriding previous save file
@@ -165,29 +165,37 @@ class Fix8():
         )
 
         # generate fixations
-        self.original_fixations = np.array(mini_emtk.generate_fixations_left(self.aoi, dispersion))
+        #self.original_fixations = np.array(mini_emtk.generate_fixations_left(self.aoi, dispersion))
+        generated_fixations = np.array(mini_emtk.generate_fixations_left(self.aoi, dispersion))
+
+        self.eye_events = pd.DataFrame(generated_fixations, columns=["x_cord", "y_cord", "duration"])
+        # self.eye_events["eye_event"] = "fixation"
+        # self.eye_events["x_cord"] = self.original_fixations[:, 0]
+        # self.eye_events["y_cord"] = self.original_fixations[:, 1]
+        # self.eye_events["duration"] = self.original_fixations[:, 2]
+
         self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
         # double clicking trial should show all and make the current fixation the last one
-        self.current_fixation = (len(self.original_fixations)-1)  
+        self.current_fixation = (len(generated_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(generated_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "Generated fixations,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(generated_fixations)}")
             else:
                 self.ui.label_progress.setText(
-                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                    f"{self.current_fixation}/{len(generated_fixations)}"
                 )
 
         # corrected fixations will be the current fixations on the screen and in the data
-        self.fixations = copy.deepcopy(self.original_fixations)
+        self.fixations = copy.deepcopy(generated_fixations)
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
@@ -217,29 +225,31 @@ class Fix8():
         )
         
         # generate fixations
-        self.original_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, approximate_letter_width, lam, k_value))
+        #self.original_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, approximate_letter_width, lam, k_value))
+        generated_fixations = np.array(mini_emtk.generate_fixations_left_skip(self.aoi, approximate_letter_width, lam, k_value))
+        self.eye_events = pd.DataFrame(generated_fixations, columns=["x_cord", "y_cord", "duration"])
         self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
         # double clicking trial should show all and make the current fixation the last one
-        self.current_fixation = (len(self.original_fixations)-1)  
+        self.current_fixation = (len(generated_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(generated_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "Generated fixations,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(generated_fixations)}")
             else:
                 self.ui.label_progress.setText(
-                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                    f"{self.current_fixation}/{len(generated_fixations)}"
                 )
 
         # corrected fixations will be the current fixations on the screen and in the data
-        self.fixations = copy.deepcopy(self.original_fixations)
+        self.fixations = copy.deepcopy(generated_fixations)
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
@@ -271,29 +281,31 @@ class Fix8():
         )
 
         # generate fixations
-        self.original_fixations = np.array(mini_emtk.within_line_regression(self.aoi, probability/10))
+        # self.original_fixations = np.array(mini_emtk.within_line_regression(self.aoi, probability/10))
+        generated_fixations = np.array(mini_emtk.within_line_regression(self.aoi, probability/10))
+        self.eye_events = pd.DataFrame(generated_fixations, columns=["x_cord", "y_cord", "duration"])
         self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
         # double clicking trial should show all and make the current fixation the last one
-        self.current_fixation = (len(self.original_fixations)-1)  
+        self.current_fixation = (len(generated_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(generated_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "Generated fixations,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(generated_fixations)}")
             else:
                 self.ui.label_progress.setText(
-                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                    f"{self.current_fixation}/{len(generated_fixations)}"
                 )
 
         # corrected fixations will be the current fixations on the screen and in the data
-        self.fixations = copy.deepcopy(self.original_fixations)
+        self.fixations = copy.deepcopy(generated_fixations)
         self.save_state()
         
         self.ui.checkbox_show_fixations.setChecked(True)
@@ -326,29 +338,30 @@ class Fix8():
         )
 
         # generate fixations
-        self.original_fixations = np.array(mini_emtk.between_line_regression(self.aoi, probability/10))
+        #self.original_fixations = np.array(mini_emtk.between_line_regression(self.aoi, probability/10))
+        generated_fixations = np.array(mini_emtk.between_line_regression(self.aoi, probability/10))
         self.ui.relevant_buttons("trial_clicked")
 
         #self.read_json_fixations(self.trial_path)
         self.suggested_corrections = None
         # double clicking trial should show all and make the current fixation the last one
-        self.current_fixation = (len(self.original_fixations)-1)  
+        self.current_fixation = (len(generated_fixations)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(generated_fixations) - 1)
         self.timer_start = time.time()
         self.metadata = "Generated fixations,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(generated_fixations)}")
             else:
                 self.ui.label_progress.setText(
-                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                    f"{self.current_fixation}/{len(generated_fixations)}"
                 )
 
         # corrected fixations will be the current fixations on the screen and in the data
-        self.fixations = copy.deepcopy(self.original_fixations)
+        self.fixations = copy.deepcopy(generated_fixations)
         self.save_state()
         
         self.ui.checkbox_show_fixations.setChecked(True)
@@ -590,8 +603,7 @@ class Fix8():
     
         # write eye metrics data to file
         eye_metrics_data.to_csv(file_name, index=False)
-        
-    
+
 
     def ascii_to_csv_converter(self):
         # open ascii file through file dialog limit to .asc files
@@ -1002,7 +1014,7 @@ class Fix8():
         
         elif "+" in self.algorithm:
             # hybrid
-            self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, line_Y, word_XY, self.secondery_algorithm_function)
+            self.suggested_corrections[:, 0:2] = self.algorithm_function(fixation_XY, line_Y, word_XY, self.secondary_algorithm_function)
 
         else:
             # warp
@@ -1017,7 +1029,7 @@ class Fix8():
 
         self.algorithm = algorithm_name
         self.algorithm_function = algorithm_function
-        self.secondery_algorithm_function = secondery_algorithm_function
+        self.secondary_algorithm_function = secondery_algorithm_function
         self.run_correction()
 
         # write metadata
@@ -1043,7 +1055,7 @@ class Fix8():
 
     def manual_correction(self):
         self.algorithm_function = None
-        self.secondery_algorithm_function = None
+        self.secondary_algorithm_function = None
         self.algorithm = "manual"
 
         # write metadata
@@ -1411,22 +1423,24 @@ class Fix8():
         self.state_history = History()
 
         self.suggested_corrections = None
-        self.current_fixation = (len(self.original_fixations)-1)  
+        self.current_fixation = (len(self.eye_events)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.eye_events) - 1)
         self.timer_start = time.time()
         self.metadata = "started, open trial," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(self.eye_events)}")
             else:
                 self.ui.label_progress.setText(
-                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                    f"{self.current_fixation}/{len(self.eye_events)}"
                 )
 
-        self.fixations = copy.deepcopy(self.original_fixations)
+        fixations = self.eye_events[self.eye_events["eye_event"] == "fixation"]
+        self.fixations = np.array(fixations[['x_cord', 'y_cord', 'duration']])
+        #self.fixations = copy.deepcopy(self.original_fixations)
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
@@ -1534,22 +1548,24 @@ class Fix8():
         self.state_history = History()
 
         self.suggested_corrections = None
-        self.current_fixation = (len(self.original_fixations)-1)  
+        self.current_fixation = (len(self.eye_events)-1)  
 
         # set the progress bar to the amount of fixations found
-        self.ui.progress_bar.setMaximum(len(self.original_fixations) - 1)
+        self.ui.progress_bar.setMaximum(len(self.eye_events) - 1)
         self.timer_start = time.time()
         self.metadata = "started,," + str(time.time()) + "\n"
 
         if self.current_fixation is not None:
             if self.current_fixation == -1:
-                self.ui.label_progress.setText(f"0/{len(self.original_fixations)}")
+                self.ui.label_progress.setText(f"0/{len(self.eye_events)}")
             else:
                 self.ui.label_progress.setText(
-                    f"{self.current_fixation}/{len(self.original_fixations)}"
+                    f"{self.current_fixation}/{len(self.eye_events)}"
                 )
 
-        self.fixations = copy.deepcopy(self.original_fixations)
+        fixations = self.eye_events[self.eye_events["eye_event"] == "fixation"]
+        self.fixations = np.array(fixations[['x_cord', 'y_cord', 'duration']])
+        #self.fixations = copy.deepcopy(self.original_fixations)
         self.save_state()
         self.ui.checkbox_show_fixations.setChecked(True)
         self.ui.checkbox_show_saccades.setChecked(True)
@@ -1611,14 +1627,14 @@ class Fix8():
 
         try:
             self.eye_events = self.json_to_df(trial_path)
-            self.original_fixations = self.eye_events.drop(columns=["eye_event"])
-            self.original_fixations = np.array(self.original_fixations)
+            #self.original_fixations = self.eye_events.drop(columns=["eye_event"])
+            #self.original_fixations = np.array(self.original_fixations)
         except:
             self.show_error_message("Trial File Error", "Problem reading json File")     
             return False
         
         # if the fixations are empty, show an error message
-        if len(self.original_fixations) == 0:
+        if len(self.eye_events) == 0:
             self.show_error_message("Trial File Error", "No Fixations Found")
             return False
         
@@ -1630,7 +1646,7 @@ class Fix8():
         """find all the fixations of the trial that was double clicked
         parameters:
         trial_path - the trial file path of the trial clicked on"""
-        self.original_fixations = []
+        #self.original_fixations = []
 
         try:
             # open the csv file with pandas
@@ -1649,10 +1665,10 @@ class Fix8():
             return False
 
         # get the x, y, and duration of the fixations
-        for index, row in fixations.iterrows():
-            self.original_fixations.append([row["x_cord"], row["y_cord"], row["duration"]])
+        #for index, row in fixations.iterrows():
+        #    self.original_fixations.append([row["x_cord"], row["y_cord"], row["duration"]])
 
-        self.original_fixations = np.array(self.original_fixations)
+        #self.original_fixations = np.array(self.original_fixations)
         self.ui.relevant_buttons("trial_clicked")
         return True
 
@@ -1660,10 +1676,10 @@ class Fix8():
     def clear_saccades(self):
         """remove the saccades from the canvas (this does not erase the data, just visuals)"""
         if self.saccade_lines != None:
-            self.ui.canvas.ax.lines.clear()  # <-- if this line crashes the tool
+            #self.ui.canvas.ax.lines.clear()  # <-- if this line crashes the tool
 
-            # for line in self.ui.canvas.ax.lines:  #<-- use this instead
-            #    line.remove()
+            for line in self.ui.canvas.ax.lines:  #<-- use this instead
+               line.remove()
 
             self.saccade_lines = None
             self.ui.canvas.draw()
@@ -1675,17 +1691,17 @@ class Fix8():
             # self.scatter.remove()
             self.fixation_points = None
             # clear scatter data from canvas but not the background image
-            self.ui.canvas.ax.collections.clear()  # <-- If this line crashes the tool
+            #self.ui.canvas.ax.collections.clear()  # <-- If this line crashes the tool
 
-            # for collection in self.ui.canvas.ax.collections: #<-- use this instead
-            #    collection.remove()
+            for collection in self.ui.canvas.ax.collections: #<-- use this instead
+               collection.remove()
             self.ui.canvas.draw()
 
     
     def clear_aois(self):
         """clear the areas of interest from the canvas"""
         if self.ui.canvas.ax.patches != None:
-            self.ui.canvas.ax.patches.clear()
+            #self.ui.canvas.ax.patches.clear()
 
             for patch in self.ui.canvas.ax.patches:
                 patch.remove()
@@ -1713,7 +1729,6 @@ class Fix8():
         self.clear_saccades()
         self.clear_aois()
         
-
         # update the scatter based on the progress bar, redraw the canvas if checkbox is clicked
         # do the same for saccades
         if self.ui.checkbox_show_fixations.isCheckable():
@@ -1796,7 +1811,7 @@ class Fix8():
         if all_fixations == 2:
             all_fixations = False
 
-        if self.fixations is None:
+        if self.fixations is None or len(self.fixations) == 0:
             return
 
         if self.ui.canvas.background is None:
@@ -1932,7 +1947,7 @@ class Fix8():
 
 
     def next_fixation(self):
-        if self.current_fixation == -1 and self.original_fixations == None:
+        if self.current_fixation == -1 and self.eye_events == None:
             # Tour
             self.set_canvas_image('src/.images/fix8-keyboard.png')
             self.ui.canvas.draw()
