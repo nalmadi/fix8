@@ -50,7 +50,7 @@ A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Ma
     Coming soon!
 
 # Python Compatibility 🐍
-Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is currently experimental and may have some limitations.
+Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is in progress, please checkout the `py313-updates` branch of this repository for the latest Python 3.13 compatible version of Fix8.
 
 # Run Fix8 from code 🚀
 To run Fix8 from the Python code, follow these steps:
