@@ -41,8 +41,9 @@ A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Ma
     Download Mac app here: <a id="raw-url" href="https://github.com/nalmadi/fix8/releases/download/v1.3/fix8_v1.3_Mac.zip">[Mac App]</a>
     
     >- Right-click on `fix8` and select `open.`
-    >- A message that reads `fix8.app can't be opend because Apple cannot check it for malicious software.` click on open to run Fix8.
-    >- First run takes a couple of minutes for the files to be scanned, please be patient.  Running the app after that will take less than five seconds.
+    >- A message that reads `fix8.app can't be opened because Apple cannot check it for malicious software.` Go to security preferences & click on open to run Fix8.
+    >- First run takes a couple of minutes for the files to be scanned, please be patient.  Each subsequent run is faster.
+    >- If you're just starting out, you can access some starter_examples from the mounted package itself (under Locations in Finder) without downloading the datasets below.
     >- Enjoy!
 
 - Datasets:
