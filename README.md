@@ -28,26 +28,26 @@ A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Ma
 
 - Windows: 
 
-    Compressed executable (single file): <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/main/executables/Fix8_v1.1_onefile.zip">[Download]</a> 
+    <!-- Compressed executable (single file): <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/main/executables/Fix8_v1.1_onefile.zip">[Download]</a>  -->
 
-    UNcompressed executable (many files): <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/main/executables/Fix8_v1.1.zip">[Download]</a>
+    Download Windows executable here: <a id="raw-url" href="https://github.com/nalmadi/fix8/releases/download/v1.3/fix8_v1.3_Windows.zip">[Windows]</a>
 
-  
-    > to download and run Fix8 do the following:
-    >- Click on one of the download link above.
-    >- In the top right, right-click the **Raw** button.
-    >- Click on "Save as..."
-    >- Unzip the file.
-    >- Locate Fix8.exe and run it, first run might take a minute.
+    >- Unzip the downloaded file.
+    >- Locate Fix8.exe and run it, first run might take a couple of minutes.
     >- Enjoy!
 
 - Mac:
 
-    Compressed executable (single file): <a id="raw-url" href="https://github.com/nalmadi/fix8/blob/main/executables/fix8_Mac.zip">[Download]</a>
+    Download Mac app here: <a id="raw-url" href="https://github.com/nalmadi/fix8/releases/download/v1.3/fix8_v1.3_Mac.zip">[Mac App]</a>
+    
+    >- Right-click on `fix8` and select `open.`
+    >- A message that reads `fix8.app can't be opend because Apple cannot check it for malicious software.` click on open to run Fix8.
+    >- First run takes a couple of minutes for the files to be scanned, please be patient.
+    >- Enjoy!
 
-- Linux:
+- Datasets:
 
-    Coming soon!
+    Download the datasets here: <a id="raw-url" href="https://github.com/nalmadi/fix8/releases/download/v1.3/fix8_v1.3_datasets.zip">[Datasets]</a>
 
 # Python Compatibility 🐍
 Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is in progress, please checkout the `py313-updates` branch of this repository for the latest Python 3.13 compatible version of Fix8.
