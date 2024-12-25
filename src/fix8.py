@@ -1099,7 +1099,10 @@ class Fix8():
                 if epsilon < 5:
                     epsilon = 5
 
-                if d[fixation_index] < epsilon * 0.91:
+                # Higher scale factor for MacOS so we can select fixation by clicking anywhere within the circle
+                scale_factor = 1.75 if platform.system() == 'Darwin' else 0.91
+
+                if d[fixation_index] < epsilon * scale_factor:
                     self.selected_fixation = fixation_index
                     return self.selected_fixation
             
