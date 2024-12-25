@@ -38,10 +38,17 @@ A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Ma
 
 - Mac:
 
-    Download Mac app here: <a id="raw-url" href="https://github.com/nalmadi/fix8/releases/download/v1.3/fix8_v1.3_Mac.zip">[Mac App]</a>
+    Download Mac app here: <a id="raw-url" href="https://github.com/nalmadi/fix8/releases/download/v1.3/fix8_v1.3_Mac.dmg">[Mac App]</a>
     
     >- Right-click on `fix8` and select `open.`
-    >- A message that reads `fix8.app can't be opend because Apple cannot check it for malicious software.` click on open to run Fix8.
+    >- A message that reads `fix8.app can't be opened because Apple cannot check it for malicious software.` click on 'open' then 'run' to run Fix8.
+    --
+    In some cases, you might have to do the following to allow the app to run:
+        1.Open System Settings.
+        2. Click Privacy & Security, scroll down, and click the Open Anyway button to confirm your intent to open or install the app.
+        3. When the warning prompt reappears, click 'Open'.
+        4. Now, can open Fix8 in the future by double-clicking it.
+    --
     >- First run takes a couple of minutes for the files to be scanned, please be patient.  Running the app after that will take less than five seconds.
     >- Enjoy!
 
@@ -50,7 +57,7 @@ A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Ma
     Download the datasets here: <a id="raw-url" href="https://github.com/nalmadi/fix8/releases/download/v1.3/fix8_v1.3_datasets.zip">[Datasets]</a>
 
 # Python Compatibility 🐍
-Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is in progress, please checkout the `py313-updates` branch of this repository for the latest Python 3.13 compatible version of Fix8.
+Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is in progress, please checkout the  <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/py313-updates">`[py313-updates]`</a> branch of this repository for the latest Python 3.13 compatible version of Fix8.
 
 # Run Fix8 from code 🚀
 To run Fix8 from the Python code, follow these steps:
