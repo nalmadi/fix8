@@ -212,8 +212,8 @@ Naser Al Madi, Brett Torra, Yixin Li, Najam Tariq. (2024). Combining Automation 
 @article{Al2024combining,
 author = {Naser Al Madi, Brett Torra, Yixin Li, Najam Tariq},
 title = {Combining Automation and Expertise: A Semi-automated Approach to Correcting Eye Tracking Data in Reading Tasks},
-journal = {},
-year = {},
+journal = {Behavior Research Methods},
+year = {2025},
 volume = {},
 pages = {},
 doi = {}
