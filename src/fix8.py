@@ -1775,6 +1775,12 @@ class Fix8():
                     c=self.remaining_fixation_color,
                 )
 
+                if self.ui.checkbox_show_saccades.isCheckable():
+                    if self.ui.checkbox_show_saccades.isChecked():
+                        self.saccade_lines = self.ui.canvas.ax.plot(
+                            x, y, alpha=self.saccade_opacity, c=self.saccade_color, linewidth=self.saccade_line_size
+                        )
+
         # draw aois
         if self.ui.checkbox_show_aoi.isChecked():
             color = self.aoi_color 
@@ -2209,7 +2215,7 @@ class Fix8():
             new_image_file_name += '.png'
 
         # Using standard draw_canvas() instead of quick_draw_canvas() to bypass blit temporarily
-        self.draw_canvas(draw_all=True)
+        self.draw_canvas(draw_all=False)
 
         # if name includes svg, save as svg
         if '.svg' in new_image_file_name:
