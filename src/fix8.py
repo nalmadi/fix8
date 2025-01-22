@@ -104,9 +104,6 @@ class Fix8():
         self.timer_start = 0  # beginning time of trial
         self.metadata = ""
 
-        self.saccade_opacity = 0.4
-        self.fixation_opacity = 0.4
-
         # fields relating to the drag and drop system
         self.selected_fixation = None           # clicked fixation
         self.xy = None
@@ -124,6 +121,8 @@ class Fix8():
         self.saccade_color = "blue"
         self.aoi_color = "black"
         self.colorblind_assist_status = False
+        self.saccade_opacity = 0.4
+        self.fixation_opacity = 0.4
         
         # fields relating to fixation size
         self.fixation_size = 30
@@ -450,6 +449,7 @@ class Fix8():
         self.ui.progress_bar.setMaximum(len(self.eye_events) - 1)
         self.progress_bar_updated(self.current_fixation, draw=True)
 
+
     def generate_shift(self):
         minimum_value = 1
         maximum_value = 10
@@ -549,6 +549,7 @@ class Fix8():
         # write hit test data to file
         hit_test_data.to_csv(file_name, index=False)
     
+
     def calculate_aoi_metrics(self):
         # open hit test dialog to get radius
         default_radius = 10
@@ -634,6 +635,7 @@ class Fix8():
         # convert and save csv file
         mini_emtk.read_EyeLink1000(ascii_file, new_correction_file_name)
 
+
     def json_to_csv_converter(self):
         # open json file through file dialog limit to .asc files
         qfd = QFileDialog()
@@ -660,6 +662,7 @@ class Fix8():
         # convert and save csv file
         dataframe = self.json_to_df(json_file)
         dataframe.to_csv(new_correction_file_name, index=False)
+
 
     def csv_to_json_converter(self):
         # open csv file through file dialog limit to .asc files
@@ -702,7 +705,6 @@ class Fix8():
         with open(f"{new_correction_file_name}", "w") as f:
             json.dump(corrected_fixations, f)
         
-
 
     def eyelink_experiment_to_csv_converter(self):
         ''' convert eyelink experiment to csv files from ASCII and runtime folder '''
@@ -1210,6 +1212,7 @@ class Fix8():
         #self.ui.canvas.ax.draw_artist(self.saccades)
         self.ui.canvas.blit(self.ui.canvas.ax.bbox)
 
+
     def lock_x_axis(self):
         
         if self.locked_x:
@@ -1398,6 +1401,7 @@ class Fix8():
         else:
             self.show_error_message("Image Error", "No Image Selected")
 
+
     def open_trial(self):
         qfd = QFileDialog()
         self.trial_path = qfd.getOpenFileName(self.ui, "Select Trial file", "", "CSV or Json (*.csv *.json)")[0]
@@ -1485,9 +1489,7 @@ class Fix8():
             self.ui.statistics_table.setItem(3, 1, QTableWidgetItem("-"))
 
         # if self.current_fixation is not None:
-
         #self.ui.statistics_table.setHidden(False)
-
 
 
     def open_aoi(self):
@@ -1512,7 +1514,6 @@ class Fix8():
         self.status_text = self.trial_name + " Opened (Default: Manual Mode)"
         self.ui.statusBar.showMessage(self.status_text)
         self.update_trial_statistics()
-
 
 
     def set_canvas_image(self, image_file):
@@ -1588,6 +1589,7 @@ class Fix8():
                 margin_width=self.aoi_width,
             )
 
+
     def json_to_df(self, trial_path):
         x_cord = []
         y_cord = []
@@ -1622,6 +1624,7 @@ class Fix8():
 
         return eye_events
     
+
     def read_json_fixations(self, trial_path):
         """find all the fixations of the trial that was double clicked
         parameters:
@@ -1700,7 +1703,6 @@ class Fix8():
             for patch in self.ui.canvas.ax.patches:
                 patch.remove()
             self.ui.canvas.draw()
-
 
 
     # draw fixations2 is similar to the normal draw fixations, excpet this one only draws to the current fixation
@@ -1785,7 +1787,6 @@ class Fix8():
         if self.ui.checkbox_show_aoi.isChecked():
             color = self.aoi_color 
 
-
             for row in self.aoi.iterrows():
                 xcord = row[1]["x"]
                 ycord = row[1]["y"]
@@ -1829,7 +1830,6 @@ class Fix8():
             x = np.array(self.eye_events[self.eye_events["eye_event"] == "fixation"]["x_cord"].iloc[0 : self.current_fixation + 1])
             y = np.array(self.eye_events[self.eye_events["eye_event"] == "fixation"]["y_cord"].iloc[0 : self.current_fixation + 1])
             duration = np.array(self.eye_events[self.eye_events["eye_event"] == "fixation"]["duration"].iloc[0 : self.current_fixation + 1])
-
 
         # draw fixations
         if self.ui.checkbox_show_fixations.isChecked():
@@ -1919,7 +1919,6 @@ class Fix8():
         self.ui.canvas.blit(self.ui.canvas.ax.bbox)
 
 
-
     def correct_all_fixations(self):
         """if the user presses the correct all fixations button,
         make the corrected fixations the suggested ones from the correction algorithm"""
@@ -1939,13 +1938,13 @@ class Fix8():
         self.status_text = "Correct All Fixations!"
         self.ui.statusBar.showMessage(self.status_text)
 
+
     def previous_fixation(self):
         # if self.suggested_corrections is not None:
         if self.current_fixation != 0:
             self.current_fixation -= 1
 
         self.progress_bar_updated(self.current_fixation, draw=False)
-
 
 
     def next_fixation(self):
@@ -2223,6 +2222,7 @@ class Fix8():
         else:
             self.ui.canvas.ax.figure.savefig(new_image_file_name, dpi=300, transparent=True, bbox_inches='tight')
 
+
     def progress_bar_updated(self, value, draw=True):
         # update the current suggested correction to the last fixation of the list
         self.current_fixation = value
@@ -2242,15 +2242,18 @@ class Fix8():
 
             self.quick_draw_canvas(all_fixations=False)
 
+
     def aoi_height_changed(self, value):
         self.aoi_height = value
         self.find_aoi()
         self.quick_draw_canvas()
-        
+
+
     def aoi_width_changed(self, value):
         self.aoi_width = value
         self.find_aoi()
         self.quick_draw_canvas()
+
 
     def select_fixation_color(self):
         color = QColorDialog.getColor(initial=QColor(self.fixation_color))
@@ -2261,6 +2264,7 @@ class Fix8():
 
         self.quick_draw_canvas(all_fixations=False)
 
+
     def select_current_fixation_color(self):
         color = QColorDialog.getColor(initial=QColor(self.current_fixation_color))
         if color.isValid():
@@ -2269,6 +2273,7 @@ class Fix8():
             self.current_fixation_color = "magenta"
 
         self.quick_draw_canvas(all_fixations=False)
+
 
     def select_suggested_fixation_color(self):
         color = QColorDialog.getColor(initial=QColor(self.suggested_fixation_color))
@@ -2279,6 +2284,7 @@ class Fix8():
 
         self.quick_draw_canvas(all_fixations=False)
 
+
     def select_remaining_fixation_color(self):
         color = QColorDialog.getColor(initial=QColor(self.remaining_fixation_color))
         if color.isValid():
@@ -2287,6 +2293,7 @@ class Fix8():
             self.remaining_fixation_color = "grey"
 
         self.quick_draw_canvas(all_fixations=False)
+
 
     def select_saccade_color(self):
         color = QColorDialog.getColor(initial=QColor(self.saccade_color))
@@ -2297,6 +2304,7 @@ class Fix8():
 
         self.quick_draw_canvas(all_fixations=False)
 
+
     def select_aoi_color(self):
         color = QColorDialog.getColor(initial=QColor(self.aoi_color))
         if color.isValid():
@@ -2305,6 +2313,7 @@ class Fix8():
             self.aoi_color = "black"
 
         self.quick_draw_canvas(all_fixations=False)
+
 
     def colorblind_assist(self):
         if self.colorblind_assist_status == False:
@@ -2321,29 +2330,34 @@ class Fix8():
             self.colorblind_assist_status = False
             self.quick_draw_canvas(all_fixations=False)
 
+
     def saccade_opacity_changed(self, value):
         self.saccade_opacity = float(value / 10)
         self.quick_draw_canvas(all_fixations=False)
+
 
     def saccade_width_changed(self, value):
         self.saccade_line_size = value
         self.draw_canvas()
 
+
     def fixation_opacity_changed(self, value):
         self.fixation_opacity = float(value / 10)
         self.quick_draw_canvas(all_fixations=False)
-        
+
+
     def fixation_size_changed(self, value):
         self.fixation_size = value * 6
         self.draw_canvas()
-    
+
+
 def main():
     if platform.system() == "Windows":
         import ctypes
-        myappid = 'ThisCanBeAnything' # arbitrary string
 
         # This helps Windows manage and group windows of this application together
         # And helps us maintain the taskbar icon
+        myappid = 'ThisCanBeAnything' # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     window = Fix8()
