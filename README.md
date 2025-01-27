@@ -207,7 +207,7 @@ Developers can find the Fix8 Core API documentation [HERE](https://fix8-eye-trac
 
 # Citation 📝
 
-[Naser Al Madi, Brett Torra, Yixin Li, Najam Tariq. (2025). Combining Automation and Expertise: A Semi-automated Approach to Correcting Eye Tracking Data in Reading Tasks.]([https://arxiv.org/pdf/2501.06977](https://link.springer.com/article/10.3758/s13428-025-02597-3))
+[Naser Al Madi, Brett Torra, Yixin Li, Najam Tariq. Combining Automation and Expertise: A Semi-automated Approach to Correcting Eye Tracking Data in Reading Tasks. Behavior Research Methods 57, 72 (2025). https://doi.org/10.3758/s13428-025-02597-3](https://link.springer.com/article/10.3758/s13428-025-02597-3)
 ```bash
 @article{Al2025combining,
   author = {Naser Al Madi, Brett Torra, Yixin Li, Najam Tariq},
