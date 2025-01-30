@@ -19,6 +19,39 @@ Fix8 (Fixate) is an open-source GUI Tool for working with eye tracking data in r
 - Request a feature by making an issue in this repository!
 
 
+# Keyboard Shortcuts ⌨️​
+[![Keyboard shortcuts](./src/.images/fix8-keyboard.png)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
+
+
+
+| Key         | Functionality                               |
+| ----------- | ------------------------------------------- |
+| a           | assign current fixation to line above       |
+| z           | assign current fixation to line below       |
+| space       | accept suggestion                           |
+| backspace   | delete fixation (click on fixation to select)|
+| right       | next fixation                               |
+| left        | previous fixation                           |
+| 1-9         | assign fixation to the line number          |
+
+
+
+
+
+# Datasets 🗂️​
+Complete or partial data from the following datasets is included in Fix8:
+
+
+- **AlMadi2018**: Al Madi, Naser, and Javed Khan. "Constructing semantic networks of comprehension from eye-movement during reading." 2018 IEEE 12th International Conference on Semantic Computing (ICSC). IEEE, 2018.
+- **EyeLink_experiment**: Al Madi, Naser, and Javed Khan. "Constructing semantic networks of comprehension from eye-movement during reading." 2018 IEEE 12th International Conference on Semantic Computing (ICSC). IEEE, 2018.
+- **EMIP2021**: Bednarik, Roman, et al. "EMIP: The eye movements in programming dataset." Science of Computer Programming 198 (2020): 102520.
+- **EMIP2021_90**: Al Madi, Naser, et al. "EMIP Toolkit: A Python Library for Customized Post-processing of the Eye Movements in Programming Dataset." ACM Symposium on Eye Tracking Research and Applications. 2021.
+- **Carr2022**: Carr, J. W., Pescuma, V. N., Furlan, M., Ktori, M., & Crepaldi, D. (2022). Algorithms for the automated correction of vertical drift in eye-tracking data. Behavior Research Methods, 54(1), 287-310.
+- **GazeBase**: Griffith, H., Lohr, D., Abdulin, E., & Komogortsev, O. (2021). GazeBase, a large-scale, multi-stimulus, longitudinal eye movement dataset. Scientific Data, 8(1), 184.
+- **MET_Dataset**: Raymond, O., Moldagali, Y., & Al Madi, N. (2023, May). A dataset of underrepresented languages in eye tracking research. In Proceedings of the 2023 Symposium on Eye Tracking Research and Applications (pp. 1-2).
+
+
+
 # Manual 📖
 A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Manual_v1.2](https://docs.google.com/document/d/14g-kQfCTfn-jabcN50_mCkjD39DFVtT_sLlosPTREzQ/edit?usp=sharing)
 
@@ -56,8 +89,6 @@ A comprehensive manual of Fix8 GUI and every feature can be found here: [Fix8_Ma
 
     Download the datasets here: <a id="raw-url" href="https://github.com/nalmadi/fix8/releases/download/v1.3/fix8_v1.3_datasets.zip">[Datasets]</a>
 
-# Python Compatibility 🐍
-Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is in progress, please checkout the  <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/py313-updates">`[py313-updates]`</a> branch of this repository for the latest Python 3.13 compatible version of Fix8.
 
 # Run Fix8 from code 🚀
 To run Fix8 from the Python code, follow these steps:
@@ -169,36 +200,9 @@ To run Fix8 from the Python code, follow these steps:
     ```
 
 
-# Keyboard Shortcuts ⌨️​
-[![Keyboard shortcuts](./src/.images/fix8-keyboard.png)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
+# Python Compatibility 🐍
+Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is in progress, please checkout the  <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/py313-updates">`[py313-updates]`</a> branch of this repository for the latest Python 3.13 compatible version of Fix8.
 
-
-
-| Key         | Functionality                               |
-| ----------- | ------------------------------------------- |
-| a           | assign current fixation to line above       |
-| z           | assign current fixation to line below       |
-| space       | accept suggestion                           |
-| backspace   | delete fixation (click on fixation to select)|
-| right       | next fixation                               |
-| left        | previous fixation                           |
-| 1-9         | assign fixation to the line number          |
-
-
-
-
-
-# Datasets 🗂️​
-Complete or partial data from the following datasets is included in Fix8:
-
-
-- **AlMadi2018**: Al Madi, Naser, and Javed Khan. "Constructing semantic networks of comprehension from eye-movement during reading." 2018 IEEE 12th International Conference on Semantic Computing (ICSC). IEEE, 2018.
-- **EyeLink_experiment**: Al Madi, Naser, and Javed Khan. "Constructing semantic networks of comprehension from eye-movement during reading." 2018 IEEE 12th International Conference on Semantic Computing (ICSC). IEEE, 2018.
-- **EMIP2021**: Bednarik, Roman, et al. "EMIP: The eye movements in programming dataset." Science of Computer Programming 198 (2020): 102520.
-- **EMIP2021_90**: Al Madi, Naser, et al. "EMIP Toolkit: A Python Library for Customized Post-processing of the Eye Movements in Programming Dataset." ACM Symposium on Eye Tracking Research and Applications. 2021.
-- **Carr2022**: Carr, J. W., Pescuma, V. N., Furlan, M., Ktori, M., & Crepaldi, D. (2022). Algorithms for the automated correction of vertical drift in eye-tracking data. Behavior Research Methods, 54(1), 287-310.
-- **GazeBase**: Griffith, H., Lohr, D., Abdulin, E., & Komogortsev, O. (2021). GazeBase, a large-scale, multi-stimulus, longitudinal eye movement dataset. Scientific Data, 8(1), 184.
-- **MET_Dataset**: Raymond, O., Moldagali, Y., & Al Madi, N. (2023, May). A dataset of underrepresented languages in eye tracking research. In Proceedings of the 2023 Symposium on Eye Tracking Research and Applications (pp. 1-2).
 
 
 # API and Documentation for Developers ⚙️
