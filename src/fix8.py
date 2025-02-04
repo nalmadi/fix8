@@ -2199,7 +2199,12 @@ class Fix8():
         # save image with png, jpg, or jpeg, default to png 
         # dpi is set to 300 for high quality
         qfd = QFileDialog()
-        default_file_name = self.trial_path.replace('.csv', '').replace('.json', '') + '_FIX8.png'
+
+        if self.trial_path is not None:
+            default_file_name = self.trial_path.replace('.csv', '').replace('.json', '') + '_FIX8.png'
+        else:
+            default_file_name = 'image_Fix8.png'
+
         new_image_file_name, _ = qfd.getSaveFileName(self.ui, "Save Image", default_file_name)
 
         if new_image_file_name == "":
