@@ -1380,6 +1380,7 @@ class Fix8():
                 #self.draw_canvas()
                 #self.ui.canvas.draw_idle()
                 self.find_aoi()
+                
                 self.ui.relevant_buttons("opened_stimulus")
                 # hide side panel until a folder is opened
                 self.ui.show_side_panel()
@@ -1582,12 +1583,17 @@ class Fix8():
 
     def find_aoi(self):
         """find the areas of interest (aoi) for the selected stimulus"""
-        if self.image_file_path != "":
-            self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
-                self.image_file_path,
-                margin_height=self.aoi_height,
-                margin_width=self.aoi_width,
-            )
+
+        try:
+            if self.image_file_path != "":
+                self.aoi, self.background_color = mini_emtk.EMTK_find_aoi(
+                    self.image_file_path,
+                    margin_height=self.aoi_height,
+                    margin_width=self.aoi_width,
+                )
+        except Exception as e:
+            self.show_error_message("AOI Error", "Problem finding AOI: " + str(e))
+            self.aoi = None
 
 
     def json_to_df(self, trial_path):
