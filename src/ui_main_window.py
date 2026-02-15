@@ -1,4 +1,5 @@
 
+
 from qt_material import QtStyleTools, list_themes
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
@@ -487,7 +488,6 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.json_to_csv_converter_action = QAction("JSON to CSV (one trial)", self)
         self.csv_to_json_converter_action = QAction("CSV to JSON (one trial)", self)
         self.eyelink_experiment_to_csv_converter_action = QAction("Eyelink Experiment to CSV", self)
-        self.eyevec_to_json_converter_action = QAction("Eyevec to JSON Convert", self)
 
         self.assign_line_1_action = QAction("Assign to Line 1", self)
         self.assign_line_2_action = QAction("Assign to Line 2", self)
@@ -620,7 +620,6 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.converters_menu.addAction(self.json_to_csv_converter_action)
         self.converters_menu.addAction(self.csv_to_json_converter_action)
         self.converters_menu.addAction(self.eyelink_experiment_to_csv_converter_action)
-        self.converters_menu.addAction(self.eyevec_to_json_converter_action)
 
         # add menu item called "Style" to the menu bar
         self.menu_style = self.menuBar().addMenu("Appearance")
@@ -761,7 +760,6 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.json_to_csv_converter_action.triggered.connect(self.fix8.json_to_csv_converter)
         self.csv_to_json_converter_action.triggered.connect(self.fix8.csv_to_json_converter)
         self.eyelink_experiment_to_csv_converter_action.triggered.connect(self.fix8.eyelink_experiment_to_csv_converter)
-        self.eyevec_to_json_converter_action.triggered.connect(self.fix8.eyevec_to_json_converter)
 
         self.assign_line_1_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(1))
         self.assign_line_2_action.triggered.connect(lambda: self.fix8.assign_fixation_to_line(2))
