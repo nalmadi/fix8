@@ -1,4 +1,3 @@
-
 #
 # This file contains several functions from Eye Movement In 
 # Programming Toolkit (EMTK)
@@ -97,7 +96,7 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
 
     # Detect the background color
     bg_color = find_background_color(img)
-    # print("bg_color: ", bg_color)
+    #print("bg_color: ", bg_color)
 
     left, right = 0, width
 
@@ -135,34 +134,91 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
 
     # Iterate through each line of code from detection
     for upper_bound, lower_bound in list(zip(upper_bounds, lower_bounds)):
+
         # Reset all temporary result for the next line
         horizontal_result, left_bounds, right_bounds = [], [], []
 
         # Move the detecting rectangle from the left to the right of the image
-        for left in range(width - margin_width):
+
+        # The following program attempt to find the left and right boundary of a word by using the algorithm written below
+        # Since all color pixel is the same in a gap between words, so minimum == maximum inside a gap, 
+        # We can use this observation to identify gaps, we can then use gap to identifiy boundary for words
+
+        # Generally, we find the boundary for a new word by,
+        # 1. Keep track of the boundary of the last gap found by using varaible "last"
+        #    because the boundary of the last gap will be the left boundary for a new word if a new word is identified
+        # 2. We find a new word by finding a new gap, as if there are two gaps, a word must be in between.
+        #    To ensure the new gap found is a new gap, not just a continution of the old gap, we use boolean variable "gap_found"
+        # 3. if we have found a new gap, we set the left boundary of the new gap as the right boundary of a new word
+        #    and the variable "last" as the left boundary of the new word. This new word should be in between of the newly found gap,
+        #    and the gap we found just before
+        # 4. Repeat this algorithm unitl line is finished
+
+        # Only problem with the above algorithm is that we need to identify a starting point
+        # This is to account for cases where the word start right on the left boundary
+        # We do this by cropping boxes that start from the left boundary and ends at variable "right"
+        # if minimum != maximum, then the start of the line is found
+
+        #find the start of line
+        start = 0 
+        last = 0
+        gap_found = False
+
+        for right in range(width - margin_width):
+
+            #crop box to check if minimum and maximum
+            box = (0, upper_bound, right + 1, lower_bound)
+            minimum, maximum = img.crop(box).getextrema()
+
+            if minimum != maximum:
+                #the start of the line is found break
+                start = right
+                last = right
+                break
+        
+        for left in range(start, width - margin_width):
             right = left + margin_width
 
             box = (left, upper_bound, right, lower_bound)
             minimum, maximum = img.crop(box).getextrema()
 
-            if left > 1:
-                if bg_color == "black":
-                    if horizontal_result[-1][3] == 0 and maximum == 255:
-                        # Rectangle detects black color for the first time in a while -> Start of one word
-                        left_bounds.append(left)
-                    if horizontal_result[-1][3] == 255 and maximum == 0:
-                        # Rectangle detects white color for the first time in a while -> End of one word
-                        right_bounds.append(right)
-                elif bg_color == "white":
-                    if horizontal_result[-1][2] == 255 and minimum == 0:
-                        # Rectangle detects black color for the first time in a while -> Start of one word
-                        left_bounds.append(left)
-                    if horizontal_result[-1][2] == 0 and minimum == 255:
-                        # Rectangle detects white color for the first time in a while -> End of one word
-                        right_bounds.append(right)
+            # if minimum == maximum, then a gap is found, else there exist a word inside the box
+            if minimum == maximum:
+
+                # if gap found is new gap, then a new word is found
+                if not gap_found:
+
+                    gap_found = True
+                    #track the new word found
+                    left_bounds.append(last)
+                    right_bounds.append(left)
+
+                #update the right boundary of the current gap
+                last = right
+
+            else:
+                # we are no longer in a word, so the last gap have ended, and we can wait for a new gap
+                gap_found = False
+
+            #if left >= 0:
+                #if bg_color == "black":
+                #    if horizontal_result[-1][3] == 0 and maximum == 255:
+                #        # Rectangle detects black color for the first time in a while -> Start of one word
+                #        left_bounds.append(left)
+                #    if horizontal_result[-1][3] == 255 and maximum == 0:
+                #        # Rectangle detects white color for the first time in a while -> End of one word
+                #        right_bounds.append(right)
+                #elif bg_color == "white":
+                #    if horizontal_result[-1][2] == 255 and minimum == 0:
+                #        # Rectangle detects black color for the first time in a while -> Start of one word
+                #        left_bounds.append(left)
+                #    if horizontal_result[-1][2] == 0 and minimum == 255:
+                #        # Rectangle detects white color for the first time in a while -> End of one word
+                #        right_bounds.append(right)
+                    
 
             # Storing all detection result
-            horizontal_result.append([left, right, minimum, maximum])
+            #horizontal_result.append([left, right, minimum, maximum])
 
         if level == "sub-line":
             part_count = 1
@@ -205,8 +261,8 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
         image = image_file_name.split("/")[-1]
 
         # For better visualization
-        x += margin_width / 2
-        width -= margin_width
+        #x += margin_width / 2
+        #width -= margin_width
 
         value = [kind, name, x, y, width, height, image]
         dic = dict(zip(columns, value))
