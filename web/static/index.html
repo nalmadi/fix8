@@ -3,115 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fix8 Web | Advanced Eye Tracking</title>
-    <!-- Use Inter font from Google Fonts -->
+    <title>Fix8 Web | Eye Tracking Correction</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div id="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar left-sidebar">
-            <div>
-                <h1>Fix8 Web</h1>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Session Isolated Workspace</p>
-            </div>
+<div id="app-container">
 
-            <div class="control-group" style="display: flex; gap: 8px;">
-                <a href="/dashboard" class="btn" style="flex:1; text-align:center; padding: 10px; text-decoration:none; background:rgba(255,255,255,0.1)">Dashboard</a>
-                <a href="/logout" class="btn" style="flex:1; text-align:center; padding: 10px; text-decoration:none; background:rgba(239, 68, 68, 0.4)">Logout</a>
-            </div>
+    <!-- ================= LEFT SIDEBAR ================= -->
+    <aside class="sidebar left-sidebar">
+        <div class="sidebar-header">
+            <h1>Fix8 Web</h1>
+            <p class="subtitle">Eye Tracking Correction</p>
+        </div>
 
-            <div class="control-group">
-                <h3>Data Source</h3>
-                <button id="btn-load-demo" class="btn btn-primary">Load Active Module</button>
-            </div>
+        <div class="nav-row">
+            <a href="/dashboard" class="btn btn-ghost">Dashboard</a>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
 
-            <div class="control-group">
-                <h3>Distortions</h3>
-                <div class="control-item">
-                    <label for="noise-slider">Noise Threshold</label>
-                    <span id="noise-val" style="color: var(--accent-primary); font-weight: bold;">5</span>
+        <div class="control-group">
+            <h3>Data Source</h3>
+            <button id="btn-load-demo" class="btn btn-primary">Load Demo Trial</button>
+            <label class="btn btn-ghost" for="upload-trial-input">Upload Trial (.json)</label>
+            <input type="file" id="upload-trial-input" accept=".json" hidden>
+            <label class="btn btn-ghost" for="upload-image-input">Upload Stimulus Image</label>
+            <input type="file" id="upload-image-input" accept=".png,.jpg,.jpeg" hidden>
+        </div>
+
+        <div class="control-group">
+            <h3>Statistics</h3>
+            <div class="stat-row"><span>Fixations</span><b id="stat-fix-count">0</b></div>
+            <div class="stat-row"><span>Trial Duration</span><b id="stat-total-dur">—</b></div>
+            <div class="stat-row"><span>Max Fixation</span><b id="stat-max-dur">—</b></div>
+            <div class="stat-row"><span>Min Fixation</span><b id="stat-min-dur">—</b></div>
+            <div class="stat-row"><span>AOIs</span><b id="stat-aoi-count">0</b></div>
+        </div>
+
+        <div class="control-group">
+            <h3>Export</h3>
+            <div class="row">
+                <a id="btn-export-json" class="btn btn-ghost" href="/api/export/json">JSON</a>
+                <a id="btn-export-csv" class="btn btn-ghost" href="/api/export/csv">CSV</a>
+                <a id="btn-export-aoi" class="btn btn-ghost" href="/api/export/aoi">AOI</a>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>View Options</h3>
+            <label class="check"><input type="checkbox" id="view-aois"> Show AOIs</label>
+            <label class="check"><input type="checkbox" id="view-saccades" checked> Show Saccades</label>
+            <label class="check"><input type="checkbox" id="view-suggestions" checked> Show Suggestions</label>
+            <label class="check"><input type="checkbox" id="view-numbers"> Show Fixation Numbers</label>
+        </div>
+
+        <div class="footer-note">Server-Side Rendering via Matplotlib</div>
+    </aside>
+
+    <!-- ================= MAIN WORKSPACE ================= -->
+    <main class="workspace">
+        <header class="workspace-header">
+            <div class="status-indicator">
+                <div class="status-dot" id="status-dot"></div>
+                <span id="status-text">Ready</span>
+            </div>
+            <div class="header-center">
+                <button class="btn-tool" id="btn-prev" title="Previous fixation (←)">◀</button>
+                <span id="progress-label">—</span>
+                <button class="btn-tool" id="btn-next" title="Next fixation (→)">▶</button>
+            </div>
+            <div class="header-right">
+                <button class="btn-tool" id="btn-undo" title="Undo">↶ Undo</button>
+                <span class="count-pill">
+                    Fixations: <b id="fix-count">0</b>
+                </span>
+            </div>
+        </header>
+
+        <div class="canvas-container" id="canvas-container">
+            <div id="interactive-grid">
+                <img id="engine-render" alt="Fix8 Rendering">
+                <div id="tooltip"></div>
+            </div>
+            <div id="empty-state">
+                <h2>No trial loaded</h2>
+                <p>Click <b>Load Demo Trial</b> or upload your own trial + stimulus image to begin.</p>
+            </div>
+        </div>
+
+        <div id="loader">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                <path d="M12 2a10 10 0 0 1 10 10"></path>
+            </svg>
+        </div>
+
+        <div class="keyboard-hint">
+            <kbd>←</kbd> prev · <kbd>→</kbd> next · <kbd>a</kbd> line above · <kbd>z</kbd> line below ·
+            <kbd>1-9</kbd> line # · <kbd>Space</kbd> accept · <kbd>Del</kbd> remove · <kbd>Ctrl+Z</kbd> undo
+        </div>
+    </main>
+
+    <!-- ================= RIGHT SIDEBAR ================= -->
+    <aside class="sidebar right-sidebar">
+        <div class="control-group accent-1">
+            <h3>Correction</h3>
+            <label class="micro">Algorithm</label>
+            <select id="algo-select">
+                <option value="warp">Warp (DTW)</option>
+                <option value="attach">Attach (nearest line)</option>
+                <option value="chain">Chain</option>
+                <option value="cluster">Cluster (k-means)</option>
+                <option value="compare">Compare (DTW words)</option>
+                <option value="merge">Merge</option>
+                <option value="regress">Regress</option>
+                <option value="segment">Segment</option>
+                <option value="slice">Slice</option>
+                <option value="stretch">Stretch</option>
+            </select>
+            <label class="micro">Mode</label>
+            <div class="segmented">
+                <input type="radio" name="algo-mode" id="mode-auto" value="auto" checked>
+                <label for="mode-auto">Auto</label>
+                <input type="radio" name="algo-mode" id="mode-assisted" value="assisted">
+                <label for="mode-assisted">Assisted</label>
+            </div>
+            <button id="btn-detect-aoi" class="btn btn-ghost">Detect AOIs</button>
+            <button id="btn-run-algo" class="btn btn-primary">Run Correction</button>
+            <button id="btn-accept-all" class="btn btn-ghost" disabled>Accept All Suggestions</button>
+        </div>
+
+        <div class="control-group accent-2">
+            <h3>Filters</h3>
+            <div class="inline-field">
+                <label>Duration ms</label>
+                <input type="number" id="filter-duration" value="80">
+            </div>
+            <div class="row">
+                <button class="btn btn-ghost small" id="btn-filter-lowpass">&lt; Low-pass</button>
+                <button class="btn btn-ghost small" id="btn-filter-highpass">&gt; High-pass</button>
+            </div>
+            <div class="inline-field">
+                <label>Outlier σ</label>
+                <input type="number" id="filter-outlier-std" value="2.5" step="0.1">
+            </div>
+            <button class="btn btn-ghost" id="btn-filter-outlier">Filter Outliers</button>
+            <div class="row">
+                <div class="inline-field tight">
+                    <label>Merge dur</label>
+                    <input type="number" id="merge-dur" value="50">
                 </div>
-                <input type="range" id="noise-slider" min="1" max="20" value="5">
-                <button id="btn-apply-noise" class="btn">Apply Noise</button>
-            </div>
-            
-            <div style="flex: 1;"></div>
-            
-            <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">
-                Powered by Flask & Matplotlib (SSR)
-            </div>
-        </aside>
-
-        <!-- Main Workspace -->
-        <main class="workspace">
-            <header class="workspace-header">
-                <div class="status-indicator">
-                    <div class="status-dot" id="status-dot"></div>
-                    <span id="status-text">Ready</span>
-                </div>
-                <div style="font-size: 0.85rem;">
-                    Fixations Loaded: <span id="fix-count" style="color: var(--accent-primary); font-weight: bold; font-size: 1.1rem;">0</span>
-                </div>
-            </header>
-            
-            <div class="canvas-container" id="canvas-container" style="position: relative; overflow: auto; width: 100%; height: 100%;">
-                <div id="interactive-grid" style="position: relative; display: inline-block;">
-                    <img id="engine-render" style="display: block; max-width: none; background: #fff;" alt="Fix8 Rendering Engine">
-                    <div id="tooltip"></div>
+                <div class="inline-field tight">
+                    <label>Merge disp</label>
+                    <input type="number" id="merge-disp" value="20">
                 </div>
             </div>
-            
-            <!-- Loading Overlay -->
-            <div id="loader">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin">
-                    <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
-                    <path d="M12 2a10 10 0 0 1 10 10"></path>
-                </svg>
+            <button class="btn btn-ghost" id="btn-filter-merge">Merge Short Fixations</button>
+            <button class="btn btn-ghost" id="btn-filter-outside">Remove Outside Screen</button>
+        </div>
+
+        <div class="control-group accent-3">
+            <h3>Distortions</h3>
+            <div class="slider-row">
+                <label>Noise</label>
+                <input type="range" id="dist-noise" min="1" max="20" value="5">
+                <span id="dist-noise-val">5</span>
+                <button class="btn-mini" id="btn-dist-noise">Apply</button>
             </div>
-        </main>
-
-        <!-- Right Sidebar -->
-        <aside class="sidebar right-sidebar">
-            <div class="control-group">
-                <h3 style="color: var(--accent-secondary);">Filters Toolkit</h3>
-                <div class="control-item" style="flex-direction: column; align-items: stretch; gap: 4px;">
-                    <label>Duration Threshold (ms)</label>
-                    <input type="number" id="filter-duration" placeholder="e.g. 80" style="padding: 8px; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); color: #fff;">
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn" style="flex: 1; font-size: 0.8rem;">&lt; Less</button>
-                    <button class="btn" style="flex: 1; font-size: 0.8rem;">&gt; Greater</button>
-                </div>
-                <button class="btn" style="border-color: rgba(239, 68, 68, 0.4); margin-top: 8px;">Filter Outliers</button>
-                <button class="btn" style="margin-top: 4px;">Merge Fixations</button>
+            <div class="slider-row">
+                <label>Slope</label>
+                <input type="range" id="dist-slope" min="1" max="20" value="5">
+                <span id="dist-slope-val">5</span>
+                <button class="btn-mini" id="btn-dist-slope">Apply</button>
             </div>
-
-            <div class="control-group" style="margin-top: 1.5rem;">
-                <h3 style="color: #fbbf24;">Algorithms</h3>
-                
-                <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: -4px;">Automatic Corrections</label>
-                <select style="padding: 10px; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); color: #fff; width: 100%;">
-                    <option value="">Select Algorithm...</option>
-                    <option value="warp">Warp</option>
-                    <option value="attach">Attach</option>
-                    <option value="chain">Chain</option>
-                    <option value="cluster">Cluster</option>
-                </select>
-                <button class="btn btn-primary" style="margin-top: 4px;">Run Automatic</button>
+            <div class="slider-row">
+                <label>Offset</label>
+                <input type="range" id="dist-offset" min="1" max="100" value="10">
+                <span id="dist-offset-val">10</span>
+                <button class="btn-mini" id="btn-dist-offset">Apply</button>
             </div>
-        </aside>
-    </div>
+            <div class="slider-row">
+                <label>Shift</label>
+                <input type="range" id="dist-shift" min="1" max="20" value="5">
+                <span id="dist-shift-val">5</span>
+                <button class="btn-mini" id="btn-dist-shift">Apply</button>
+            </div>
+        </div>
+    </aside>
+</div>
 
-    <style>
-        .spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-    </style>
-
-    <script src="/js/visualizer.js"></script>
-    <script src="/js/app.js"></script>
+<script src="/js/visualizer.js"></script>
+<script src="/js/app.js"></script>
 </body>
 </html>
