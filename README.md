@@ -3,9 +3,9 @@
 fix8 (Fixate) is an open-source GUI Tool for working with eye tracking data in reading tasks. Fix8 includes a novel semi-automated correction approach for eye tracking data in reading tasks. The proposed approach allows the user to collaborate with an algorithm to produce accurate corrections in less time without sacrificing accuracy.
 
 
-[![Watch the video](./src/.images/step2.jpg)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
 
 
+![GUI Overview](./src/.images/fix8.jpg)
 
 
 # Main Features ⭐
