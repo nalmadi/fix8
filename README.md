@@ -19,23 +19,6 @@ fix8 (Fixate) is an open-source GUI Tool for working with eye tracking data in r
 - Request a feature by making an issue in this repository!
 
 
-# Keyboard Shortcuts ⌨️​
-[![Keyboard shortcuts](./src/.images/fix8-keyboard.png)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
-
-
-
-| Key         | Functionality                               |
-| ----------- | ------------------------------------------- |
-| a           | assign current fixation to line above       |
-| z           | assign current fixation to line below       |
-| space       | accept suggestion                           |
-| backspace   | delete fixation (click on fixation to select)|
-| right       | next fixation                               |
-| left        | previous fixation                           |
-| 1-9         | assign fixation to the line number          |
-
-
-
 
 
 # Datasets 🗂️​
@@ -200,6 +183,24 @@ To run Fix8 from the Python code, follow these steps:
     ```
 
 
+# Keyboard Shortcuts ⌨️​
+[![Keyboard shortcuts](./src/.images/fix8-keyboard.png)](https://youtu.be/Zw2uO3IE2vI?si=h1yYnNQag-0Q7lVe)
+
+
+
+| Key         | Functionality                               |
+| ----------- | ------------------------------------------- |
+| a           | assign current fixation to line above       |
+| z           | assign current fixation to line below       |
+| space       | accept suggestion                           |
+| backspace   | delete fixation (click on fixation to select)|
+| right       | next fixation                               |
+| left        | previous fixation                           |
+| 1-9         | assign fixation to the line number          |
+
+
+
+
 # Python Compatibility 🐍
 Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, and 3.11. Support for Python 3.12 and 3.13 is in progress, please checkout the  <a id="raw-url" href="https://github.com/nalmadi/fix8/tree/py313-updates">`[py313-updates]`</a> branch of this repository for the latest Python 3.13 compatible version of Fix8.
 
@@ -207,6 +208,7 @@ Fix8 has been thoroughly tested and runs reliably on Python versions 3.9, 3.10, 
 
 # API and Documentation for Developers ⚙️
 Developers can find the Fix8 Core API documentation [HERE](https://fix8-eye-tracking.github.io/)
+
 
 
 # Citation 📝
