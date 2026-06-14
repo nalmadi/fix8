@@ -112,6 +112,7 @@ class Fix8():
         # fields relating to aoi margin
         self.aoi_width = 7
         self.aoi_height = 4
+        self.aoi_threshold = 80
 
         # fields relating to color filters
         self.fixation_color = "red"
@@ -157,6 +158,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
 
         # generate fixations
@@ -211,6 +213,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
         
         # generate fixations
@@ -266,6 +269,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
 
         # generate fixations
@@ -322,6 +326,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
 
         # generate fixations
@@ -475,6 +480,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
 
         # get line_Y from aoi
@@ -1665,6 +1671,7 @@ class Fix8():
                     self.image_file_path,
                     margin_height=self.aoi_height,
                     margin_width=self.aoi_width,
+                    threshold=self.aoi_threshold,
                 )
         except Exception as e:
             self.show_error_message("AOI Error", "Problem finding AOI: " + str(e))
@@ -2334,12 +2341,15 @@ class Fix8():
         self.find_aoi()
         self.quick_draw_canvas()
 
-
     def aoi_width_changed(self, value):
         self.aoi_width = value
         self.find_aoi()
         self.quick_draw_canvas()
 
+    def aoi_threshold_changed(self, value):
+        self.aoi_threshold = value
+        self.find_aoi()
+        self.quick_draw_canvas()
 
     def select_fixation_color(self):
         color = QColorDialog.getColor(initial=QColor(self.fixation_color))

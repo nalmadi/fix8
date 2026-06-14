@@ -51,7 +51,7 @@ def find_background_color(img):
 
     return bg_color
 
-def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_height=4, margin_width=7):
+def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_height=4, margin_width=7, threshold=80):
     """Find Area of Interest in the given image and store the aoi attributes in a Pandas Dataframe
     Parameters
     ----------
@@ -87,9 +87,9 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
     majority_color = unique_values[np.argmax(counts)]
 
     #convert base on majority color
-    range_color = 5
+    #range_color = 5
     img = img.point(
-        lambda x: 0 if not abs(float(x) - float(majority_color)) <= range_color else 255
+        lambda x: 0 if x <= threshold else 255
     )  # Apply threshold and convert to black and white
 
     width, height = img.size

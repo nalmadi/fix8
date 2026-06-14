@@ -338,7 +338,6 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.toggle_aoi_width.setEnabled(False)
 
         self.aoi_layer_top.addWidget(self.checkbox_show_aoi)
-        self.aoi_layer_top.addLayout(self.aoi_width_layer)
 
         self.aoi_layer_bottom = QHBoxLayout()
         self.button_aoi_color = QPushButton("AOIs Color")
@@ -355,7 +354,21 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.aoi_height_layer.addWidget(self.toggle_aoi_height)
         self.aoi_height_layer.addWidget(self.aoi_height_text)
 
-        self.aoi_layer_bottom.addLayout(self.aoi_height_layer)
+        #new button for threshold
+        self.aoi_threshold_layer = QHBoxLayout()
+        #self.aoi_layer_threshold = QHBoxLayout()
+        self.toggle_aoi_threshold = QSpinBox()
+        self.toggle_aoi_threshold.setMaximum(255)
+        self.toggle_aoi_threshold.setMinimum(0)
+        self.toggle_aoi_threshold.setValue(80)
+        self.aoi_threshold_text = QLabel("Threshold")
+        self.toggle_aoi_threshold.setEnabled(False)
+        self.aoi_threshold_layer.addWidget(self.toggle_aoi_threshold)
+        self.aoi_threshold_layer.addWidget(self.aoi_threshold_text)
+
+        self.aoi_layer_bottom.addLayout(self.aoi_threshold_layer)
+        self.aoi_layer_top.addLayout(self.aoi_width_layer)
+        self.aoi_layer_top.addLayout(self.aoi_height_layer)
 
         self.filters.addLayout(self.aoi_layer_top)
         self.filters.addLayout(self.aoi_layer_bottom)
@@ -663,6 +676,8 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
         self.checkbox_show_aoi.stateChanged.connect(self.fix8.quick_draw_canvas)
         self.toggle_aoi_width.valueChanged.connect(self.fix8.aoi_width_changed)
         self.toggle_aoi_width.valueChanged.connect(self.set_canvas_focus)
+        self.toggle_aoi_threshold.valueChanged.connect(self.fix8.aoi_threshold_changed)
+        self.toggle_aoi_threshold.valueChanged.connect(self.set_canvas_focus)
         self.toggle_aoi_height.valueChanged.connect(self.fix8.aoi_height_changed)
         self.toggle_aoi_height.valueChanged.connect(self.set_canvas_focus)
         self.checkbox_show_fixations.stateChanged.connect(self.fix8.quick_draw_canvas)
@@ -781,6 +796,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             self.checkbox_show_aoi.setEnabled(True)
             self.toggle_aoi_width.setEnabled(True)
             self.toggle_aoi_height.setEnabled(True)
+            self.toggle_aoi_threshold.setEnabled(True)
             self.canvas_toolbar.setEnabled(True)
             self.checkbox_show_fixations.setCheckable(False)
             self.checkbox_show_fixations.setChecked(False)
@@ -820,6 +836,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
             
             self.toggle_aoi_width.setEnabled(False)
             self.toggle_aoi_height.setEnabled(False)
+            self.toggle_aoi_threshold.setEnabled(False)
             #self.button_coloblind_assist.setEnabled(False)
             self.toggle_fixation_opacity.setEnabled(False)
             self.toggle_saccade_opacity.setEnabled(False)
@@ -854,6 +871,7 @@ class Ui_Main_Window(QMainWindow, QtStyleTools):
 
             self.toggle_aoi_width.setEnabled(True)
             self.toggle_aoi_height.setEnabled(True)
+            self.toggle_aoi_threshold.setEnabled(True)
             self.button_fixation_color.setEnabled(True)
             self.button_saccade_color.setEnabled(True)
             self.button_aoi_color.setEnabled(True)
