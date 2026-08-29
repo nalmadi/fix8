@@ -51,7 +51,7 @@ def find_background_color(img):
 
     return bg_color
 
-def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_height=4, margin_width=7):
+def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_height=4, margin_width=7, threshold=80):
     """Find Area of Interest in the given image and store the aoi attributes in a Pandas Dataframe
     Parameters
     ----------
@@ -79,18 +79,18 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
         
         # img = Image.open(image_path + image).convert('1')
         img = Image.open(image_file_name)
-        img = img.convert("L")  # Convert to grayscale
-        threshold = 80
-        img = img.point(
-            lambda x: 0 if x < threshold else 255, "1"
-        )  # Apply threshold and convert to black and white
+    
+    img = img.convert("L")  # Convert to grayscale
 
-    else:
-        img = img.convert("L")  # Convert to grayscale
-        threshold = 80
-        img = img.point(
-            lambda x: 0 if x < threshold else 255, "1"
-        )  # Apply threshold and convert to black and white
+    #find majority color 
+    unique_values, counts = np.unique(img, return_counts=True)
+    majority_color = unique_values[np.argmax(counts)]
+
+    #convert base on majority color
+    #range_color = 5
+    img = img.point(
+        lambda x: 0 if x <= threshold else 255
+    )  # Apply threshold and convert to black and white
 
     width, height = img.size
 
@@ -176,6 +176,7 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
                 last = right
                 break
         
+        temp_right = -1
         for left in range(start, width - margin_width):
             right = left + margin_width
 
@@ -190,8 +191,15 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
 
                     gap_found = True
                     #track the new word found
-                    left_bounds.append(last)
-                    right_bounds.append(left)
+                    #if the word found is the first word, then only add left bound
+                    if temp_right == -1:
+                        left_bounds.append(max(0, last - 3))
+                    #if not, calculate the right boundary of the last word and the left boundary of the current word
+                    else:
+                        real_bound = (temp_right + last) / 2
+                        left_bounds.append(real_bound)
+                        right_bounds.append(real_bound)
+                    temp_right = left
 
                 #update the right boundary of the current gap
                 last = right
@@ -199,26 +207,8 @@ def EMTK_find_aoi(image_file_name=None, img=None, level="sub-line", margin_heigh
             else:
                 # we are no longer in a word, so the last gap have ended, and we can wait for a new gap
                 gap_found = False
-
-            #if left >= 0:
-                #if bg_color == "black":
-                #    if horizontal_result[-1][3] == 0 and maximum == 255:
-                #        # Rectangle detects black color for the first time in a while -> Start of one word
-                #        left_bounds.append(left)
-                #    if horizontal_result[-1][3] == 255 and maximum == 0:
-                #        # Rectangle detects white color for the first time in a while -> End of one word
-                #        right_bounds.append(right)
-                #elif bg_color == "white":
-                #    if horizontal_result[-1][2] == 255 and minimum == 0:
-                #        # Rectangle detects black color for the first time in a while -> Start of one word
-                #        left_bounds.append(left)
-                #    if horizontal_result[-1][2] == 0 and minimum == 255:
-                #        # Rectangle detects white color for the first time in a while -> End of one word
-                #        right_bounds.append(right)
-                    
-
-            # Storing all detection result
-            #horizontal_result.append([left, right, minimum, maximum])
+        
+        right_bounds.append(temp_right + 3)
 
         if level == "sub-line":
             part_count = 1

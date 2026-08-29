@@ -112,6 +112,7 @@ class Fix8():
         # fields relating to aoi margin
         self.aoi_width = 7
         self.aoi_height = 4
+        self.aoi_threshold = 80
 
         # fields relating to color filters
         self.fixation_color = "red"
@@ -157,6 +158,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
 
         # generate fixations
@@ -211,6 +213,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
         
         # generate fixations
@@ -266,6 +269,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
 
         # generate fixations
@@ -322,6 +326,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
 
         # generate fixations
@@ -475,6 +480,7 @@ class Fix8():
             self.image_file_path,
             margin_height=self.aoi_height,
             margin_width=self.aoi_width,
+            threshold=self.aoi_threshold,
         )
 
         # get line_Y from aoi
@@ -635,7 +641,6 @@ class Fix8():
         # convert and save csv file
         mini_emtk.read_EyeLink1000(ascii_file, new_correction_file_name)
 
-
     def json_to_csv_converter(self):
         # open json file through file dialog limit to .asc files
         qfd = QFileDialog()
@@ -662,8 +667,7 @@ class Fix8():
         # convert and save csv file
         dataframe = self.json_to_df(json_file)
         dataframe.to_csv(new_correction_file_name, index=False)
-
-
+    
     def csv_to_json_converter(self):
         # open csv file through file dialog limit to .asc files
         qfd = QFileDialog()
@@ -704,7 +708,6 @@ class Fix8():
 
         with open(f"{new_correction_file_name}", "w") as f:
             json.dump(corrected_fixations, f)
-        
 
     def eyelink_experiment_to_csv_converter(self):
         ''' convert eyelink experiment to csv files from ASCII and runtime folder '''
@@ -719,6 +722,84 @@ class Fix8():
 
         self.show_error_message("Warning", "Conversion may take a while")
         mini_emtk.read_EyeLink1000_experiment(ascii_file, save_folder, runtime_folder=runtime_folder)
+
+    #convert eyevec file into json data file with correct format
+    def eyevec_to_json_converter(self):
+
+        # open csv file contain eyevec format data through file dialog limit to .asc files
+        qfd = QFileDialog()
+        csv_file = qfd.getOpenFileName(self.ui, "Select CSV file", "", "CSV Files (*.csv)")[0]
+
+        if csv_file == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        # ask user for file name to save csv through file dialog
+        qfd = QFileDialog()
+        default_file_name = csv_file.replace('.csv', '') + '.json'
+        new_correction_file_name, _ = qfd.getSaveFileName(self.ui, "Save converted json file", default_file_name)
+        
+        if new_correction_file_name == "":
+            self.show_error_message("Error", "No file selected")
+            return
+
+        if '.json' not in new_correction_file_name:
+            new_correction_file_name += '.json'
+
+        self.show_error_message("Warning", "Conversion may take a while")
+
+        file_number = 1
+        fixations = [] #the output list of fixation
+        converted_list = [] #keep track of the data as it converts from csv to a list of strings
+
+        with open(csv_file, 'r') as file:
+
+            #loop through each line
+            #convert csv file to a list of strings
+            for line in file:
+
+                start_index = 0
+
+                #loop through character to separate csv:
+                for cur_index in range(len(line)):
+                    
+                    #slice if current character is ;
+                    if line[cur_index] == ';':
+                        converted_list.append(line[start_index:cur_index])
+                        start_index = cur_index + 1
+
+            #loop through the converted_list, which contain the converted list of string
+            #find keep points where FIXATION_END to add to the fixation list that will be outputed
+            for index in range(len(converted_list)):
+                
+                #if the end time is found, then add values to fixation
+                if converted_list[index] == "FIXATION_END":
+
+                    #calculate fixation time using start and end time
+                    start_time = float(converted_list[index + 2])
+                    end_time = float(converted_list[index + 3])
+                    fixation_time = float(end_time - start_time)
+                    fixation_time /= 1000
+
+                    #find the x and y position of gaze
+                    x_position = float(converted_list[index + 4])
+                    y_position = float(converted_list[index + 5])
+                    fixations.append([x_position, y_position, fixation_time])
+                
+                #if the end of the recording file is found, output into a json file
+                if converted_list[index] == "RECORDING_END":
+                    
+                    #generate correct filename
+                    dot_loc = new_correction_file_name.find('.')
+                    output_file_name = new_correction_file_name[:dot_loc] + "_" + str(file_number) + new_correction_file_name[dot_loc:]
+                    file_number += 1
+
+                    #generate output fixation and outpu as json file
+                    corrected_fixations = {'fixations': fixations}
+                    with open(f"{output_file_name}", "w") as f:
+                        json.dump(corrected_fixations, f)
+
+                    fixations = []
 
     def outlier_duration_filter(self):
         minimum_value = 0.1
@@ -1590,6 +1671,7 @@ class Fix8():
                     self.image_file_path,
                     margin_height=self.aoi_height,
                     margin_width=self.aoi_width,
+                    threshold=self.aoi_threshold,
                 )
         except Exception as e:
             self.show_error_message("AOI Error", "Problem finding AOI: " + str(e))
@@ -2259,12 +2341,15 @@ class Fix8():
         self.find_aoi()
         self.quick_draw_canvas()
 
-
     def aoi_width_changed(self, value):
         self.aoi_width = value
         self.find_aoi()
         self.quick_draw_canvas()
 
+    def aoi_threshold_changed(self, value):
+        self.aoi_threshold = value
+        self.find_aoi()
+        self.quick_draw_canvas()
 
     def select_fixation_color(self):
         color = QColorDialog.getColor(initial=QColor(self.fixation_color))
